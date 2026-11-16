@@ -1,0 +1,369 @@
+{
+  "id": "cornell-biomedical-engineering-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Biomedical Engineering (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biomedical-engineering-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 2
+    },
+    "forbiddenWith": [
+      "cornell-biological-engineering-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "bio-two",
+      "label": "Two biology courses: introductory and/or advanced, with at most one introductory",
+      "group": "Biology",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "A biochemistry pair (BIOMG 3310 and 3320) counts as one course, so it has its own branch that needs both courses plus one more biology course. Every other advanced biology course counts alone. An AP Biology score of 5 can stand in for the introductory course but the board cannot see it, so a student using it may show this row short.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "no-pair",
+          "label": "Two biology courses (no biochemistry pair), at most one introductory",
+          "group": "Biology",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "BIOMG-1350",
+                  "BIOG-1440",
+                  "BIOG-1445",
+                  "BME-2010",
+                  "CHEME-2880",
+                  "ENGRI-1310",
+                  "BME-1310"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "BIOAP-3160",
+                      "BIOMS-3160",
+                      "BIOAP-4130",
+                      "BIOMS-4130",
+                      "BIOMG-2800",
+                      "BIOMG-3310",
+                      "BIOMG-3320",
+                      "BIOMG-3300",
+                      "BIOMG-3350",
+                      "BIOMI-2900",
+                      "BIONB-2220",
+                      "NS-3410"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "BIOMG-3310",
+                        "BIOMG-3320"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "BIOMG-1350",
+                  "BIOG-1440",
+                  "BIOG-1445",
+                  "BME-2010",
+                  "CHEME-2880",
+                  "ENGRI-1310",
+                  "BME-1310"
+                ]
+              },
+              "label": "At most one introductory biology course",
+              "maxCourses": 1
+            }
+          ]
+        },
+        {
+          "id": "with-pair",
+          "label": "Biochemistry pair (BIOMG 3310 and 3320) plus one more biology course",
+          "group": "Biology",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "BIOMG-1350",
+                  "BIOG-1440",
+                  "BIOG-1445",
+                  "BME-2010",
+                  "CHEME-2880",
+                  "ENGRI-1310",
+                  "BME-1310"
+                ]
+              },
+              {
+                "course": [
+                  "BIOAP-3160",
+                  "BIOMS-3160",
+                  "BIOAP-4130",
+                  "BIOMS-4130",
+                  "BIOMG-2800",
+                  "BIOMG-3310",
+                  "BIOMG-3320",
+                  "BIOMG-3300",
+                  "BIOMG-3350",
+                  "BIOMI-2900",
+                  "BIONB-2220",
+                  "NS-3410"
+                ]
+              }
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "BIOMG-3310"
+                ]
+              },
+              "label": "BIOMG 3310",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "BIOMG-3320"
+                ]
+              },
+              "label": "BIOMG 3320",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "BIOMG-1350",
+                  "BIOG-1440",
+                  "BIOG-1445",
+                  "BME-2010",
+                  "CHEME-2880",
+                  "ENGRI-1310",
+                  "BME-1310"
+                ]
+              },
+              "label": "At most one introductory biology course",
+              "maxCourses": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bme-four",
+      "label": "Four biomedical engineering courses spread over at least two of the three engineering categories",
+      "group": "Biomedical engineering",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Categories: molecular and cellular, physiological systems analysis, and applications. Courses approved by petition are not counted here.",
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "molecular-cellular",
+          "label": "Molecular and cellular",
+          "rule": {
+            "course": [
+              "BEE-3600",
+              "BIOCB-4840",
+              "CS-4775",
+              "BME-3010",
+              "BME-3020",
+              "CHEME-4020",
+              "BME-5830",
+              "BME-5850"
+            ]
+          }
+        },
+        {
+          "id": "physiological",
+          "label": "Physiological systems analysis",
+          "rule": {
+            "course": [
+              "BIONB-4140",
+              "BIOMS-4140",
+              "BIOAP-4140",
+              "BME-3300",
+              "BIONB-3300",
+              "PSYCH-3300",
+              "COGST-3300",
+              "BME-3410",
+              "BME-4010",
+              "MAE-4660",
+              "BME-4020",
+              "BME-4910",
+              "BIONB-4910",
+              "ECE-4910",
+              "BME-4640",
+              "MAE-4640"
+            ]
+          }
+        },
+        {
+          "id": "applications",
+          "label": "Applications",
+          "rule": {
+            "course": [
+              "BEE-4500",
+              "BEE-4530",
+              "MAE-4530",
+              "BME-3210",
+              "BME-3310",
+              "BME-5780",
+              "ECE-6690",
+              "BME-5810",
+              "MAE-5680",
+              "BME-6210",
+              "CHEME-6310",
+              "BME-6350",
+              "CHEME-5430",
+              "MSE-4610"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 4,
+      "minDistinctCategories": 2
+    },
+    {
+      "id": "petition-courses",
+      "label": "If a course outside the lists is approved by petition for this minor, check it with the BME office (the planner counts only listed courses)",
+      "group": "Biomedical engineering",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn C- or better in every course used for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-gpa",
+      "label": "Keep a cumulative GPA above 2.0 across the minor's courses",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Check the six courses total at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-overlap-rule",
+      "label": "No more than two of the six courses may be required courses of your major (major electives are fine)",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The planner holds back more than two courses shared with any major (stricter than the page, which only limits required major courses).",
+      "kind": "confirm"
+    },
+    {
+      "id": "one-bio-minor",
+      "label": "Hold only one of the Biological Engineering and Biomedical Engineering minors",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approval",
+      "label": "Be in a major that approves the minor",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-complete",
+      "label": "Complete all requirements for your undergraduate degree",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "continuous-enrollment",
+      "label": "Plan to finish the minor during your continuous undergraduate enrollment",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Contact the BME undergraduate coordinator to declare the minor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "certify-minor",
+      "label": "Apply for certification of the minor once the coursework is done",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biomedical-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

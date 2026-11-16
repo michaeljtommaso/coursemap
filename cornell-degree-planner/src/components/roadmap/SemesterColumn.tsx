@@ -20,6 +20,10 @@ import {
 } from "@/lib/planner/computeCardStatusMap";
 import type { PendingChoice } from "@/lib/planner/pendingChoices";
 import { Tooltip } from "@/components/ui/Tooltip";
+import type { MarkValue } from "@/lib/planner/distribution/types";
+import type { CardProgramInfo } from "./cardPrograms";
+
+const NO_CARD_PROGRAMS: Record<string, CardProgramInfo> = {};
 
 /**
  * SemesterColumn (spec 004 §1; spec 014 §D1 placement model) — one real DOM
@@ -77,6 +81,9 @@ export function SemesterColumn({
   onChainHover,
   onCompleted,
   attribution,
+  cardPrograms = NO_CARD_PROGRAMS,
+  beforeCountFor,
+  beforeMark,
   canAddShortTermBefore = false,
 }: {
   column: BoardColumn;
@@ -93,6 +100,13 @@ export function SemesterColumn({
   onCompleted: (placementId: string) => void;
   /** placementId → requirement labels it counts toward (useRequirementProgress). */
   attribution: Record<string, string[]>;
+  /** Spec 047 D6/D8: placementId → its card's program dots and held-back
+   *  line (buildCardPrograms); empty without extra programs. */
+  cardPrograms?: Record<string, CardProgramInfo>;
+  /** Spec 047 D10: handed to each card's "Count it for X instead". */
+  beforeCountFor?: (courseId: string, layerId: string) => void;
+  /** Spec 047 D10: handed to each card's own answer writes (its credits pick). */
+  beforeMark?: (key: string, value: MarkValue | null) => void;
   /** Spec 042 D2/D8: show the gap "+" before this (regular) column — the gap
    *  has no short term yet and the plan is under the short-term cap. */
   canAddShortTermBefore?: boolean;
@@ -251,6 +265,9 @@ export function SemesterColumn({
         onChainHover={onChainHover}
         onCompleted={onCompleted}
         attribution={attribution[card.placement.id]}
+        programInfo={cardPrograms[card.placement.id]}
+        beforeCountFor={beforeCountFor}
+        beforeMark={beforeMark}
       />
     );
   }

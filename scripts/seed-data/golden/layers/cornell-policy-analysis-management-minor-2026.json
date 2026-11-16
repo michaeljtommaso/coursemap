@@ -1,0 +1,167 @@
+{
+  "programId": "cornell-policy-analysis-management-minor-2026",
+  "description": "A student from the Government major finishes the minor with the intro course plus three upper-level courses and one short extra course.",
+  "layerIds": [
+    "cornell-policy-analysis-management-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-government-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PUBPOL-2301",
+    "PUBPOL-3011",
+    "PUBPOL-3015",
+    "PUBPOL-3080",
+    "PUBPOL-3060"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PUBPOL-4000",
+      "rowId": "upper-level-credits",
+      "why": "Special Studies courses are expressly excluded from the minor."
+    },
+    {
+      "courseId": "PUBPOL-4010",
+      "rowId": "additional-credits",
+      "why": "Special Studies courses are expressly excluded from the minor."
+    },
+    {
+      "courseId": "PUBPOL-2210",
+      "rowId": "upper-level-credits",
+      "why": "A 2000-level course is below the 3000/4000 floor of this row."
+    },
+    {
+      "courseId": "PUBPOL-1510",
+      "rowId": "additional-credits",
+      "why": "A 1000-level course is below the 2000 floor."
+    },
+    {
+      "courseId": "PUBPOL-2301",
+      "rowId": "additional-credits",
+      "why": "The intro course fills its own row and is not reused for the extra credits."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PUBPOL-2301",
+      "subject": "PUBPOL",
+      "number": "2301",
+      "title": "Introduction to Public Policy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3011",
+      "subject": "PUBPOL",
+      "number": "3011",
+      "title": "Food Systems and Environmental Policy",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PUBPOL-3015",
+      "subject": "PUBPOL",
+      "number": "3015",
+      "title": "Climate Economics and Policy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3080",
+      "subject": "PUBPOL",
+      "number": "3080",
+      "title": "Economics of the U.S. Social Safety Net",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3060",
+      "subject": "PUBPOL",
+      "number": "3060",
+      "title": "Political Messaging and Public Policy",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PUBPOL-4000",
+      "subject": "PUBPOL",
+      "number": "4000",
+      "title": "Directed Readings",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-4010",
+      "subject": "PUBPOL",
+      "number": "4010",
+      "title": "Empirical Research",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2210",
+      "subject": "PUBPOL",
+      "number": "2210",
+      "title": "Poverty and Public Policy",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PUBPOL-1510",
+      "subject": "PUBPOL",
+      "number": "1510",
+      "title": "FWS: America at War in the Modern World",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-HE"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    }
+  ]
+}

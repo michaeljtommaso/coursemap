@@ -1,0 +1,15 @@
+{
+  "programId": "cornell-law-society-minor-2026",
+  "description": "An economics student takes this minor, whose rows are all confirmations with the program, so no course list is scored.",
+  "layerIds": [
+    "cornell-law-society-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [],
+  "mustNotCount": [],
+  "courses": []
+}

@@ -7,7 +7,7 @@ import { usePrograms } from "@/hooks/usePrograms";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/contexts/AuthProvider";
-import { COLLEGES, programCollegeId, programIsVisible } from "@/lib/planner/colleges";
+import { ProgramStack } from "@/components/programs/ProgramStack";
 import { TopBarMenu } from "@/components/layout/TopBarMenu";
 import { TopBarInline } from "@/components/layout/TopBarInline";
 import { useTopBarStore, type TopBarTier } from "@/store/useTopBarStore";
@@ -15,8 +15,9 @@ import { CatalogRetryButton } from "@/components/layout/CatalogRetryButton";
 
 /**
  * TopBar (spec 004) — the plan's identity lives here now: an inline-editable
- * plan name beside the brand ("Michael's CS Plan") and the program switcher,
- * then the rest of the controls in one of three stages (spec 039 D8): spread
+ * plan name beside the brand ("Michael's CS Plan") and the program stack
+ * (spec 047 D5: the plan's major, second major and minors; "Change major"
+ * lives in its panel), then the rest of the controls in one of three stages (spec 039 D8): spread
  * out (full), packed tighter (compact), or behind TopBarMenu once even the
  * compact row can't fit. The stage is measured, so the bar never overflows a
  * laptop and never covers the brand. Custom templates are deferred
@@ -177,7 +178,19 @@ function PlanMenu() {
 /** Room the plan name keeps beside the logo before the controls step down a
  *  stage (px). */
 const PLAN_NAME_ROOM = 180;
-const TIERS: TopBarTier[] = ["full", "compact", "menu"];
+
+/**
+ * The bar's stages, widest first. The published tier (spec 039 D8) is full,
+ * compact or menu; compact has two steps so the program stack (spec 047 D5)
+ * keeps its labels as long as it can: `compact` packs the other controls
+ * tighter, `folded` also folds the stack's extra programs into rings, and
+ * `menu` puts the rest behind the menu button (rings too). So a plan with
+ * three or four programs still shows their names at a wide desktop; the stack
+ * folds only when even the packed row with names doesn't fit.
+ */
+type Stage = "full" | "compact" | "folded" | "menu";
+const STAGES: Stage[] = ["full", "compact", "folded", "menu"];
+const TIER_OF: Record<Stage, TopBarTier> = { full: "full", compact: "compact", folded: "compact", menu: "menu" };
 
 /**
  * Which stage the controls fit in (spec 039 D8). Measured, not a breakpoint:
@@ -185,38 +198,44 @@ const TIERS: TopBarTier[] = ["full", "compact", "menu"];
  * plan name) would get less than its room, and remembers how wide the bar had
  * to be for it; it steps back up once the bar is that wide again. Each change
  * re-measures right after it lands (and a ResizeObserver catches the rest), so
- * the full → compact → menu cascade settles before the browser paints.
- * Anything that changes the controls' width (major, sign-in, the plan loading)
+ * the cascade settles before the browser paints. Anything that changes the
+ * controls' width (major, sign-in, the plan loading, the programs on it)
  * starts again from `full`.
  */
-function useTopBarTier(resetKey: string) {
+function useTopBarStage(resetKey: string) {
   const barRef = useRef<HTMLDivElement>(null);
   const brandRef = useRef<HTMLDivElement>(null);
-  const [tier, setTier] = useState<TopBarTier>("full");
+  const [stage, setStage] = useState<Stage>("full");
   // Bar width each stage needed, learned when it stopped fitting.
-  const needed = useRef<Record<TopBarTier, number>>({ full: 0, compact: 0, menu: 0 });
+  const needed = useRef<Record<Stage, number>>({ full: 0, compact: 0, folded: 0, menu: 0 });
   const checkRef = useRef<() => void>(() => {});
+  // The stage the bar is drawn in right now, so a measurement taken before a
+  // pending step lands is never applied on top of it (mount runs both effects
+  // below against the same layout; acting on both would skip a stage).
+  const drawn = useRef<Stage>("full");
 
   useLayoutEffect(() => {
     const bar = barRef.current;
     const brand = brandRef.current;
     if (!bar || !brand || typeof ResizeObserver === "undefined") return;
-    needed.current = { full: 0, compact: 0, menu: 0 };
+    needed.current = { full: 0, compact: 0, folded: 0, menu: 0 };
     let fresh = true;
     const check = () => {
       const logo = brand.querySelector("h1")?.getBoundingClientRect().width ?? 0;
       const want = logo + 12 + PLAN_NAME_ROOM;
       const have = brand.getBoundingClientRect().width;
       const width = bar.clientWidth;
-      setTier((was) => {
-        const shown: TopBarTier = fresh ? "full" : was;
+      const measuredAt = drawn.current;
+      setStage((was) => {
+        if (!fresh && was !== measuredAt) return was;
+        const shown: Stage = fresh ? "full" : was;
         fresh = false;
-        const i = TIERS.indexOf(shown);
+        const i = STAGES.indexOf(shown);
         if (have < want && shown !== "menu") {
           needed.current[shown] = width + (want - have);
-          return TIERS[i + 1];
+          return STAGES[i + 1];
         }
-        if (shown !== "full" && width >= needed.current[TIERS[i - 1]]) return TIERS[i - 1];
+        if (shown !== "full" && width >= needed.current[STAGES[i - 1]]) return STAGES[i - 1];
         return shown;
       });
     };
@@ -228,46 +247,28 @@ function useTopBarTier(resetKey: string) {
     return () => ro.disconnect();
   }, [resetKey]);
 
-  useLayoutEffect(() => checkRef.current(), [tier]);
+  useLayoutEffect(() => {
+    drawn.current = stage;
+    checkRef.current();
+  }, [stage]);
 
   // Published for the tour, which opens the menu when the bar is in it.
+  const tier = TIER_OF[stage];
   const publish = useTopBarStore((s) => s.setTier);
   useEffect(() => publish(tier), [tier, publish]);
 
-  return { barRef, brandRef, tier };
+  return { barRef, brandRef, stage, tier };
 }
 
 export function TopBar() {
-  const { programs, loading, error } = usePrograms();
+  const { error } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
-  const setSelectedProgramId = useProgramStore((s) => s.setSelectedProgramId);
-  const { setStudentContext, isAnonymous } = useAuth();
-  const { planId } = usePlan();
-  const { barRef, brandRef, tier } = useTopBarTier(`${selectedProgramId}|${isAnonymous}|${planId}`);
-
-  const handleProgramChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const id = e.target.value || null;
-    // Each program has its own cloud plan; switching never wipes anything.
-    if (id === selectedProgramId) return;
-    setSelectedProgramId(id);
-    // The picked major's college is the student's (spec 019 D11).
-    const college = programCollegeId(programs.find((p) => p.id === id));
-    if (college) void setStudentContext({ college });
-  };
-
-  // Hidden majors leave the picker (spec 019 D11) — except the one this plan
-  // is on, so a student already on it still sees it. Grouped by college when
-  // the list spans more than one.
-  const pickable = programs.filter((p) => programIsVisible(p) || p.id === selectedProgramId);
-  const ungrouped = pickable.filter((p) => programCollegeId(p) === null);
-  const groups = COLLEGES.map((c) => ({
-    college: c,
-    programs: pickable.filter((p) => programCollegeId(p) === c.id),
-  })).filter((g) => g.programs.length > 0);
-  const option = (p: (typeof programs)[number]) => (
-    <option key={p.id} value={p.id}>
-      {p.name}
-    </option>
+  const { isAnonymous } = useAuth();
+  const { planId, additionalPrograms } = usePlan();
+  // The stack's width changes with the programs on the plan: re-measure.
+  const programsKey = additionalPrograms.map((p) => p.programId).join(",");
+  const { barRef, brandRef, stage, tier } = useTopBarStage(
+    `${selectedProgramId}|${isAnonymous}|${planId}|${programsKey}`
   );
 
   return (
@@ -277,6 +278,7 @@ export function TopBar() {
       <div
         ref={barRef}
         data-topbar-tier={tier}
+        data-topbar-stage={stage}
         className="mx-auto flex items-center justify-between gap-4 px-4 py-3"
         style={{ minHeight: "var(--topbar-h)" }}
       >
@@ -288,46 +290,12 @@ export function TopBar() {
           <PlanMenu />
         </div>
 
-        {/* Controls: the major picker, then the rest inline (full or
-            compact) or behind the menu, whichever fits (spec 039 D8). */}
+        {/* Controls: the program stack (spec 047 D5: one segment per
+            program, replacing the major select; folded to rings only once
+            the packed row with names doesn't fit), then the rest inline
+            (full or compact) or behind the menu, whichever fits (spec 039 D8). */}
         <div className="flex shrink-0 items-center gap-2">
-          {selectedProgramId && (
-            /* The "Program" label was an absolutely-positioned float (-top-4)
-               that hung above the bar (spec 006 §F4). It's now an sr-only label
-               — the selected major name in the control is self-explanatory, and
-               screen readers still get the field name. */
-            <div data-tour="major" className="relative">
-              <label htmlFor="program-select" className="sr-only">
-                Program
-              </label>
-              <Tooltip content={programs.find((p) => p.id === selectedProgramId)?.name} placement="bottom">
-              <select
-                id="program-select"
-                value={selectedProgramId ?? ""}
-                onChange={handleProgramChange}
-                disabled={loading}
-                // Capped width: a native select sizes to its LONGEST option
-                // ("Information Science, Systems, and Technology, B.S.").
-                // Long names truncate.
-                className="max-w-[15rem] cursor-pointer appearance-none truncate rounded-lg border border-line bg-surface py-1.5 pl-3 pr-8 t-body outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:opacity-50"
-              >
-                {groups.length > 1 ? (
-                  <>
-                    {ungrouped.map(option)}
-                    {groups.map((g) => (
-                      <optgroup key={g.college.id} label={g.college.shortName}>
-                        {g.programs.map(option)}
-                      </optgroup>
-                    ))}
-                  </>
-                ) : (
-                  pickable.map(option)
-                )}
-              </select>
-              </Tooltip>
-              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-ink-3" />
-            </div>
-          )}
+          <ProgramStack folded={stage === "folded" || stage === "menu"} />
 
           {error && <CatalogRetryButton />}
 

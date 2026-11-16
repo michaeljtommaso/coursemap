@@ -112,6 +112,7 @@ function loaded(content: Partial<LoadedPlan>): LoadedPlan {
     courseMarks: {},
     triedCourseIds: [],
     shortTerms: [],
+    additionalPrograms: [],
     ...content,
   };
 }

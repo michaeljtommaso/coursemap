@@ -422,3 +422,65 @@ describe("folding finished rows (spec 045 D2)", () => {
     expect(foldLineText(foldGroup([ETH]), names)).toBe("");
   });
 });
+
+describe("buildPageModel — several programs (spec 047 D6)", () => {
+  const sec = (id: string, kind: "college" | "primary" | "secondMajor" | "minor", status: "ok" | "loading" = "ok") => ({
+    id,
+    kind,
+    name: id,
+    shortName: id,
+    color: null,
+    pct: 0,
+    satisfiedCount: 0,
+    total: 0,
+    status,
+  });
+  const g = (key: string, layerKind: "college" | "major" | "minor", sectionId?: string) => ({
+    key,
+    label: key,
+    satisfiedCount: 0,
+    total: 1,
+    ...(sectionId ? { sectionId } : {}),
+    items: [
+      {
+        id: `${key}:r`,
+        label: "r",
+        category: null,
+        suggestedSem: null,
+        status: "unmet" as const,
+        coveredBy: [],
+        checkable: true,
+        requirement: null,
+        dist: { layerId: key, rowId: "r", layerKind, rowKind: "seat" as const, engineStatus: "unmet" as const, countedCodes: [] },
+      },
+    ],
+  });
+
+  it("sections by program in progress.sections order, empty sections kept", () => {
+    const m = buildPageModel(
+      [g("math", "major", "mathematics"), g("college", "college"), g("econ", "major", "economics")],
+      {},
+      "distribution",
+      [sec("cas", "college"), sec("economics", "primary"), sec("mathematics", "secondMajor"), sec("cs", "minor", "loading")]
+    );
+    expect(m.sections.map((s) => [s.key, s.groups.map((x) => x.key)])).toEqual([
+      ["program:cas", ["college"]],
+      ["program:economics", ["econ"]],
+      ["program:mathematics", ["math"]],
+      ["program:cs", []],
+    ]);
+    expect(m.sections[3].program?.status).toBe("loading");
+  });
+
+  it("without a second major or minor, sections by layer exactly as before", () => {
+    const groups = [g("college", "college", "cas"), g("econ", "major", "economics")];
+    const withSections = buildPageModel(groups, { program: "Economics" }, "distribution", [sec("cas", "college"), sec("economics", "primary")]);
+    expect(withSections).toEqual(buildPageModel(groups, { program: "Economics" }, "distribution"));
+    expect(withSections.sections.map((s) => s.key)).toEqual(["college", "major"]);
+  });
+
+  it("layer mode names a minor's groups instead of dropping them", () => {
+    const m = buildPageModel([g("cs", "minor")], { minor: "CS minor" }, "distribution");
+    expect(m.sections.map((s) => [s.key, s.label])).toEqual([["minor", "CS minor"]]);
+  });
+});

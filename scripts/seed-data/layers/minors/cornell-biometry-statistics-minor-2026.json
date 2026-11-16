@@ -1,0 +1,652 @@
+{
+  "id": "cornell-biometry-statistics-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Biometry and Statistics (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biometry-statistics-minor-2026",
+  "rows": [
+    {
+      "id": "calc-1",
+      "label": "Calculus I (MATH 1110)",
+      "group": "Calculus",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Taken at Cornell, or fulfilled by AP, IB, A-level or CASE credit granted for MATH 1110. Transfer credit is not counted here.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "course": [
+                  "MATH-1110"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "MATH-1110"
+                ]
+              },
+              {
+                "creditKind": [
+                  "ap",
+                  "ib",
+                  "alevel",
+                  "placement"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "calc-2",
+      "label": "Calculus II (MATH 1120 or MATH 1910)",
+      "group": "Calculus",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Taken at Cornell, or fulfilled by AP, CASE or Singapore A-level credit. IB and transfer credit are not counted here.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "course": [
+                  "MATH-1120",
+                  "MATH-1910"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "MATH-1120",
+                  "MATH-1910"
+                ]
+              },
+              {
+                "creditKind": [
+                  "ap",
+                  "alevel",
+                  "placement"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "multivariable",
+      "label": "Multivariable calculus (MATH 2220, 2240 or 1920)",
+      "group": "Calculus",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Taken at Cornell, or fulfilled by CASE placement credit for MATH 1920. AP, IB and transfer credit are not counted here.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "course": [
+                  "MATH-2220",
+                  "MATH-2240",
+                  "MATH-1920"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "MATH-1920"
+                ]
+              },
+              {
+                "creditKind": [
+                  "placement"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "stat-methods-1",
+      "label": "Statistical Methods I (STSCI 2200 or a listed equivalent)",
+      "group": "Statistics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Taken at Cornell, or fulfilled by AP Statistics credit. Other exam and transfer credit is not counted here. HADM 2010 is listed by pattern because the catalog data lacks it.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "STSCI-2200",
+                      "AEM-2100",
+                      "ENGRD-2700",
+                      "ILRST-2100",
+                      "PUBPOL-2100",
+                      "PUBPOL-2101",
+                      "PSYCH-2500",
+                      "SOC-3010",
+                      "STSCI-2150"
+                    ]
+                  },
+                  {
+                    "pattern": "HADM 2010"
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "STSCI-2200",
+                      "AEM-2100",
+                      "ENGRD-2700",
+                      "ILRST-2100",
+                      "PUBPOL-2100",
+                      "PUBPOL-2101",
+                      "PSYCH-2500",
+                      "SOC-3010",
+                      "STSCI-2150"
+                    ]
+                  },
+                  {
+                    "pattern": "HADM 2010"
+                  }
+                ]
+              },
+              {
+                "creditKind": [
+                  "ap"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "stat-methods-2",
+      "label": "Statistical Methods II (STSCI 3200)",
+      "group": "Statistics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Must be taken at Cornell; no exam or transfer credit.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "STSCI-3200"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "probability",
+      "label": "One probability course (STSCI 3080, MATH 4710, ECON 3130 or ORIE 3500)",
+      "group": "Statistics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Must be taken at Cornell; no exam or transfer credit.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "STSCI-3080",
+              "MATH-4710",
+              "ECON-3130",
+              "ORIE-3500"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "electives",
+      "label": "Three statistics electives; two of the listed 2-credit courses together make one elective",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+        "anchor": "Electives"
+      },
+      "note": "Counted as three full electives, or two electives plus a pair of short courses, or one elective plus two pairs, or three pairs. Linear Algebra is also allowed by the page but names no course, so it is not counted here: see the linear algebra confirm row. All must be taken at Cornell.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "electives-full",
+          "label": "Three electives from the full-credit list",
+          "group": "Electives",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+            "anchor": "Electives"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "STSCI-3090",
+                      "STSCI-3100",
+                      "STSCI-3510",
+                      "STSCI-3740",
+                      "STSCI-3900",
+                      "STSCI-4050",
+                      "STSCI-4060",
+                      "STSCI-4100",
+                      "STSCI-4110",
+                      "STSCI-4140",
+                      "STSCI-4270",
+                      "STSCI-4550",
+                      "STSCI-4630",
+                      "STSCI-4780",
+                      "STSCI-5640"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "STSCI-4030",
+                      "STSCI-4090",
+                      "STSCI-4520"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 0
+        },
+        {
+          "id": "electives-one-pair",
+          "label": "Two electives plus one pair of short courses",
+          "group": "Electives",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+            "anchor": "Electives"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "course": [
+                          "STSCI-3090",
+                          "STSCI-3100",
+                          "STSCI-3510",
+                          "STSCI-3740",
+                          "STSCI-3900",
+                          "STSCI-4050",
+                          "STSCI-4060",
+                          "STSCI-4100",
+                          "STSCI-4110",
+                          "STSCI-4140",
+                          "STSCI-4270",
+                          "STSCI-4550",
+                          "STSCI-4630",
+                          "STSCI-4780",
+                          "STSCI-5640"
+                        ]
+                      },
+                      {
+                        "course": [
+                          "STSCI-4030",
+                          "STSCI-4090",
+                          "STSCI-4520"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "course": [
+                      "STSCI-3600",
+                      "STSCI-4610",
+                      "STSCI-4850",
+                      "STSCI-4720",
+                      "STSCI-4725",
+                      "STSCI-4881"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 4,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "STSCI-3600",
+                  "STSCI-4610",
+                  "STSCI-4850",
+                  "STSCI-4720",
+                  "STSCI-4725",
+                  "STSCI-4881"
+                ]
+              },
+              "label": "Exactly one pair of short courses",
+              "minCourses": 2,
+              "maxCourses": 2
+            }
+          ]
+        },
+        {
+          "id": "electives-two-pairs",
+          "label": "One elective plus two pairs of short courses",
+          "group": "Electives",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+            "anchor": "Electives"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "course": [
+                          "STSCI-3090",
+                          "STSCI-3100",
+                          "STSCI-3510",
+                          "STSCI-3740",
+                          "STSCI-3900",
+                          "STSCI-4050",
+                          "STSCI-4060",
+                          "STSCI-4100",
+                          "STSCI-4110",
+                          "STSCI-4140",
+                          "STSCI-4270",
+                          "STSCI-4550",
+                          "STSCI-4630",
+                          "STSCI-4780",
+                          "STSCI-5640"
+                        ]
+                      },
+                      {
+                        "course": [
+                          "STSCI-4030",
+                          "STSCI-4090",
+                          "STSCI-4520"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "course": [
+                      "STSCI-3600",
+                      "STSCI-4610",
+                      "STSCI-4850",
+                      "STSCI-4720",
+                      "STSCI-4725",
+                      "STSCI-4881"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 5,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "STSCI-3600",
+                  "STSCI-4610",
+                  "STSCI-4850",
+                  "STSCI-4720",
+                  "STSCI-4725",
+                  "STSCI-4881"
+                ]
+              },
+              "label": "Exactly two pairs of short courses",
+              "minCourses": 4,
+              "maxCourses": 4
+            }
+          ]
+        },
+        {
+          "id": "electives-three-pairs",
+          "label": "Three pairs of short courses",
+          "group": "Electives",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+            "anchor": "Electives"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "STSCI-3600",
+                  "STSCI-4610",
+                  "STSCI-4850",
+                  "STSCI-4720",
+                  "STSCI-4725",
+                  "STSCI-4881"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 6,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "linear-algebra-elective",
+      "label": "If a linear algebra course is used as an elective, confirm it with the department",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+        "anchor": "Electives"
+      },
+      "note": "The page lets Linear Algebra count as an elective but names no course number, so the board does not count it; take another elective or confirm this one.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Every counted course: taken at Cornell for a letter grade, C or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "note": "The page also says C- for electives; the stricter C is used. S/U grades never count.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "At least 20 credits toward the minor",
+      "group": "Overall",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The listed courses already add up to more; confirm if AP or placement fulfils some of them.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the Bowers Biometry and Statistics minor form",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biometry-statistics-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

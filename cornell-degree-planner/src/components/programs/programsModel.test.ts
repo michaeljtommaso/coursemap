@@ -1,0 +1,518 @@
+import { describe, expect, it } from "vitest";
+import type { MinorIndexEntry } from "@/lib/schemas";
+import type { OverlapPair, ProgramSection } from "@/hooks/useRequirementProgress";
+import type { Program } from "@/types/db";
+import type { Layer } from "@/lib/planner/distribution/types";
+import { ENGINEERING_SHARING_NOTE } from "@/lib/planner/engineeringDoubleMajor";
+import {
+  addButtons,
+  concentrationChoice,
+  concentrationPrompt,
+  doneLine,
+  entrySummary,
+  notOpenWarnings,
+  toggledConcentrations,
+  withWarnings,
+  withPairNotes,
+  extraEntries,
+  fillToast,
+  heldBackToggles,
+  majorGroups,
+  matchesProgramPrefix,
+  minorGroups,
+  overlapLine,
+  primaryEntry,
+  segmentValue,
+  type PickerContext,
+} from "./programsModel";
+
+const prog = (id: string, name: string, short: string, collegeId: Program["collegeId"], status?: "hidden"): Program => ({
+  id,
+  name,
+  short_name: short,
+  college: "",
+  catalog_year: 2026,
+  total_credits: null,
+  affiliation_text: null,
+  created_at: "",
+  collegeId,
+  family: collegeId === "engineering" ? "engineering" : (collegeId ?? "engineering"),
+  ...(status ? { status } : {}),
+});
+
+const ECON = prog("cornell-econ-ba", "Economics, B.A.", "Economics", "cas");
+const MATH = prog("cornell-math-ba", "Mathematics, B.A.", "Mathematics", "cas");
+const GOVT = prog("cornell-govt-ba", "Government, B.A.", "Government", "cas");
+const HIDDEN = prog("cornell-old-ba", "Old Major, B.A.", "Old", "cas", "hidden");
+const AEM = prog("cornell-aem-bs", "Applied Economics and Management, B.S.", "AEM", "cals");
+const CS = prog("cornell-cs-bs", "Computer Science, B.S.", "CS", "engineering");
+const ME = prog("cornell-me-bs", "Mechanical Engineering, B.S.", "ME", "engineering");
+const ECE = prog("cornell-ece-bs", "Electrical and Computer Engineering, B.S.", "ECE", "engineering");
+const ORE = prog("cornell-ore-bs", "Operations Research and Engineering, B.S.", "ORE", "engineering");
+const ISST = prog("cornell-isst-bs", "Information Science, Systems, and Technology, B.S.", "ISST", "engineering");
+const ENVE = prog("cornell-enve-bs", "Environmental Engineering, B.S.", "EnvE", "engineering");
+const CE = prog("cornell-ce-bs", "Civil Engineering, B.S.", "CE", "engineering");
+const ENG_HIDDEN = prog("cornell-old-bs", "Old Engineering, B.S.", "Old Eng", "engineering", "hidden");
+
+const minor = (id: string, name: string, offeredBy: string, extra: Partial<MinorIndexEntry> = {}): MinorIndexEntry => ({
+  id,
+  name,
+  shortName: `${name} minor`,
+  offeredBy,
+  catalogYear: "2026-27",
+  ...extra,
+});
+
+const section = (s: Partial<ProgramSection> & Pick<ProgramSection, "id" | "kind">): ProgramSection => ({
+  name: s.id,
+  shortName: s.id,
+  color: null,
+  pct: 0,
+  satisfiedCount: 0,
+  total: 0,
+  status: "ok",
+  ...s,
+});
+
+function ctx(over: Partial<PickerContext> = {}): PickerContext {
+  return {
+    primaryId: ECON.id,
+    primaryProgram: ECON,
+    list: [],
+    shortNameOf: (id) => ({ [ECON.id]: "Economics", [MATH.id]: "Mathematics", [CS.id]: "CS" })[id] ?? id,
+    sharingOf: () => undefined,
+    ...over,
+  };
+}
+
+describe("matchesProgramPrefix", () => {
+  it("matches an id itself and its catalog-year forms, like the program rule leaf", () => {
+    expect(matchesProgramPrefix("cornell-cs-bs", ["cornell-cs-bs"])).toBe(true);
+    expect(matchesProgramPrefix("cornell-cs-bs-2026", ["cornell-cs-bs"])).toBe(true);
+    expect(matchesProgramPrefix("cornell-cs-bsx", ["cornell-cs-bs"])).toBe(false);
+    expect(matchesProgramPrefix(null, ["cornell-cs-bs"])).toBe(false);
+    expect(matchesProgramPrefix("cornell-cs-bs", undefined)).toBe(false);
+  });
+});
+
+describe("stack entries", () => {
+  it("the primary reads its section, else the top-level numbers (D14)", () => {
+    const fromTop = primaryEntry(ECON.id, ECON, { satisfiedCount: 8, total: 13, pct: 61.5 });
+    expect(fromTop).toMatchObject({ kind: "primary", shortName: "Economics", pct: 62, done: 8, total: 13, status: "ok" });
+    expect(segmentValue(fromTop)).toBe("62%");
+    const fromSection = primaryEntry(ECON.id, ECON, {
+      satisfiedCount: 1,
+      total: 2,
+      sections: [section({ id: ECON.id, kind: "primary", pct: 40, satisfiedCount: 4, total: 10 })],
+    });
+    expect(fromSection).toMatchObject({ pct: 40, done: 4, total: 10 });
+    // Engineering: no pct, a ratio.
+    expect(primaryEntry(CS.id, CS, { satisfiedCount: 3, total: 12 }).pct).toBe(25);
+    // Nothing solved yet: no figure.
+    expect(segmentValue(primaryEntry(CS.id, CS, { satisfiedCount: 0, total: 0 }))).toBe("");
+  });
+
+  it("extras take their section's numbers and color, loading until it arrives; minors show n/m", () => {
+    const list = [
+      { programId: MATH.id, kind: "major" as const },
+      { programId: "cs-minor", kind: "minor" as const },
+    ];
+    const names = (id: string) => (id === MATH.id ? { name: MATH.name, shortName: "Mathematics" } : null);
+    const [m, c] = extraEntries(
+      list,
+      [section({ id: "cs-minor", kind: "minor", shortName: "CS minor", color: 2, satisfiedCount: 3, total: 6, pct: 50 })],
+      names
+    );
+    expect(m).toMatchObject({ kind: "secondMajor", shortName: "Mathematics", color: 1, status: "loading" });
+    expect(segmentValue(m)).toBe("");
+    expect(c).toMatchObject({ kind: "minor", shortName: "CS minor", color: 2, status: "ok" });
+    expect(segmentValue(c)).toBe("3/6");
+    const failed = extraEntries(list.slice(0, 1), [section({ id: MATH.id, kind: "secondMajor", status: "unavailable" })], names);
+    expect(segmentValue(failed[0])).toBe("can't load");
+  });
+});
+
+describe("add buttons", () => {
+  it("a second major: one per plan, A&S/CALS only, refused by a layer that forbids it", () => {
+    expect(addButtons({ list: [], primaryProgram: ECON, primarySharing: undefined }).major).toEqual({
+      enabled: true,
+      label: "Add a second major",
+    });
+    expect(
+      addButtons({ list: [{ programId: MATH.id, kind: "major" }], primaryProgram: ECON, primarySharing: undefined }).major
+    ).toEqual({ enabled: false, label: "Second major", reason: "One second major per plan." });
+    expect(
+      addButtons({ list: [], primaryProgram: ECON, primarySharing: { otherMajors: "forbidden" } }).major
+    ).toEqual({ enabled: false, label: "Second major", reason: "Economics doesn't allow a second major." });
+  });
+
+  it("an Engineering primary may add a second major (D15), one per plan", () => {
+    expect(addButtons({ list: [], primaryProgram: CS, primarySharing: undefined }).major).toEqual({
+      enabled: true,
+      label: "Add a second major",
+    });
+    expect(
+      addButtons({ list: [{ programId: ME.id, kind: "major" }], primaryProgram: CS, primarySharing: undefined }).major
+    ).toEqual({ enabled: false, label: "Second major", reason: "One second major per plan." });
+  });
+
+  it("a primary of no college (the blank canvas) can't add one", () => {
+    const BLANK = { short_name: "Your own plan", college: "Your own plan", collegeId: null, family: "cas" as const };
+    expect(addButtons({ list: [], primaryProgram: BLANK, primarySharing: undefined }).major).toEqual({
+      enabled: false,
+      label: "Second major",
+      reason: "Second majors are open to Arts & Sciences, CALS and Engineering majors.",
+    });
+  });
+
+  it("a minor: off at three", () => {
+    const three = ["a", "b", "c"].map((id) => ({ programId: id, kind: "minor" as const }));
+    expect(addButtons({ list: three.slice(0, 2), primaryProgram: ECON, primarySharing: undefined }).minor.enabled).toBe(true);
+    expect(addButtons({ list: three, primaryProgram: ECON, primarySharing: undefined }).minor).toEqual({
+      enabled: false,
+      label: "Minor",
+      reason: "Three minors per plan.",
+    });
+  });
+});
+
+describe("the add picker", () => {
+  it("second majors: the primary's college's visible majors, the plan's own disabled", () => {
+    const groups = majorGroups([ECON, MATH, GOVT, HIDDEN, AEM, CS], ctx({ list: [{ programId: MATH.id, kind: "major" }] }), "");
+    expect(groups).toHaveLength(1);
+    expect(groups[0].label).toBe("Arts & Sciences");
+    expect(groups[0].rows.map((r) => [r.id, r.disabledReason])).toEqual([
+      [ECON.id, "on this plan"],
+      [GOVT.id, null],
+      [MATH.id, "on this plan"],
+    ]);
+    expect(majorGroups([ECON, MATH], ctx({ primaryId: CS.id, primaryProgram: CS }), "")).toEqual([]);
+  });
+
+  it("second majors: a layer in memory that forbids a second major or names the pair is disabled (D14)", () => {
+    const sharingOf = (id: string) =>
+      id === GOVT.id ? { otherMajors: "forbidden" as const } : id === MATH.id ? { forbiddenWith: ["cornell-econ-ba"] } : undefined;
+    const rows = majorGroups([ECON, MATH, GOVT], ctx({ sharingOf }), "")[0].rows;
+    expect(rows.find((r) => r.id === GOVT.id)?.disabledReason).toBe("doesn't allow a second major");
+    expect(rows.find((r) => r.id === MATH.id)?.disabledReason).toBe("can't be combined with Economics");
+  });
+
+  describe("an Engineering primary (D15)", () => {
+    const all = [ECON, MATH, AEM, CS, ME, ECE, ORE, ISST, ENVE, CE, ENG_HIDDEN];
+    const eng = (primary: Program, over: Partial<PickerContext> = {}) =>
+      majorGroups(all, ctx({ primaryId: primary.id, primaryProgram: primary, ...over }), "");
+
+    it("ME lists the other visible Engineering majors, not ME itself and no A&S or CALS major", () => {
+      const groups = eng(ME);
+      expect(groups).toHaveLength(1);
+      expect(groups[0].label).toBe("Engineering");
+      expect(groups[0].rows.map((r) => r.id)).toEqual([CE.id, CS.id, ECE.id, ENVE.id, ISST.id, ORE.id]);
+      expect(groups[0].rows.every((r) => r.disabledReason === null && r.note === ENGINEERING_SHARING_NOTE)).toBe(true);
+    });
+
+    it("ISST shows CS and ORE disabled with the college's reason, the rest open", () => {
+      const rows = eng(ISST)[0].rows;
+      const reason = "ISST can't be paired with Computer Science or Operations Research (curricular overlap).";
+      expect(rows.find((r) => r.id === CS.id)?.disabledReason).toBe(reason);
+      expect(rows.find((r) => r.id === ORE.id)?.disabledReason).toBe(reason);
+      // A forbidden pair shows only its reason, never the sharing note.
+      expect(rows.find((r) => r.id === CS.id)?.note).toBeNull();
+      expect(rows.find((r) => r.id === ORE.id)?.note).toBeNull();
+      expect(rows.find((r) => r.id === ME.id)?.disabledReason).toBeNull();
+      expect(rows.find((r) => r.id === ME.id)?.note).toBe(ENGINEERING_SHARING_NOTE);
+      // Either order: a CS primary sees ISST disabled too.
+      expect(eng(CS)[0].rows.find((r) => r.id === ISST.id)?.disabledReason).toBe(reason);
+    });
+
+    it("EnvE shows CE open with the coordinators' note, then the sharing note", () => {
+      const rows = eng(ENVE)[0].rows;
+      expect(rows.find((r) => r.id === CE.id)).toMatchObject({
+        disabledReason: null,
+        note: `Both majors' undergraduate coordinators must approve this pair, and your plan must show distinct thrusts in the two areas. ${ENGINEERING_SHARING_NOTE}`,
+      });
+      expect(rows.find((r) => r.id === ME.id)?.note).toBe(ENGINEERING_SHARING_NOTE);
+    });
+
+    it("keeps the common reasons: a minor on the plan not open to it, and search", () => {
+      const rows = eng(ME, {
+        list: [{ programId: "cs-minor", kind: "minor" }],
+        shortNameOf: (id) => ({ "cs-minor": "CS minor" })[id] ?? id,
+        notOpenToOf: (id) => (id === "cs-minor" ? ["cornell-cs-bs"] : undefined),
+      })[0].rows;
+      expect(rows.find((r) => r.id === CS.id)?.disabledReason).toBe("The CS minor isn't open to CS majors");
+      expect(majorGroups(all, ctx({ primaryId: ME.id, primaryProgram: ME }), "civil")[0].rows.map((r) => r.id)).toEqual([CE.id]);
+    });
+
+    it("an A&S primary still lists no Engineering major", () => {
+      expect(majorGroups(all, ctx(), "")[0].rows.map((r) => r.id)).toEqual([ECON.id, MATH.id]);
+    });
+
+    it("the panel's second-major row carries the pair note; minors and A&S second majors don't", () => {
+      const entries = withPairNotes(
+        extraEntries(
+          [
+            { programId: CE.id, kind: "major" },
+            { programId: "cs-minor", kind: "minor" },
+          ],
+          undefined,
+          () => null
+        ),
+        ENVE.id
+      );
+      expect(entries[0].note).toMatch(/^Both majors' undergraduate coordinators must approve/);
+      expect(entries[0].note!.endsWith(ENGINEERING_SHARING_NOTE)).toBe(true);
+      expect(entries[1].note).toBeUndefined();
+      expect(withPairNotes(extraEntries([{ programId: CS.id, kind: "major" }], undefined, () => null), ME.id)[0].note).toBe(
+        ENGINEERING_SHARING_NOTE
+      );
+      expect(withPairNotes(extraEntries([{ programId: MATH.id, kind: "major" }], undefined, () => null), ECON.id)[0].note).toBeUndefined();
+    });
+  });
+
+  it("search narrows by name or short name", () => {
+    expect(majorGroups([ECON, MATH, GOVT], ctx(), "math")[0].rows.map((r) => r.id)).toEqual([MATH.id]);
+    expect(majorGroups([ECON, MATH, GOVT], ctx(), "zzz")).toEqual([]);
+  });
+
+  it("minors: grouped by who offers them, hidden left out, notOpenTo and on-plan disabled (D12)", () => {
+    const entries = [
+      minor("cs-minor", "Computer Science", "Bowers CIS", { notOpenTo: ["cornell-cs-bs"] }),
+      minor("math-minor", "Mathematics", "Arts & Sciences"),
+      minor("econ-minor", "Economics", "Arts & Sciences", { notOpenTo: ["cornell-econ-ba"] }),
+      minor("gone-minor", "Gone", "Arts & Sciences", { visible: false }),
+    ];
+    const groups = minorGroups(
+      entries,
+      ctx({ list: [{ programId: "math-minor", kind: "minor" }, { programId: CS.id, kind: "major" }] }),
+      ""
+    );
+    expect(groups.map((g) => g.label)).toEqual(["Arts & Sciences", "Bowers CIS"]);
+    expect(groups[0].rows.map((r) => [r.id, r.disabledReason])).toEqual([
+      ["econ-minor", "Not open to Economics majors"],
+      ["math-minor", "on this plan"],
+    ]);
+    // The second major counts too.
+    expect(groups[1].rows[0].disabledReason).toBe("Not open to CS majors");
+  });
+});
+
+describe("a minor not open to a major on the plan, the other order (D12, audit #3)", () => {
+  const CSBA = prog("cornell-computer-science-ba", "Computer Science, B.A.", "Computer Science", "cas");
+  const notOpenToOf = (id: string) =>
+    ({ "cs-minor": ["cornell-computer-science-ba", "cornell-cs-bs"], "math-minor": ["cornell-math-ba"] })[id];
+  const names = (id: string) =>
+    ({ [ECON.id]: "Economics", [CSBA.id]: "Computer Science", [MATH.id]: "Mathematics", "cs-minor": "CS minor", "math-minor": "Math minor" })[id] ?? id;
+
+  it("the second-major picker disables a major a minor on the plan isn't open to", () => {
+    const rows = majorGroups(
+      [ECON, CSBA, MATH, GOVT],
+      ctx({ list: [{ programId: "cs-minor", kind: "minor" }], shortNameOf: names, notOpenToOf }),
+      ""
+    )[0].rows;
+    expect(rows.find((r) => r.id === CSBA.id)?.disabledReason).toBe(
+      "The CS minor isn't open to Computer Science majors"
+    );
+    expect(rows.find((r) => r.id === GOVT.id)?.disabledReason).toBeNull();
+    // Without the index in memory the picker can't know: enabled, as before.
+    expect(
+      majorGroups([CSBA], ctx({ list: [{ programId: "cs-minor", kind: "minor" }], shortNameOf: names }), "")[0].rows[0]
+        .disabledReason
+    ).toBeNull();
+  });
+
+  it("a plan that already holds the pair warns on the minor, primary or second major alike", () => {
+    const fromSecond = notOpenWarnings({
+      primaryId: ECON.id,
+      list: [
+        { programId: CSBA.id, kind: "major" },
+        { programId: "cs-minor", kind: "minor" },
+        { programId: "math-minor", kind: "minor" },
+      ],
+      notOpenToOf,
+      shortNameOf: names,
+    });
+    expect([...fromSecond]).toEqual([
+      ["cs-minor", "The CS minor isn't open to Computer Science majors — check with your advisor."],
+    ]);
+    const fromPrimary = notOpenWarnings({
+      primaryId: MATH.id,
+      list: [{ programId: "math-minor", kind: "minor" }],
+      notOpenToOf,
+      shortNameOf: names,
+    });
+    expect(fromPrimary.get("math-minor")).toBe("The Math minor isn't open to Mathematics majors — check with your advisor.");
+  });
+
+  it("a warned minor never reads as cleanly done", () => {
+    const [e] = withWarnings(
+      extraEntries([{ programId: "cs-minor", kind: "minor" }], [section({ id: "cs-minor", kind: "minor", shortName: "CS minor", pct: 100, satisfiedCount: 6, total: 6 })], () => null),
+      new Map([["cs-minor", "The CS minor isn't open to Computer Science majors — check with your advisor."]])
+    );
+    expect(segmentValue(e)).toBe("check");
+    expect(doneLine(e)).toBe("Check with your advisor");
+    expect(entrySummary(e)).toContain("isn't open to Computer Science majors");
+  });
+});
+
+describe("a second major's concentrations (D2, audit #2)", () => {
+  const layer = (l: Partial<Layer> & Pick<Layer, "id" | "kind">): Layer => ({ name: l.id, rows: [], ...l }) as unknown as Layer;
+  const MATH_LAYERS = [
+    layer({ id: MATH.id, kind: "major", concentrations: { min: 1, max: 1 } } as never),
+    layer({ id: `${MATH.id}--applied`, kind: "concentration", programId: MATH.id, concentrationId: "applied", name: "Applied Mathematics" } as never),
+    layer({ id: `${MATH.id}--pure`, kind: "concentration", programId: MATH.id, concentrationId: "pure", name: "Pure Mathematics" } as never),
+  ];
+
+  it("options come from the major's concentration layers; needed until one is chosen", () => {
+    const c = concentrationChoice(MATH.id, "Mathematics", MATH_LAYERS, undefined)!;
+    expect(c.options).toEqual([
+      { id: "applied", name: "Applied Mathematics" },
+      { id: "pure", name: "Pure Mathematics" },
+    ]);
+    expect(c).toMatchObject({ min: 1, max: 1, chosen: [], needed: true });
+    expect(concentrationPrompt(c)).toBe("Choose a concentration to finish Mathematics");
+    expect(concentrationChoice(MATH.id, "Mathematics", MATH_LAYERS, ["pure"])).toMatchObject({ chosen: ["pure"], needed: false });
+    // A stored id no longer offered doesn't count as chosen.
+    expect(concentrationChoice(MATH.id, "Mathematics", MATH_LAYERS, ["gone"])!.needed).toBe(true);
+  });
+
+  it("nothing to choose without concentration layers, or before the layers load", () => {
+    expect(concentrationChoice(MATH.id, "Mathematics", MATH_LAYERS.slice(0, 1), [])).toBeNull();
+    expect(concentrationChoice(MATH.id, "Mathematics", undefined, [])).toBeNull();
+  });
+
+  it("respects min/max, never past 3", () => {
+    const many = [
+      layer({ id: MATH.id, kind: "major", concentrations: { min: 2, max: 5 } } as never),
+      ...["a", "b", "c", "d", "e"].map((id) =>
+        layer({ id: `${MATH.id}--${id}`, kind: "concentration", programId: MATH.id, concentrationId: id } as never)
+      ),
+    ];
+    const c = concentrationChoice(MATH.id, "Mathematics", many, ["a"])!;
+    expect(c.max).toBe(3);
+    expect(concentrationPrompt(c)).toBe("Choose another concentration to finish Mathematics");
+    expect(concentrationPrompt(concentrationChoice(MATH.id, "Mathematics", many, [])!)).toBe(
+      "Choose 2 concentrations to finish Mathematics"
+    );
+    const full = concentrationChoice(MATH.id, "Mathematics", many, ["a", "b", "c"])!;
+    expect(toggledConcentrations(full, "d")).toEqual(["a", "b", "c"]);
+    expect(toggledConcentrations(full, "b")).toEqual(["a", "c"]);
+    expect(toggledConcentrations(c, "b")).toEqual(["a", "b"]);
+    // A single-choice major swaps.
+    const one = concentrationChoice(MATH.id, "Mathematics", MATH_LAYERS, ["applied"])!;
+    expect(toggledConcentrations(one, "pure")).toEqual(["pure"]);
+  });
+});
+
+describe("toasts (D3, D9)", () => {
+  it("says what went to Tried", () => {
+    expect(fillToast("CS minor", 6, 6, 20)).toBe("Added 6 required classes for CS minor to Tried.");
+    expect(fillToast("CS minor", 1, 1, 20)).toBe("Added 1 required class for CS minor to Tried.");
+    expect(fillToast("CS minor", 0, 0, 20, true)).toBe("Your board already covers CS minor's required classes.");
+    expect(fillToast("Mathematics", 18, 12, 20)).toBe(
+      "Added 12 of 18 required classes for Mathematics. Tried holds 20 — place some on the board to make room."
+    );
+    expect(fillToast("Mathematics", 4, 0, 20)).toMatch(/^Tried is full \(it holds 20\)/);
+  });
+
+  it("nothing to add and rows still open: says they're choices, never that the board covers them (audit #1)", () => {
+    expect(fillToast("Data Science minor", 0, 0, 20)).toBe(
+      "Added nothing to Tried: Data Science minor's requirements are choices — open Requirements to pick classes."
+    );
+    expect(fillToast("Data Science minor", 0, 0, 20, false)).not.toContain("already covers");
+    // Only a complete program "already covers" its classes.
+    expect(fillToast("Data Science minor", 0, 0, 20, true)).toBe(
+      "Your board already covers Data Science minor's required classes."
+    );
+  });
+
+});
+
+describe("the overlap line (D8)", () => {
+  const names = (id: string) => ({ econ: "Economics", math: "Mathematics" })[id] ?? id;
+  const pair = (over: Partial<OverlapPair>): OverlapPair => ({
+    a: "econ",
+    b: "math",
+    limit: { maxCourses: 2 },
+    sharedCourseIds: ["ECON-3130", "MATH-2210"],
+    heldBack: [],
+    estimated: false,
+    ...over,
+  });
+
+  it("names the count and each held-back course", () => {
+    expect(
+      overlapLine(
+        pair({ heldBack: [{ courseId: "ECON-3110", placementId: "p1", countsFor: "econ", heldFrom: "math" }] }),
+        names
+      )
+    ).toBe("2 of 2 shared courses used · ECON 3110 counts for Economics only, because of the Mathematics limit.");
+  });
+
+  it("covers none, credits, forbidden and the estimated note", () => {
+    expect(overlapLine(pair({ limit: "none", sharedCourseIds: [] }), names)).toBe("No shared courses allowed.");
+    expect(overlapLine(pair({ limit: { maxCredits: 12 }, sharedCourseIds: ["A-1"] }), names)).toBe(
+      "1 shared course · up to 12 shared credits."
+    );
+    expect(overlapLine(pair({ limit: "forbidden" }), names)).toBe(
+      "Economics and Mathematics can't be combined. Check with your advisor."
+    );
+    expect(overlapLine(pair({ estimated: true }), names)).toBe(
+      "2 of 2 shared courses used. Estimated: progress may be understated."
+    );
+  });
+});
+
+describe("held-back toggles (D8)", () => {
+  const names = (id: string) => ({ econ: "Economics", cs: "CS minor" })[id] ?? id;
+  const layers: Record<string, string> = { econ: "econ-layer", cs: "cs-layer" };
+  const layerOf = (id: string) => layers[id] ?? null;
+  const pair = (over: Partial<OverlapPair>): OverlapPair => ({
+    a: "econ",
+    b: "cs",
+    limit: { maxCourses: 1 },
+    sharedCourseIds: ["ECON-3130"],
+    heldBack: [],
+    estimated: false,
+    ...over,
+  });
+
+  it("one per held-back course, the earlier program first, the current side marked, switching to the held-from layer", () => {
+    const toggles = heldBackToggles(
+      pair({
+        heldBack: [
+          { courseId: "ECON-3120", placementId: "p1", countsFor: "cs", heldFrom: "econ" },
+          { courseId: "CS-2110", placementId: "p2", countsFor: "econ", heldFrom: "cs" },
+          { courseId: "ECON-3120", placementId: "p3", countsFor: "cs", heldFrom: "econ" },
+        ],
+      }),
+      names,
+      layerOf
+    );
+    expect(toggles).toEqual([
+      {
+        courseId: "ECON-3120",
+        code: "ECON 3120",
+        sides: [
+          { id: "econ", name: "Economics", current: false },
+          { id: "cs", name: "CS minor", current: true },
+        ],
+        switchTo: "econ-layer",
+      },
+      {
+        courseId: "CS-2110",
+        code: "CS 2110",
+        sides: [
+          { id: "econ", name: "Economics", current: true },
+          { id: "cs", name: "CS minor", current: false },
+        ],
+        switchTo: "cs-layer",
+      },
+    ]);
+  });
+
+  it("none without the held-from layer id, and none for a forbidden pair", () => {
+    const held = [{ courseId: "ECON-3120", placementId: "p1", countsFor: "cs", heldFrom: "econ" }];
+    expect(heldBackToggles(pair({ heldBack: held }), names, (id) => (id === "cs" ? "cs-layer" : null))).toEqual([]);
+    expect(heldBackToggles(pair({ heldBack: held, limit: "forbidden" }), names, layerOf)).toEqual([]);
+  });
+});

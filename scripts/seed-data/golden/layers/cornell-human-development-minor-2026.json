@@ -1,0 +1,293 @@
+{
+  "programId": "cornell-human-development-minor-2026",
+  "description": "A student takes one beginning human development course and four advanced ones, for five in all.",
+  "layerIds": [
+    "cornell-human-development-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "HD-1130",
+    "HD-3110",
+    "HD-3150",
+    "HD-3190",
+    "HD-3210"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "HD-4000",
+      "rowId": "upper-level-courses",
+      "why": "Directed readings is a special studies course the page rules out."
+    },
+    {
+      "courseId": "HD-4010",
+      "rowId": "upper-level-courses",
+      "why": "Empirical research is a special studies course the page rules out."
+    },
+    {
+      "courseId": "HD-4020",
+      "rowId": "upper-level-courses",
+      "why": "Supervised fieldwork is a special studies course the page rules out."
+    },
+    {
+      "courseId": "HD-4030",
+      "rowId": "upper-level-courses",
+      "why": "Course assistant experience is a special studies course the page rules out."
+    },
+    {
+      "courseId": "HD-2200",
+      "rowId": "upper-level-courses",
+      "why": "A 2000-level course is below the 3000 floor for the four advanced courses."
+    },
+    {
+      "courseId": "HD-6020",
+      "rowId": "upper-level-courses",
+      "why": "A graduate-level HD course is above the 3000/4000 range."
+    },
+    {
+      "courseId": "HD-2180",
+      "rowId": "intro-course",
+      "why": "Only the three named introductory courses fill the intro seat."
+    }
+  ],
+  "courses": [
+    {
+      "id": "HD-1130",
+      "subject": "HD",
+      "number": "1130",
+      "title": "Introduction to Human Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "HD-3110",
+      "subject": "HD",
+      "number": "3110",
+      "title": "Educational Psychology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "HD-3150",
+      "subject": "HD",
+      "number": "3150",
+      "title": "Language and Power",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        }
+      ]
+    },
+    {
+      "id": "HD-3190",
+      "subject": "HD",
+      "number": "3190",
+      "title": "Memory and the Law",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "KCM-HE"
+        },
+        {
+          "value": "PBS-HE"
+        }
+      ]
+    },
+    {
+      "id": "HD-3210",
+      "subject": "HD",
+      "number": "3210",
+      "title": "Developmental Cognitive Neuroscience",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "KCM-HE"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "HD-4000",
+      "subject": "HD",
+      "number": "4000",
+      "title": "Directed Readings",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "HD-4010",
+      "subject": "HD",
+      "number": "4010",
+      "title": "Empirical Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "HD-4020",
+      "subject": "HD",
+      "number": "4020",
+      "title": "Supervised Fieldwork",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "HD-4030",
+      "subject": "HD",
+      "number": "4030",
+      "title": "Course Assistant Experience",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "HD-2200",
+      "subject": "HD",
+      "number": "2200",
+      "title": "The Human Brain and Mind: An Introduction to Cognitive Neuroscience",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "KCM-HE"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "HD-6020",
+      "subject": "HD",
+      "number": "6020",
+      "title": "Research in Risk and Rational Decision Making",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "HD-2180",
+      "subject": "HD",
+      "number": "2180",
+      "title": "Human Development: Adulthood and Aging",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "KCM-HE"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    }
+  ]
+}

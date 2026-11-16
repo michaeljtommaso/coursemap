@@ -1,0 +1,95 @@
+{
+  "id": "cornell-human-development-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Human Development (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-human-development-minor-2026",
+  "rows": [
+    {
+      "id": "intro-course",
+      "label": "One introductory Human Development course (HD 1130, 2150 or 2170)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/human-development-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "HD-1130",
+          "HD-2150",
+          "HD-2170"
+        ]
+      }
+    },
+    {
+      "id": "upper-level-courses",
+      "label": "Four more HD courses at the 3000 or 4000 level (not the special studies courses)",
+      "group": "Upper-level courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/human-development-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Directed readings, empirical research, supervised fieldwork and course assistant experience never count.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "HD"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "HD-4000",
+                "HD-4010",
+                "HD-4020",
+                "HD-4030"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn at least a B- in every minor course (SX for a course offered only S-U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/human-development-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-substitutions",
+      "label": "No course substitutions are allowed for the minor",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/human-development-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "In your graduation semester, submit the minor application and email an unofficial transcript; you have no HD advisor, so track your own progress",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/human-development-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

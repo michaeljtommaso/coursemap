@@ -1,0 +1,648 @@
+{
+  "id": "cornell-game-design-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Game Design (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-game-design-minor-2026",
+  "rows": [
+    {
+      "id": "core-architecture",
+      "label": "Core: intro game architecture or game design course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/game-design-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Either the CS or the INFO version counts. Taken at Cornell for a letter grade, so exam and transfer credit never counts.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "CS-3152",
+              "INFO-3152"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-advanced",
+      "label": "Core: advanced game architecture or game design course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/game-design-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Either the CS or the INFO version counts. Taken at Cornell for a letter grade.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "CS-4152",
+              "INFO-4152"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "additional-courses",
+      "label": "Four more courses from the approved game-design list, none from your own major's department",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/game-design-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Courses from the department of your major are held out for the majors the board can identify; see the confirm row for the rest.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ART-1101",
+              "ART-1102",
+              "ART-1103",
+              "ART-1104",
+              "ART-1201",
+              "ART-1500",
+              "ART-1501",
+              "ART-1503",
+              "ART-1504",
+              "ART-1601",
+              "ART-1602",
+              "ART-1901",
+              "ART-2201",
+              "ART-2301",
+              "ART-2401",
+              "ART-2501",
+              "ART-2601",
+              "ART-2701",
+              "ART-2907",
+              "ART-3001",
+              "ART-3006",
+              "ART-3011",
+              "ART-3099",
+              "ART-3102",
+              "ART-3104",
+              "ART-3105",
+              "ART-3199",
+              "ART-3201",
+              "ART-3202",
+              "ART-3203",
+              "ART-3205",
+              "ART-3299",
+              "ART-3301",
+              "ART-3305",
+              "ART-3306",
+              "ART-3307",
+              "ART-3399",
+              "ART-3404",
+              "ART-3499",
+              "ART-3501",
+              "ART-3502",
+              "ART-3503",
+              "ART-3599",
+              "ART-3699",
+              "ART-3705",
+              "ART-3707",
+              "ART-3708",
+              "ART-3799",
+              "ART-3803",
+              "ART-3804",
+              "ART-3874",
+              "ART-3899",
+              "ART-3900",
+              "ART-3901",
+              "ARTH-3650",
+              "ASIAN-3315",
+              "CS-2110",
+              "CS-2112",
+              "CS-3700",
+              "CS-3780",
+              "CS-4450",
+              "CS-4620",
+              "CS-4740",
+              "CS-5414",
+              "CS-5625",
+              "DEA-3510",
+              "HD-1130",
+              "HD-2180",
+              "HD-2200",
+              "HD-3190",
+              "HD-3290",
+              "INFO-2450",
+              "INFO-3140",
+              "INFO-3200",
+              "INFO-3450",
+              "INFO-3561",
+              "INFO-3660",
+              "INFO-4240",
+              "INFO-4301",
+              "INFO-4320",
+              "INFO-4400",
+              "MUSIC-1100",
+              "MUSIC-1101",
+              "MUSIC-1105",
+              "MUSIC-1106",
+              "MUSIC-1199",
+              "MUSIC-1205",
+              "MUSIC-1212",
+              "MUSIC-1213",
+              "MUSIC-1312",
+              "MUSIC-1332",
+              "MUSIC-1343",
+              "MUSIC-1421",
+              "MUSIC-1465",
+              "MUSIC-1466",
+              "MUSIC-2006",
+              "MUSIC-2101",
+              "MUSIC-2102",
+              "MUSIC-2111",
+              "MUSIC-2112",
+              "MUSIC-2130",
+              "MUSIC-2201",
+              "MUSIC-2207",
+              "MUSIC-2221",
+              "MUSIC-2232",
+              "MUSIC-2244",
+              "MUSIC-2250",
+              "MUSIC-2260",
+              "MUSIC-2290",
+              "MUSIC-2311",
+              "MUSIC-2321",
+              "MUSIC-2330",
+              "MUSIC-2340",
+              "MUSIC-2341",
+              "MUSIC-2361",
+              "MUSIC-2370",
+              "MUSIC-2372",
+              "MUSIC-2380",
+              "MUSIC-2421",
+              "MUSIC-2440",
+              "MUSIC-2441",
+              "MUSIC-2528",
+              "MUSIC-2701",
+              "MUSIC-2703",
+              "MUSIC-3111",
+              "MUSIC-3112",
+              "MUSIC-3122",
+              "MUSIC-3141",
+              "MUSIC-3251",
+              "MUSIC-3316",
+              "MUSIC-3318",
+              "MUSIC-3322",
+              "MUSIC-3327",
+              "MUSIC-3370",
+              "MUSIC-3423",
+              "MUSIC-3431",
+              "MUSIC-3490",
+              "MUSIC-4124",
+              "MUSIC-4181",
+              "MUSIC-4233",
+              "MUSIC-4239",
+              "MUSIC-4241",
+              "MUSIC-4252",
+              "MUSIC-4258",
+              "MUSIC-4270",
+              "MUSIC-4313",
+              "MUSIC-4340",
+              "MUSIC-4341",
+              "MUSIC-4410",
+              "MUSIC-4412",
+              "MUSIC-4667",
+              "PMA-1410",
+              "PMA-1610",
+              "PMA-1641",
+              "PMA-2000",
+              "PMA-2100",
+              "PMA-2301",
+              "PMA-2610",
+              "PMA-2701",
+              "PMA-3570",
+              "PMA-3610",
+              "PMA-3680",
+              "PSYCH-1102",
+              "PSYCH-1131",
+              "PSYCH-2050",
+              "PSYCH-2090",
+              "PSYCH-2150",
+              "PSYCH-2580",
+              "PSYCH-3140",
+              "PSYCH-3420",
+              "PSYCH-4150",
+              "PSYCH-4270",
+              "PSYCH-4331",
+              "PSYCH-4500",
+              "SYSEN-5420",
+              "VISST-2000"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "CS"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-computer-science-ba",
+                    "cornell-cs-bs",
+                    "cornell-isst-bs"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "INFO"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-information-science-ba",
+                    "cornell-information-science-bs",
+                    "cornell-isst-bs"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "MUSIC"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-music-ba"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "PMA"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-performing-media-arts-ba"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "PSYCH"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-psychology-ba",
+                    "cornell-cognitive-science-ba"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "ARTH"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-history-art-ba"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "ASIAN"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-asian-studies-ba",
+                    "cornell-china-asia-pacific-studies-ba"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "HD"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-human-development-bs"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "DEA"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-design-environmental-analysis-bs"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "SYSEN"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-systems-engineering-bs"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "ART"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-art-bfa"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "ART-2701",
+                    "MUSIC-3431"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-performing-media-arts-ba"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "PMA-3680"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-music-ba"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "INFO-3660"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-history-art-ba"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "ARTH-3650",
+                    "PSYCH-3140"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-information-science-ba",
+                    "cornell-information-science-bs",
+                    "cornell-isst-bs"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "INFO-3140",
+                    "HD-1130"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-psychology-ba",
+                    "cornell-cognitive-science-ba"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "PSYCH-1131"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-human-development-bs"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "PMA-2701"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-art-bfa"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0
+    },
+    {
+      "id": "confirm-other-department",
+      "label": "Confirm none of the four additional courses is from your own major's department",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/game-design-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board only knows the departments of majors it holds layers for (and cross-listings it can see); check the rest yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-grades",
+      "label": "Confirm every course was taken at Cornell for a letter grade (no S/U) and finished with C or better",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/game-design-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-declaration",
+      "label": "Confirm you submitted the minor application once enrolled in your last needed courses",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/game-design-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-major-approves",
+      "label": "If you are in Engineering, confirm your major allows this minor",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/game-design-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-enrollment-window",
+      "label": "Confirm you finish the minor during your continuous undergraduate enrollment at Cornell",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/game-design-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-eighteen-credits",
+      "label": "If you are in Engineering, confirm the six courses total at least 18 credits",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/game-design-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "Some list courses carry only 1 or 2 credits, so six courses can fall short of 18.",
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "programId": "cornell-sustainable-energy-systems-minor-2026",
+  "description": "An environmental engineering major whose required courses double as three minor courses, one more than the minor lets two programs share.",
+  "layerIds": [
+    "cornell-environmental-engineering-bs-2026",
+    "cornell-sustainable-energy-systems-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-environmental-engineering-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CEE-4210",
+    "ENGRD-2510",
+    "ECE-4510",
+    "MAE-4020",
+    "EAS-2680",
+    "CEE-3230"
+  ],
+  "limit": {
+    "maxCourses": 2
+  },
+  "shared": [
+    "ENGRD-2510",
+    "EAS-2680",
+    "CEE-3230"
+  ],
+  "heldBack": [
+    {
+      "courseId": "CEE-3230",
+      "from": "cornell-sustainable-energy-systems-minor-2026",
+      "why": "Three shared courses exceed the cap of two, so one stops counting toward the minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CEE-4210",
+      "subject": "CEE",
+      "number": "4210",
+      "title": "Renewable Energy Systems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENGRD-2510",
+      "subject": "ENGRD",
+      "number": "2510",
+      "title": "Engineering Processes for Environmental Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ECE-4510",
+      "subject": "ECE",
+      "number": "4510",
+      "title": "Electric Power Systems I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "MAE-4020",
+      "subject": "MAE",
+      "number": "4020",
+      "title": "Wind Power",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2680",
+      "subject": "EAS",
+      "number": "2680",
+      "title": "Climate and Global Warming",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CEE-3230",
+      "subject": "CEE",
+      "number": "3230",
+      "title": "Engineering Economics and Management",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

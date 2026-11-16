@@ -1,0 +1,157 @@
+{
+  "id": "cornell-operations-research-management-science-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Operations Research and Management Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-operations-research-management-science-minor-2026",
+  "rows": [
+    {
+      "id": "core-three",
+      "label": "Three core methods courses from the approved core list",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/operations-research-management-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Pick from probability and statistics, the two optimization courses, stochastic processes, and simulation. Courses beyond three can serve as electives.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ENGRD-2700",
+          "ORIE-3300",
+          "ORIE-3310",
+          "ORIE-3500",
+          "ORIE-3510",
+          "ORIE-4580"
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "electives-three",
+      "label": "Three more courses: any core-list course or any ORIE course at the 3000 level or above",
+      "group": "Elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/operations-research-management-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Research, project and teaching courses (ORIE 4900, 4999, 4990) together may supply at most 3 credits toward these electives.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "ENGRD-2700",
+              "ORIE-3300",
+              "ORIE-3310",
+              "ORIE-3500",
+              "ORIE-3510",
+              "ORIE-4580"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "ORIE"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "ORIE-4900",
+              "ORIE-4999",
+              "ORIE-4990"
+            ]
+          },
+          "label": "Research, project and teaching courses together: at most 3 credits",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn at least a C- in every course used for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/operations-research-management-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minor-gpa",
+      "label": "Keep a GPA of 2.0 or higher across the courses counted in the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/operations-research-management-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Check that the six minor courses total at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/operations-research-management-science-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approval",
+      "label": "Be enrolled in a major that approves its students taking this minor (the minor is closed to ORE and ISST majors)",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/operations-research-management-science-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-completion",
+      "label": "Finish all requirements for your undergraduate degree; the minor is recorded on the transcript after graduation",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/operations-research-management-science-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "continuous-enrollment",
+      "label": "Complete the minor during your continuous undergraduate enrollment at Cornell",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/operations-research-management-science-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "certify",
+      "label": "Apply for certification of the minor once the coursework is done",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/operations-research-management-science-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

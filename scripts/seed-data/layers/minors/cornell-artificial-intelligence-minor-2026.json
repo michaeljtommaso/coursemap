@@ -1,0 +1,388 @@
+{
+  "id": "cornell-artificial-intelligence-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Artificial Intelligence (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-artificial-intelligence-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 2
+    }
+  },
+  "rows": [
+    {
+      "id": "foundations-ml",
+      "label": "Machine learning foundation: take one of the four listed machine learning courses",
+      "group": "Foundations core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Required Courses"
+      },
+      "note": "Pick one. Must be a Cornell course taken for a letter grade; exam and transfer credit never count.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "CS-3780",
+              "ECE-3200",
+              "ORIE-3741",
+              "STSCI-3740"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "foundations-reasoning",
+      "label": "Reasoning foundation: take the AI reasoning and decision-making course (CS 3700)",
+      "group": "Foundations core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Required Courses"
+      },
+      "note": "Must be a Cornell course taken for a letter grade; exam and transfer credit never count.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "CS-3700"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "foundations-human-ai",
+      "label": "Human-AI interaction foundation: take one of INFO 3160, INFO 4240 (or STS 4240) or INFO 4470",
+      "group": "Foundations core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Required Courses"
+      },
+      "note": "The page also allows certain topics of the INFO 4940 special-topics course, but the board cannot tell which topic a student took, so INFO 4940 is left out here and a confirm row covers it. The December 2026 / May 2027 graduate alternative is likewise a confirm row. A course used here cannot also count as an elective (each course counts once). Must be a Cornell course taken for a letter grade; exam and transfer credit never count.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "INFO-3160",
+              "INFO-4240",
+              "STS-4240",
+              "INFO-4470",
+              "INFO-4940"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "INFO-4940"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "foundations-ethics",
+      "label": "Ethics, governance and policy foundation: take one of the listed ethics and policy courses",
+      "group": "Foundations core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Required Courses"
+      },
+      "note": "Options are the computing-ethics course (ENGRG 3605, PHIL 2473 or STS 3605), INFO 1210, the computing-choices course (INFO 1260 or CS 1340) and the AI law and policy course (INFO 4210 or PUBPOL 4210). A course used here cannot also count as an elective. Must be a Cornell course taken for a letter grade; exam and transfer credit never count.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ENGRG-3605",
+              "PHIL-2473",
+              "STS-3605",
+              "INFO-1210",
+              "INFO-1260",
+              "CS-1340",
+              "INFO-4210",
+              "PUBPOL-4210"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "ai-electives",
+      "label": "Two AI electives from the approved elective list",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Required Courses"
+      },
+      "note": "Counts two courses from the elective list. Cross-listed twins (the alternative rows) are one course; no student can take both, so counting them separately is safe. INFO 4940 is excluded because only certain topics are on the list; the topic rows have no course id, so a confirm row covers them. A course already used for a foundation requirement does not count again here (each course counts once). Must be a Cornell course taken for a letter grade; exam and transfer credit never count.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "BIONB-3500",
+              "BME-4790",
+              "CS-4670",
+              "CS-4701",
+              "CS-4740",
+              "COGST-4740",
+              "LING-4474",
+              "CS-4750",
+              "ECE-4770",
+              "MAE-4760",
+              "CS-4756",
+              "CS-4782",
+              "CS-4783",
+              "CS-4787",
+              "CS-4789",
+              "CS-4860",
+              "MATH-4860",
+              "ECE-4160",
+              "ENGRG-3605",
+              "PHIL-2473",
+              "STS-3605",
+              "INFO-1170",
+              "INFO-1260",
+              "CS-1340",
+              "INFO-3160",
+              "INFO-3350",
+              "INFO-3950",
+              "INFO-4120",
+              "INFO-4300",
+              "INFO-4240",
+              "STS-4240",
+              "INFO-4260",
+              "STS-4260",
+              "CS-4300",
+              "INFO-4310",
+              "INFO-4410",
+              "INFO-4470",
+              "INFO-4940",
+              "ILRGL-4066",
+              "AMST-4066",
+              "LING-4424",
+              "COGST-4240",
+              "CS-4744",
+              "LING-4434",
+              "CS-4745",
+              "MAE-4180",
+              "CS-4758",
+              "ECE-4180",
+              "MAE-4810",
+              "ECE-4240",
+              "NBA-4920",
+              "ORIE-3320",
+              "ORIE-4160",
+              "ORIE-4740",
+              "ORIE-4742",
+              "ORIE-4570",
+              "PHIL-2621",
+              "COGST-2621",
+              "PUBPOL-2120",
+              "PUBPOL-3520",
+              "PUBPOL-4210",
+              "INFO-4210",
+              "STSCI-4030",
+              "STSCI-4520",
+              "STSCI-4750"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "INFO-4940"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a grade of C or better in every course used for the minor (C- is not accepted)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course at Cornell for a letter grade (S/U and SX/UX are not accepted)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-substitutions",
+      "label": "No course substitutions or outside coursework may be used for the minor",
+      "group": "Rules",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Complete at least 15 credits across the six courses",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The six-course structure usually exceeds this; a low-credit combination (for example a 1.5-credit elective) can fall short, so check the total.",
+      "kind": "confirm"
+    },
+    {
+      "id": "topics-info4940",
+      "label": "INFO 4940 counts only for the named topics on the page, for the human-AI foundation or as an elective",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Required Courses"
+      },
+      "note": "Human-AI foundation: the two named design topics. Elective: the five named topics listed on the page. The board cannot see the topic of a special-topics section, so INFO 4940 is not counted automatically. If you took one of these topics, it counts for the matching requirement. A course used for the human-AI foundation cannot also be an elective.",
+      "kind": "confirm"
+    },
+    {
+      "id": "info-3450-alternative",
+      "label": "If you graduate in December 2026 or May 2027, INFO 3450 may stand in for the human-AI interaction foundation",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Required Courses"
+      },
+      "note": "The board does not know your graduation term, so INFO 3450 is not counted automatically.",
+      "kind": "confirm"
+    },
+    {
+      "id": "no-double-foundation",
+      "label": "A course that appears under both the ethics foundation and the electives (or both the human-AI foundation and the electives) cannot fill both at once",
+      "group": "Rules",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Required Courses"
+      },
+      "note": "The board counts each course once, which already prevents this.",
+      "kind": "confirm"
+    },
+    {
+      "id": "prerequisites",
+      "label": "Check the prerequisites for each course (programming, probability, calculus and linear algebra are common) and plan your schedule from the foundation courses on",
+      "group": "Planning",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "File the minor application when you are in, or done with, your final minor courses",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "submission-deadline",
+      "label": "Submit the application by May 31 for a May or August graduation, or by December 31 for a December graduation; late applications are not accepted",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Submission Deadlines"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "overlap-rules",
+      "label": "At most two courses may count toward both the minor and your major; CS, IS and ISST majors have category-specific limits",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/artificial-intelligence-minor/",
+        "anchor": "Important Information about Major/Minor Overlaps"
+      },
+      "note": "CS: cap on CS core, electives, practicum; others may count toward technical electives, specialization or approved electives. IS: cap on core and concentration; others toward IS electives. ISST: cap on core and primary concentration; others toward secondary concentration or approved electives. The board enforces the stricter general limit (two shared courses with any major). Cornell's narrower rule applies only to the named categories and approvals, so confirm with your department.",
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,210 @@
+{
+  "programId": "cornell-public-policy-minor-2026",
+  "description": "A fictional student takes one gateway course, one methods course, and three Government electives to finish the minor.",
+  "layerIds": [
+    "cornell-public-policy-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-government-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GOVT-3032",
+    "GOVT-2309",
+    "GOVT-3061",
+    "GOVT-3087",
+    "GOVT-3131"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GOVT-2309",
+      "rowId": "gateway",
+      "why": "A methods course is not one of the two gateway options."
+    },
+    {
+      "courseId": "GOVT-3583",
+      "rowId": "methods",
+      "why": "A gateway course is not one of the three methods options."
+    },
+    {
+      "courseId": "GOVT-1101",
+      "rowId": "electives",
+      "why": "A first-year writing seminar is not taken as a policy elective; the board holds electives to upper-level Government courses until the department list is checked."
+    },
+    {
+      "courseId": "GOVT-1109",
+      "rowId": "electives",
+      "why": "A one-credit course falls below the three-credit floor the board uses for an elective."
+    },
+    {
+      "courseId": "GOVT-1111",
+      "rowId": "electives",
+      "why": "An introductory survey is held out; only upper-level Government courses count until the eligible list is checked."
+    },
+    {
+      "courseId": "GOVT-4999",
+      "rowId": "electives",
+      "why": "Independent study is not a listed policy elective."
+    },
+    {
+      "courseId": "GOVT-4959",
+      "rowId": "electives",
+      "why": "An honors thesis course is not a listed policy elective."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GOVT-3032",
+      "subject": "GOVT",
+      "number": "3032",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GOVT-2309",
+      "subject": "GOVT",
+      "number": "2309",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GOVT-3061",
+      "subject": "GOVT",
+      "number": "3061",
+      "title": "Climate Politics in the US",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-3087",
+      "subject": "GOVT",
+      "number": "3087",
+      "title": "International Human Rights Law and Advocacy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-3131",
+      "subject": "GOVT",
+      "number": "3131",
+      "title": "The Nature, Functions, and Limits of Law",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-3583",
+      "subject": "GOVT",
+      "number": "3583",
+      "title": "Comparative Public Policy: Political Pathways to Equality",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1101",
+      "subject": "GOVT",
+      "number": "1101",
+      "title": "FWS: Power and Politics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1109",
+      "subject": "GOVT",
+      "number": "1109",
+      "title": "Disagreement",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "GOVT-1111",
+      "subject": "GOVT",
+      "number": "1111",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-4999",
+      "subject": "GOVT",
+      "number": "4999",
+      "title": "Undergraduate Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-4959",
+      "subject": "GOVT",
+      "number": "4959",
+      "title": "Honors Thesis: Research and Writing",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

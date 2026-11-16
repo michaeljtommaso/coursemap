@@ -1,0 +1,170 @@
+{
+  "programId": "cornell-materials-science-engineering-minor-2026",
+  "description": "A student finishes one entry engineering course, two core MSE courses and three upper-level MSE electives.",
+  "layerIds": [
+    "cornell-materials-science-engineering-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-physics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ENGRD-2610",
+    "MSE-3010",
+    "MSE-3030",
+    "MSE-3040",
+    "MSE-3050",
+    "MSE-4100"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ENGRD-2020",
+      "rowId": "intro-engrd",
+      "why": "Only ENGRD 2610 and 2620 are accepted as the entry course."
+    },
+    {
+      "courseId": "PHYS-3360",
+      "rowId": "core-mse",
+      "why": "Core slots are limited to the seven named MSE courses."
+    },
+    {
+      "courseId": "MSE-4900",
+      "rowId": "mse-electives",
+      "why": "Special-projects research numbers are held out of the elective count."
+    },
+    {
+      "courseId": "MSE-2060",
+      "rowId": "mse-electives",
+      "why": "A 2000-level MSE course is below the 3000 floor for electives."
+    },
+    {
+      "courseId": "MSE-4050",
+      "rowId": "mse-electives",
+      "why": "Senior thesis is research, which the page allows for at most three credits, so it is held out of the elective count."
+    },
+    {
+      "courseId": "MSE-8000",
+      "rowId": "mse-electives",
+      "why": "Graduate research credits are research involvement and are held out of the elective count."
+    },
+    {
+      "courseId": "MSE-5010",
+      "rowId": "mse-electives",
+      "why": "The Master of Engineering project is a research course and is held out of the elective count."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ENGRD-2610",
+      "subject": "ENGRD",
+      "number": "2610",
+      "title": "Mechanical Properties of Materials: From Nanodevices to Superstructures",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MSE-3010",
+      "subject": "MSE",
+      "number": "3010",
+      "title": "Materials Chemistry",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MSE-3030",
+      "subject": "MSE",
+      "number": "3030",
+      "title": "Thermodynamics of Condensed Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MSE-3040",
+      "subject": "MSE",
+      "number": "3040",
+      "title": "Kinetics, Diffusion, and Phase Transformations",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MSE-3050",
+      "subject": "MSE",
+      "number": "3050",
+      "title": "Electronic, Magnetic, and Dielectric Properties of Materials",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MSE-4100",
+      "subject": "MSE",
+      "number": "4100",
+      "title": "Physical Metallurgy and Applications",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ENGRD-2020",
+      "subject": "ENGRD",
+      "number": "2020",
+      "title": "Statics and Mechanics of Solids",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "PHYS-3360",
+      "subject": "PHYS",
+      "number": "3360",
+      "title": "Modern Physics",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "MSE-4900",
+      "subject": "MSE",
+      "number": "4900",
+      "title": "Special Projects in Materials Science and Engineering",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "MSE-2060",
+      "subject": "MSE",
+      "number": "2060",
+      "title": "Atomic and Molecular Structure of Matter",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MSE-4050",
+      "subject": "MSE",
+      "number": "4050",
+      "title": "Senior Thesis I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "MSE-8000",
+      "subject": "MSE",
+      "number": "8000",
+      "title": "Research in Materials Science",
+      "credits": 1,
+      "creditsMax": 12,
+      "attrs": []
+    },
+    {
+      "id": "MSE-5010",
+      "subject": "MSE",
+      "number": "5010",
+      "title": "MEng Project - Ongoing",
+      "credits": 1,
+      "creditsMax": 10,
+      "attrs": []
+    }
+  ]
+}

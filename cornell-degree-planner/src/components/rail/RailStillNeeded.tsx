@@ -8,8 +8,12 @@ import { useCreditProfile } from "@/hooks/useCreditProfile";
 import { useProgramStore } from "@/store/useProgramStore";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import { cn } from "@/lib/utils";
-import { buildRailLines, creditLineCredits, highlightStillValid, sameIds, type RailLine } from "./railLines";
+import { buildRailBlocks, creditLineCredits, highlightStillValid, sameIds, type RailLine } from "./railLines";
 import { TriedReminder } from "./TriedReminder";
+import { RailProgramFold } from "./RailProgramFold";
+import { useRailFold } from "./railFold";
+import { PROGRAM_COLOR_VAR } from "@/lib/planner/programColors";
+import type { ProgramColor } from "@/hooks/useRequirementProgress";
 import { Tooltip } from "@/components/ui/Tooltip";
 
 /**
@@ -23,9 +27,15 @@ import { Tooltip } from "@/components/ui/Tooltip";
  * to that row; a finished line toggles its cards' highlight. Esc clears it,
  * and leaving the planner never strands one.
  *
+ * Spec 047 D6: the college's and the primary's lines stay as above; each
+ * second major or minor follows as one folded line (RailProgramFold) that a
+ * click unfolds to its own group lines. Which are unfolded is remembered per
+ * plan (railFold.ts). A plan with no extra program renders exactly as before.
+ *
  * DOM contract: [data-rail-still-needed] root; [data-rail-group] with
  * [data-group-key] per line ("credit" for Credit before Cornell);
- * [data-rail-notice=<kind>] for a notice line.
+ * [data-rail-notice=<kind>] for a notice line; [data-rail-program] per extra
+ * program.
  */
 
 const NOTICE_LINE: Record<RequirementNotice["kind"] | "needs-concentration", string> = {
@@ -50,7 +60,18 @@ function NoticeLine({ kind }: { kind: keyof typeof NOTICE_LINE }) {
   );
 }
 
-function GroupLine({ line, lit, onClick }: { line: RailLine; lit: boolean; onClick: () => void }) {
+function GroupLine({
+  line,
+  lit,
+  onClick,
+  color = null,
+}: {
+  line: RailLine;
+  lit: boolean;
+  onClick: () => void;
+  /** Spec 047: an extra program's lines fill in its color until done. */
+  color?: ProgramColor | null;
+}) {
   const triedFraction = line.need > 0 ? Math.min(1 - line.fraction, line.triedPlus / line.need) : 0;
   return (
     <Tooltip content={line.fullLabel}>
@@ -83,7 +104,13 @@ function GroupLine({ line, lit, onClick }: { line: RailLine; lit: boolean; onCli
       </span>
       {line.need > 0 && (
         <span className="col-span-2 flex h-[3px] overflow-hidden rounded-full bg-surface-2" aria-hidden>
-          <span className="block h-full bg-complete" style={{ width: `${line.fraction * 100}%` }} />
+          <span
+            className="block h-full bg-complete"
+            style={{
+              width: `${line.fraction * 100}%`,
+              ...(color && !line.done ? { background: PROGRAM_COLOR_VAR[color] } : {}),
+            }}
+          />
           {triedFraction > 0 && <span className="block h-full bg-drop" style={{ width: `${triedFraction * 100}%` }} />}
         </span>
       )}
@@ -94,7 +121,8 @@ function GroupLine({ line, lit, onClick }: { line: RailLine; lit: boolean; onCli
 
 export function RailStillNeeded({ columnSems }: { columnSems: number[] }) {
   const progress = useRequirementProgress();
-  const { planProgramId } = usePlan();
+  const { planProgramId, planId } = usePlan();
+  const [openPrograms, toggleProgram] = useRailFold(planId);
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   const programId = planProgramId ?? selectedProgramId;
   const { programs } = usePrograms();
@@ -111,9 +139,15 @@ export function RailStillNeeded({ columnSems }: { columnSems: number[] }) {
     conc && conc.chosen.length > 0
       ? conc.chosen.map((id) => conc.options.find((o) => o.id === id)?.name ?? id).join(", ")
       : null;
-  const lines = useMemo(
-    () => buildRailLines(progress, { major: majorName, concentration: concentrationName }),
+  const blocks = useMemo(
+    () => buildRailBlocks(progress, { major: majorName, concentration: concentrationName }),
     [progress, majorName, concentrationName]
+  );
+  const lines = blocks.base;
+  // Every line on the rail, for the highlight check (folded programs too).
+  const allLines = useMemo(
+    () => (blocks.extras.length === 0 ? blocks.base : [...blocks.base, ...blocks.extras.flatMap((b) => b.lines)]),
+    [blocks]
   );
   const creditCredits = useMemo(() => creditLineCredits(resolved), [resolved]);
 
@@ -123,8 +157,8 @@ export function RailStillNeeded({ columnSems }: { columnSems: number[] }) {
   // the first render here.
   useEffect(() => {
     if (highlighted.length === 0 || progress.groups.length === 0) return;
-    if (!highlightStillValid(highlighted, lines, progress)) setHighlighted([]);
-  }, [highlighted, lines, progress, setHighlighted]);
+    if (!highlightStillValid(highlighted, allLines, progress)) setHighlighted([]);
+  }, [highlighted, allLines, progress, setHighlighted]);
 
   // Esc clears the highlight (only listening while something is lit).
   useEffect(() => {
@@ -169,6 +203,16 @@ export function RailStillNeeded({ columnSems }: { columnSems: number[] }) {
     lightUp(sameIds(line.coveredBy, highlighted) ? [] : line.coveredBy);
   };
 
+  const lineButton = (line: RailLine, color: ProgramColor | null = null) => (
+    <GroupLine
+      key={line.key}
+      line={line}
+      lit={line.coveredBy.length > 0 && sameIds(line.coveredBy, highlighted)}
+      onClick={() => activate(line)}
+      color={color}
+    />
+  );
+
   const isDistribution = progress.engine === "distribution";
   let body: ReactNode;
   if (!programId) {
@@ -187,14 +231,7 @@ export function RailStillNeeded({ columnSems }: { columnSems: number[] }) {
     body = (
       <>
         {progress.concentrations?.needed && <NoticeLine kind="needs-concentration" />}
-        {lines.map((line) => (
-          <GroupLine
-            key={line.key}
-            line={line}
-            lit={line.coveredBy.length > 0 && sameIds(line.coveredBy, highlighted)}
-            onClick={() => activate(line)}
-          />
-        ))}
+        {lines.map((line) => lineButton(line))}
       </>
     );
   }
@@ -225,6 +262,28 @@ export function RailStillNeeded({ columnSems }: { columnSems: number[] }) {
           </button>
         )}
         {body}
+        {programId &&
+          blocks.extras.map((b) => (
+            <RailProgramFold
+              key={b.section.id}
+              section={b.section}
+              open={openPrograms.has(b.section.id)}
+              forbidden={b.forbidden}
+              onToggle={() => toggleProgram(b.section.id)}
+            >
+              {b.lines.length > 0 ? (
+                b.lines.map((line) => lineButton(line, b.section.color))
+              ) : (
+                <p className="px-1.5 py-1 t-meta text-ink-3">
+                  {b.section.status === "unavailable"
+                    ? "Can't load this program right now"
+                    : b.section.status === "loading"
+                      ? "Loading requirements…"
+                      : "Nothing to track here."}
+                </p>
+              )}
+            </RailProgramFold>
+          ))}
       </div>
       <TriedReminder tried={progress.tried} columnSems={columnSems} />
     </section>

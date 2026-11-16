@@ -4,12 +4,15 @@ import type {
   CourseRule,
   FactValue,
   Layer,
+  LayerSharing,
   MarkValue,
   Question,
   Row,
   RowLimit,
+  SharingLimit,
 } from "@/lib/planner/distribution/types";
 import { ANSWER_KEY_MAX, isValidAnswerKey } from "@/lib/planner/questions/keys";
+import { PROGRAM_ID_PREFIX_RE } from "@/lib/planner/distribution/programPrefix";
 
 /**
  * Zod schemas for the Firestore document model (docs/specs/002 §3, §5).
@@ -476,6 +479,82 @@ export const PlacementSchema = z
  *  sanitizeShortTerms / strictShortTerms first. */
 const SHORT_TERMS = z.array(z.number().int().min(1).max(10)).max(10).optional().catch(undefined);
 
+// ─── Additional programs (spec 047 D2) ───────────────────────────────────────
+/** One extra program on a plan: a second major or a minor. Stored as a list of
+ *  maps (no array directly inside an array, so Firestore can hold it). */
+export const AdditionalProgramSchema = z
+  .object({
+    programId: z.string().min(1).max(80),
+    kind: z.enum(["major", "minor"]),
+    // A second major's chosen concentrations (spec 047 D2). Never on a minor.
+    concentrationIds: z.array(z.string().min(1).max(80)).max(3).optional(),
+  })
+  .strict();
+export type AdditionalProgram = z.infer<typeof AdditionalProgramSchema>;
+/** rules: additionalPrograms.size() <= 4 — keep in sync with firestore.rules. */
+export const MAX_ADDITIONAL_PROGRAMS = 4; // 1 second major + 3 minors
+export const MAX_SECOND_MAJORS = 1;
+export const MAX_MINORS = 3;
+
+/** What is wrong with a list of additional programs (spec 047 D2), or null
+ *  when it is fine: more than one second major, more than three minors, a
+ *  program twice, or concentrations on a minor. Entries are already shaped. */
+function additionalProgramsProblem(list: AdditionalProgram[]): string | null {
+  if (list.length > MAX_ADDITIONAL_PROGRAMS) return `at most ${MAX_ADDITIONAL_PROGRAMS} additional programs`;
+  if (list.filter((p) => p.kind === "major").length > MAX_SECOND_MAJORS) return "at most one second major";
+  if (list.filter((p) => p.kind === "minor").length > MAX_MINORS) return `at most ${MAX_MINORS} minors`;
+  if (new Set(list.map((p) => p.programId)).size !== list.length) return "a program is listed twice";
+  if (list.some((p) => p.kind === "minor" && p.concentrationIds !== undefined)) return "a minor has no concentrations";
+  return null;
+}
+
+/** Read side, tolerant: a malformed entry, a repeat of an earlier program, a
+ *  minor carrying concentrations and anything past the per-kind caps are
+ *  dropped on their own (first wins); a value that is not a list reads as
+ *  absent. Optional: absent = none, and a doc without it parses with no key
+ *  added. Writes go through strictAdditionalPrograms first. */
+export const ADDITIONAL_PROGRAMS = z
+  .array(z.unknown())
+  .transform((raw): AdditionalProgram[] => {
+    const out: AdditionalProgram[] = [];
+    for (const v of raw) {
+      if (out.length >= MAX_ADDITIONAL_PROGRAMS) break;
+      const parsed = AdditionalProgramSchema.safeParse(v);
+      if (!parsed.success) continue;
+      if (additionalProgramsProblem([...out, parsed.data]) != null) continue;
+      out.push(parsed.data);
+    }
+    return out;
+  })
+  .optional()
+  .catch(undefined);
+
+/** Write side as a schema (share create): every entry shaped, the D2 caps. */
+const STRICT_ADDITIONAL_PROGRAMS = z
+  .array(AdditionalProgramSchema)
+  .max(MAX_ADDITIONAL_PROGRAMS)
+  .superRefine((list, ctx) => {
+    const problem = additionalProgramsProblem(list);
+    if (problem) ctx.addIssue({ code: "custom", message: `additionalPrograms: ${problem}` });
+  });
+
+/**
+ * Write-side check for a plan's additional programs (spec 047 D2): throws on
+ * a malformed entry, more than one second major, more than three minors, a
+ * duplicate program id, concentrations on a minor, or the plan's own primary
+ * major in the list. Reads stay tolerant (ADDITIONAL_PROGRAMS).
+ */
+export function strictAdditionalPrograms(list: unknown, primaryProgramId: string): AdditionalProgram[] {
+  const parsed = STRICT_ADDITIONAL_PROGRAMS.safeParse(list);
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message ?? "additionalPrograms: malformed");
+  }
+  if (parsed.data.some((p) => p.programId === primaryProgramId)) {
+    throw new Error("additionalPrograms: the primary major is not an additional program");
+  }
+  return parsed.data;
+}
+
 /** Record-size cap helper — z.record has no .max(); rules cap map.size(). */
 function maxKeys(n: number) {
   return (o: Record<string, unknown>) => Object.keys(o).length <= n;
@@ -568,6 +647,11 @@ export const PlanSchema = z
     // Spec 042 D4: added short-term columns (persist while empty).
     // rules: shortTerms.size() <= 10 — keep in sync with firestore.rules.
     shortTerms: SHORT_TERMS,
+    // Spec 047 D2: the plan's second major and minors, in the order added.
+    // Optional: absent = none. Tolerant on read; writes check
+    // strictAdditionalPrograms. rules: additionalPrograms.size() <= 4 — keep
+    // in sync with firestore.rules (MAX_ADDITIONAL_PROGRAMS).
+    additionalPrograms: ADDITIONAL_PROGRAMS,
     schemaVersion: z.number().int(),
     createdAt: z.unknown().optional(),
     updatedAt: z.unknown().optional(),
@@ -617,6 +701,10 @@ export const ShareSchema = z
     // shows them. rules: shortTerms.size() <= 10 — keep in sync with
     // firestore.rules.
     shortTerms: SHORT_TERMS,
+    // Spec 047 D13: the plan's second major and minors, so the share is
+    // scored on (and names) every program. Tolerant on read.
+    // rules: additionalPrograms.size() <= 4 — keep in sync with firestore.rules.
+    additionalPrograms: ADDITIONAL_PROGRAMS,
     schemaVersion: z.number().int(),
   })
   .passthrough();
@@ -630,10 +718,13 @@ export const ShareCreateSchema = ShareSchema.extend({
   courseMarks: CourseMarksSchema.optional(),
   collegeRuleSet: COLLEGE_RULE_SET.optional(),
   concentrationIds: CONCENTRATION_IDS.optional(),
-}).refine(
-  (s) => Object.keys(s.courseSnapshots).length <= 80,
-  { message: "courseSnapshots: at most 80 courses" }
-);
+  // Spec 047: checked strictly on create (D2's caps, no duplicates).
+  additionalPrograms: STRICT_ADDITIONAL_PROGRAMS.optional(),
+})
+  .refine((s) => Object.keys(s.courseSnapshots).length <= 80, { message: "courseSnapshots: at most 80 courses" })
+  .refine((s) => !(s.additionalPrograms ?? []).some((p) => p.programId === s.programId), {
+    message: "additionalPrograms: the primary major is not an additional program",
+  });
 
 /** Spec 046 D5 — exactly one of `areas` (roster distribution tags such as
  *  "ALC-AS", or Engineering liberal studies groups as "LS:g1"; at most two) or
@@ -974,11 +1065,37 @@ export const LayerRowSchema = z.discriminatedUnion("kind", [
   ConfirmRowSchema,
 ]) satisfies z.ZodType<Row>;
 
+// Spec 047 D7/D14: how a program's courses may also count toward another
+// program. lintLayer checks the bounds and which kinds may set which field.
+/** Program-id prefixes (distribution/programPrefix.ts), at least one. */
+const PROGRAM_PREFIXES = z.array(z.string().regex(PROGRAM_ID_PREFIX_RE, "a program id prefix")).min(1).max(20);
+const SHARING_LIMIT = z.union([
+  z.literal("none"),
+  z
+    .object({
+      maxCourses: z.number().int().min(0).max(60).optional(),
+      maxCredits: z.number().int().min(0).max(200).optional(),
+      with: PROGRAM_PREFIXES.optional(),
+    })
+    .strict(),
+]) satisfies z.ZodType<SharingLimit>;
+const LayerSharingSchema = z
+  .object({
+    otherMajors: z.union([SHARING_LIMIT, z.literal("forbidden")]).optional(),
+    minors: SHARING_LIMIT.optional(),
+    forbiddenWith: PROGRAM_PREFIXES.optional(),
+  })
+  .strict() satisfies z.ZodType<LayerSharing>;
+
 export const LayerSchema = z
   .object({
     id: z.string().regex(/^[a-z0-9][a-z0-9-]{0,100}$/),
-    kind: z.enum(["college", "major", "concentration"]),
-    family: z.enum(["cas", "cals"]),
+    // "minor" (spec 047 D12): minor layers are fetched by id only, so a client
+    // whose schema lacks the kind never loads one.
+    kind: z.enum(["college", "major", "concentration", "minor"]),
+    // "other" (spec 047): minors offered outside A&S/CALS; lintLayer allows it
+    // on minor layers only.
+    family: z.enum(["cas", "cals", "other"]),
     name: z.string().min(1).max(160),
     catalogYear: z.string().regex(/^\d{4}-\d{2}$/),
     programId: z.string().max(80).optional(),
@@ -992,6 +1109,11 @@ export const LayerSchema = z
     // Concentration layers: does a course count toward both the major and this
     // concentration? (lintLayer checks that only a concentration sets it.)
     courseSharing: z.enum(["shared", "separate"]).optional(),
+    // Spec 047 D7/D14: major and minor layers (every field), concentration
+    // layers (forbiddenWith only); lintLayer checks. A layer carrying it fails
+    // an older client's schema: major layers gain it only after the app that
+    // reads it ships.
+    sharing: LayerSharingSchema.optional(),
     appliesTo: z.array(AppliesClauseSchema).min(1).max(8).optional(),
     rows: z.array(LayerRowSchema).min(1).max(80),
     // Spec 020 D9: questions this layer asks (lintLayer checks their rows and refs).
@@ -1042,6 +1164,37 @@ export const ProgramIndexDocSchema = z
   })
   .passthrough();
 export type ProgramIndexDoc = z.infer<typeof ProgramIndexDocSchema>;
+
+// ─── Minor index (spec 047 D12) ─────────────────────────────────────────────
+// `catalog/minorIndex`: one doc listing every minor, kept apart from the
+// program index so a stale client never shows minors in the major picker.
+// Passthrough like the program index (a newer seed may add fields). A minor's
+// layer id is its `id` (fetched by id only).
+export const MinorIndexEntrySchema = z
+  .object({
+    id: z.string().min(1).max(80),
+    name: z.string().min(1).max(160),
+    shortName: z.string().min(1).max(40),
+    /** Who offers the minor, as displayed ("Arts & Sciences", "Bowers CIS",
+     *  "SC Johnson College"); the picker groups by it. */
+    offeredBy: z.string().min(1).max(80),
+    catalogYear: z.string().regex(/^\d{4}-\d{2}$/, "a catalog year like 2026-27"),
+    /** Program id prefixes whose majors may not take this minor (spec 047 C2),
+     *  matched like the `program` rule leaf. */
+    notOpenTo: z.array(z.string().min(1).max(80)).max(40).optional(),
+    /** false pulls a minor from the picker without deleting it. Absent = shown. */
+    visible: z.boolean().optional(),
+  })
+  .passthrough();
+export type MinorIndexEntry = z.infer<typeof MinorIndexEntrySchema>;
+
+export const MinorIndexSchema = z
+  .object({
+    entries: z.array(MinorIndexEntrySchema).max(300),
+    updatedAt: z.unknown().optional(),
+  })
+  .passthrough();
+export type MinorIndexDoc = z.infer<typeof MinorIndexSchema>;
 
 // ─── Requirement reports (spec 019 D15) ─────────────────────────────────────
 // `requirementReports/{id}`: create-only "this looks wrong" reports from any

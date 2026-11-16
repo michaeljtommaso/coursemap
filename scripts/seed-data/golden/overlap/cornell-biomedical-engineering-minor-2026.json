@@ -1,0 +1,125 @@
+{
+  "programId": "cornell-biomedical-engineering-minor-2026",
+  "description": "A fictional biology major whose biochemistry and intro biology courses also fill the minor must hold one of them back, since only two courses may be shared.",
+  "layerIds": [
+    "cornell-biological-sciences-ba-2026",
+    "cornell-biomedical-engineering-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOMG-1350",
+    "BIOMG-3310",
+    "BIOMG-3320",
+    "BME-3010",
+    "BME-3020",
+    "BME-4010",
+    "BME-3310"
+  ],
+  "limit": {
+    "maxCourses": 2
+  },
+  "shared": [
+    "BIOMG-1350",
+    "BIOMG-3310",
+    "BIOMG-3320"
+  ],
+  "heldBack": [
+    {
+      "courseId": "BIOMG-1350",
+      "from": "cornell-biomedical-engineering-minor-2026",
+      "why": "Three courses are shared but the minor allows two, so the intro biology course stops counting for the minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3310",
+      "subject": "BIOMG",
+      "number": "3310",
+      "title": "Principles of Biochemistry: Proteins and Metabolism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-3320",
+      "subject": "BIOMG",
+      "number": "3320",
+      "title": "Principles of Biochemistry: Molecular Biology",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BME-3010",
+      "subject": "BME",
+      "number": "3010",
+      "title": "Cellular Principles of Biomedical Engineering",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BME-3020",
+      "subject": "BME",
+      "number": "3020",
+      "title": "Molecular Principles of Biomedical Engineering",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BME-4010",
+      "subject": "BME",
+      "number": "4010",
+      "title": "Biomedical Engineering Analysis of Metabolic and Structural Systems",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BME-3310",
+      "subject": "BME",
+      "number": "3310",
+      "title": "Medical and Preclinical Imaging",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

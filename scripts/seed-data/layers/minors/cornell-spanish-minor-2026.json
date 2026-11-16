@@ -1,0 +1,120 @@
+{
+  "id": "cornell-spanish-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Spanish (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-spanish-minor-2026",
+  "rows": [
+    {
+      "id": "language",
+      "label": "Advanced Spanish language course (writing or spoken)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "SPAN-2180",
+          "SPAN-2130"
+        ]
+      }
+    },
+    {
+      "id": "perspectives",
+      "label": "One perspectives or survey course on Latin America, Spain or Brazil",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "SPAN 2230 may instead be used as an elective; a course counts only once.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "SPAN-2205",
+          "SPAN-2150",
+          "SPAN-2200",
+          "SPAN-2140",
+          "SPAN-2235",
+          "SPAN-2230",
+          "PORT-2800"
+        ]
+      }
+    },
+    {
+      "id": "electives",
+      "label": "Three elective Spanish courses of 3+ credits (not prerequisite-level language)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page does not name a department for electives; the board counts SPAN courses numbered 2100 or above. An elective from another department needs the director to confirm it (see the confirm row).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "SPAN"
+            ]
+          },
+          {
+            "number": {
+              "min": 2100
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "elective-in-spanish",
+      "label": "At least one elective taught in Spanish (3+ credits)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot see the language of instruction.",
+      "kind": "confirm"
+    },
+    {
+      "id": "elective-other-dept",
+      "label": "Elective outside the SPAN subject: confirm it counts",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page names no department for electives, so only SPAN courses are counted automatically. Check with the director about anything else.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-b-minus",
+      "label": "All five courses taken for a letter grade, B- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Register your intent with the Director of Undergraduate Studies",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/spanish-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

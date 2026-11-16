@@ -1,0 +1,181 @@
+{
+  "id": "cornell-public-policy-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Public Policy (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-public-policy-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 1,
+      "with": [
+        "cornell-government-ba"
+      ]
+    }
+  },
+  "rows": [
+    {
+      "id": "gateway",
+      "label": "Gateway course: one of the two public policy gateway courses, taken in Government",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts Cornell GOVT courses only (exam and transfer credit left out), which also meets the rule that the gateway be taken in the Government Department.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "GOVT-3032",
+              "GOVT-3583"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "methods",
+      "label": "Methods course: one of three Government data and inquiry courses",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Exam and transfer credit left out, as for the other rows.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "GOVT-2309",
+              "GOVT-3282",
+              "GOVT-3999"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "electives",
+      "label": "Three elective courses from the Government policy electives",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page points to an eligible list it does not print, so the board counts only fixed-credit GOVT courses numbered 3000-4999 of 3+ credits, leaving out writing seminars, intro surveys, honors thesis and independent study. That may be stricter than the list; the confirm row asks you to check each elective. A policy course from another department needs advisor approval and is not counted (see the confirm row). The optional grouping pathway is not encoded.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "GOVT"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Honors"
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "eligible-list",
+      "label": "Check that each elective is on the minor's eligible list of policy courses",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts only upper-level Government courses of three or more credits; the department list decides which actually count, and a lower-level course on that list needs your advisor to confirm it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "outside-course-approval",
+      "label": "At most one course may come from another department, with advisor approval; at least four of five stay in Government",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts GOVT courses only, so a non-Government policy course (up to one, approved by your advisor) is not counted until you confirm it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C+ or better in every course that counts toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "credits-15",
+      "label": "Complete at least 15 credits for the minor",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-policy-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Five courses of three credits give 15; confirm if any course carries fewer credits.",
+      "kind": "confirm"
+    }
+  ]
+}

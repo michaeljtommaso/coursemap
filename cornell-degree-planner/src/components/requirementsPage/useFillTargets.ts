@@ -10,6 +10,9 @@ import {
 import { LIBERAL_STUDIES_GROUP_ID } from "@/lib/planner/liberalStudies";
 import { liberalStudiesOptionId } from "@/lib/classes/requirementFilter";
 import { useProgramData } from "@/hooks/useProgramData";
+import { useAdditionalProgramData } from "@/hooks/useAdditionalProgramData";
+import { secondMajorSlots } from "@/lib/planner/engineeringDoubleMajor";
+import type { AdditionalProgram } from "@/lib/schemas";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { Layer } from "@/lib/planner/distribution/types";
@@ -81,21 +84,58 @@ export function buildFillTargets(items: readonly RequirementItem[], ctx: FillTar
   return targets;
 }
 
-/** useFillTargets (spec 028 D10) — buildFillTargets over the page's program
- *  and the student's liberal studies entering class. */
+const NO_EXTRAS: AdditionalProgram[] = [];
+
+/** useFillTargets (spec 028 D10) — buildFillTargets over every program on the
+ *  plan and the student's liberal studies entering class.
+ *
+ *  Spec 047: a second major's and minors' rows are read with their own rules:
+ *  their layers join the primary's (a layer row id names its layer), and an
+ *  Engineering second major's rows (which share ids with no prefix) go
+ *  through its own template, filtered as the engine filters it, when the
+ *  caller passes that program's section id. A row no program knows suggests
+ *  nothing (it used to suggest every class). */
 export function useFillTargets(
   programId: string | null,
-  templateSlots: ProgramSlotWithData[]
-): (items: readonly RequirementItem[]) => FillTarget[] {
-  const { layers } = useProgramData(programId);
+  templateSlots: ProgramSlotWithData[],
+  additionalPrograms: AdditionalProgram[] = NO_EXTRAS
+): (items: readonly RequirementItem[], sectionId?: string | null) => FillTarget[] {
+  const { layers: ownLayers } = useProgramData(programId);
+  const { programs: extras } = useAdditionalProgramData(additionalPrograms);
   const { aliases } = useCatalogContext();
   const canonical = useCallback((id: string) => aliases[id] ?? id, [aliases]);
-  const engineering = useMemo(() => buildRequirementPredicate(templateSlots, canonical), [templateSlots, canonical]);
+  const layers = useMemo(() => {
+    const extra = extras.flatMap((p) => (p.status === "ok" ? p.layers : []));
+    return extra.length > 0 ? [...(ownLayers ?? []), ...extra] : ownLayers;
+  }, [ownLayers, extras]);
+  const engineering = useMemo(
+    () => buildRequirementPredicate(templateSlots, canonical, false),
+    [templateSlots, canonical]
+  );
+  // D15: the Engineering second major's own rows, as the engine sees them.
+  const second = extras.find((p) => p.kind === "major" && p.status === "ok" && (p.template?.length ?? 0) > 0);
+  const secondId = second?.programId ?? null;
+  const secondTemplate = second?.template;
+  const secondEngineering = useMemo(
+    () =>
+      secondTemplate
+        ? buildRequirementPredicate(secondMajorSlots(templateSlots, secondTemplate, canonical), canonical, false)
+        : null,
+    [templateSlots, secondTemplate, canonical]
+  );
   const lsCohort = useLiberalStudiesFilterCohort();
   const liberalStudies = useMemo(() => buildLiberalStudiesPredicate(lsCohort), [lsCohort]);
 
   return useCallback(
-    (items) => buildFillTargets(items, { layers, programId, canonical, aliases, engineering, liberalStudies }),
-    [layers, programId, canonical, aliases, engineering, liberalStudies]
+    (items, sectionId) =>
+      buildFillTargets(items, {
+        layers,
+        programId,
+        canonical,
+        aliases,
+        engineering: secondEngineering && sectionId && sectionId === secondId ? secondEngineering : engineering,
+        liberalStudies,
+      }),
+    [layers, programId, canonical, aliases, engineering, secondEngineering, secondId, liberalStudies]
   );
 }

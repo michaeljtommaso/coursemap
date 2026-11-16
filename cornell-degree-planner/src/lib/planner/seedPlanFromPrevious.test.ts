@@ -4,6 +4,7 @@ import {
   defaultCarryMark,
   isCollegeLayerId,
   mergeSeedMarks,
+  mergeSeedPrograms,
   mergeSeedTried,
   planContentIsEmpty,
   coursesLeftBehind,
@@ -336,5 +337,43 @@ describe("seedPlanFromPrevious — tried classes on a major switch (spec 028 D12
     const merged = mergeSeedTried(ids("T", 15), ids("C", 10));
     expect(merged).toHaveLength(MAX_TRIED_COURSES);
     expect(merged.slice(0, 15)).toEqual(ids("T", 15));
+  });
+});
+
+describe("seedPlanFromPrevious — spec 047 extra programs (D13)", () => {
+  const programs = [
+    { programId: "cas-math-ba", kind: "major" as const },
+    { programId: "minor-cs", kind: "minor" as const },
+    { programId: "minor-econ", kind: "minor" as const },
+  ];
+
+  it("carries them, minus the new primary and any keepProgram refuses", () => {
+    const seed = seedPlanFromPrevious(prevPlan({ additionalPrograms: programs }), [], [], {
+      primaryProgramId: "minor-econ",
+      keepProgram: (p) => p.kind === "minor",
+    });
+    expect(seed?.additionalPrograms).toEqual([{ programId: "minor-cs", kind: "minor" }]);
+    expect(seedPlanFromPrevious(prevPlan({ additionalPrograms: programs }), [])?.additionalPrograms).toEqual(programs);
+  });
+
+  it("an otherwise empty old plan with programs still seeds; with none it returns null as before", () => {
+    const empty = { placements: [], placedCourses: {}, completedIds: [], inProgressIds: [] };
+    expect(seedPlanFromPrevious({ ...empty, additionalPrograms: programs }, [])?.kept).toBe(0);
+    expect(seedPlanFromPrevious(empty, [])).toBeNull();
+  });
+
+  it("mergeSeedPrograms: the target's own first, no repeats, no primary, within the caps", () => {
+    const target = [{ programId: "cas-govt-ba", kind: "major" as const }];
+    const carried = [
+      ...programs,
+      { programId: "minor-a", kind: "minor" as const },
+      { programId: "minor-b", kind: "minor" as const },
+    ];
+    expect(mergeSeedPrograms(target, carried, "minor-econ")).toEqual([
+      { programId: "cas-govt-ba", kind: "major" },
+      { programId: "minor-cs", kind: "minor" },
+      { programId: "minor-a", kind: "minor" },
+      { programId: "minor-b", kind: "minor" },
+    ]);
   });
 });

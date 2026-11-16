@@ -42,6 +42,18 @@
 // rows they name and in a closing list. A malformed phase2-reconcile.json (bad
 // JSON, wrong shape, a rename to a row the layer lacks) is a flag, never a crash.
 //
+// Spec 047. Every layer that sets `sharing` shows it in words with its
+// "sharing" quote (no quote: a flag). A MINOR layer also needs, each a flag
+// when missing, failing or made on another version of the layer:
+// coverage.json (check-coverage.ts: every in-scope sentence accounted for) and,
+// when the minor sets a limit toward majors (sharing.otherMajors) or the files
+// exist anyway, overlap-report.json with its golden-overlap.json
+// (check-overlap-fixture.ts: the limit binds against a real major and the
+// fixture says what is held back). A single-author draft (framing "single-author") has no blind pair:
+// no diff.json or resolution.json is expected, and the sheet lists its
+// sentence ledger's sharing, eligibility and out-of-scope entries with their
+// reasons for the reviewer.
+//
 // Run (from scripts/):
 //   npx tsx review-sheet.ts --program <layerId> [--dir <provenanceDir>] [--out <file>]
 // Reads merged.json (required) and, when present, verify.json, diff.json,
@@ -53,10 +65,14 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join, resolve } from "path";
 import { z } from "zod";
+import { coverageProblem, readCoverageReport, type CoverageReport } from "./check-coverage";
+import { overlapFixtureRequired } from "./check-overlap-fixture";
 import { LedgerInputError, checkLedger, loadLedger, normRef, type EditLedger } from "./edit-ledger";
 import { loadVerifiedExtract, type CourseList, type PageExtract } from "./extract-catalog-page";
 import {
   PROVENANCE_FILES,
+  SHARING_QUOTE_KEY,
+  describeSharing,
   describeQuestion,
   describeRow,
   layerSha256,
@@ -105,6 +121,26 @@ export type ReviewInputs = {
   editsError?: string;
   /** snapshot/page.txt, for the ledger's quotes. */
   pageText?: string;
+  /** Spec 047 minors: coverage.json (check-coverage.ts). */
+  coverage?: CoverageReport;
+  coverageError?: string;
+  /** Spec 047 minors: overlap-report.json, and whether golden-overlap.json exists. */
+  overlap?: OverlapReportShape;
+  overlapError?: string;
+  overlapFixture?: boolean;
+};
+
+/** The fields of check-overlap-fixture.ts's OverlapReport the sheet reads. */
+export type OverlapReportShape = {
+  programId: string;
+  ok: boolean;
+  problems: string[];
+  limit: { maxCourses?: number; maxCredits?: number } | null;
+  sharedBefore: string[];
+  sharedAfter: string[];
+  pctBefore: Record<string, number>;
+  pctAfter: Record<string, number>;
+  layerHashes?: Record<string, string>;
 };
 
 /** The college reconcile step's output (see the header). */
@@ -442,7 +478,49 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
         `${short ? `${WARN} ` : ""}${decisions.length} resolver decision(s)${short ? ` (needs at least ${needed})` : ""}`,
     );
     if (short) flags++;
-  } else L.push("- Blind drafts: no diff.json");
+  } else if (merged.framing === "single-author") L.push("- Blind drafts: none (one author, checked by the sentence ledger, the verifier and the golden plans)");
+  else L.push("- Blind drafts: no diff.json");
+
+  // Spec 047: sharing, and a minor's sentence coverage and overlap fixture.
+  if (layer.sharing != null && !(merged.quotes[SHARING_QUOTE_KEY]?.length)) {
+    L.push(`- ${WARN} Sharing: the layer sets an overlap limit but quotes no "${SHARING_QUOTE_KEY}" sentence`);
+    flags++;
+  }
+  if (layer.kind === "minor" || inputs.coverage || inputs.coverageError) {
+    const problem = inputs.coverageError ? `${PROVENANCE_FILES.coverage} cannot be used: ${oneLine(inputs.coverageError)}` : coverageProblem(inputs.coverage, thisHash);
+    if (problem) {
+      L.push(`- ${WARN} Sentence coverage: ${problem}`);
+      for (const f of (inputs.coverage?.findings ?? []).slice(0, 20)) L.push(`  - ${WARN} ${oneLine(f.message)}`);
+      flags++;
+    } else {
+      const c = inputs.coverage!.counts;
+      L.push(`- Sentence coverage: every in-scope block accounted for (${c.accounted} block(s): ${c.toRows} to rows, ${c.toSharing} to sharing, ${c.toEligibility} eligibility, ${c.outOfScope} out of scope)`);
+    }
+  }
+  const overlapNeeded = overlapFixtureRequired(layer) || !!inputs.overlapFixture || !!inputs.overlap || !!inputs.overlapError;
+  if (layer.kind === "minor" && !overlapNeeded) L.push("- Overlap fixture: not needed (the minor sets no limit toward majors)");
+  if (layer.kind === "minor" && overlapNeeded) {
+    const o = inputs.overlap;
+    const why = inputs.overlapError
+      ? `${PROVENANCE_FILES.overlapReport} cannot be used: ${oneLine(inputs.overlapError)}`
+      : !inputs.overlapFixture
+        ? `${PROVENANCE_FILES.goldenOverlap} is missing (the golden plan's second fixture: the minor with a real major where the limit binds)`
+        : !o
+          ? `${PROVENANCE_FILES.overlapReport} is missing (run check-overlap-fixture.ts --report)`
+          : o.layerHashes?.[layer.id] !== thisHash
+            ? `${PROVENANCE_FILES.overlapReport} was made on a different version of this layer: re-run check-overlap-fixture.ts`
+            : !o.ok
+              ? `the overlap fixture fails: ${o.problems.map(oneLine).join("; ")}`
+              : null;
+    if (why) {
+      L.push(`- ${WARN} Overlap fixture: ${why}`);
+      flags++;
+    } else {
+      const lim = o!.limit;
+      const limText = lim ? [lim.maxCourses != null ? `at most ${lim.maxCourses} course(s)` : "", lim.maxCredits != null ? `at most ${lim.maxCredits} credit(s)` : ""].filter(Boolean).join(" and ") : "none";
+      L.push(`- Overlap fixture: ok — limit ${limText}; shared before [${o!.sharedBefore.join(", ")}], after the hold-back [${o!.sharedAfter.join(", ")}]`);
+    }
+  }
   if (golden?.layerHashes) {
     const want = golden.layerHashes[layer.id];
     if (want !== layerSha256(layer)) {
@@ -518,6 +596,37 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
   }
   const lookup = questionLookup(layer);
 
+  // Sharing (spec 047 D7): the limit in words, and the sentence(s) behind it.
+  const sharingQuotes = merged.quotes[SHARING_QUOTE_KEY] ?? [];
+  if (layer.sharing != null || sharingQuotes.length) {
+    L.push("## Sharing with other programs", "");
+    const words = describeSharing(layer);
+    if (words.length) for (const w of words) L.push(`- ${w}`);
+    else L.push("- No limit encoded (the quote below is why)");
+    if (merged.derivedNumbers?.[SHARING_QUOTE_KEY]) L.push(`- Derived (the stricter limit the fields can express): ${oneLine(merged.derivedNumbers[SHARING_QUOTE_KEY])}`);
+    L.push("", ...quoteLines(sharingQuotes), "");
+  }
+
+  // The single author's sentence ledger: what it left out of the rows, and why.
+  const ledger = merged.ledger ?? [];
+  const offRow = ledger.filter((e) => (Array.isArray(e.to) ? e.to : [e.to]).some((t) => t === "sharing" || t === "eligibility" || t === "out-of-scope"));
+  if (offRow.length) {
+    L.push("## Sentence ledger: sharing, eligibility and out of scope", "");
+    const textOf = (id: string) => {
+      const b = extract?.blocks.find((x) => x.id === id);
+      if (b) return b.text;
+      const l = extract?.lists.find((x) => x.id === id);
+      return l ? `list ${l.id} (${l.courseIds.length} course(s))` : "";
+    };
+    for (const e of offRow) {
+      const to = (Array.isArray(e.to) ? e.to : [e.to]).join(", ");
+      L.push(`- \`${e.block}\` → ${to}${e.reason ? ` — ${oneLine(e.reason)}` : ""}`);
+      const t = textOf(e.block);
+      if (t) L.push(`  > ${oneLine(t).slice(0, 300)}`);
+    }
+    L.push("");
+  }
+
   L.push("## Rows", "");
   for (const [unitAt, unit] of units.entries()) {
     const row = unit.row;
@@ -532,7 +641,8 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
     let origin: Origin | null = null;
     // A row the ledger signs off came from the edit, whatever the diff says.
     if (so) origin = { text: `edited after verification (${so.change}, ${PROVENANCE_FILES.edits})`, flagged: false };
-    else if (!ds.length) origin = diff ? originFromDiff(orig, diff, origLayer) : { text: "no diff on file", flagged: false };
+    else if (!ds.length)
+      origin = diff ? originFromDiff(orig, diff, origLayer) : { text: merged.framing === "single-author" ? "written by the single author" : "no diff on file", flagged: false };
     const fromLists = listRefs[unit.key] ? listLines(unit, listRefs[unit.key], extractError ? undefined : extract) : null;
     const flagged = unitFlag || !!origin?.flagged || !!fromLists?.flagged;
     if (flagged) flags++;
@@ -622,6 +732,18 @@ const GoldenShape = z.object({
   layerHashes: z.record(str, str).optional(),
 });
 
+const OverlapShape = z.object({
+  programId: str,
+  ok: z.boolean(),
+  problems: z.array(str),
+  limit: z.object({ maxCourses: z.number().optional(), maxCredits: z.number().optional() }).nullable(),
+  sharedBefore: z.array(str),
+  sharedAfter: z.array(str),
+  pctBefore: z.record(str, z.number()),
+  pctAfter: z.record(str, z.number()),
+  layerHashes: z.record(str, str).optional(),
+});
+
 function checked<T>(value: unknown, shape: z.ZodType, path: string): T | undefined {
   if (value === undefined) return undefined;
   const r = shape.safeParse(value);
@@ -684,7 +806,31 @@ export function loadReviewInputs(base: string): ReviewInputs {
     editsError = e.message;
   }
   const pageText = existsSync(at(PROVENANCE_FILES.pageText)) ? readFileSync(at(PROVENANCE_FILES.pageText), "utf-8") : undefined;
+  // Spec 047 minors: coverage.json and overlap-report.json; malformed is a flag, not thrown.
+  let coverage: CoverageReport | undefined;
+  let coverageError: string | undefined;
+  try {
+    coverage = readCoverageReport(base);
+  } catch (e) {
+    coverageError = e instanceof Error ? e.message : String(e);
+  }
+  let overlap: OverlapReportShape | undefined;
+  let overlapError: string | undefined;
+  if (existsSync(at(PROVENANCE_FILES.overlapReport))) {
+    try {
+      const r = OverlapShape.safeParse(JSON.parse(readFileSync(at(PROVENANCE_FILES.overlapReport), "utf-8")));
+      if (!r.success) throw new Error(`wrong shape: ${r.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")}`);
+      overlap = r.data as OverlapReportShape;
+    } catch (e) {
+      overlapError = e instanceof Error ? e.message : String(e);
+    }
+  }
   return {
+    coverage,
+    coverageError,
+    overlap,
+    overlapError,
+    overlapFixture: existsSync(at(PROVENANCE_FILES.goldenOverlap)),
     edits: editsError ? undefined : edits,
     editBase,
     editsError,

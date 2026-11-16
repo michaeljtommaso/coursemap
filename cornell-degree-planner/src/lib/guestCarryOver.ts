@@ -1,4 +1,9 @@
-import { MAX_FACT_ANSWERS, type CreditEntry } from "@/lib/schemas";
+import {
+  ADDITIONAL_PROGRAMS,
+  MAX_FACT_ANSWERS,
+  type AdditionalProgram,
+  type CreditEntry,
+} from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import type { CollegeId } from "@/lib/planner/colleges";
 import type {
@@ -8,7 +13,11 @@ import type {
   TransferKind,
 } from "@/lib/planner/distribution/types";
 import { enteringYearForEntryTerm } from "@/lib/planner/entryTerm";
-import { canonicalProgramId, migrateLegacyWaivers } from "@/lib/planner/legacyPrograms";
+import {
+  canonicalAdditionalPrograms,
+  canonicalProgramId,
+  migrateLegacyWaivers,
+} from "@/lib/planner/legacyPrograms";
 
 /**
  * Guest carry-over decisions (spec 018), pure. When a guest signs into a Google
@@ -44,6 +53,9 @@ export type CarryPlanContent = {
    *  semester k"); travel with the plan copy, like the placements' own
    *  `shortTerm` flags. Optional: a retry stashed before spec 042 has none. */
   shortTerms?: number[];
+  /** Spec 047 D13 second major and minors; travel with the plan copy, under
+   *  their current ids. Optional: a retry stashed before spec 047 has none. */
+  additionalPrograms?: AdditionalProgram[];
 };
 
 /** A guest plan as read for carrying over. */
@@ -93,25 +105,42 @@ export type ProfileCarryPatch = Partial<{
 /**
  * A plan's content under its current program (spec 019 D12): a retired
  * program id reads as its current id, with its waivers translated, so a copy
- * is written under the new id. Anything else is returned as is.
+ * is written under the new id. Its additional programs (spec 047 D13) are
+ * read tolerantly (a retry stash comes back from browser storage unchecked)
+ * and under their current ids, without a repeat or the primary, so the
+ * strict write can't refuse the copy forever. Anything else is returned as
+ * is (same object when nothing changes).
  */
 export function currentProgramContent(content: CarryPlanContent): CarryPlanContent {
   // Defensive: a retry stash is read back from browser storage unchecked.
   const stored: unknown = content?.programId;
   if (typeof stored !== "string") return content;
   const programId = canonicalProgramId(stored);
-  if (programId === stored) return content;
-  return {
-    ...content,
-    programId,
-    waivedRequirementIds: Array.isArray(content.waivedRequirementIds)
+  const programs = carriedPrograms(content.additionalPrograms, programId);
+  if (programId === stored && programs === content.additionalPrograms) return content;
+  const out: CarryPlanContent = { ...content, programId };
+  if (programId !== stored) {
+    out.waivedRequirementIds = Array.isArray(content.waivedRequirementIds)
       ? migrateLegacyWaivers(stored, content.waivedRequirementIds)
-      : content.waivedRequirementIds,
-  };
+      : content.waivedRequirementIds;
+  }
+  if (programs === undefined) delete out.additionalPrograms;
+  else out.additionalPrograms = programs;
+  return out;
+}
+
+/** A copy's additional programs, safe to write under `programId`: the same
+ *  array when it already is, undefined when the field is absent. */
+function carriedPrograms(raw: unknown, programId: string): AdditionalProgram[] | undefined {
+  if (raw === undefined) return undefined;
+  const shaped = ADDITIONAL_PROGRAMS.parse(raw) ?? [];
+  const canonical = canonicalAdditionalPrograms(shaped, programId);
+  return JSON.stringify(canonical) === JSON.stringify(raw) ? (raw as AdditionalProgram[]) : canonical;
 }
 
 /** Student content a plan copy would keep: courses, tried classes (spec 028
- *  D12), course marks (spec 020) or added short-term columns (spec 042 D4).
+ *  D12), course marks (spec 020), added short-term columns (spec 042 D4) or
+ *  extra programs (spec 047 D2).
  *  An A&S / CALS student often starts with an empty board and only tried
  *  classes. */
 function hasContent(c: CarryPlanContent): boolean {
@@ -119,7 +148,8 @@ function hasContent(c: CarryPlanContent): boolean {
     (Array.isArray(c.placements) && c.placements.length > 0) ||
     (Array.isArray(c.triedCourseIds) && c.triedCourseIds.length > 0) ||
     (!!c.courseMarks && Object.keys(c.courseMarks).length > 0) ||
-    (Array.isArray(c.shortTerms) && c.shortTerms.length > 0)
+    (Array.isArray(c.shortTerms) && c.shortTerms.length > 0) ||
+    (Array.isArray(c.additionalPrograms) && c.additionalPrograms.length > 0)
   );
 }
 

@@ -12,8 +12,14 @@ import type { ShareDoc } from "@/lib/schemas";
 
 const fetchShare = vi.fn();
 vi.mock("@/services/shares", () => ({ fetchShare: (id: string) => fetchShare(id) }));
-vi.mock("@/services/programs", () => ({ fetchProgram: vi.fn(async () => null) }));
-vi.mock("@/services/layers", () => ({ fetchLayer: vi.fn(async () => null) }));
+const fetchProgramIndex = vi.fn(async () => [] as { id: string; name: string; short_name: string }[]);
+const fetchMinorIndex = vi.fn(async () => [] as { id: string; name: string; shortName: string }[]);
+vi.mock("@/services/programs", () => ({
+  fetchProgram: vi.fn(async () => null),
+  fetchProgramIndex: () => fetchProgramIndex(),
+}));
+const fetchLayer = vi.fn(async (_id: string): Promise<unknown> => null);
+vi.mock("@/services/layers", () => ({ fetchLayer: (id: string) => fetchLayer(id), fetchMinorIndex: () => fetchMinorIndex() }));
 
 const { ShareView } = await import("./ShareView");
 
@@ -24,6 +30,10 @@ beforeEach(() => {
   document.body.appendChild(container);
   root = createRoot(container);
   fetchShare.mockReset();
+  fetchProgramIndex.mockClear();
+  fetchMinorIndex.mockClear();
+  fetchLayer.mockReset();
+  fetchLayer.mockImplementation(async () => null);
 });
 afterEach(() => {
   act(() => root.unmount());
@@ -111,5 +121,58 @@ describe("ShareView — short-term columns (spec 042)", () => {
   it("an added short term with no classes stays out of the document, like an empty semester", async () => {
     await render(share({ shortTerms: [1] }));
     expect(columnHeads().map((h) => h.key)).toEqual(["2", "4"]);
+  });
+});
+
+describe("ShareView — several programs (spec 047 D13)", () => {
+  const programs = () => container.querySelector("[data-share-programs]")!.textContent;
+
+  it("names every program in the header", async () => {
+    fetchProgramIndex.mockResolvedValueOnce([{ id: "cas-mathematics-ba", name: "Mathematics (BA)", short_name: "Mathematics" }]);
+    fetchMinorIndex.mockResolvedValueOnce([{ id: "cs-minor", name: "Computer Science", shortName: "CS minor" }]);
+    await render(
+      share({
+        additionalPrograms: [
+          { programId: "cas-mathematics-ba", kind: "major" },
+          { programId: "cs-minor", kind: "minor" },
+        ],
+      })
+    );
+    expect(programs()).toBe("Psychology + Mathematics (second major) + CS minor");
+    expect(container.textContent).toContain("Psychology + Mathematics (second major) + CS minor · shared plan");
+  });
+
+  it("a share without extra programs reads no index and shows the program alone", async () => {
+    await render(share());
+    expect(programs()).toBe("Psychology");
+    expect(fetchProgramIndex).not.toHaveBeenCalled();
+    expect(fetchMinorIndex).not.toHaveBeenCalled();
+  });
+
+  it("reads an extra program's layer, so an answer on it names its requirement (audit #9)", async () => {
+    const csMinor = { id: "cs-minor", kind: "minor", name: "CS minor", rows: [{ id: "intro", label: "Intro programming" }] };
+    fetchLayer.mockImplementation(async (id: string) => (id === "cs-minor" ? { ok: true, layer: csMinor } : null));
+    await render(
+      share({
+        placements: [{ id: "f", courseId: "CS-1110", sem: 1, order: 0 }],
+        courseMarks: { "usedAs:cs-minor/intro@CS-1110": "yes" },
+        additionalPrograms: [{ programId: "cs-minor", kind: "minor" }],
+      })
+    );
+    expect(fetchLayer).toHaveBeenCalledWith("cs-minor");
+    const lines = [...container.querySelectorAll("[data-share-mark]")].map((el) => el.textContent);
+    expect(lines).toEqual(["Used as Intro programming · the student's answer"]);
+  });
+
+  it("a share without extra programs reads only its own layers", async () => {
+    await render(share({ courseMarks: { "usedAs:cas-psychology-ba/r@PSYCH-1101": "yes" } }));
+    expect(fetchLayer.mock.calls.map((c) => c[0])).toEqual(["cas-psychology-ba"]);
+  });
+
+  it("names it from its id when the index can't be read", async () => {
+    fetchMinorIndex.mockRejectedValueOnce(new Error("offline"));
+    await render(share({ additionalPrograms: [{ programId: "music", kind: "minor" }] }));
+    expect(programs()).toBe("Psychology + Music minor");
+    expect(fetchProgramIndex).not.toHaveBeenCalled();
   });
 });

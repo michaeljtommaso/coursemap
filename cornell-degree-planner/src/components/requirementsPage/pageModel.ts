@@ -1,8 +1,10 @@
 import type {
+  ProgramSection,
   RequirementGroup,
   RequirementItem,
   TriedProgress,
 } from "@/hooks/useRequirementProgress";
+import { hasExtraPrograms, sectionIdOf } from "@/components/requirements/programSections";
 import { triedPlacementId } from "@/lib/planner/triedProgress";
 import { progressText } from "@/components/requirements/requirementText";
 import {
@@ -29,9 +31,13 @@ import {
  *     4 of 10", then the course or credit floor still short), else rows done
  *     ("1 of 2"). Done comes from status, never from the numbers.
  *   - Tried classes (D11) add a separate blue "+N", never a met state.
+ *   - Spec 047 D6: a plan with a second major or a minor is sectioned by
+ *     PROGRAM instead (college, primary, second major, minors, in
+ *     `progress.sections` order); each section carries its ProgramSection
+ *     for the foldable header. A plan with none is sectioned as above.
  */
 
-export type LayerKind = "college" | "major" | "concentration";
+export type LayerKind = "college" | "major" | "concentration" | "minor";
 
 export type PageGroup = {
   key: string;
@@ -44,9 +50,12 @@ export type PageGroup = {
 };
 
 export type PageSection = {
-  key: LayerKind | "program";
+  /** A layer kind or "program"; in program mode `program:<section id>`. */
+  key: string;
   label: string;
   groups: PageGroup[];
+  /** Spec 047: the program this section is (program mode only). */
+  program?: ProgramSection;
 };
 
 export type PageModel = {
@@ -62,10 +71,12 @@ export type SectionNames = {
   program?: string | null;
   /** The chosen concentration name(s). */
   concentration?: string | null;
+  /** A minor's name, when the groups are sectioned by layer. */
+  minor?: string | null;
 };
 
-const LAYER_PREFIX = /^(College|Major|Concentration) · /;
-const KIND_ORDER: LayerKind[] = ["college", "major", "concentration"];
+const LAYER_PREFIX = /^(College|Major|Concentration|Minor) · /;
+const KIND_ORDER: LayerKind[] = ["college", "major", "concentration", "minor"];
 
 /** "College · Distribution" → "Distribution"; Engineering labels unchanged.
  *  The name a group goes by on the page's outline and the rail. */
@@ -85,6 +96,9 @@ function sectionLabel(kind: LayerKind | "program", names: SectionNames): string 
       return names.concentration ? `Concentration: ${names.concentration}` : "Concentration";
     case "program":
       return names.program ?? "Your major";
+    case "minor":
+      // Layer mode only; program mode names every section from its ProgramSection.
+      return names.minor ?? "Minor";
   }
 }
 
@@ -94,8 +108,12 @@ export function buildPageModel(
   /** Which engine produced the groups. An Engineering program stays one
    *  section even when a row carries distribution info (liberal studies,
    *  spec 037 D9). Absent: sectioned by each group's layer. */
-  engine?: "engineering" | "distribution"
+  engine?: "engineering" | "distribution",
+  /** Spec 047: `progress.sections`. With a second major or minor among them
+   *  the page is sectioned by program. */
+  programs?: readonly ProgramSection[]
 ): PageModel {
+  if (programs && hasExtraPrograms({ sections: [...programs] })) return buildProgramModel(groups, programs, engine);
   const advisor: RequirementItem[] = [];
   const byKind = new Map<LayerKind | "program", PageGroup[]>();
   for (const g of groups) {
@@ -121,6 +139,49 @@ export function buildPageModel(
     .filter((k) => byKind.has(k))
     .map((k) => ({ key: k, label: sectionLabel(k, names), groups: byKind.get(k)! }));
   return { sections, advisor };
+}
+
+function pageGroup(g: RequirementGroup, items: RequirementItem[], engine?: "engineering" | "distribution"): PageGroup {
+  return {
+    key: g.key,
+    title: groupTitle(g.label),
+    items,
+    // The engine's counts already leave confirm rows out.
+    satisfiedCount: g.satisfiedCount,
+    total: g.total,
+    layerKind: engine === "engineering" ? null : (items.find((it) => it.dist)?.dist?.layerKind ?? null),
+  };
+}
+
+/** Spec 047 D6: one section per program, in `programs` order (empty ones too:
+ *  a program still loading, or one that can't load, keeps its header). */
+function buildProgramModel(
+  groups: readonly RequirementGroup[],
+  programs: readonly ProgramSection[],
+  engine?: "engineering" | "distribution"
+): PageModel {
+  const advisor: RequirementItem[] = [];
+  const bySection = new Map<string, PageGroup[]>();
+  for (const g of groups) {
+    const items: RequirementItem[] = [];
+    for (const it of g.items) (isConfirm(it) ? advisor : items).push(it);
+    if (items.length === 0) continue;
+    const id = sectionIdOf(g, programs);
+    if (!id) continue;
+    bySection.set(id, [...(bySection.get(id) ?? []), pageGroup(g, items, engine)]);
+  }
+  const sections = programs.map((p) => ({
+    key: programSectionKey(p.id),
+    label: p.name,
+    groups: bySection.get(p.id) ?? [],
+    program: p,
+  }));
+  return { sections, advisor };
+}
+
+/** A program section's key (outline, DOM id, fold state). */
+export function programSectionKey(sectionId: string): string {
+  return `program:${sectionId}`;
 }
 
 // ── Amounts ──────────────────────────────────────────────────────────────────

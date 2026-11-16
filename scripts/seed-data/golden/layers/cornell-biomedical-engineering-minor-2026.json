@@ -1,0 +1,147 @@
+{
+  "programId": "cornell-biomedical-engineering-minor-2026",
+  "description": "A fictional biology major completes the minor with one intro biology course, one genetics course and four biomedical engineering courses.",
+  "layerIds": [
+    "cornell-biomedical-engineering-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOMG-1350",
+    "BIOMG-2800",
+    "BME-3010",
+    "BME-3020",
+    "BME-4010",
+    "BME-3310"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "BME-2010",
+      "rowId": "bme-four",
+      "why": "A physiology course that only counts on the introductory biology side, not as an engineering course."
+    },
+    {
+      "courseId": "BIOMG-2800",
+      "rowId": "bme-four",
+      "why": "A genetics course belongs to the biology categories, not the engineering ones."
+    },
+    {
+      "courseId": "BME-3110",
+      "rowId": "bme-four",
+      "why": "A BME course that is not on any of the minor's engineering lists."
+    },
+    {
+      "courseId": "BME-3010",
+      "rowId": "bio-two",
+      "why": "A molecular and cellular engineering course is not a biology course."
+    },
+    {
+      "courseId": "BME-1310",
+      "rowId": "bme-four",
+      "why": "The introductory BME course is only on the biology side of the minor, not an engineering-category course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOMG-1350",
+      "subject": "BIOMG",
+      "number": "1350",
+      "title": "Introductory Biology: Cell and Developmental Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "BIOMG-2800",
+      "subject": "BIOMG",
+      "number": "2800",
+      "title": "Lectures in Genetics and Genomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BME-3010",
+      "subject": "BME",
+      "number": "3010",
+      "title": "Cellular Principles of Biomedical Engineering",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BME-3020",
+      "subject": "BME",
+      "number": "3020",
+      "title": "Molecular Principles of Biomedical Engineering",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BME-4010",
+      "subject": "BME",
+      "number": "4010",
+      "title": "Biomedical Engineering Analysis of Metabolic and Structural Systems",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BME-3310",
+      "subject": "BME",
+      "number": "3310",
+      "title": "Medical and Preclinical Imaging",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BME-2010",
+      "subject": "BME",
+      "number": "2010",
+      "title": "Physiology of Human Health and Disease",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BME-3110",
+      "subject": "BME",
+      "number": "3110",
+      "title": "Cellular Systems Biology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "BME-1310",
+      "subject": "BME",
+      "number": "1310",
+      "title": "Introduction to Biomedical Engineering",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

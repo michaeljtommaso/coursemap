@@ -1,0 +1,234 @@
+{
+  "programId": "cornell-linguistics-minor-2026",
+  "description": "A student finishes the minor with the intro course, two foundation courses, and three further courses at the 1000 to 3000 levels.",
+  "layerIds": [
+    "cornell-linguistics-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-linguistics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "LING-1101",
+    "LING-3302",
+    "LING-3303",
+    "LING-1170",
+    "LING-2212"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "LING-1100",
+      "rowId": "additional-ling",
+      "why": "A first-year writing seminar is not a linguistics course for the minor."
+    },
+    {
+      "courseId": "LING-1110",
+      "rowId": "additional-ling",
+      "why": "The extra courses must carry at least three credits, and this one is a single credit."
+    },
+    {
+      "courseId": "LING-3390",
+      "rowId": "additional-ling",
+      "why": "Independent study can be taken for fewer than three credits, so it is held out of the pool."
+    },
+    {
+      "courseId": "LING-3315",
+      "rowId": "foundation",
+      "why": "Only the three named survey courses meet the foundation requirement."
+    },
+    {
+      "courseId": "LING-3324",
+      "rowId": "additional-ling",
+      "why": "Cayuga language instruction is a language course, which does not count as a linguistics course here."
+    },
+    {
+      "courseId": "LING-3315",
+      "rowId": "additional-ling",
+      "why": "Old Norse is taught as a language course, so it does not count toward the additional courses."
+    },
+    {
+      "courseId": "LING-6623",
+      "rowId": "additional-ling",
+      "why": "Old Irish is a language course, so it does not count toward the additional courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "LING-1101",
+      "subject": "LING",
+      "number": "1101",
+      "title": "Introduction to Linguistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-3302",
+      "subject": "LING",
+      "number": "3302",
+      "title": "Introduction to Phonetics and Phonology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-3303",
+      "subject": "LING",
+      "number": "3303",
+      "title": "Introduction to Syntax and Semantics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-1170",
+      "subject": "LING",
+      "number": "1170",
+      "title": "Introduction to Cognitive Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "LING-2212",
+      "subject": "LING",
+      "number": "2212",
+      "title": "Hieroglyphs to HTML: History of Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-1100",
+      "subject": "LING",
+      "number": "1100",
+      "title": "FWS: Language, Thought, and Reality",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "LING-1110",
+      "subject": "LING",
+      "number": "1110",
+      "title": "What is Linguistics? How We Use Linguistics in Our Daily Lives",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "LING-3390",
+      "subject": "LING",
+      "number": "3390",
+      "title": "Independent Study in Linguistics",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "LING-3315",
+      "subject": "LING",
+      "number": "3315",
+      "title": "Old Norse I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        }
+      ]
+    },
+    {
+      "id": "LING-3324",
+      "subject": "LING",
+      "number": "3324",
+      "title": "Cayuga Language and Culture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "LING-6623",
+      "subject": "LING",
+      "number": "6623",
+      "title": "Introduction to Old Irish I",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

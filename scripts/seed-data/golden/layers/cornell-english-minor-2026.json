@@ -1,0 +1,255 @@
+{
+  "programId": "cornell-english-minor-2026",
+  "description": "A fictional economics major finishes the English minor with three creative writing courses and two literature courses.",
+  "layerIds": [
+    "cornell-english-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ENGL-2800",
+    "ENGL-3820",
+    "ENGL-3840",
+    "ENGL-3120",
+    "ENGL-3470"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ENGL-1105",
+      "rowId": "english-courses",
+      "why": "A first-year writing seminar is excluded from the minor."
+    },
+    {
+      "courseId": "ENGL-1170",
+      "rowId": "english-courses",
+      "why": "Another first-year writing seminar, also excluded."
+    },
+    {
+      "courseId": "ENGL-2603",
+      "rowId": "english-courses",
+      "why": "A one-credit course is below the three-credit floor."
+    },
+    {
+      "courseId": "ENGL-2705",
+      "rowId": "english-courses",
+      "why": "A two-credit course is below the three-credit floor."
+    },
+    {
+      "courseId": "MATH-1910",
+      "rowId": "english-courses",
+      "why": "A mathematics course is neither English-department nor cross-listed with it."
+    },
+    {
+      "courseId": "ENGL-4800",
+      "rowId": "english-courses",
+      "why": "A fourth creative writing course goes past the three the minor allows."
+    },
+    {
+      "courseId": "ENGL-4950",
+      "rowId": "english-courses",
+      "why": "Independent study counts only when the department approves it, which the board cannot see."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ENGL-2800",
+      "subject": "ENGL",
+      "number": "2800",
+      "title": "Creative Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3820",
+      "subject": "ENGL",
+      "number": "3820",
+      "title": "Narrative Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3840",
+      "subject": "ENGL",
+      "number": "3840",
+      "title": "Poetry Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3120",
+      "subject": "ENGL",
+      "number": "3120",
+      "title": "Beowulf",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3470",
+      "subject": "ENGL",
+      "number": "3470",
+      "title": "The Victorian Novel",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-1105",
+      "subject": "ENGL",
+      "number": "1105",
+      "title": "FWS: Writing and Sexual Politics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-1170",
+      "subject": "ENGL",
+      "number": "1170",
+      "title": "FWS: Short Stories",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2603",
+      "subject": "ENGL",
+      "number": "2603",
+      "title": "The Novels of Toni Morrison",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ENGL-2705",
+      "subject": "ENGL",
+      "number": "2705",
+      "title": "The Idea of Hospitality I: From Ancient Times to the Present",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-4800",
+      "subject": "ENGL",
+      "number": "4800",
+      "title": "Advanced Poetry Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-4950",
+      "subject": "ENGL",
+      "number": "4950",
+      "title": "Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}

@@ -15,7 +15,9 @@ import { tmpdir } from "os";
 import { join } from "path";
 import type { GoldenFixture } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
 import { buildGoldenReport, serializeFixture } from "./check-golden-layer";
-import { extractPage } from "./extract-catalog-page";
+import { extractPage, loadVerifiedExtract } from "./extract-catalog-page";
+import { checkCoverage } from "./check-coverage";
+import { buildOverlapReport, serializeOverlapFixture, type OverlapFixture } from "./check-overlap-fixture";
 import { checkPromotion, layerFileText, promote } from "./promote-layer";
 import { buildReview, loadReviewInputs } from "./review-sheet";
 import { layerSha256, rowUnits, type DistCourse, type Layer, type LayerDiff, type Row, type SnapshotMeta } from "./layer-authoring";
@@ -421,6 +423,114 @@ check("new layer (single author): a row without a sign-off, a verify.json beside
 function sheetHas(dir: string, text: string): boolean {
   return buildReview(loadReviewInputs(dir)).markdown.includes(text);
 }
+
+// ── Spec 047: minors (single author, sentence coverage, overlap fixture) ────
+const MINOR: Layer = {
+  id: "invented-minor-2026",
+  kind: "minor",
+  family: "other",
+  name: "Invented Minor",
+  catalogYear: "2026-27",
+  programId: "invented-minor-2026",
+  sharing: { otherMajors: "none" },
+  rows: [seat("n1", "FICT-1000")],
+};
+const MINOR_FX = fixtureFor(MINOR, [MINOR.id], { programId: MAJOR.id, entryTerm: "FA26", transfer: "none" }, ["FICT-1000"]);
+const MINOR_HTML = "<!doctype html><html><head><title>Invented Minor</title></head><body><main><h1>Invented Minor</h1><p>Invented requirement sentence for the corpus minor.</p></main></body></html>\n";
+const OVERLAP_FX: OverlapFixture = {
+  programId: MINOR.id,
+  description: "An invented major and minor that may share nothing.",
+  layerIds: [MAJOR.id, MINOR.id],
+  ctx: { programId: MAJOR.id, entryTerm: "FA26", transfer: "none" },
+  plan: ["FICT-1000"],
+  limit: { maxCourses: 0 },
+  shared: ["FICT-1000"],
+  heldBack: [{ courseId: "FICT-1000", from: MINOR.id, why: "Invented: the pair may share no course." }],
+  courses: [fict("FICT-1000")],
+};
+
+/** A clean single-author minor folder; the major is promoted into `seed` first. */
+function minorProvenance(seed: Seed, minor: Layer = MINOR, skip: string[] = []): string {
+  mkdirSync(join(seed.layersDir, "cals"), { recursive: true });
+  writeFileSync(join(seed.layersDir, "cals", `${MAJOR.id}.json`), layerFileText(MAJOR));
+  const dir = provenance(minor, MINOR_FX, [minor], { pageHtml: MINOR_HTML });
+  for (const f of ["diff.json", "resolution.json"]) rmSync(join(dir, f));
+  const ex = loadVerifiedExtract(dir);
+  const block = ex.blocks.find((b) => b.kind === "prose")!.id;
+  const merged = JSON.parse(readFileSync(join(dir, "merged.json"), "utf-8"));
+  Object.assign(merged, { framing: "single-author", ledger: [{ block, to: ["n1", "sharing"] }] });
+  merged.quotes.sharing = ["Invented page text for the corpus."];
+  writeFileSync(join(dir, "merged.json"), JSON.stringify(merged, null, 2));
+  const files: Record<string, string> = {
+    "coverage.json": JSON.stringify(checkCoverage(merged, ex)),
+    "golden-overlap.json": serializeOverlapFixture(OVERLAP_FX),
+    "overlap-report.json": JSON.stringify(buildOverlapReport([MAJOR, minor], OVERLAP_FX)),
+  };
+  for (const [f, text] of Object.entries(files)) if (!skip.includes(f)) writeFileSync(join(dir, f), text);
+  return dir;
+}
+const minorRefusals = (base: string, seed: Seed) => checkPromotion({ program: MINOR.id, family: "other", base, catalog: CATALOG, ...seed }).refusals;
+
+check("minor: promoted to layers/minors/, golden/ and overlap/ without a blind pair", () => {
+  const seed = seedDirs();
+  const base = minorProvenance(seed);
+  assertEqual("refusals", minorRefusals(base, seed), []);
+  quiet.out = [];
+  const code = promote({ program: MINOR.id, family: "other", base, catalog: CATALOG, ...seed }, (s) => quiet.out.push(s), (s) => quiet.err.push(s));
+  assertEqual("exit 0", code, 0);
+  assertTrue("layer in minors/", existsSync(join(seed.layersDir, "minors", `${MINOR.id}.json`)), quiet.out.join("\n"));
+  assertTrue("golden", existsSync(join(seed.goldenDir, `${MINOR.id}.json`)), quiet.out.join("\n"));
+  assertEqual("overlap fixture", readFileSync(join(seed.goldenDir, "..", "overlap", `${MINOR.id}.json`), "utf-8"), serializeOverlapFixture(OVERLAP_FX));
+  const md = buildReview(loadReviewInputs(base)).markdown;
+  assertTrue("sheet shows sharing, coverage and overlap", /Sharing with other programs/.test(md) && /Sentence coverage: every in-scope block/.test(md) && /Overlap fixture: ok/.test(md), md.slice(0, 1500));
+});
+check("minor: no coverage.json, no overlap fixture or report, a stale report: refused", () => {
+  for (const f of ["coverage.json", "golden-overlap.json", "overlap-report.json"]) {
+    const seed = seedDirs();
+    const rs = minorRefusals(minorProvenance(seed, MINOR, [f]), seed);
+    assertTrue(`${f} missing`, hasRefusal(rs, f), JSON.stringify(rs));
+  }
+  const seed = seedDirs();
+  const base = minorProvenance(seed);
+  writeFileSync(join(seed.layersDir, "cals", `${MAJOR.id}.json`), layerFileText({ ...MAJOR, name: "Invented Science (BS), edited" }));
+  assertTrue("major changed since the report", hasRefusal(minorRefusals(base, seed), "than the one promoted in seed-data"), JSON.stringify(minorRefusals(base, seed)));
+});
+check("minor: an unaccounted sentence or a limit that does not bind is refused", () => {
+  const seed = seedDirs();
+  const base = minorProvenance(seed);
+  const merged = JSON.parse(readFileSync(join(base, "merged.json"), "utf-8"));
+  merged.ledger = [];
+  writeFileSync(join(base, "merged.json"), JSON.stringify(merged));
+  assertTrue("coverage re-run fails", hasRefusal(minorRefusals(base, seed), "sentence coverage fails"), JSON.stringify(minorRefusals(base, seed)));
+  const seed2 = seedDirs();
+  const loose: Layer = { ...MINOR, sharing: { otherMajors: { maxCourses: 1 } } };
+  const rs = minorRefusals(minorProvenance(seed2, loose), seed2);
+  assertTrue("does not bind", hasRefusal(rs, "does not bind"), JSON.stringify(rs));
+});
+check("minor without a limit toward majors: no overlap fixture needed; one that exists is still checked", () => {
+  const seed = seedDirs();
+  const free: Layer = { ...MINOR };
+  delete free.sharing;
+  const base = minorProvenance(seed, free, ["golden-overlap.json", "overlap-report.json"]);
+  const merged = JSON.parse(readFileSync(join(base, "merged.json"), "utf-8"));
+  merged.ledger = [{ block: merged.ledger[0].block, to: "n1" }];
+  delete merged.quotes.sharing;
+  writeFileSync(join(base, "merged.json"), JSON.stringify(merged, null, 2));
+  writeFileSync(join(base, "coverage.json"), JSON.stringify(checkCoverage(merged, loadVerifiedExtract(base))));
+  assertEqual("refusals", minorRefusals(base, seed), []);
+  assertTrue("sheet says not needed", /Overlap fixture: not needed/.test(buildReview(loadReviewInputs(base)).markdown), "no line");
+  writeFileSync(join(base, "golden-overlap.json"), serializeOverlapFixture(OVERLAP_FX));
+  assertTrue("a stray fixture is checked", minorRefusals(base, seed).length > 0, "accepted");
+});
+check("row-id reuse: a re-promotion that gives an old row id a new meaning is refused; family other is for minors only", () => {
+  const seed = seedDirs();
+  mkdirSync(join(seed.layersDir, "cals"), { recursive: true });
+  writeFileSync(join(seed.layersDir, "cals", `${MAJOR.id}.json`), layerFileText({ ...MAJOR, rows: [{ id: "m1", kind: "confirm", label: "Invented confirm", group: "G", source: { url: URL, anchor: "Invented" } }] }));
+  const rs = refusals(MAJOR.id, provenance(MAJOR, MAJOR_FX, [MAJOR]), seed);
+  assertTrue("row id reused", hasRefusal(rs, "row id: invented-bs-2026:m1: row id reused"), JSON.stringify(rs));
+  const other = checkPromotion({ program: MAJOR.id, family: "other", base: provenance(MAJOR, MAJOR_FX, [MAJOR]), catalog: CATALOG, ...seedDirs() }).refusals;
+  assertTrue("major with family other", hasRefusal(other, 'only a minor may be promoted with family "other"'), JSON.stringify(other));
+});
 
 // ── Run ─────────────────────────────────────────────────────────────────────
 console.log(`\n── promote-layer corpus — ${checks.length} case(s) ──`);

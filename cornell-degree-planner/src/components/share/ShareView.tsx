@@ -3,8 +3,8 @@ import { ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "@/components/brand/LogoMark";
 import { fetchShare } from "@/services/shares";
-import { fetchProgram } from "@/services/programs";
-import { fetchLayer } from "@/services/layers";
+import { fetchProgram, fetchProgramIndex } from "@/services/programs";
+import { fetchLayer, fetchMinorIndex } from "@/services/layers";
 import { buildBoard } from "@/lib/planner/board";
 import {
   adaptCurrentShare,
@@ -18,8 +18,9 @@ import { semesterLabel, formatCredits } from "@/lib/planner/semesters";
 import { sanitizeShortTerms, termOfColumn } from "@/lib/planner/terms";
 import type { ShareDoc } from "@/lib/schemas";
 import type { Layer } from "@/lib/planner/distribution/types";
-import { shareProgressInput } from "@/lib/planner/shareContext";
+import { shareAdditionalPrograms, shareProgressInput } from "@/lib/planner/shareContext";
 import { asksStudentFacts, shareLayerIds, shareMarkLines } from "./shareMarks";
+import { shareProgramsLine } from "./sharePrograms";
 
 /**
  * ShareView (spec 005 §5) — the read-only surface behind /s/{shareId}. A frozen
@@ -42,10 +43,48 @@ import { asksStudentFacts, shareLayerIds, shareMarkLines } from "./shareMarks";
  * the student's own view may differ. Those layers are read (public, read-only)
  * only for a share that recorded a rule set or marks, so older shares and
  * Engineering shares cost no extra reads. No question lines or change links.
+ * A share with a second major or minors also reads their layers (spec 047
+ * D13), so an answer on one of them names its real requirement.
+ *
+ * Spec 047 D13: a share that carries a second major or minors names every
+ * program in its header ("Economics + Mathematics (second major) + CS minor ·
+ * shared plan"). Their names are read (public, read-only) from the program
+ * index and the minor index, only for such a share; until they arrive, or if
+ * a read fails, an id reads prettified.
  *
  * DOM contract (e2e): mark lines [data-share-mark]; the note
- * [data-share-facts-note].
+ * [data-share-facts-note]; the program line [data-share-programs].
  */
+
+/** Names of a share's extra programs (id → short name); {} for a share without any. */
+function useShareProgramNames(share: ShareDoc | null): Record<string, string> {
+  const [loaded, setLoaded] = useState<{ share: ShareDoc; names: Record<string, string> } | null>(null);
+  useEffect(() => {
+    if (!share) return;
+    const extra = shareAdditionalPrograms(share);
+    if (extra.length === 0) return;
+    let cancelled = false;
+    const wantMajor = extra.some((p) => p.kind === "major");
+    const wantMinor = extra.some((p) => p.kind === "minor");
+    Promise.all([
+      wantMajor ? fetchProgramIndex().catch(() => []) : Promise.resolve([]),
+      wantMinor ? fetchMinorIndex().catch(() => []) : Promise.resolve([]),
+    ])
+      .then(([programs, minors]) => {
+        if (cancelled) return;
+        const names: Record<string, string> = {};
+        for (const p of programs) names[p.id] = p.short_name || p.name;
+        for (const m of minors) names[m.id] = m.shortName || m.name;
+        setLoaded({ share, names });
+      })
+      .catch((err) => console.warn("[share] program names load failed", err));
+    return () => {
+      cancelled = true;
+    };
+  }, [share]);
+  return loaded && loaded.share === share ? loaded.names : NO_NAMES;
+}
+const NO_NAMES: Record<string, string> = {};
 
 /** The layers behind a share's answers; [] until loaded or when none apply. */
 function useShareLayers(share: ShareDoc | null): Layer[] {
@@ -55,10 +94,13 @@ function useShareLayers(share: ShareDoc | null): Layer[] {
     const input = shareProgressInput(share);
     if (!input.collegeLayerId && Object.keys(input.courseMarks).length === 0) return;
     let cancelled = false;
+    // Spec 047 D13: a share with extra programs also reads their layers
+    // (public, read-only), so their answers name their real requirement.
     const ids = shareLayerIds({
       programId: share.programId,
       collegeRuleSet: input.collegeLayerId,
       concentrationIds: input.concentrationIds,
+      additionalPrograms: shareAdditionalPrograms(share),
     });
     Promise.all(ids.map((id) => fetchLayer(id).catch(() => null)))
       .then((results) => {
@@ -120,6 +162,11 @@ export function ShareView({ shareId }: { shareId: string }) {
     [share, layers]
   );
   const factsNote = useMemo(() => asksStudentFacts(layers), [layers]);
+  const programNames = useShareProgramNames(share);
+  const programsLine = useMemo(
+    () => (share ? shareProgramsLine(share.programName, shareAdditionalPrograms(share), programNames) : ""),
+    [share, programNames]
+  );
 
   const columns = useMemo(() => {
     if (!model) return [];
@@ -167,7 +214,8 @@ export function ShareView({ shareId }: { shareId: string }) {
   const waivedCount = model.waivedRequirementIds.length;
 
   return (
-    <div className="flex h-screen flex-col bg-canvas text-ink">
+    // Never scrolls as a whole (see RequirementsPage): only its panes scroll.
+    <div className="relative flex h-screen flex-col overflow-clip bg-canvas text-ink">
       {/* Header */}
       <div className="border-b border-line bg-surface/90">
         <div className="flex items-center justify-between gap-4 px-4 py-3">
@@ -176,7 +224,7 @@ export function ShareView({ shareId }: { shareId: string }) {
             <div className="min-w-0">
               <p className="truncate t-body font-semibold">{share.planName}</p>
               <p className="t-meta">
-                {share.programName} · shared plan ·{" "}
+                <span data-share-programs>{programsLine}</span> · shared plan ·{" "}
                 <span className="num">{doneCount}</span>{" "}
                 {doneCount === 1 ? "course" : "courses"} completed
                 {inProgressCount > 0 && (

@@ -7,7 +7,14 @@
 // Offline only, by design: authoring runs against a dump (spec D13), so there is
 // no Firestore mode and no credentials are read.
 //
-//   npx tsx validate-layers.ts --dump <catalog-dump.json> [layer files or dirs...]
+//   npx tsx validate-layers.ts --dump <catalog-dump.json> [--previous <path>]... [layer files or dirs...]
+//
+// --previous (spec 047 D10): the previously seeded versions of the layers (a
+// layers backup that seed-layers.ts --apply writes to scripts/backups/, a
+// folder of layer files, or one layer file). Each layer with a previous
+// version is checked for a row id whose meaning changed (rowIdReuse below):
+// row ids key students' waivers and answers, so they are never reused.
+// promote-layer.ts runs the same check against the layer it replaces.
 //
 // Layer paths default to scripts/seed-data/layers (searched recursively for
 // *.json). The dump may be either a JSON array of course docs or a backup file
@@ -136,6 +143,7 @@ export type LayerRow = {
   id: string;
   kind: "seat" | "pool" | "distribution" | "credits" | "anyOf" | "confirm";
   label?: string;
+  group?: string;
   rule?: CourseRule;
   requiredCourses?: number;
   requiredCredits?: number;
@@ -412,16 +420,139 @@ export function renderReport(r: LayerReport): string {
 
 export const DEFAULT_LAYER_DIR = resolve(__dirname, "seed-data", "layers");
 
+// ─── Row-id reuse (spec 047 D10) ──────────────────────────────────────────────
+// A waiver or answer is keyed by layer id and row id. If a re-authored layer
+// gives an old row id to a different requirement, a student's old waiver
+// silently applies to the new one. So a row id is never reused: each layer is
+// compared with its previously seeded version (--previous) and a row unit whose
+// meaning changed under the same id is an ERROR. Meaning, as far as files show
+// it:
+//   ERROR  the unit switched between checkable and confirm;
+//   ERROR  its rule now matches catalog courses entirely disjoint from the
+//          ones it matched before (both non-empty);
+//   ERROR  both its label and its group changed and it shares less than half
+//          of its courses with before (confirm rows: label and group changed);
+//   WARN   only the label changed, or the kind changed (a refinement, usually:
+//          check it is the same requirement);
+//   WARN   a row id was removed: that id must never come back for another
+//          requirement.
+// Course edits that keep the requirement (a course added to a list, a count
+// fixed) pass.
+
+/** A row unit: a top-level row, or "<anyOfId>/<childId>". */
+function layerUnits(layer: LayerFile): { key: string; row: LayerRow }[] {
+  const out: { key: string; row: LayerRow }[] = [];
+  for (const r of layer.rows) {
+    out.push({ key: r.id, row: r });
+    if (r.kind === "anyOf") for (const c of r.rows ?? []) out.push({ key: `${r.id}/${c.id}`, row: c });
+  }
+  return out;
+}
+
+/** The rule a unit counts courses by; null for confirm rows and anyOf parents. */
+function unitRule(row: LayerRow): CourseRule | null {
+  if (row.kind === "confirm" || row.kind === "anyOf") return null;
+  if (row.kind === "distribution") {
+    const cats: CourseRule = { anyOf: (row.categories ?? []).map((c) => c.rule) };
+    return row.rule ? { allOf: [row.rule, cats] } : cats;
+  }
+  return row.rule ?? null;
+}
+
+export type RowIdReport = { errors: string[]; warnings: string[] };
+
+export function rowIdReuse(prev: LayerFile, next: LayerFile, catalog?: Catalog): RowIdReport {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  const before = new Map(layerUnits(prev).map((u) => [u.key, u.row]));
+  const nowKeys = new Set(layerUnits(next).map((u) => u.key));
+  const matched = (rule: CourseRule | null): Set<string> | null =>
+    rule && catalog ? new Set(catalog.courses.filter((c) => courseMatchesRule(c, rule, null, true)).map((c) => c.id)) : null;
+  for (const { key, row } of layerUnits(next)) {
+    const old = before.get(key);
+    if (!old) continue;
+    const where = `${next.id}:${key}`;
+    const checkable = (r: LayerRow) => r.kind !== "confirm";
+    if (checkable(old) !== checkable(row)) {
+      errors.push(`${where}: row id reused: it was a ${old.kind} row and is now a ${row.kind} row (a confirm row and a checked row are different requirements); give the new requirement a new id`);
+      continue;
+    }
+    const labelChanged = (old.label ?? "") !== (row.label ?? "");
+    const groupChanged = (old.group ?? "") !== (row.group ?? "");
+    const a = matched(unitRule(old));
+    const b = matched(unitRule(row));
+    let share: number | null = null;
+    if (a && b && a.size && b.size) {
+      let common = 0;
+      for (const id of a) if (b.has(id)) common++;
+      share = common / Math.min(a.size, b.size);
+      if (common === 0) {
+        errors.push(`${where}: row id reused: its rule matched ${a.size} catalog course(s) before and ${b.size} now, none in common; give the new requirement a new id`);
+        continue;
+      }
+    }
+    if (labelChanged && groupChanged && (share == null ? true : share < 0.5)) {
+      errors.push(
+        `${where}: row id reused: label "${old.label ?? ""}" → "${row.label ?? ""}" and group "${old.group ?? ""}" → "${row.group ?? ""}"` +
+          `${share == null ? "" : `, ${Math.round(share * 100)}% of its courses in common`}; give the new requirement a new id`,
+      );
+      continue;
+    }
+    if (labelChanged) warnings.push(`${where}: label changed ("${old.label ?? ""}" → "${row.label ?? ""}"): check it is still the same requirement (row ids are never reused)`);
+    else if (old.kind !== row.kind) warnings.push(`${where}: kind changed (${old.kind} → ${row.kind}): check it is still the same requirement`);
+  }
+  for (const key of before.keys())
+    if (!nowKeys.has(key)) warnings.push(`${next.id}:${key}: row removed since the previous version; never give this id to another requirement`);
+  return { errors, warnings };
+}
+
+/** Previously seeded layers by id, from a layers backup (seed-layers.ts --apply
+ *  writes { "<id>": { json: "<layer>" } } to scripts/backups/), a directory of
+ *  layer files, or one layer file. */
+export function loadPreviousLayers(path: string): Map<string, LayerFile> {
+  const out = new Map<string, LayerFile>();
+  if (statSync(path).isDirectory()) {
+    for (const f of collectLayerFiles([path])) {
+      const l = readLayerFile(f);
+      out.set(l.id, l);
+    }
+    return out;
+  }
+  const raw = JSON.parse(readFileSync(path, "utf-8"));
+  if (raw && typeof raw.id === "string" && Array.isArray(raw.rows)) {
+    out.set(raw.id, raw as LayerFile);
+    return out;
+  }
+  if (!raw || typeof raw !== "object") throw new Error(`${path}: not a layer file, a layers backup or a directory`);
+  for (const [id, doc] of Object.entries(raw as Record<string, unknown>)) {
+    const json = (doc as { json?: unknown } | null)?.json;
+    if (typeof json !== "string") throw new Error(`${path}: entry ${id} has no layer json (not a layers backup)`);
+    const layer = JSON.parse(json) as LayerFile;
+    out.set(layer.id ?? id, layer);
+  }
+  return out;
+}
+
 // ─── main() ───────────────────────────────────────────────────────────────────
 function main() {
   const args = process.argv.slice(2);
   let dumpPath: string | null = null;
   const newTags: string[] = [];
   const paths: string[] = [];
+  const previousPaths: string[] = [];
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--dump") dumpPath = args[++i] ?? null;
     else if (args[i] === "--new-tag") newTags.push(args[++i] ?? "");
+    else if (args[i] === "--previous") previousPaths.push(args[++i] ?? "");
     else paths.push(args[i]);
+  }
+  const previous = new Map<string, LayerFile>();
+  for (const p of previousPaths) {
+    if (!p || !existsSync(resolve(p))) {
+      console.error(`ABORTED: --previous ${p} does not exist.`);
+      process.exit(1);
+    }
+    for (const [id, l] of loadPreviousLayers(resolve(p))) previous.set(id, l);
   }
   if (!dumpPath) {
     console.error("ABORTED: --dump <catalog-dump.json> is required (this validator is offline only).");
@@ -447,8 +578,17 @@ function main() {
 
   let errors = 0;
   let warnings = 0;
+  if (previousPaths.length) console.log(`Row-id reuse: comparing with ${previous.size} previously seeded layer(s) from ${previousPaths.join(", ")}`);
+  else console.log("Row-id reuse: not checked (pass --previous <layers backup | folder | file> to compare with the previously seeded versions).");
   for (const f of files) {
-    const r = validateLayer(f, readLayerFile(f), catalog, { newTags });
+    const layer = readLayerFile(f);
+    const r = validateLayer(f, layer, catalog, { newTags });
+    const prev = previous.get(layer.id);
+    if (prev) {
+      const reuse = rowIdReuse(prev, layer, catalog);
+      r.errors.push(...reuse.errors);
+      r.warnings.push(...reuse.warnings);
+    }
     console.log(renderReport(r));
     errors += r.errors.length;
     warnings += r.warnings.length;

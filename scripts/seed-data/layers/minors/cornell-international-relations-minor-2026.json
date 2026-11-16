@@ -1,0 +1,432 @@
+{
+  "id": "cornell-international-relations-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "International Relations (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-international-relations-minor-2026",
+  "rows": [
+    {
+      "id": "core-intl-economics",
+      "label": "Core course in international economics and development (Group 1)",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Group 1 core courses expect an introductory economics course first.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2300",
+          "AEM-4300",
+          "ECON-3545"
+        ]
+      }
+    },
+    {
+      "id": "core-world-politics",
+      "label": "Core course in world politics and foreign policy (Group 2)",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GOVT-1817"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-intl-policy",
+      "label": "Core course in international policy (Group 3)",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2000",
+          "GDEV-1102",
+          "GDEV-2010",
+          "GDEV-3150",
+          "GDEV-3311"
+        ]
+      }
+    },
+    {
+      "id": "core-regional",
+      "label": "Core course in regional specialization (Group 4), one from any region's core list",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "HIST-1590",
+          "GOVT-3353",
+          "ASIAN-2208",
+          "ASIAN-2211",
+          "ASIAN-2218",
+          "ASIAN-2222",
+          "ASIAN-2275",
+          "CAPS-2230",
+          "GOVT-2553",
+          "HIST-1511",
+          "HIST-1960",
+          "GOVT-3293",
+          "HIST-2674",
+          "GOVT-3313"
+        ]
+      }
+    },
+    {
+      "id": "electives",
+      "label": "Two electives from the elective lists of any of the four groups",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Only listed electives of at least 3 credits count; CRP 3850, GDEV 4940 and ASIAN 4494 (printed as variable credit below 3) are held out, since the board cannot see the credits taken (stricter, so six courses reach 18). Unlisted courses the coordinator approves never count (see the approval reminder). A second core-list course does not count. Option B needs one elective from the regional lists (separate reminder).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AEM-2000",
+              "AEM-2300",
+              "AEM-2350",
+              "AEM-2500",
+              "AEM-2805",
+              "AEM-2816",
+              "AEM-4420",
+              "AEM-4450",
+              "AEM-4545",
+              "AEM-4880",
+              "ASIAN-3304",
+              "CRP-3854",
+              "ECON-3550",
+              "ECON-3545",
+              "ECON-3910",
+              "GDEV-3010",
+              "ILRGL-2350",
+              "ILRGL-3385",
+              "ILRGL-4337",
+              "NES-4337",
+              "PUBPOL-3780",
+              "ASIAN-4448",
+              "ASRC-3330",
+              "GOVT-2274",
+              "GOVT-2817",
+              "GOVT-2847",
+              "GOVT-3384",
+              "GOVT-3857",
+              "GOVT-3947",
+              "GDEV-4721",
+              "HIST-2315",
+              "HIST-1650",
+              "HIST-1740",
+              "HIST-2541",
+              "HIST-2969",
+              "AEM-1500",
+              "CEE-1130",
+              "ECON-3670",
+              "ECON-3850",
+              "ECON-3860",
+              "GDEV-3020",
+              "GDEV-3311",
+              "GDEV-3240",
+              "GDEV-4140",
+              "GDEV-4443",
+              "GDEV-4940",
+              "GOVT-2152",
+              "GOVT-3087",
+              "GOVT-3494",
+              "GOVT-4451",
+              "HIST-4851",
+              "ILRGL-4360",
+              "PUBPOL-3615",
+              "PUBPOL-3670",
+              "ASRC-2003",
+              "ASRC-2354",
+              "ASRC-2515",
+              "ASRC-2542",
+              "ASRC-2556",
+              "ASRC-4681",
+              "CRP-3850",
+              "NS-4630",
+              "GOVT-3333",
+              "ANTHR-4516",
+              "ARTH-3850",
+              "ARTH-4816",
+              "ASIAN-2232",
+              "ASIAN-3309",
+              "ASIAN-3380",
+              "ASIAN-3395",
+              "ASIAN-3396",
+              "ASIAN-4454",
+              "ASIAN-4494",
+              "CAPS-4502",
+              "GOVT-3007",
+              "GOVT-3017",
+              "GOVT-3044",
+              "GOVT-3443",
+              "GOVT-4037",
+              "HIST-2548",
+              "RELST-2250",
+              "ARTH-4720",
+              "GOVT-2553",
+              "HIST-2158",
+              "HIST-2165",
+              "HIST-2760",
+              "HIST-2958",
+              "ANTHR-3255",
+              "ARTH-3566",
+              "HIST-3801",
+              "LATA-2200",
+              "LATA-2715",
+              "LATA-2800",
+              "LATA-4000",
+              "GOVT-2673",
+              "HIST-3519",
+              "NES-2722",
+              "NES-3542",
+              "NES-3805"
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "CRP-3850",
+                "GDEV-4940",
+                "ASIAN-4494"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "total-credits",
+      "label": "At least 18 credits in the minor",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Re-counts credits of listed courses; it never uses a course up, so it sees every listed course, not only the six the rows use. The six-courses credit floor is held by the 3-credit minimum on the electives and by the separate reminder below.",
+      "overlay": true,
+      "kind": "credits",
+      "rule": {
+        "course": [
+          "AEM-2300",
+          "AEM-4300",
+          "ECON-3545",
+          "AEM-2000",
+          "AEM-2350",
+          "AEM-2500",
+          "AEM-2805",
+          "AEM-2816",
+          "AEM-4420",
+          "AEM-4450",
+          "AEM-4545",
+          "AEM-4880",
+          "ASIAN-3304",
+          "CRP-3854",
+          "ECON-3550",
+          "ECON-3910",
+          "GDEV-3010",
+          "ILRGL-2350",
+          "ILRGL-3385",
+          "ILRGL-4337",
+          "NES-4337",
+          "PUBPOL-3780",
+          "GOVT-1817",
+          "ASIAN-4448",
+          "ASRC-3330",
+          "GOVT-2274",
+          "GOVT-2817",
+          "GOVT-2847",
+          "GOVT-3384",
+          "GOVT-3857",
+          "GOVT-3947",
+          "GDEV-4721",
+          "HIST-2315",
+          "HIST-1650",
+          "HIST-1740",
+          "HIST-2541",
+          "HIST-2969",
+          "GDEV-1102",
+          "GDEV-2010",
+          "GDEV-3150",
+          "GDEV-3311",
+          "AEM-1500",
+          "CEE-1130",
+          "ECON-3670",
+          "ECON-3850",
+          "ECON-3860",
+          "GDEV-3020",
+          "GDEV-3240",
+          "GDEV-4140",
+          "GDEV-4443",
+          "GDEV-4940",
+          "GOVT-2152",
+          "GOVT-3087",
+          "GOVT-3494",
+          "GOVT-4451",
+          "HIST-4851",
+          "ILRGL-4360",
+          "PUBPOL-3615",
+          "PUBPOL-3670",
+          "HIST-1590",
+          "GOVT-3353",
+          "ASIAN-2208",
+          "ASIAN-2211",
+          "ASIAN-2218",
+          "ASIAN-2222",
+          "ASIAN-2275",
+          "CAPS-2230",
+          "GOVT-2553",
+          "HIST-1511",
+          "HIST-1960",
+          "GOVT-3293",
+          "HIST-2674",
+          "GOVT-3313",
+          "ASRC-2003",
+          "ASRC-2354",
+          "ASRC-2515",
+          "ASRC-2542",
+          "ASRC-2556",
+          "ASRC-4681",
+          "CRP-3850",
+          "NS-4630",
+          "GOVT-3333",
+          "ANTHR-4516",
+          "ARTH-3850",
+          "ARTH-4816",
+          "ASIAN-2232",
+          "ASIAN-3309",
+          "ASIAN-3380",
+          "ASIAN-3395",
+          "ASIAN-3396",
+          "ASIAN-4454",
+          "ASIAN-4494",
+          "CAPS-4502",
+          "GOVT-3007",
+          "GOVT-3017",
+          "GOVT-3044",
+          "GOVT-3443",
+          "GOVT-4037",
+          "HIST-2548",
+          "RELST-2250",
+          "ARTH-4720",
+          "HIST-2158",
+          "HIST-2165",
+          "HIST-2760",
+          "HIST-2958",
+          "ANTHR-3255",
+          "ARTH-3566",
+          "HIST-3801",
+          "LATA-2200",
+          "LATA-2715",
+          "LATA-2800",
+          "LATA-4000",
+          "GOVT-2673",
+          "HIST-3519",
+          "NES-2722",
+          "NES-3542",
+          "NES-3805"
+        ]
+      },
+      "requiredCredits": 18
+    },
+    {
+      "id": "six-courses-credit-total",
+      "label": "The six minor courses themselves total at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The total above counts every listed course on your plan, not only the six used for the minor. Check that the four core courses and two electives alone reach 18 credits.",
+      "kind": "confirm"
+    },
+    {
+      "id": "option-b-regional-elective",
+      "label": "Option B only: one of your two electives is from the regional specialization electives",
+      "group": "Option B",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot tell which track you chose. If you follow Option B, make sure one elective is from the regional lists.",
+      "kind": "confirm"
+    },
+    {
+      "id": "option-b-language",
+      "label": "Option B only: finish the language requirement (one language plus a culture course, or two languages to proficiency)",
+      "group": "Option B",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Language Requirement"
+      },
+      "note": "Proficiency is usually reached with a course at the 2000 level. The board cannot check language proficiency.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every course counted for the minor, language courses included, for a letter grade",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "regional-content",
+      "label": "Regional courses must be mostly (over half) about a region or a country in it",
+      "group": "Regional specialization",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Course List"
+      },
+      "note": "The page's lists are samples; the board counts listed courses only.",
+      "kind": "confirm"
+    },
+    {
+      "id": "unlisted-course-approval",
+      "label": "A course not on the lists counts only if the IR coordinator approves it",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Course List"
+      },
+      "note": "Unlisted courses never count on the board; if an approved one is your sixth course, the rows above may show short.",
+      "kind": "confirm"
+    },
+    {
+      "id": "enroll-in-minor",
+      "label": "Enroll in the minor through the program's Administrative Coordinator",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-relations-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

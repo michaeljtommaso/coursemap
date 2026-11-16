@@ -103,7 +103,7 @@ service cloud.firestore {
           return d.keys().hasOnly(
                ['name','programId','placements','courseSnapshots','completedIds',
                 'inProgressIds','waivedRequirementIds','courseMarks','triedCourseIds',
-                'shortTerms','schemaVersion','createdAt','updatedAt'])
+                'shortTerms','additionalPrograms','schemaVersion','createdAt','updatedAt'])
             && d.name is string
             && d.name.size() <= 80                                      // keep in sync with schemas.ts PlanSchema.name
             && d.programId is string
@@ -139,6 +139,14 @@ service cloud.firestore {
             && (!('shortTerms' in d)
                 || (d.shortTerms is list
                     && d.shortTerms.size() <= 10))                      // keep in sync with schemas.ts PlanSchema.shortTerms
+            // Spec 047 D2: the plan's second major and minors (a list of
+            // { programId, kind, concentrationIds? } maps), optional: a plan
+            // without any has no field. Per-entry shape and the 1 major + 3
+            // minors split are client Zod (strictAdditionalPrograms); rules
+            // cap the list size.
+            && (!('additionalPrograms' in d)
+                || (d.additionalPrograms is list
+                    && d.additionalPrograms.size() <= 4))               // keep in sync with schemas.ts MAX_ADDITIONAL_PROGRAMS
             && d.schemaVersion is int
             && d.schemaVersion >= 3;                                    // keep in sync with schemas.ts PLAN_SCHEMA_VERSION
         }
@@ -219,7 +227,8 @@ service cloud.firestore {
              ['createdBy','createdAt','planName','programId','programName',
               'enteringYear','placements','courseSnapshots','completedIds',
               'inProgressIds','waivedRequirementIds','courseMarks',
-              'collegeRuleSet','concentrationIds','shortTerms','schemaVersion'])
+              'collegeRuleSet','concentrationIds','shortTerms','additionalPrograms',
+              'schemaVersion'])
         && d.placements is list
         && d.placements.size() <= 80                                  // keep in sync with schemas.ts ShareSchema.placements
         && d.courseSnapshots is map
@@ -249,6 +258,12 @@ service cloud.firestore {
         && (!('shortTerms' in d)
             || (d.shortTerms is list
                 && d.shortTerms.size() <= 10))                        // keep in sync with schemas.ts ShareSchema.shortTerms
+        // Spec 047 D13: the plan's second major and minors, optional (a share
+        // without them stays valid). Per-entry shape is client Zod
+        // (ShareCreateSchema); rules cap the list size.
+        && (!('additionalPrograms' in d)
+            || (d.additionalPrograms is list
+                && d.additionalPrograms.size() <= 4))                 // keep in sync with schemas.ts MAX_ADDITIONAL_PROGRAMS
         && d.schemaVersion is int
         && d.schemaVersion >= 3;                                      // keep in sync with schemas.ts PLAN_SCHEMA_VERSION
     }

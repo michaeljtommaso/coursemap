@@ -1,0 +1,239 @@
+{
+  "programId": "cornell-data-science-minor-2026",
+  "description": "A fictional economics major finishes the data science minor with one stats, one coding and four spread-out category courses.",
+  "layerIds": [
+    "cornell-data-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ECON-3130",
+    "CS-1110",
+    "ECON-3120",
+    "ECON-3140",
+    "INFO-1200",
+    "INFO-3312"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "STSCI-3200",
+      "rowId": "core-statistics",
+      "why": "Statistics II is only a data analysis course, not on the core statistics list."
+    },
+    {
+      "courseId": "INFO-2950",
+      "rowId": "core-statistics",
+      "why": "An intro data science course is not on the core statistics list."
+    },
+    {
+      "courseId": "CS-3780",
+      "rowId": "core-computing",
+      "why": "Machine learning is a data analysis course, not on the core programming list."
+    },
+    {
+      "courseId": "MATH-2310",
+      "rowId": "category-courses",
+      "why": "Linear algebra counts only when taken in fall 2024 or later, which the board cannot confirm, so it is held out."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3120",
+      "subject": "ECON",
+      "number": "3120",
+      "title": "Applied Econometrics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3140",
+      "subject": "ECON",
+      "number": "3140",
+      "title": "Econometrics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-1200",
+      "subject": "INFO",
+      "number": "1200",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "INFO-3312",
+      "subject": "INFO",
+      "number": "3312",
+      "title": "Data Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3200",
+      "subject": "STSCI",
+      "number": "3200",
+      "title": "Statistics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-2950",
+      "subject": "INFO",
+      "number": "2950",
+      "title": "Introduction to Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-3780",
+      "subject": "CS",
+      "number": "3780",
+      "title": "Introduction to Machine Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2310",
+      "subject": "MATH",
+      "number": "2310",
+      "title": "Linear Algebra for Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

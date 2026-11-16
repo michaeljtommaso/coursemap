@@ -49,3 +49,27 @@ describe("AnswersEditor", () => {
     expect(text(html)).toContain("You haven't answered any.");
   });
 });
+
+describe("AnswersEditor — where shared courses count (spec 047 D8)", () => {
+  it("lists each countsFor choice by name with Clear, never as a question", () => {
+    const html = renderToStaticMarkup(
+      <AnswersEditor
+        answers={[entry({}), entry({ key: "countsFor:math-ba@ECON-3110", prompt: "countsFor:math-ba@ECON-3110" })]}
+        onAnswer={vi.fn()}
+        choices={[{ key: "countsFor:math-ba@ECON-3110", text: "ECON 3110 counts for Mathematics" }]}
+      />
+    );
+    expect(html).toContain('data-counts-for-choice="countsFor:math-ba@ECON-3110"');
+    expect(html).not.toContain('data-answer-entry="countsFor:math-ba@ECON-3110"');
+    expect(text(html)).toContain("Where shared courses count ECON 3110 counts for Mathematics Clear");
+    expect(html).toContain('aria-label="Clear your choice: ECON 3110 counts for Mathematics"');
+  });
+
+  it("with only choices, no empty-answers line", () => {
+    const html = renderToStaticMarkup(
+      <AnswersEditor answers={[]} onAnswer={vi.fn()} choices={[{ key: "countsFor:m@C-1", text: "C 1 counts for M" }]} />
+    );
+    expect(text(html)).not.toContain("You haven't answered any");
+    expect(text(html)).not.toContain("Answers to questions");
+  });
+});

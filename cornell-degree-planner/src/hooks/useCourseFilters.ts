@@ -413,13 +413,18 @@ export function recordSatisfiesRequirement(
  *  program switch) narrows nothing. */
 export function buildRequirementPredicate(
   slots: ProgramSlotWithData[],
-  canonical: (id: string) => string = identity
+  canonical: (id: string) => string = identity,
+  /** What an id that isn't one of these slots' requirements gets: true (the
+   *  Classes page's filter, which only offers this program's ids, narrows
+   *  nothing), or false where an unknown id must suggest nothing (the
+   *  Requirements page's "Classes that would fill this"). */
+  unknown = true
 ): (r: CatalogIndexRecord, requirementId: string) => boolean {
   const byId = new Map<string, RequirementInstance>();
   for (const req of programToRequirements(programSlotsToMatchInput(slots))) byId.set(req.id, req);
   return (r, requirementId) => {
     const req = byId.get(requirementId);
-    return req ? recordSatisfiesRequirement(r, req, canonical) : true;
+    return req ? recordSatisfiesRequirement(r, req, canonical) : unknown;
   };
 }
 

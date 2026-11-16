@@ -95,3 +95,35 @@ export function migrateLegacyWaivers(storedProgramId: string, waivedIds: string[
   const known = waivedIds.filter((id) => id.includes(":") || Object.prototype.hasOwnProperty.call(map, id));
   return translateWaivers(known, map);
 }
+
+/**
+ * A plan's (or share's) additional programs (spec 047 D13) read under their
+ * current ids: each retired program id becomes its current id, and an entry
+ * that then repeats an earlier one, or names the plan's own primary program
+ * (`primaryProgramId`, already canonical), is dropped (first wins). The list
+ * is already shaped (schemas.ts ADDITIONAL_PROGRAMS). Returns the same array
+ * when nothing changes. Pure.
+ */
+export function canonicalAdditionalPrograms<P extends { programId: string }>(
+  list: readonly P[],
+  primaryProgramId: string
+): P[] {
+  const out: P[] = [];
+  const seen = new Set<string>();
+  let changed = false;
+  for (const p of list) {
+    const programId = canonicalProgramId(p.programId);
+    if (programId === primaryProgramId || seen.has(programId)) {
+      changed = true;
+      continue;
+    }
+    seen.add(programId);
+    if (programId !== p.programId) {
+      changed = true;
+      out.push({ ...p, programId });
+    } else {
+      out.push(p);
+    }
+  }
+  return changed ? out : (list as P[]);
+}

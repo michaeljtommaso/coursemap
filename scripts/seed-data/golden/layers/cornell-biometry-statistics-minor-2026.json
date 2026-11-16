@@ -1,0 +1,239 @@
+{
+  "programId": "cornell-biometry-statistics-minor-2026",
+  "description": "A student finishes the calculus, statistics and probability sequence plus three full-credit statistics electives.",
+  "layerIds": [
+    "cornell-biometry-statistics-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-1110",
+    "MATH-1120",
+    "MATH-2220",
+    "STSCI-2200",
+    "STSCI-3200",
+    "STSCI-3080",
+    "STSCI-3740",
+    "STSCI-3100",
+    "STSCI-3510"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-1120",
+      "rowId": "calc-1",
+      "why": "Calculus II is not the Calculus I course."
+    },
+    {
+      "courseId": "MATH-1110",
+      "rowId": "calc-2",
+      "why": "Calculus I cannot stand in for the second calculus course."
+    },
+    {
+      "courseId": "MATH-1110",
+      "rowId": "multivariable",
+      "why": "Single-variable calculus is not one of the multivariable options."
+    },
+    {
+      "courseId": "STSCI-3200",
+      "rowId": "stat-methods-1",
+      "why": "The second methods course is not on the list of first-course equivalents."
+    },
+    {
+      "courseId": "STSCI-2200",
+      "rowId": "stat-methods-2",
+      "why": "The first methods course does not fill the second methods slot."
+    },
+    {
+      "courseId": "STSCI-3740",
+      "rowId": "probability",
+      "why": "An actuarial math elective is not a listed probability course."
+    },
+    {
+      "courseId": "STSCI-2200",
+      "rowId": "electives",
+      "why": "The core methods course is not on the elective list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1120",
+      "subject": "MATH",
+      "number": "1120",
+      "title": "Calculus II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-2200",
+      "subject": "STSCI",
+      "number": "2200",
+      "title": "Statistics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3200",
+      "subject": "STSCI",
+      "number": "3200",
+      "title": "Statistics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3080",
+      "subject": "STSCI",
+      "number": "3080",
+      "title": "Probability Models and Inference",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3740",
+      "subject": "STSCI",
+      "number": "3740",
+      "title": "Data Mining and Machine Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3100",
+      "subject": "STSCI",
+      "number": "3100",
+      "title": "Statistical Sampling",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3510",
+      "subject": "STSCI",
+      "number": "3510",
+      "title": "Stochastic Processes for Decision-Making",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    }
+  ]
+}

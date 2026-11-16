@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   MAX_PLACEMENTS,
   clampSem,
+  columnHasCourse,
   columnPlacements,
   insertPlacement,
   movePlacementTo,
@@ -83,6 +84,38 @@ function slot(id: string, over: Partial<ProgramSlotWithData> = {}): ProgramSlotW
 }
 
 // ── clampSem / normalize ──────────────────────────────────────────────────────
+describe("columnHasCourse (spec 047 D4)", () => {
+  const ps = (): Placement[] => [
+    P("a", 3, 0, "CS-2110"),
+    P("b", 3, 1, "MATH-1920"),
+    { id: "s", courseId: "CS-1110", sem: 3, order: 0, shortTerm: true },
+  ];
+
+  it("finds the same course in the target column", () => {
+    expect(columnHasCourse(ps(), "CS-2110", 3)).toBe(true);
+  });
+
+  it("allows the same course in another term (a retake)", () => {
+    expect(columnHasCourse(ps(), "CS-2110", 4)).toBe(false);
+    expect(columnHasCourse(ps(), "CS-2110", { sem: 3, shortTerm: true })).toBe(false);
+  });
+
+  it("treats a short term as its own column", () => {
+    expect(columnHasCourse(ps(), "CS-1110", { sem: 3, shortTerm: true })).toBe(true);
+    expect(columnHasCourse(ps(), "CS-1110", 3)).toBe(false);
+  });
+
+  it("compares canonical ids, so an old id and its current id are the same class", () => {
+    const canonical = (id: string) => (id === "ENGRD-2700" ? "CS-2110" : id);
+    expect(columnHasCourse(ps(), "ENGRD-2700", 3, canonical)).toBe(true);
+    expect(columnHasCourse(ps(), "ENGRD-2700", 3)).toBe(false);
+  });
+
+  it("skips the placement being moved", () => {
+    expect(columnHasCourse(ps(), "CS-2110", 3, undefined, "a")).toBe(false);
+  });
+});
+
 describe("clampSem", () => {
   it("clamps into 1..10 and treats non-finite as 1", () => {
     expect(clampSem(0)).toBe(1);

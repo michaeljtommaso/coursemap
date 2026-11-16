@@ -1,0 +1,1970 @@
+{
+  "id": "cornell-information-science-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Information Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-information-science-minor-2026",
+  "sharing": {
+    "forbiddenWith": [
+      "cornell-data-science-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "track",
+      "label": "Pick one concentration: its core course, three of its courses, and an elective from any concentration",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Program Requirements by College"
+      },
+      "note": "Core, three concentration courses and one elective, counted without reuse. Behavioral Science and User Experience share one option here (same core INFO 2450), which would also accept a mix of their two lists: see the confirm row. Exam and transfer credit never count. INFO 4940 and COMM 4940 are left out (see the topics row).",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "behavioral-or-ux",
+          "label": "Behavioral Science or User Experience: core course, three concentration courses and one elective",
+          "group": "Courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+            "anchor": "Program Requirements by College"
+          },
+          "note": "Behavioral Science and User Experience share the core course and sit in one option. So that a mix of the two lists cannot pass, the three concentration courses must come from the courses both lists share (stricter than the page); a student using courses from only one list confirms on the one-concentration row.",
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-2450",
+                      "COMM-4380",
+                      "COMM-4940",
+                      "CS-3780",
+                      "CS-4740",
+                      "INFO-3170",
+                      "INFO-3200",
+                      "INFO-3300",
+                      "INFO-3450",
+                      "INFO-3720",
+                      "INFO-3950",
+                      "INFO-4100",
+                      "INFO-4140",
+                      "INFO-4240",
+                      "INFO-4300",
+                      "INFO-4350",
+                      "INFO-4360",
+                      "INFO-4400",
+                      "INFO-4430",
+                      "INFO-4450",
+                      "INFO-4490",
+                      "INFO-4500",
+                      "INFO-4505",
+                      "INFO-4940",
+                      "PSYCH-3800",
+                      "INFO-2950",
+                      "INFO-2951",
+                      "COMM-3150",
+                      "COMM-3190",
+                      "COMM-4010",
+                      "COMM-4860",
+                      "ENGL-3778",
+                      "GOVT-3189",
+                      "INFO-2770",
+                      "INFO-3130",
+                      "INFO-3312",
+                      "INFO-3350",
+                      "INFO-3370",
+                      "INFO-3900",
+                      "INFO-4120",
+                      "INFO-4145",
+                      "INFO-4200",
+                      "INFO-4250",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4310",
+                      "INFO-4390",
+                      "INFO-4561",
+                      "ORIE-3120",
+                      "ORIE-3741",
+                      "ORIE-4740",
+                      "PUBPOL-3460",
+                      "SOC-3580",
+                      "SOC-4390",
+                      "STSCI-3740",
+                      "INFO-3561",
+                      "INFO-2921",
+                      "ART-3705",
+                      "ARTH-4151",
+                      "CS-4620",
+                      "CS-4758",
+                      "INFO-2300",
+                      "INFO-2310",
+                      "INFO-3152",
+                      "INFO-3660",
+                      "INFO-4152",
+                      "INFO-4320",
+                      "INFO-4420",
+                      "STS-4040",
+                      "INFO-1200",
+                      "INFO-1260",
+                      "ENGRG-3605",
+                      "HADM-4890",
+                      "INFO-3210",
+                      "INFO-4113",
+                      "INFO-4210",
+                      "INFO-4301",
+                      "PUBPOL-2300",
+                      "PUBPOL-2301",
+                      "CS-5150",
+                      "INFO-4340",
+                      "INFO-4410",
+                      "INFO-4555",
+                      "INFO-2850",
+                      "ECON-3120",
+                      "ECON-3140",
+                      "ECON-3810",
+                      "ECON-4020",
+                      "ECON-4610",
+                      "ECON-4620",
+                      "ECON-4660",
+                      "INFO-4220",
+                      "ORIE-4350",
+                      "SOC-3080",
+                      "SOC-3490",
+                      "INFO-4125",
+                      "INFO-4470",
+                      "PSYCH-3420"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "INFO-1300"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "INFO-4940",
+                    "COMM-4940",
+                    "ARTH-4151"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 5,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "INFO-2450"
+                ]
+              },
+              "label": "One core course of the chosen concentration",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "COMM-4380",
+                  "INFO-3450",
+                  "INFO-4240",
+                  "INFO-4400",
+                  "INFO-4430",
+                  "INFO-4450",
+                  "INFO-4490",
+                  "INFO-4505"
+                ]
+              },
+              "label": "Three concentration courses from those both lists share",
+              "minCourses": 3
+            },
+            {
+              "rule": {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-2450"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "COMM-4380",
+                      "INFO-3450",
+                      "INFO-4240",
+                      "INFO-4400",
+                      "INFO-4430",
+                      "INFO-4450",
+                      "INFO-4490",
+                      "INFO-4505"
+                    ]
+                  }
+                ]
+              },
+              "label": "Core plus concentration courses, counted without reuse",
+              "minCourses": 4
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-2950",
+                  "INFO-2951"
+                ]
+              },
+              "label": "Only one of the two data science intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-1200",
+                  "INFO-1260"
+                ]
+              },
+              "label": "Only one of the two ethics intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "PUBPOL-2300",
+                  "PUBPOL-2301"
+                ]
+              },
+              "label": "Only one of the two policy intro alternatives",
+              "maxCourses": 1
+            }
+          ]
+        },
+        {
+          "id": "data-science",
+          "label": "Data Science: core course, three concentration courses and one elective",
+          "group": "Courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+            "anchor": "Program Requirements by College"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-2450",
+                      "COMM-4380",
+                      "COMM-4940",
+                      "CS-3780",
+                      "CS-4740",
+                      "INFO-3170",
+                      "INFO-3200",
+                      "INFO-3300",
+                      "INFO-3450",
+                      "INFO-3720",
+                      "INFO-3950",
+                      "INFO-4100",
+                      "INFO-4140",
+                      "INFO-4240",
+                      "INFO-4300",
+                      "INFO-4350",
+                      "INFO-4360",
+                      "INFO-4400",
+                      "INFO-4430",
+                      "INFO-4450",
+                      "INFO-4490",
+                      "INFO-4500",
+                      "INFO-4505",
+                      "INFO-4940",
+                      "PSYCH-3800",
+                      "INFO-2950",
+                      "INFO-2951",
+                      "COMM-3150",
+                      "COMM-3190",
+                      "COMM-4010",
+                      "COMM-4860",
+                      "ENGL-3778",
+                      "GOVT-3189",
+                      "INFO-2770",
+                      "INFO-3130",
+                      "INFO-3312",
+                      "INFO-3350",
+                      "INFO-3370",
+                      "INFO-3900",
+                      "INFO-4120",
+                      "INFO-4145",
+                      "INFO-4200",
+                      "INFO-4250",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4310",
+                      "INFO-4390",
+                      "INFO-4561",
+                      "ORIE-3120",
+                      "ORIE-3741",
+                      "ORIE-4740",
+                      "PUBPOL-3460",
+                      "SOC-3580",
+                      "SOC-4390",
+                      "STSCI-3740",
+                      "INFO-3561",
+                      "INFO-2921",
+                      "ART-3705",
+                      "ARTH-4151",
+                      "CS-4620",
+                      "CS-4758",
+                      "INFO-2300",
+                      "INFO-2310",
+                      "INFO-3152",
+                      "INFO-3660",
+                      "INFO-4152",
+                      "INFO-4320",
+                      "INFO-4420",
+                      "STS-4040",
+                      "INFO-1200",
+                      "INFO-1260",
+                      "ENGRG-3605",
+                      "HADM-4890",
+                      "INFO-3210",
+                      "INFO-4113",
+                      "INFO-4210",
+                      "INFO-4301",
+                      "PUBPOL-2300",
+                      "PUBPOL-2301",
+                      "CS-5150",
+                      "INFO-4340",
+                      "INFO-4410",
+                      "INFO-4555",
+                      "INFO-2850",
+                      "ECON-3120",
+                      "ECON-3140",
+                      "ECON-3810",
+                      "ECON-4020",
+                      "ECON-4610",
+                      "ECON-4620",
+                      "ECON-4660",
+                      "INFO-4220",
+                      "ORIE-4350",
+                      "SOC-3080",
+                      "SOC-3490",
+                      "INFO-4125",
+                      "INFO-4470",
+                      "PSYCH-3420"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "INFO-1300"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "INFO-4940",
+                    "COMM-4940",
+                    "ARTH-4151"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 5,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "INFO-2950",
+                  "INFO-2951"
+                ]
+              },
+              "label": "One core course of the chosen concentration",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "COMM-3150",
+                  "COMM-3190",
+                  "COMM-4010",
+                  "COMM-4860",
+                  "COMM-4940",
+                  "CS-3780",
+                  "CS-4740",
+                  "ENGL-3778",
+                  "GOVT-3189",
+                  "INFO-2770",
+                  "INFO-3130",
+                  "INFO-3200",
+                  "INFO-3300",
+                  "INFO-3312",
+                  "INFO-3350",
+                  "INFO-3370",
+                  "INFO-3720",
+                  "INFO-3900",
+                  "INFO-3950",
+                  "INFO-4100",
+                  "INFO-4120",
+                  "INFO-4140",
+                  "INFO-4145",
+                  "INFO-4200",
+                  "INFO-4240",
+                  "INFO-4250",
+                  "INFO-4260",
+                  "INFO-4270",
+                  "INFO-4300",
+                  "INFO-4310",
+                  "INFO-4350",
+                  "INFO-4390",
+                  "INFO-4561",
+                  "INFO-4940",
+                  "ORIE-3120",
+                  "ORIE-3741",
+                  "ORIE-4740",
+                  "PUBPOL-3460",
+                  "SOC-3580",
+                  "SOC-4390",
+                  "STSCI-3740"
+                ]
+              },
+              "label": "Three concentration courses",
+              "minCourses": 3
+            },
+            {
+              "rule": {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-2950",
+                      "INFO-2951"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "COMM-3150",
+                      "COMM-3190",
+                      "COMM-4010",
+                      "COMM-4860",
+                      "COMM-4940",
+                      "CS-3780",
+                      "CS-4740",
+                      "ENGL-3778",
+                      "GOVT-3189",
+                      "INFO-2770",
+                      "INFO-3130",
+                      "INFO-3200",
+                      "INFO-3300",
+                      "INFO-3312",
+                      "INFO-3350",
+                      "INFO-3370",
+                      "INFO-3720",
+                      "INFO-3900",
+                      "INFO-3950",
+                      "INFO-4100",
+                      "INFO-4120",
+                      "INFO-4140",
+                      "INFO-4145",
+                      "INFO-4200",
+                      "INFO-4240",
+                      "INFO-4250",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4300",
+                      "INFO-4310",
+                      "INFO-4350",
+                      "INFO-4390",
+                      "INFO-4561",
+                      "INFO-4940",
+                      "ORIE-3120",
+                      "ORIE-3741",
+                      "ORIE-4740",
+                      "PUBPOL-3460",
+                      "SOC-3580",
+                      "SOC-4390",
+                      "STSCI-3740"
+                    ]
+                  }
+                ]
+              },
+              "label": "Core plus concentration courses, counted without reuse",
+              "minCourses": 4
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-2950",
+                  "INFO-2951"
+                ]
+              },
+              "label": "Only one of the two data science intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-1200",
+                  "INFO-1260"
+                ]
+              },
+              "label": "Only one of the two ethics intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "PUBPOL-2300",
+                  "PUBPOL-2301"
+                ]
+              },
+              "label": "Only one of the two policy intro alternatives",
+              "maxCourses": 1
+            }
+          ]
+        },
+        {
+          "id": "digital-culture-production",
+          "label": "Digital Culture and Production: core course, three concentration courses and one elective",
+          "group": "Courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+            "anchor": "Program Requirements by College"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-2450",
+                      "COMM-4380",
+                      "COMM-4940",
+                      "CS-3780",
+                      "CS-4740",
+                      "INFO-3170",
+                      "INFO-3200",
+                      "INFO-3300",
+                      "INFO-3450",
+                      "INFO-3720",
+                      "INFO-3950",
+                      "INFO-4100",
+                      "INFO-4140",
+                      "INFO-4240",
+                      "INFO-4300",
+                      "INFO-4350",
+                      "INFO-4360",
+                      "INFO-4400",
+                      "INFO-4430",
+                      "INFO-4450",
+                      "INFO-4490",
+                      "INFO-4500",
+                      "INFO-4505",
+                      "INFO-4940",
+                      "PSYCH-3800",
+                      "INFO-2950",
+                      "INFO-2951",
+                      "COMM-3150",
+                      "COMM-3190",
+                      "COMM-4010",
+                      "COMM-4860",
+                      "ENGL-3778",
+                      "GOVT-3189",
+                      "INFO-2770",
+                      "INFO-3130",
+                      "INFO-3312",
+                      "INFO-3350",
+                      "INFO-3370",
+                      "INFO-3900",
+                      "INFO-4120",
+                      "INFO-4145",
+                      "INFO-4200",
+                      "INFO-4250",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4310",
+                      "INFO-4390",
+                      "INFO-4561",
+                      "ORIE-3120",
+                      "ORIE-3741",
+                      "ORIE-4740",
+                      "PUBPOL-3460",
+                      "SOC-3580",
+                      "SOC-4390",
+                      "STSCI-3740",
+                      "INFO-3561",
+                      "INFO-2921",
+                      "ART-3705",
+                      "ARTH-4151",
+                      "CS-4620",
+                      "CS-4758",
+                      "INFO-2300",
+                      "INFO-2310",
+                      "INFO-3152",
+                      "INFO-3660",
+                      "INFO-4152",
+                      "INFO-4320",
+                      "INFO-4420",
+                      "STS-4040",
+                      "INFO-1200",
+                      "INFO-1260",
+                      "ENGRG-3605",
+                      "HADM-4890",
+                      "INFO-3210",
+                      "INFO-4113",
+                      "INFO-4210",
+                      "INFO-4301",
+                      "PUBPOL-2300",
+                      "PUBPOL-2301",
+                      "CS-5150",
+                      "INFO-4340",
+                      "INFO-4410",
+                      "INFO-4555",
+                      "INFO-2850",
+                      "ECON-3120",
+                      "ECON-3140",
+                      "ECON-3810",
+                      "ECON-4020",
+                      "ECON-4610",
+                      "ECON-4620",
+                      "ECON-4660",
+                      "INFO-4220",
+                      "ORIE-4350",
+                      "SOC-3080",
+                      "SOC-3490",
+                      "INFO-4125",
+                      "INFO-4470",
+                      "PSYCH-3420"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "INFO-1300"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "INFO-4940",
+                    "COMM-4940",
+                    "ARTH-4151"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 5,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "INFO-3561",
+                  "INFO-2921",
+                  "INFO-3200",
+                  "INFO-4140",
+                  "INFO-4260",
+                  "INFO-4270",
+                  "INFO-4940"
+                ]
+              },
+              "label": "One core course of the chosen concentration",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "ART-3705",
+                  "ARTH-4151",
+                  "CS-4620",
+                  "CS-4758",
+                  "COMM-3190",
+                  "INFO-2300",
+                  "INFO-2310",
+                  "INFO-2921",
+                  "INFO-3152",
+                  "INFO-3200",
+                  "INFO-3300",
+                  "INFO-3450",
+                  "INFO-3660",
+                  "INFO-4140",
+                  "INFO-4152",
+                  "INFO-4240",
+                  "INFO-4260",
+                  "INFO-4270",
+                  "INFO-4320",
+                  "INFO-4400",
+                  "INFO-4420",
+                  "INFO-4940",
+                  "STS-4040"
+                ]
+              },
+              "label": "Three concentration courses",
+              "minCourses": 3
+            },
+            {
+              "rule": {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-3561",
+                      "INFO-2921",
+                      "INFO-3200",
+                      "INFO-4140",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4940"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "ART-3705",
+                      "ARTH-4151",
+                      "CS-4620",
+                      "CS-4758",
+                      "COMM-3190",
+                      "INFO-2300",
+                      "INFO-2310",
+                      "INFO-2921",
+                      "INFO-3152",
+                      "INFO-3200",
+                      "INFO-3300",
+                      "INFO-3450",
+                      "INFO-3660",
+                      "INFO-4140",
+                      "INFO-4152",
+                      "INFO-4240",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4320",
+                      "INFO-4400",
+                      "INFO-4420",
+                      "INFO-4940",
+                      "STS-4040"
+                    ]
+                  }
+                ]
+              },
+              "label": "Core plus concentration courses, counted without reuse",
+              "minCourses": 4
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-2950",
+                  "INFO-2951"
+                ]
+              },
+              "label": "Only one of the two data science intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-1200",
+                  "INFO-1260"
+                ]
+              },
+              "label": "Only one of the two ethics intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "PUBPOL-2300",
+                  "PUBPOL-2301"
+                ]
+              },
+              "label": "Only one of the two policy intro alternatives",
+              "maxCourses": 1
+            }
+          ]
+        },
+        {
+          "id": "information-ethics-law-policy",
+          "label": "Information Ethics, Law, and Policy: core course, three concentration courses and one elective",
+          "group": "Courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+            "anchor": "Program Requirements by College"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-2450",
+                      "COMM-4380",
+                      "COMM-4940",
+                      "CS-3780",
+                      "CS-4740",
+                      "INFO-3170",
+                      "INFO-3200",
+                      "INFO-3300",
+                      "INFO-3450",
+                      "INFO-3720",
+                      "INFO-3950",
+                      "INFO-4100",
+                      "INFO-4140",
+                      "INFO-4240",
+                      "INFO-4300",
+                      "INFO-4350",
+                      "INFO-4360",
+                      "INFO-4400",
+                      "INFO-4430",
+                      "INFO-4450",
+                      "INFO-4490",
+                      "INFO-4500",
+                      "INFO-4505",
+                      "INFO-4940",
+                      "PSYCH-3800",
+                      "INFO-2950",
+                      "INFO-2951",
+                      "COMM-3150",
+                      "COMM-3190",
+                      "COMM-4010",
+                      "COMM-4860",
+                      "ENGL-3778",
+                      "GOVT-3189",
+                      "INFO-2770",
+                      "INFO-3130",
+                      "INFO-3312",
+                      "INFO-3350",
+                      "INFO-3370",
+                      "INFO-3900",
+                      "INFO-4120",
+                      "INFO-4145",
+                      "INFO-4200",
+                      "INFO-4250",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4310",
+                      "INFO-4390",
+                      "INFO-4561",
+                      "ORIE-3120",
+                      "ORIE-3741",
+                      "ORIE-4740",
+                      "PUBPOL-3460",
+                      "SOC-3580",
+                      "SOC-4390",
+                      "STSCI-3740",
+                      "INFO-3561",
+                      "INFO-2921",
+                      "ART-3705",
+                      "ARTH-4151",
+                      "CS-4620",
+                      "CS-4758",
+                      "INFO-2300",
+                      "INFO-2310",
+                      "INFO-3152",
+                      "INFO-3660",
+                      "INFO-4152",
+                      "INFO-4320",
+                      "INFO-4420",
+                      "STS-4040",
+                      "INFO-1200",
+                      "INFO-1260",
+                      "ENGRG-3605",
+                      "HADM-4890",
+                      "INFO-3210",
+                      "INFO-4113",
+                      "INFO-4210",
+                      "INFO-4301",
+                      "PUBPOL-2300",
+                      "PUBPOL-2301",
+                      "CS-5150",
+                      "INFO-4340",
+                      "INFO-4410",
+                      "INFO-4555",
+                      "INFO-2850",
+                      "ECON-3120",
+                      "ECON-3140",
+                      "ECON-3810",
+                      "ECON-4020",
+                      "ECON-4610",
+                      "ECON-4620",
+                      "ECON-4660",
+                      "INFO-4220",
+                      "ORIE-4350",
+                      "SOC-3080",
+                      "SOC-3490",
+                      "INFO-4125",
+                      "INFO-4470",
+                      "PSYCH-3420"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "INFO-1300"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "INFO-4940",
+                    "COMM-4940",
+                    "ARTH-4151"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 5,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "INFO-1200",
+                  "INFO-1260"
+                ]
+              },
+              "label": "One core course of the chosen concentration",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "COMM-3190",
+                  "COMM-4010",
+                  "COMM-4940",
+                  "ENGRG-3605",
+                  "HADM-4890",
+                  "INFO-2921",
+                  "INFO-3170",
+                  "INFO-3200",
+                  "INFO-3210",
+                  "INFO-3300",
+                  "INFO-3350",
+                  "INFO-3370",
+                  "INFO-4100",
+                  "INFO-4113",
+                  "INFO-4120",
+                  "INFO-4140",
+                  "INFO-4145",
+                  "INFO-4200",
+                  "INFO-4210",
+                  "INFO-4240",
+                  "INFO-4250",
+                  "INFO-4260",
+                  "INFO-4270",
+                  "INFO-4300",
+                  "INFO-4301",
+                  "INFO-4350",
+                  "INFO-4390",
+                  "INFO-4561",
+                  "INFO-4940",
+                  "PUBPOL-2300",
+                  "PUBPOL-2301",
+                  "PUBPOL-3460"
+                ]
+              },
+              "label": "Three concentration courses",
+              "minCourses": 3
+            },
+            {
+              "rule": {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-1200",
+                      "INFO-1260"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "COMM-3190",
+                      "COMM-4010",
+                      "COMM-4940",
+                      "ENGRG-3605",
+                      "HADM-4890",
+                      "INFO-2921",
+                      "INFO-3170",
+                      "INFO-3200",
+                      "INFO-3210",
+                      "INFO-3300",
+                      "INFO-3350",
+                      "INFO-3370",
+                      "INFO-4100",
+                      "INFO-4113",
+                      "INFO-4120",
+                      "INFO-4140",
+                      "INFO-4145",
+                      "INFO-4200",
+                      "INFO-4210",
+                      "INFO-4240",
+                      "INFO-4250",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4300",
+                      "INFO-4301",
+                      "INFO-4350",
+                      "INFO-4390",
+                      "INFO-4561",
+                      "INFO-4940",
+                      "PUBPOL-2300",
+                      "PUBPOL-2301",
+                      "PUBPOL-3460"
+                    ]
+                  }
+                ]
+              },
+              "label": "Core plus concentration courses, counted without reuse",
+              "minCourses": 4
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-2950",
+                  "INFO-2951"
+                ]
+              },
+              "label": "Only one of the two data science intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-1200",
+                  "INFO-1260"
+                ]
+              },
+              "label": "Only one of the two ethics intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "PUBPOL-2300",
+                  "PUBPOL-2301"
+                ]
+              },
+              "label": "Only one of the two policy intro alternatives",
+              "maxCourses": 1
+            }
+          ]
+        },
+        {
+          "id": "interactive-technologies",
+          "label": "Interactive Technologies: core course, three concentration courses and one elective",
+          "group": "Courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+            "anchor": "Program Requirements by College"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-2450",
+                      "COMM-4380",
+                      "COMM-4940",
+                      "CS-3780",
+                      "CS-4740",
+                      "INFO-3170",
+                      "INFO-3200",
+                      "INFO-3300",
+                      "INFO-3450",
+                      "INFO-3720",
+                      "INFO-3950",
+                      "INFO-4100",
+                      "INFO-4140",
+                      "INFO-4240",
+                      "INFO-4300",
+                      "INFO-4350",
+                      "INFO-4360",
+                      "INFO-4400",
+                      "INFO-4430",
+                      "INFO-4450",
+                      "INFO-4490",
+                      "INFO-4500",
+                      "INFO-4505",
+                      "INFO-4940",
+                      "PSYCH-3800",
+                      "INFO-2950",
+                      "INFO-2951",
+                      "COMM-3150",
+                      "COMM-3190",
+                      "COMM-4010",
+                      "COMM-4860",
+                      "ENGL-3778",
+                      "GOVT-3189",
+                      "INFO-2770",
+                      "INFO-3130",
+                      "INFO-3312",
+                      "INFO-3350",
+                      "INFO-3370",
+                      "INFO-3900",
+                      "INFO-4120",
+                      "INFO-4145",
+                      "INFO-4200",
+                      "INFO-4250",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4310",
+                      "INFO-4390",
+                      "INFO-4561",
+                      "ORIE-3120",
+                      "ORIE-3741",
+                      "ORIE-4740",
+                      "PUBPOL-3460",
+                      "SOC-3580",
+                      "SOC-4390",
+                      "STSCI-3740",
+                      "INFO-3561",
+                      "INFO-2921",
+                      "ART-3705",
+                      "ARTH-4151",
+                      "CS-4620",
+                      "CS-4758",
+                      "INFO-2300",
+                      "INFO-2310",
+                      "INFO-3152",
+                      "INFO-3660",
+                      "INFO-4152",
+                      "INFO-4320",
+                      "INFO-4420",
+                      "STS-4040",
+                      "INFO-1200",
+                      "INFO-1260",
+                      "ENGRG-3605",
+                      "HADM-4890",
+                      "INFO-3210",
+                      "INFO-4113",
+                      "INFO-4210",
+                      "INFO-4301",
+                      "PUBPOL-2300",
+                      "PUBPOL-2301",
+                      "CS-5150",
+                      "INFO-4340",
+                      "INFO-4410",
+                      "INFO-4555",
+                      "INFO-2850",
+                      "ECON-3120",
+                      "ECON-3140",
+                      "ECON-3810",
+                      "ECON-4020",
+                      "ECON-4610",
+                      "ECON-4620",
+                      "ECON-4660",
+                      "INFO-4220",
+                      "ORIE-4350",
+                      "SOC-3080",
+                      "SOC-3490",
+                      "INFO-4125",
+                      "INFO-4470",
+                      "PSYCH-3420"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "INFO-1300"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "INFO-4940",
+                    "COMM-4940",
+                    "ARTH-4151"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 5,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "INFO-4120",
+                  "INFO-4320"
+                ]
+              },
+              "label": "One core course of the chosen concentration",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "CS-3780",
+                  "CS-4620",
+                  "CS-4758",
+                  "CS-5150",
+                  "INFO-3300",
+                  "INFO-4120",
+                  "INFO-4152",
+                  "INFO-4310",
+                  "INFO-4320",
+                  "INFO-4340",
+                  "INFO-4410",
+                  "INFO-4430",
+                  "INFO-4505",
+                  "INFO-4555",
+                  "INFO-4940",
+                  "ORIE-3120",
+                  "ORIE-3741",
+                  "ORIE-4740",
+                  "STSCI-3740"
+                ]
+              },
+              "label": "Three concentration courses",
+              "minCourses": 3
+            },
+            {
+              "rule": {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-4120",
+                      "INFO-4320"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "CS-3780",
+                      "CS-4620",
+                      "CS-4758",
+                      "CS-5150",
+                      "INFO-3300",
+                      "INFO-4120",
+                      "INFO-4152",
+                      "INFO-4310",
+                      "INFO-4320",
+                      "INFO-4340",
+                      "INFO-4410",
+                      "INFO-4430",
+                      "INFO-4505",
+                      "INFO-4555",
+                      "INFO-4940",
+                      "ORIE-3120",
+                      "ORIE-3741",
+                      "ORIE-4740",
+                      "STSCI-3740"
+                    ]
+                  }
+                ]
+              },
+              "label": "Core plus concentration courses, counted without reuse",
+              "minCourses": 4
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-2950",
+                  "INFO-2951"
+                ]
+              },
+              "label": "Only one of the two data science intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-1200",
+                  "INFO-1260"
+                ]
+              },
+              "label": "Only one of the two ethics intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "PUBPOL-2300",
+                  "PUBPOL-2301"
+                ]
+              },
+              "label": "Only one of the two policy intro alternatives",
+              "maxCourses": 1
+            }
+          ]
+        },
+        {
+          "id": "networks-crowds-markets",
+          "label": "Networks, Crowds, and Markets: core course, three concentration courses and one elective",
+          "group": "Courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+            "anchor": "Program Requirements by College"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-2450",
+                      "COMM-4380",
+                      "COMM-4940",
+                      "CS-3780",
+                      "CS-4740",
+                      "INFO-3170",
+                      "INFO-3200",
+                      "INFO-3300",
+                      "INFO-3450",
+                      "INFO-3720",
+                      "INFO-3950",
+                      "INFO-4100",
+                      "INFO-4140",
+                      "INFO-4240",
+                      "INFO-4300",
+                      "INFO-4350",
+                      "INFO-4360",
+                      "INFO-4400",
+                      "INFO-4430",
+                      "INFO-4450",
+                      "INFO-4490",
+                      "INFO-4500",
+                      "INFO-4505",
+                      "INFO-4940",
+                      "PSYCH-3800",
+                      "INFO-2950",
+                      "INFO-2951",
+                      "COMM-3150",
+                      "COMM-3190",
+                      "COMM-4010",
+                      "COMM-4860",
+                      "ENGL-3778",
+                      "GOVT-3189",
+                      "INFO-2770",
+                      "INFO-3130",
+                      "INFO-3312",
+                      "INFO-3350",
+                      "INFO-3370",
+                      "INFO-3900",
+                      "INFO-4120",
+                      "INFO-4145",
+                      "INFO-4200",
+                      "INFO-4250",
+                      "INFO-4260",
+                      "INFO-4270",
+                      "INFO-4310",
+                      "INFO-4390",
+                      "INFO-4561",
+                      "ORIE-3120",
+                      "ORIE-3741",
+                      "ORIE-4740",
+                      "PUBPOL-3460",
+                      "SOC-3580",
+                      "SOC-4390",
+                      "STSCI-3740",
+                      "INFO-3561",
+                      "INFO-2921",
+                      "ART-3705",
+                      "ARTH-4151",
+                      "CS-4620",
+                      "CS-4758",
+                      "INFO-2300",
+                      "INFO-2310",
+                      "INFO-3152",
+                      "INFO-3660",
+                      "INFO-4152",
+                      "INFO-4320",
+                      "INFO-4420",
+                      "STS-4040",
+                      "INFO-1200",
+                      "INFO-1260",
+                      "ENGRG-3605",
+                      "HADM-4890",
+                      "INFO-3210",
+                      "INFO-4113",
+                      "INFO-4210",
+                      "INFO-4301",
+                      "PUBPOL-2300",
+                      "PUBPOL-2301",
+                      "CS-5150",
+                      "INFO-4340",
+                      "INFO-4410",
+                      "INFO-4555",
+                      "INFO-2850",
+                      "ECON-3120",
+                      "ECON-3140",
+                      "ECON-3810",
+                      "ECON-4020",
+                      "ECON-4610",
+                      "ECON-4620",
+                      "ECON-4660",
+                      "INFO-4220",
+                      "ORIE-4350",
+                      "SOC-3080",
+                      "SOC-3490",
+                      "INFO-4125",
+                      "INFO-4470",
+                      "PSYCH-3420"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "INFO-1300"
+                    ]
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "INFO-4940",
+                    "COMM-4940",
+                    "ARTH-4151"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 5,
+          "requiredCredits": 0,
+          "limits": [
+            {
+              "rule": {
+                "course": [
+                  "INFO-2850"
+                ]
+              },
+              "label": "One core course of the chosen concentration",
+              "minCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "COMM-3150",
+                  "COMM-4940",
+                  "CS-3780",
+                  "CS-4740",
+                  "ECON-3120",
+                  "ECON-3140",
+                  "ECON-3810",
+                  "ECON-4020",
+                  "ECON-4610",
+                  "ECON-4620",
+                  "ECON-4660",
+                  "INFO-3300",
+                  "INFO-3950",
+                  "INFO-4140",
+                  "INFO-4145",
+                  "INFO-4200",
+                  "INFO-4220",
+                  "INFO-4240",
+                  "INFO-4250",
+                  "INFO-4270",
+                  "INFO-4300",
+                  "INFO-4350",
+                  "INFO-4940",
+                  "INFO-4360",
+                  "ORIE-4350",
+                  "PUBPOL-3460",
+                  "SOC-3080",
+                  "SOC-3490"
+                ]
+              },
+              "label": "Three concentration courses",
+              "minCourses": 3
+            },
+            {
+              "rule": {
+                "anyOf": [
+                  {
+                    "course": [
+                      "INFO-2850"
+                    ]
+                  },
+                  {
+                    "course": [
+                      "COMM-3150",
+                      "COMM-4940",
+                      "CS-3780",
+                      "CS-4740",
+                      "ECON-3120",
+                      "ECON-3140",
+                      "ECON-3810",
+                      "ECON-4020",
+                      "ECON-4610",
+                      "ECON-4620",
+                      "ECON-4660",
+                      "INFO-3300",
+                      "INFO-3950",
+                      "INFO-4140",
+                      "INFO-4145",
+                      "INFO-4200",
+                      "INFO-4220",
+                      "INFO-4240",
+                      "INFO-4250",
+                      "INFO-4270",
+                      "INFO-4300",
+                      "INFO-4350",
+                      "INFO-4940",
+                      "INFO-4360",
+                      "ORIE-4350",
+                      "PUBPOL-3460",
+                      "SOC-3080",
+                      "SOC-3490"
+                    ]
+                  }
+                ]
+              },
+              "label": "Core plus concentration courses, counted without reuse",
+              "minCourses": 4
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-2950",
+                  "INFO-2951"
+                ]
+              },
+              "label": "Only one of the two data science intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "INFO-1200",
+                  "INFO-1260"
+                ]
+              },
+              "label": "Only one of the two ethics intro alternatives",
+              "maxCourses": 1
+            },
+            {
+              "rule": {
+                "course": [
+                  "PUBPOL-2300",
+                  "PUBPOL-2301"
+                ]
+              },
+              "label": "Only one of the two policy intro alternatives",
+              "maxCourses": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "second-elective",
+      "label": "Second elective from any concentration (not needed by Engineering majors)",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Program Requirements by College"
+      },
+      "note": "Students outside Engineering take two electives; Engineering majors take one, so the Engineering option here is met by any spare course.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "other-colleges",
+          "label": "Second elective for students outside Engineering",
+          "group": "Courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+            "anchor": "Program Requirements by College"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "allOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "course": [
+                          "INFO-2450",
+                          "COMM-4380",
+                          "COMM-4940",
+                          "CS-3780",
+                          "CS-4740",
+                          "INFO-3170",
+                          "INFO-3200",
+                          "INFO-3300",
+                          "INFO-3450",
+                          "INFO-3720",
+                          "INFO-3950",
+                          "INFO-4100",
+                          "INFO-4140",
+                          "INFO-4240",
+                          "INFO-4300",
+                          "INFO-4350",
+                          "INFO-4360",
+                          "INFO-4400",
+                          "INFO-4430",
+                          "INFO-4450",
+                          "INFO-4490",
+                          "INFO-4500",
+                          "INFO-4505",
+                          "INFO-4940",
+                          "PSYCH-3800",
+                          "INFO-2950",
+                          "INFO-2951",
+                          "COMM-3150",
+                          "COMM-3190",
+                          "COMM-4010",
+                          "COMM-4860",
+                          "ENGL-3778",
+                          "GOVT-3189",
+                          "INFO-2770",
+                          "INFO-3130",
+                          "INFO-3312",
+                          "INFO-3350",
+                          "INFO-3370",
+                          "INFO-3900",
+                          "INFO-4120",
+                          "INFO-4145",
+                          "INFO-4200",
+                          "INFO-4250",
+                          "INFO-4260",
+                          "INFO-4270",
+                          "INFO-4310",
+                          "INFO-4390",
+                          "INFO-4561",
+                          "ORIE-3120",
+                          "ORIE-3741",
+                          "ORIE-4740",
+                          "PUBPOL-3460",
+                          "SOC-3580",
+                          "SOC-4390",
+                          "STSCI-3740",
+                          "INFO-3561",
+                          "INFO-2921",
+                          "ART-3705",
+                          "ARTH-4151",
+                          "CS-4620",
+                          "CS-4758",
+                          "INFO-2300",
+                          "INFO-2310",
+                          "INFO-3152",
+                          "INFO-3660",
+                          "INFO-4152",
+                          "INFO-4320",
+                          "INFO-4420",
+                          "STS-4040",
+                          "INFO-1200",
+                          "INFO-1260",
+                          "ENGRG-3605",
+                          "HADM-4890",
+                          "INFO-3210",
+                          "INFO-4113",
+                          "INFO-4210",
+                          "INFO-4301",
+                          "PUBPOL-2300",
+                          "PUBPOL-2301",
+                          "CS-5150",
+                          "INFO-4340",
+                          "INFO-4410",
+                          "INFO-4555",
+                          "INFO-2850",
+                          "ECON-3120",
+                          "ECON-3140",
+                          "ECON-3810",
+                          "ECON-4020",
+                          "ECON-4610",
+                          "ECON-4620",
+                          "ECON-4660",
+                          "INFO-4220",
+                          "ORIE-4350",
+                          "SOC-3080",
+                          "SOC-3490",
+                          "INFO-4125",
+                          "INFO-4470",
+                          "PSYCH-3420"
+                        ]
+                      },
+                      {
+                        "course": [
+                          "INFO-1300"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "INFO-4940",
+                        "COMM-4940",
+                        "ARTH-4151"
+                      ]
+                    }
+                  },
+                  {
+                    "not": {
+                      "creditKind": [
+                        "ap",
+                        "ib",
+                        "alevel",
+                        "intl",
+                        "placement",
+                        "transfer"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "program": [
+                    "cornell-be-bs",
+                    "cornell-bme-bs",
+                    "cornell-ce-bs",
+                    "cornell-cheme-bs",
+                    "cornell-cs-bs",
+                    "cornell-eas-bs",
+                    "cornell-ece-bs",
+                    "cornell-enve-bs",
+                    "cornell-ep-bs",
+                    "cornell-me-bs",
+                    "cornell-mse-bs",
+                    "cornell-ore-bs"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 1,
+          "requiredCredits": 0
+        },
+        {
+          "id": "engineering-none",
+          "label": "Engineering majors need no second elective (met by any spare course on the board)",
+          "group": "Courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+            "anchor": "Program Requirements by College"
+          },
+          "kind": "pool",
+          "rule": {
+            "program": [
+              "cornell-be-bs",
+              "cornell-bme-bs",
+              "cornell-ce-bs",
+              "cornell-cheme-bs",
+              "cornell-cs-bs",
+              "cornell-eas-bs",
+              "cornell-ece-bs",
+              "cornell-enve-bs",
+              "cornell-ep-bs",
+              "cornell-me-bs",
+              "cornell-mse-bs",
+              "cornell-ore-bs"
+            ]
+          },
+          "requiredCourses": 1,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "one-concentration",
+      "label": "Take the core course and the three concentration courses from the same concentration",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Program Requirements by Concentration"
+      },
+      "note": "Behavioral Science and User Experience share one option on the board, so it counts only courses on both lists as their concentration courses (stricter). A course on only one of the two lists still counts for you if all three come from your list: confirm here.",
+      "kind": "confirm"
+    },
+    {
+      "id": "topics-4940",
+      "label": "INFO 4940 and COMM 4940 count only for a topic named on your concentration list, and ARTH 4151 only on an advisor-approved topic",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Program Requirements by Concentration"
+      },
+      "note": "The board counts none of these three because it cannot see the topic. If your topic is listed (or your advisor approved the ARTH 4151 topic), count it yourself and confirm here.",
+      "kind": "confirm"
+    },
+    {
+      "id": "game-design-listing",
+      "label": "Game design courses count only under their INFO number (INFO 3152, INFO 4152), not the CS numbers",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Program Requirements by Concentration"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "college-structure",
+      "label": "Check the course counts for your own college: Hotel School students take two concentration courses plus HADM 3740 and HADM 4760",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Program Requirements by College"
+      },
+      "note": "The board treats Engineering majors with the five-course structure and everyone else with the six-course structure. Hotel School students need the core course, two concentration courses, HADM 3740, HADM 4760 and one elective, so confirm that structure with the minor advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C or better (C- does not count) in every course used for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course at Cornell for a letter grade (S/U and SX/UX are not accepted)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-substitutions",
+      "label": "No course substitutions or petitions are allowed",
+      "group": "Rules",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-transfer-abroad",
+      "label": "No transfer credit and no study abroad credit can be used for the minor",
+      "group": "Rules",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Program Policies"
+      },
+      "note": "Transfer and exam credit are refused by the course rows; study abroad credit cannot be seen on the board, so check it yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "data-science-minor-bar",
+      "label": "You cannot declare this minor with its Data Science concentration together with the Data Science minor",
+      "group": "Rules",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Program Policies"
+      },
+      "note": "The planner bars the whole Data Science minor with this one, which is stricter than the page (it names only the Data Science concentration).",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Check the minor totals the minimum credits for your college (15 to 18)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The Engineering minor rules also mention six courses and at least 18 credits; the college tables above ask for five courses for Engineering majors, so confirm the credit minimum with the minor advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approves",
+      "label": "Your major must approve the minor, and you must complete all requirements for your degree",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "File the minor certification form when you reach your last required courses; deadlines are May 31 (May or August graduation) and December 31 (December)",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/information-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

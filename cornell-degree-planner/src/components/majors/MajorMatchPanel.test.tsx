@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { MajorMatch } from "@/hooks/useMajorMatch";
-import { MatchSummary, MissingAmount } from "./MajorMatchPanel";
+import { MajorMatchPanel, MatchSummary, MissingAmount } from "./MajorMatchPanel";
 
 // The panel's data hooks reach Firebase; this test renders one line only.
 vi.mock("@/hooks/useMajorMatch", () => ({ useMajorMatch: () => ({ matches: [], ready: true, college: null, needsCollege: false }) }));
@@ -9,6 +9,7 @@ vi.mock("@/hooks/usePrograms", () => ({ usePrograms: () => ({ programs: [], load
 vi.mock("@/store/useProgramStore", () => ({ useProgramStore: () => null }));
 vi.mock("@/store/usePlannerStore", () => ({ usePlannerStore: () => null }));
 vi.mock("@/components/onboarding/CollegePicker", () => ({ CollegePicker: () => null }));
+vi.mock("./MinorMatchList", () => ({ MinorMatchList: () => null }));
 
 // Static render (no DOM library in this repo): what a "Still needed" line shows.
 
@@ -70,5 +71,13 @@ describe("MatchSummary", () => {
   it("other majors read as before", () => {
     expect(line(match({ requirementsLeft: 1 }))).toBe("1 Classics requirement left.");
     expect(line(match({ requirementsLeft: 0 }))).toBe("Your plan meets every Classics requirement we can check.");
+  });
+});
+
+describe("MajorMatchPanel tabs (spec 047 D11)", () => {
+  it("opens on Majors, with a Minors tab beside it", () => {
+    const html = renderToStaticMarkup(<MajorMatchPanel cards={[]} />);
+    expect(html).toMatch(/aria-pressed="true"[^>]*data-match-tab="majors"/);
+    expect(html).toMatch(/aria-pressed="false"[^>]*data-match-tab="minors"/);
   });
 });

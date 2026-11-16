@@ -1,0 +1,247 @@
+{
+  "id": "cornell-global-health-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Global Health (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-global-health-minor-2026",
+  "rows": [
+    {
+      "id": "ns-2600",
+      "label": "Intro to Global Health (NS 2600), taken before the field experience",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-health-minor/",
+        "anchor": "Course Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-2600"
+        ]
+      }
+    },
+    {
+      "id": "ns-4600",
+      "label": "Explorations in Global and Public Health (NS 4600), taken after the field experience",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-health-minor/",
+        "anchor": "Course Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "NS-4600"
+        ]
+      }
+    },
+    {
+      "id": "electives",
+      "label": "Three elective courses (9 credits) from three different of the four listed categories, taken at Cornell",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-health-minor/",
+        "anchor": "Elective Course Requirement"
+      },
+      "note": "One course in each of three categories (I to IV) and 9 credits in all. Exam and transfer credit never counts, since the courses must be taken at Cornell. NS 4030 (course assistant) is left out of Category IV because the page allows it only when assisting in certain courses, which the board cannot see. Category V (petition) is a separate confirm row, so a student using a petitioned course may see this row short.",
+      "kind": "distribution",
+      "rule": {
+        "not": {
+          "creditKind": [
+            "ap",
+            "ib",
+            "alevel",
+            "intl",
+            "placement",
+            "transfer"
+          ]
+        }
+      },
+      "categories": [
+        {
+          "id": "cat-1",
+          "label": "I. Biomedical and epidemiological",
+          "rule": {
+            "course": [
+              "BIOMI-2500",
+              "BIOMI-2600",
+              "BIOMI-2950",
+              "BIOMI-3210",
+              "BIOMI-4040",
+              "BIOMI-4090",
+              "BIOMI-4310",
+              "BIOMS-4150",
+              "BIOMS-4340",
+              "ENTOM-2100",
+              "FDSC-4220",
+              "NS-3030",
+              "NS-3060",
+              "NS-3150",
+              "NS-3600",
+              "NS-4200",
+              "NS-4410",
+              "NS-6140",
+              "PLSCI-4070"
+            ]
+          }
+        },
+        {
+          "id": "cat-2",
+          "label": "II. Social and ethical",
+          "rule": {
+            "course": [
+              "AMST-2225",
+              "AMST-3141",
+              "ANTHR-2245",
+              "ANTHR-2421",
+              "ANTHR-2468",
+              "ANTHR-3465",
+              "ANTHR-4682",
+              "ASIAN-2262",
+              "ASRC-4602",
+              "BSOC-2051",
+              "BSOC-2061",
+              "BSOC-2071",
+              "BSOC-3011",
+              "GDEV-2010",
+              "GDEV-3111",
+              "GDEV-3700",
+              "EDUC-2610",
+              "HD-2510",
+              "NS-2450",
+              "NS-4420",
+              "NS-4500",
+              "NS-4510",
+              "PUBPOL-3180",
+              "PUBPOL-3280",
+              "SOC-4120"
+            ]
+          }
+        },
+        {
+          "id": "cat-3",
+          "label": "III. Political, economic and food systems",
+          "rule": {
+            "course": [
+              "AEM-1600",
+              "AEM-2000",
+              "AEM-3385",
+              "AEM-4450",
+              "COMM-2850",
+              "ECON-3710",
+              "ECON-3910",
+              "ECON-6410",
+              "ECON-6420",
+              "ECON-7711",
+              "GDEV-3020",
+              "GDEV-3400",
+              "GDEV-4140",
+              "NS-4480",
+              "PUBPOL-2350",
+              "PUBPOL-3870",
+              "PUBPOL-4110",
+              "PUBPOL-4370"
+            ]
+          }
+        },
+        {
+          "id": "cat-4",
+          "label": "IV. Health systems and programs",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "AEM-4880",
+                  "BEE-2510",
+                  "BEE-3299",
+                  "ENGRG-3400",
+                  "DEA-2700",
+                  "DEA-5305",
+                  "ILROB-4710",
+                  "NS-4030",
+                  "PUBPOL-5449",
+                  "PLSCI-2100",
+                  "PLSCI-3100"
+                ]
+              },
+              {
+                "not": {
+                  "course": [
+                    "NS-4030"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 3,
+      "minDistinctCategories": 3,
+      "requiredCredits": 9
+    },
+    {
+      "id": "category-v-petition",
+      "label": "Alternative: an area-specific course approved by petition can stand in for one elective (Category V)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-health-minor/",
+        "anchor": "Elective Course Requirement"
+      },
+      "note": "The board cannot see petition approvals. If you use a petitioned course as one of your three, the electives row may show short; confirm with the program.",
+      "kind": "confirm"
+    },
+    {
+      "id": "ns-4030-condition",
+      "label": "If using NS 4030 as an elective, it counts only when you served as assistant in one of the specific NS courses the page names",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-health-minor/",
+        "anchor": "Elective Course Requirement"
+      },
+      "note": "NS 4030 is excluded from the electives row; this reminds you of the condition. If it qualifies, the board will not count it automatically.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-required",
+      "label": "Take both required courses for a letter grade",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-health-minor/",
+        "anchor": "Course Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-electives",
+      "label": "Take every elective for a letter grade at Cornell",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-health-minor/",
+        "anchor": "Elective Course Requirement"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "elo-petition",
+      "label": "After NS 2600 and before the field experience, submit the experience petition for program review",
+      "group": "Experiential learning",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-health-minor/",
+        "anchor": "Experiential Learning Opportunity Requirement"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "elo-complete",
+      "label": "Complete an approved global or public health field or lab experience meeting the program's criteria",
+      "group": "Experiential learning",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-health-minor/",
+        "anchor": "Experiential Learning Opportunity Requirement"
+      },
+      "note": "The experience needs a health-focused host, a qualified supervisor, room to apply coursework, and a written scope of work agreed with the program. Community engagement is encouraged but optional.",
+      "kind": "confirm"
+    }
+  ]
+}

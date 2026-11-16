@@ -561,6 +561,90 @@ check("catalog: a question whose courses match no catalog course, or a credit qu
   assertTrue("unknown sequence course", unknown.errors.some((e) => e.code === "catalog" && /TEST-9999 is not in the catalog/.test(e.message)), JSON.stringify(unknown.errors));
 });
 
+// ── Spec 047: minors, sharing, sentence coverage, exclusions ────────────────
+const asMinor = (d: DraftFixture) => {
+  Object.assign(d.layer, { kind: "minor", family: "other" });
+};
+const SHARING_QUOTE = "Students take two seminars from TEST 4010 or 4020";
+
+check("minor: a minor layer checks clean like a major", () => {
+  const r = run(variant(asMinor));
+  assertEqual("no errors", r.errors, []);
+});
+check("sharing-quote: sharing needs a 'sharing' quote that states its bounds; derivedNumbers.sharing downgrades", () => {
+  const withSharing = (d: DraftFixture) => (asMinor(d), Object.assign(d.layer, { sharing: { otherMajors: { maxCourses: 2 } } }));
+  const none = run(variant(withSharing));
+  assertEqual("no quote", none.errors.map((e) => e.code), ["sharing-quote"]);
+  const quoted = run(variant((d) => (withSharing(d), (d.quotes.sharing = [SHARING_QUOTE]))));
+  assertEqual("quoted: clean", quoted.errors, []);
+  const unstated = run(variant((d) => (withSharing(d), Object.assign(d.layer, { sharing: { otherMajors: { maxCredits: 6 } } }), (d.quotes.sharing = [SHARING_QUOTE]))));
+  assertTrue("unstated bound", unstated.errors.some((e) => e.code === "sharing-quote" && /maxCredits is 6/.test(e.message)), JSON.stringify(unstated.errors));
+  const derived = run(
+    variant((d) => {
+      withSharing(d);
+      Object.assign(d.layer, { sharing: { otherMajors: { maxCredits: 6 } } });
+      d.quotes.sharing = [SHARING_QUOTE];
+      (d as unknown as Record<string, unknown>).derivedNumbers = { sharing: "eighteen credits minus the twelve that must be unique" };
+    }),
+  );
+  assertEqual("derived: ok", derived.ok, true);
+  assertTrue("derived: a warning", derived.warnings.some((w) => w.code === "sharing-quote" && /derived/.test(w.message)), JSON.stringify(derived.warnings));
+  const notOnPage = run(variant((d) => (withSharing(d), (d.quotes.sharing = ["Nothing like this sentence is on the page"]))));
+  assertTrue("a sharing quote is checked against the page", notOnPage.errors.some((e) => e.code === "quote-not-found" && e.key === "sharing"), JSON.stringify(notOnPage.errors));
+  const quoteKey = run(variant((d) => (d.quotes.sharing = [SHARING_QUOTE])));
+  assertTrue("'sharing' is a valid quotes key", !quoteKey.errors.some((e) => e.code === "quote-key"), JSON.stringify(quoteKey.errors));
+  const rowNamed = run(variant((d) => (rowOf(d, "intro").id = "sharing", ((d.quotes as Record<string, string[]>).sharing = d.quotes.intro), delete (d.quotes as Record<string, unknown>).intro)));
+  assertTrue("a row named sharing", rowNamed.errors.some((e) => e.code === "sharing-quote" && /rename the row/.test(e.message)), JSON.stringify(rowNamed.errors));
+});
+check("sentence-coverage: a single-author draft needs a ledger that accounts for every block", () => {
+  const ex = {
+    schemaVersion: 1 as const, programId: "test-ba", textSha256: META.textSha256, htmlSha256: META.htmlSha256, all: false, concentrationHeadings: [], linkedCourseIds: [], lists: [],
+    blocks: [
+      { id: "H1", kind: "heading" as const, level: 2, path: [], text: "Program Requirements", courseIds: [] },
+      { id: "P1", kind: "prose" as const, path: [], text: "Complete the introductory course TEST 1010 with a grade of C or better.", courseIds: ["TEST-1010"] },
+      { id: "P2", kind: "prose" as const, path: [], text: "The department calls this the upper-level requirement - plan early.", courseIds: [] },
+    ],
+  };
+  const single = (d: DraftFixture) => (asMinor(d), Object.assign(d, { author: "merged", framing: "single-author" }));
+  const noExtract = run(variant(single));
+  assertTrue("no extract", noExtract.errors.some((e) => e.code === "sentence-coverage" && /extract.json/.test(e.message)), JSON.stringify(noExtract.errors));
+  const noLedger = run(variant(single), { extract: ex });
+  assertTrue("no ledger", noLedger.errors.some((e) => e.code === "sentence-coverage" && /no sentence ledger/.test(e.message)), JSON.stringify(noLedger.errors));
+  const partial = run(variant((d) => (single(d), Object.assign(d, { ledger: [{ block: "P1", to: "intro" }] }))), { extract: ex });
+  assertEqual("P2 unaccounted", partial.errors.filter((e) => e.code === "sentence-coverage").map((e) => e.key), ["P2"]);
+  const grade = run(variant((d) => (single(d), Object.assign(d, { ledger: [{ block: "P1", to: "out-of-scope", reason: "x" }, { block: "P2", to: "out-of-scope", reason: "advice" }] }))), { extract: ex });
+  assertEqual("a grade sentence out of scope", grade.errors.filter((e) => e.code === "sentence-coverage").map((e) => e.key), ["P1"]);
+  const full = run(variant((d) => (single(d), Object.assign(d, { ledger: [{ block: "P1", to: "intro" }, { block: "P2", to: "out-of-scope", reason: "advice" }] }))), { extract: ex });
+  assertEqual("full ledger: clean", full.errors, []);
+  assertEqual("a blind draft without a ledger is not asked", run(cleanDraft(), { extract: ex }).errors, []);
+});
+check("exclusion-size: a not that removes more than half of its positive set warns", () => {
+  const rule = (ids: string[]) => variant((d) => (rowOf(d, "electives").rule = { allOf: [{ subject: ["TEST"] }, { number: { min: 3000 } }, { not: { course: ids } }] }));
+  const big = run(rule(["TEST-3010", "TEST-3020", "TEST-4010"]));
+  assertTrue("3 of 4 removed", big.warnings.some((w) => w.code === "exclusion-size" && w.key === "electives" && /removes 3 of the 4/.test(w.message)), JSON.stringify(big.warnings));
+  const half = run(rule(["TEST-3010", "TEST-3020"]));
+  assertTrue("2 of 4 is not more than half", !half.warnings.some((w) => w.code === "exclusion-size"), JSON.stringify(half.warnings));
+  assertTrue("no catalog, no count", !run(rule(["TEST-3010", "TEST-3020", "TEST-4010"]), { catalog: undefined }).warnings.some((w) => w.code === "exclusion-size"), "counted without a catalog");
+});
+check("minor-main-requirement: a minor carried by a credits row warns", () => {
+  const big = run(
+    variant((d) => {
+      asMinor(d);
+      (d.layer.rows as AnyRow[]).push({ id: "total", kind: "credits", label: "Credit total", group: "Total", source: SRC, rule: { subject: ["TEST"] }, requiredCredits: 30 });
+    }),
+  );
+  assertTrue("asks more than the consuming rows hold", big.warnings.some((w) => w.code === "minor-main-requirement" && w.key === "total"), JSON.stringify(big.warnings));
+  const only = run(
+    variant((d) => {
+      asMinor(d);
+      d.layer.rows = [{ id: "total", kind: "credits", label: "Credit total", group: "Total", source: SRC, rule: { subject: ["TEST"] }, requiredCredits: 9 }] as unknown as typeof d.layer.rows;
+      d.quotes = { total: ["At least 3 TEST courses at the 3000-level or above | 9"] } as typeof d.quotes;
+    }),
+  );
+  assertTrue("no consuming row", only.warnings.some((w) => w.code === "minor-main-requirement" && /no row that uses courses up/.test(w.message)), JSON.stringify(only.warnings));
+  assertTrue("a major is not asked", !run(cleanDraft()).warnings.some((w) => w.code === "minor-main-requirement"), "major warned");
+});
+
 // ── Run ──────────────────────────────────────────────────────────────────────
 console.log(`\n── check-draft corpus — ${checks.length} case(s) ──`);
 let failedCases = 0;

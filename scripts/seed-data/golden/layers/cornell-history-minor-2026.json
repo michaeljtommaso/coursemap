@@ -1,0 +1,225 @@
+{
+  "programId": "cornell-history-minor-2026",
+  "description": "A student finishing the history minor with five department courses, one of them a seminar.",
+  "layerIds": [
+    "cornell-history-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "HIST-1540",
+    "HIST-1561",
+    "HIST-1595",
+    "HIST-1985",
+    "HIST-2132"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "HIST-1200",
+      "rowId": "five-history-courses",
+      "why": "A first-year writing seminar is excluded from the minor."
+    },
+    {
+      "courseId": "HIST-2001",
+      "rowId": "five-history-courses",
+      "why": "A 2-credit supervised reading falls below the 3-credit size."
+    },
+    {
+      "courseId": "HIST-2005",
+      "rowId": "five-history-courses",
+      "why": "A 1-credit course falls below the 3-credit size."
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "five-history-courses",
+      "why": "A course outside the History department does not count."
+    }
+  ],
+  "courses": [
+    {
+      "id": "HIST-1540",
+      "subject": "HIST",
+      "number": "1540",
+      "title": "American Capitalism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "LH-IL"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1561",
+      "subject": "HIST",
+      "number": "1561",
+      "title": "Introduction to the Ottoman Empire",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HGS"
+        },
+        {
+          "value": "HIST-HPE"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1595",
+      "subject": "HIST",
+      "number": "1595",
+      "title": "African American History from 1865",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "LH-IL"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1985",
+      "subject": "HIST",
+      "number": "1985",
+      "title": "American History from 1500 to 1800",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HPE"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2132",
+      "subject": "HIST",
+      "number": "2132",
+      "title": "Law and Society in Early Modern and Modern China",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HAN"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1200",
+      "subject": "HIST",
+      "number": "1200",
+      "title": "FWS: Writing History",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2001",
+      "subject": "HIST",
+      "number": "2001",
+      "title": "Supervised Reading - Undergraduate",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2005",
+      "subject": "HIST",
+      "number": "2005",
+      "title": "The First American University",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    }
+  ]
+}

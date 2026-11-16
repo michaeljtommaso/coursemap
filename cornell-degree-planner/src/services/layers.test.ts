@@ -19,7 +19,15 @@ vi.mock("firebase/firestore", () => ({
 }));
 vi.mock("@/lib/firebase", () => ({ db: {} }));
 
-import { fetchCollegeLayers, fetchConcentrationLayers, fetchLayer, parseLayer } from "./layers";
+import {
+  fetchCollegeLayers,
+  fetchConcentrationLayers,
+  fetchLayer,
+  fetchMinorIndex,
+  parseLayer,
+  peekMinorIndex,
+  resetMinorIndexCache,
+} from "./layers";
 import casCollege from "@/lib/planner/distribution/fixtures/cas-college.json";
 import { encodeLayerDoc } from "@/lib/planner/distribution/layerDoc";
 import type { Layer } from "@/lib/planner/distribution/types";
@@ -151,5 +159,41 @@ describe("the fictional test majors (scripts/seed-data/layers-test) pass the rea
       const kinds = new Set(r.layer.rows.map((row) => row.kind));
       for (const k of ["seat", "pool", "distribution", "anyOf", "confirm"]) expect(kinds).toContain(k);
     }
+  });
+});
+
+describe("fetchMinorIndex (spec 047 D12)", () => {
+  const entry = { id: "minor-cs", name: "Computer Science Minor", shortName: "CS minor", offeredBy: "Bowers CIS", catalogYear: "2026-27" };
+
+  beforeEach(() => {
+    resetMinorIndexCache();
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  it("reads catalog/minorIndex once per session and parses it", async () => {
+    getDoc.mockResolvedValue(snap({ entries: [entry, { ...entry, id: "minor-econ", notOpenTo: ["cas-econ"] }] }));
+    expect(peekMinorIndex()).toBeNull();
+    const [a, b] = await Promise.all([fetchMinorIndex(), fetchMinorIndex()]);
+    expect(a.map((e) => e.id)).toEqual(["minor-cs", "minor-econ"]);
+    expect(b).toBe(a);
+    expect(await fetchMinorIndex()).toBe(a);
+    expect(getDoc).toHaveBeenCalledTimes(1);
+    expect(getDoc.mock.calls[0][0]).toEqual({ path: "catalog/minorIndex" });
+    expect(peekMinorIndex()).toBe(a);
+  });
+
+  it("reads [] when no minors are seeded yet", async () => {
+    getDoc.mockResolvedValue(snap(null));
+    expect(await fetchMinorIndex()).toEqual([]);
+  });
+
+  it("rejects a doc that fails the schema, and a failed read is retried next time", async () => {
+    getDoc.mockResolvedValueOnce(snap({ entries: [{ ...entry, catalogYear: "next year" }] }));
+    await expect(fetchMinorIndex()).rejects.toThrow(/minor index rejected/);
+    getDoc.mockRejectedValueOnce(new Error("offline"));
+    await expect(fetchMinorIndex()).rejects.toThrow("offline");
+    getDoc.mockResolvedValueOnce(snap({ entries: [entry] }));
+    expect((await fetchMinorIndex()).map((e) => e.id)).toEqual(["minor-cs"]);
+    expect(getDoc).toHaveBeenCalledTimes(3);
   });
 });

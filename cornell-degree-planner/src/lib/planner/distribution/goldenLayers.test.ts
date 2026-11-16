@@ -82,7 +82,7 @@ function resolveLayer(id: string): Layer {
   return layer;
 }
 
-const KIND_RANK: Record<Layer["kind"], number> = { college: 0, major: 1, concentration: 2 };
+const KIND_RANK: Record<Layer["kind"], number> = { college: 0, major: 1, concentration: 2, minor: 3 };
 
 /** Ways the fixture's layers do not fit its student; [] = fits (mirrors
  *  scripts/check-golden-layer.ts fixtureProblems, plus the naming rule that

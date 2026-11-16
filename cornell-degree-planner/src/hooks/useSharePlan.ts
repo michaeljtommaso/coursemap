@@ -33,7 +33,7 @@ export interface SharePlanApi {
 export function useSharePlan(): SharePlanApi {
   const {
     planId, planName, placements, placedCourses, completedIds, inProgressIds,
-    waivedRequirementIds, planProgramId, shortTerms,
+    waivedRequirementIds, planProgramId, shortTerms, additionalPrograms,
   } = usePlan();
   const { programs } = usePrograms();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
@@ -110,6 +110,9 @@ export function useSharePlan(): SharePlanApi {
           courseMarks: marks,
           collegeLayerId: collegeRuleSet,
           concentrationIds: progress.engine === "distribution" ? progress.concentrations?.chosen : undefined,
+          // Spec 047 D13: the second major and minors travel with the share.
+          additionalPrograms,
+          primaryProgramId: program.id,
         }),
         schemaVersion: PLAN_SCHEMA_VERSION,
       });

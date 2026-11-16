@@ -1,0 +1,174 @@
+{
+  "programId": "cornell-business-minor-2026",
+  "description": "A student finishing the business minor with one pick from each foundation and core group.",
+  "layerIds": [
+    "cornell-business-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ILRST-2100",
+    "ECON-1110",
+    "ILRID-1700",
+    "AEM-2400",
+    "AEM-2210",
+    "AEM-2241"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ECON-1120",
+      "rowId": "foundation-microeconomics",
+      "why": "Introductory macroeconomics is not on the microeconomics list."
+    },
+    {
+      "courseId": "MATH-1110",
+      "rowId": "foundation-statistics",
+      "why": "Calculus is not on the statistics list."
+    },
+    {
+      "courseId": "AEM-2220",
+      "rowId": "core-accounting",
+      "why": "Managerial accounting is not among the financial accounting choices."
+    },
+    {
+      "courseId": "AEM-4210",
+      "rowId": "core-finance",
+      "why": "An upper-level finance elective is not among the listed finance choices."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ILRST-2100",
+      "subject": "ILRST",
+      "number": "2100",
+      "title": "Introductory Statistics and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ILRID-1700",
+      "subject": "ILRID",
+      "number": "1700",
+      "title": "Introduction to Organizations and Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2400",
+      "subject": "AEM",
+      "number": "2400",
+      "title": "Marketing",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2210",
+      "subject": "AEM",
+      "number": "2210",
+      "title": "Financial Accounting",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2241",
+      "subject": "AEM",
+      "number": "2241",
+      "title": "Finance",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ECON-1120",
+      "subject": "ECON",
+      "number": "1120",
+      "title": "Introductory Macroeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2220",
+      "subject": "AEM",
+      "number": "2220",
+      "title": "Dilemmas in Entrepreneurship",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4210",
+      "subject": "AEM",
+      "number": "4210",
+      "title": "Futures, Options and Financial Derivatives",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

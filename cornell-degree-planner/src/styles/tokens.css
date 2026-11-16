@@ -37,6 +37,16 @@
   --drop: #60a5fa;        --drop-text: #1e40af;        --drop-tint: #eff6ff;
   --destructive: #ef4444; --destructive-text: #991b1b; --destructive-tint: #fef2f2;
 
+  /* --- program colors (spec 047 D5) — a plan's extra programs, in the order
+   * added (lib/planner/programColors.ts); never a status hue. Same triad shape:
+   * base = dots/bars, text = on-tint text, tint = fills. Dots vs --surface
+   * #fefeff: 3.71 / 4.43 / 4.56 / 4.72 (>= 3:1); text on tint 7.27 / 8.88 /
+   * 7.22 / 9.45. */
+  --program-1: #0d9488;   --program-1-text: #115e59;   --program-1-tint: #f0fdfa;
+  --program-2: #6366f1;   --program-2-text: #3730a3;   --program-2-tint: #eef2ff;
+  --program-3: #db2777;   --program-3-text: #9d174d;   --program-3-tint: #fdf2f8;
+  --program-4: #64748b;   --program-4-text: #334155;   --program-4-tint: #f1f5f9;
+
   /* --- derived status ring/glow (card direction 11, claude-design-2026-07-11)
    * Serve the CourseCard 2px status ring + live conic border: `--*-bd` is the
    * ring/glint color (base @ 55%); the destructive glow/ring feed the blocked
@@ -168,6 +178,14 @@
   --waived: #a78bfa;      --waived-text: #ddd6fe;      --waived-tint: rgb(76 29 149 / 0.4);
   --drop: #60a5fa;        --drop-text: #bfdbfe;        --drop-tint: rgb(30 58 138 / 0.4);
   --destructive: #f87171; --destructive-text: #fecaca; --destructive-tint: rgb(127 29 29 / 0.4);
+
+  /* program colors (spec 047 D5) — lifted for dark ink, tints go alpha. Dots
+   * vs --surface #0f172a: 9.59 / 5.98 / 6.74 / 6.96 (>= 3:1); text on tint
+   * (over the surface) 11.45 / 10.31 / 11.08 / 12.01. */
+  --program-1: #2dd4bf;   --program-1-text: #99f6e4;   --program-1-tint: rgb(19 78 74 / 0.4);
+  --program-2: #818cf8;   --program-2-text: #c7d2fe;   --program-2-tint: rgb(49 46 129 / 0.4);
+  --program-3: #f472b6;   --program-3-text: #fbcfe8;   --program-3-tint: rgb(131 24 67 / 0.4);
+  --program-4: #94a3b8;   --program-4-text: #e2e8f0;   --program-4-tint: rgb(51 65 85 / 0.4);
 
   /* derived status ring/glow (card direction 11) — same mixes over the dark
    * base hues above; see the :root block for what each serves. */

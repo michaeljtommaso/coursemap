@@ -14,14 +14,19 @@ export type SaveAnswer = (scope: "mark" | "fact", key: string, value: MarkValue 
  * PlanProvider); a student fact is stored on the profile (`setStudentAnswer`,
  * which rejects with a readable message). The row's question form and the
  * "Your answers" list both call through here.
+ *
+ * `beforeMark` (spec 047 D10) runs right before a course mark is written: the
+ * page passes `useMakeRoom`'s guard, which drops orphaned entries when the
+ * write would otherwise hit the course-answer cap.
  */
-export function useAnswerActions(): SaveAnswer {
+export function useAnswerActions(beforeMark?: (key: string, value: MarkValue | null) => void): SaveAnswer {
   // Marks live on the plan (PlanProvider), facts on the profile (AuthProvider).
   const { setCourseMark } = usePlanContext();
   const { setStudentAnswer } = useAuth();
   return useCallback<SaveAnswer>(
     async (scope, key, value) => {
       if (scope === "mark") {
+        beforeMark?.(key, value);
         setCourseMark(key, value);
         return;
       }
@@ -29,6 +34,6 @@ export function useAnswerActions(): SaveAnswer {
       if (typeof value === "number") throw new Error("That answer doesn't fit this question.");
       await setStudentAnswer(key, value as FactValue | null);
     },
-    [setCourseMark, setStudentAnswer]
+    [setCourseMark, setStudentAnswer, beforeMark]
   );
 }

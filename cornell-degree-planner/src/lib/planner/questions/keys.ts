@@ -128,6 +128,40 @@ export function isValidAnswerKey(key: string): boolean {
   return key.length > 0 && key.length <= ANSWER_KEY_MAX && ANSWER_KEY_RE.test(key);
 }
 
+// ─── "Count it for X instead" (spec 047 D8) ──────────────────────────────────
+
+/** Prefix of a countsFor course mark. Not a question type: parseRef reads
+ *  these keys as null, so nothing that walks questions mistakes one. */
+export const COUNTS_FOR_PREFIX = "countsFor:";
+/** A layer id as LayerSchema allows it. */
+const LAYER_ID_RE = /^[a-z0-9][a-z0-9-]{0,100}$/;
+/** A course id inside a key: key-safe characters, no separators. */
+const KEY_COURSE_RE = /^[A-Za-z0-9_-]+$/;
+
+/**
+ * The course mark that says "count `courseId` for the program of layer
+ * `layerId`" when an overlap limit holds it back from one side (spec 047 D8):
+ * `countsFor:${layerId}@${courseId}`, value "yes". A layer id is at most 101
+ * characters and a course id COURSE_ID_ALLOWANCE, so the key always fits
+ * ANSWER_KEY_MAX.
+ */
+export function countsForKey(layerId: string, courseId: string): string {
+  return `${COUNTS_FOR_PREFIX}${layerId}@${courseId}`;
+}
+
+/** A countsFor key split into its parts, or null when it is not one. */
+export function parseCountsForKey(key: string): { layerId: string; courseId: string } | null {
+  if (!isValidAnswerKey(key) || !key.startsWith(COUNTS_FOR_PREFIX)) return null;
+  const rest = key.slice(COUNTS_FOR_PREFIX.length);
+  const at = rest.indexOf("@");
+  if (at <= 0 || rest.indexOf("@", at + 1) >= 0) return null;
+  const layerId = rest.slice(0, at);
+  const courseId = rest.slice(at + 1);
+  if (!LAYER_ID_RE.test(layerId)) return null;
+  if (courseId.length === 0 || courseId.length > COURSE_ID_ALLOWANCE || !KEY_COURSE_RE.test(courseId)) return null;
+  return { layerId, courseId };
+}
+
 /**
  * The course scope of every row-scoped mark question the layers declare:
  * ref → the question's `courses` rule. The rule evaluator reads it so a

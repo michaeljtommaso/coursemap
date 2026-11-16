@@ -1,0 +1,158 @@
+{
+  "programId": "cornell-data-science-minor-2026",
+  "description": "An economics major whose statistics and econometrics courses also serve the minor has one course held back by the two-course overlap cap.",
+  "layerIds": [
+    "cornell-economics-ba-2026",
+    "cornell-data-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ECON-3130",
+    "CS-1110",
+    "ECON-3120",
+    "ECON-3140",
+    "INFO-1200",
+    "INFO-3312"
+  ],
+  "limit": {
+    "maxCourses": 2
+  },
+  "shared": [
+    "ECON-3130",
+    "ECON-3120",
+    "ECON-3140"
+  ],
+  "heldBack": [
+    {
+      "courseId": "ECON-3140",
+      "from": "cornell-data-science-minor-2026",
+      "why": "Three courses serve both programs but only two may, so one stops counting for the minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3120",
+      "subject": "ECON",
+      "number": "3120",
+      "title": "Applied Econometrics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3140",
+      "subject": "ECON",
+      "number": "3140",
+      "title": "Econometrics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "INFO-1200",
+      "subject": "INFO",
+      "number": "1200",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "INFO-3312",
+      "subject": "INFO",
+      "number": "3312",
+      "title": "Data Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    }
+  ]
+}

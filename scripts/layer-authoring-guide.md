@@ -1,7 +1,8 @@
 # Writing a requirement layer (spec 019 Phases 4 and 5)
 
-How one Arts & Sciences or CALS major's requirements become a layer file the
-Distribution engine can check. Read this whole page before writing a draft. The
+How one Arts & Sciences or CALS major's (or any minor's, see "Minor layers")
+requirements become a layer file the Distribution engine can check. Read this
+whole page before writing a draft. The
 format itself is defined in
 `cornell-degree-planner/src/lib/planner/distribution/types.ts` (read its header
 for the counting rules); the draft envelope and file layout are in
@@ -37,14 +38,28 @@ courses):
 - graduate (5000+) courses, or "no more than one 2000-level course";
 - a named course that "does not fulfill" a requirement (e.g. one seminar that
   isn't a seminar, an honors tutorial).
+
+**"Not accepted as fulfilling" is not an exclusion.** A sentence like "the
+following are NOT accepted as fulfilling X: A, B" names things that do not
+STAND IN for X (an attribute or course that is not itself X). It does not
+remove courses that ARE X and also carry A or B. Encode it by keeping the rule
+to X alone, never as `{ "not": <A or B> }` beside it: that reading once
+refused 83 of 128 qualifying biology courses and 15 of 21 ethics courses.
+check-draft warns (`exclusion-size`) when a `not` removes more than half of
+the courses the rest of its rule matches, and prints every exclusion's count
+on its `exclusions:` line; read the sentence again whenever it fires.
+
 Also give every major a confirm row for applying to or declaring the major when
 the page asks for an application, a prerequisite grade or a director's approval.
 
 Out:
 - College requirements (distribution, first-year writing seminars, language,
   the 120-credit total, PE, swim test). They live once in the college layer.
-- Honors, minors, study abroad advice, sample schedules, "recommended" courses
-  that are not required. If the page says "recommended", it is not a row.
+- Honors, study abroad advice, sample schedules, "recommended" courses that
+  are not required. If the page says "recommended", it is not a row. (A minor
+  is its own layer: see "Minor layers". A major page's sentence about how its
+  courses may count toward a minor or a second major goes in the major
+  layer's `sharing`, with its quote.)
 - Concentrations: each is its own layer (`<programId>--<concentrationId>`,
   kind `concentration`). Note them in `notes` unless your task says to author them.
   If the page makes the student choose concentrations, set the major layer's
@@ -91,6 +106,148 @@ the college meets whatever their major: distribution areas, first-year writing,
 language, credit totals, residency, grades, PE and swim. Rules that differ by
 entry term or transfer status use `appliesTo` on the row or the layer (see
 `types.ts`). Keep the layer's id exactly as your task gives it.
+
+## Minor layers (spec 047)
+
+A minor layer encodes one minor's own requirements. It is chosen beside the
+student's major, so it never repeats college requirements and never picks a
+college layer. Header:
+
+```json
+{
+  "id": "cornell-data-science-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Data Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-data-science-minor-2026",
+  "rows": []
+}
+```
+
+- `id` = `programId` = `cornell-<catalog slug>-2026`, like a major
+  (`programs/data-science-minor/` → `cornell-data-science-minor-2026`).
+- `family`: `cas` or `cals` for a minor offered by Arts & Sciences or CALS,
+  `other` for any other college (Engineering, Bowers CIS, SC Johnson). Only a
+  minor may use `other`.
+- No `concentrations`, no `courseSharing`, no `concentrationId`, no college
+  rows (distribution, writing, language, credit totals).
+
+**Course-counting requirements are consuming rows.** "Six courses from these
+lists", "one of A, B or C", "18 credits of psychology": write each as a seat,
+pool (with `requiredCredits` when the page counts credits) or distribution
+row. Never write a minor's main requirement as a `credits` row or an
+`overlay` row: overlay rows never count toward an overlap limit, so a minor
+written that way escapes its limit (check-draft warns,
+`minor-main-requirement`). A credits row is right only for a rule that
+re-counts courses the consuming rows already hold ("at least 9 of the credits
+with an AEM code", "at least 9 credits taken at Cornell").
+
+**Eligibility, grades and declaring the minor are confirm rows.** Minimum
+grades, letter grade only, a minor GPA, admission grades ("C+ or better in
+three courses"), sign-up deadlines and "enrollment in a major that approves
+the minor" are confirm rows. A rule that depends on the student's major ("if
+your major requires CS 1110, take a more advanced course") is a `program`
+leaf when the page names the majors, else a narrower rule plus a confirm row.
+
+**"Not open to X majors" is not a row.** It goes in the minor's entry in
+`scripts/seed-data/minor-index.json` (`notOpenTo`, program-id prefixes): the
+picker lists the minor disabled for those students. In the sentence ledger,
+map that sentence to `eligibility` with the reason (which prefixes).
+
+**AP, transfer and "taken at Cornell"** go through `creditKind` exactly as for
+majors (see "Exam and transfer credit"): "all courses must be taken at Cornell"
+excludes every exam kind and `transfer`.
+
+### Sharing (overlap limits)
+
+A minor layer (and a major layer whose page states such a rule) sets
+`sharing` from the sentence that limits how its courses may count toward
+another program:
+
+```json
+"sharing": { "otherMajors": { "maxCourses": 2 } }
+```
+
+| Field | On a minor layer | On a major layer |
+|---|---|---|
+| `otherMajors` | toward any major on the plan (primary or second) | toward a second major; `"forbidden"`: no second major at all |
+| `minors` | toward another minor | toward a minor |
+| `forbiddenWith` | program-id prefixes it can't be combined with at all | the same |
+
+A limit is `"none"` (no course may count for both), or `{ "maxCourses": n }`
+and/or `{ "maxCredits": n }`, optionally with `"with": [<program-id
+prefixes>]` when the cap applies only with those partners. Absent means no
+limit: leave `sharing` out when the page says courses may also count toward
+other programs, or says nothing.
+
+- **Quote it.** `quotes` gets a `"sharing"` entry: the page's sentence(s) that
+  set the limit, word for word, stating every number the field holds
+  (check-draft `sharing-quote`). When the page explicitly allows unlimited
+  sharing, you may quote that sentence under `"sharing"` with no field set.
+- **Encode the stricter limit the fields can express, plus a confirm row with
+  the exact rule.** When Cornell's rule is narrower than these fields can say
+  (a cap on only the major's core rows, "12 credits must be unique", a cap on
+  only some courses), encode the STRICTER limit (it can only hold back too
+  much, never too little) and keep a confirm row stating the real rule. Never
+  encode a more generous limit. A number you work out this way (an 18-credit
+  minor with 12 unique credits gives `maxCredits: 6`) goes in
+  `derivedNumbers` under `"sharing"`.
+- Overlap counts consuming rows and credits rows of each program; overlay
+  rows and the college layer never count.
+
+### Row ids are never reused
+
+Students' waivers and answers are keyed by layer id and row id, and a minor's
+stay stored after the student removes it. Once a layer has been seeded, a row
+id means that requirement forever: give a new requirement a new id, and when a
+requirement goes away retire its id. promote-layer.ts and
+`validate-layers.ts --previous` refuse a row id whose meaning changed.
+
+### The single-author chain and its sentence ledger
+
+Minors are written by ONE author (framing `"single-author"`, author
+`"merged"`, straight to `merged.src.json`), checklist first: write the
+plain-English checklist in `checklist`, then the rows, then the ledger. The
+ledger (`ledger` in the draft) accounts for every in-scope block of
+`extract.json`:
+
+```json
+"ledger": [
+  { "block": "P3", "to": "core-statistics" },
+  { "block": "P4", "to": ["sharing", "core-computing"] },
+  { "block": "P5", "to": "eligibility", "reason": "notOpenTo in the minor index" },
+  { "block": "L4", "to": "out-of-scope", "reason": "suggested courses, not required" },
+  { "block": "H6", "to": "out-of-scope", "reason": "advising contacts" }
+]
+```
+
+- `block`: a block id (`P12` prose, `T4` table row), a list id (`L3`: every
+  row of the list) or a heading id (`H5`: the whole section up to the next
+  heading of the same or a higher level). Rows of a list a row was expanded
+  from (`listRefs`) are accounted for already.
+- `to`: a row id (or `parent/child`), `"sharing"`, `"eligibility"` or
+  `"out-of-scope"`, or a list of several. `eligibility` and `out-of-scope`
+  need a `reason`, and so does `sharing` when the layer sets none.
+- A sentence about overlap, grades, residency (at Cornell, transfer, AP) or
+  eligibility can never be out of scope: overlap goes to `sharing` or a row,
+  grades and residency to a row, eligibility to a row or `eligibility`.
+
+Run `npx tsx check-coverage.ts ../docs/provenance/<id>/merged.json` after
+check-draft passes: it writes `coverage.json`, which the review sheet and
+promote-layer require. check-draft reports the same problems as
+`sentence-coverage` errors.
+
+### Golden plans for a minor
+
+`golden-fixture.json` proves the minor alone: `layerIds: ["<minorId>"]`,
+`ctx.programId` = a real major the minor is open to. When the minor sets a
+limit toward majors (`sharing.otherMajors`), a second fixture,
+`golden-overlap.json`, proves the limit (check-overlap-fixture.ts): a promoted
+major from `scripts/seed-data/layers/` and the minor, a plan that completes
+the minor while the two count more courses in common than the limit allows,
+the courses both count (`shared`), the pair's `limit`, and `heldBack`: which
+course(s) the limit holds back and from which program.
 
 ## Layer header
 

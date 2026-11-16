@@ -168,3 +168,29 @@ describe("normalizePlan — retired program ids (spec 019 D12)", () => {
     });
   });
 });
+
+describe("normalizePlan — spec 047 additional programs", () => {
+  it("reads the list tolerantly, under current ids, without the primary or a repeat", () => {
+    const out = normalizePlan(
+      current({
+        additionalPrograms: [
+          { programId: "cornell-infosci-bs-2025", kind: "major" },
+          { programId: "cornell-information-science-bs-2026", kind: "major" }, // the same program again
+          { programId: "cornell-cs-bs-2026", kind: "minor" }, // the primary
+          { programId: "minor-a", kind: "minor", extra: 1 }, // malformed (strict entry)
+          { programId: "minor-b", kind: "minor" },
+        ],
+      })
+    );
+    expect(out.additionalPrograms).toEqual([
+      { programId: "cornell-information-science-bs-2026", kind: "major" },
+      { programId: "minor-b", kind: "minor" },
+    ]);
+  });
+
+  it("is [] without the field, for a non-list, and for a legacy doc", () => {
+    expect(normalizePlan(current()).additionalPrograms).toEqual([]);
+    expect(normalizePlan(current({ additionalPrograms: { a: 1 } })).additionalPrograms).toEqual([]);
+    expect(normalizePlan({ name: "x", programId: "p", schemaVersion: 2 }).additionalPrograms).toEqual([]);
+  });
+});

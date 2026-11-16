@@ -1,0 +1,143 @@
+{
+  "programId": "cornell-engineering-management-minor-2026",
+  "description": "A fictional student takes the economics course, a probability course, and four management electives from the listed courses.",
+  "layerIds": [
+    "cornell-engineering-management-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-environmental-engineering-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CEE-3230",
+    "CEE-3040",
+    "ENGRG-3600",
+    "CEE-5900",
+    "CEE-5980",
+    "ENMGT-5990"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CEE-3230",
+      "rowId": "core-statistics",
+      "why": "The economics course is not one of the probability and statistics choices."
+    },
+    {
+      "courseId": "CEE-3040",
+      "rowId": "core-econ-accounting",
+      "why": "A statistics course cannot fill the economics or accounting slot."
+    },
+    {
+      "courseId": "CEE-3040",
+      "rowId": "additional-courses",
+      "why": "Required-group courses are not on the three-of-seven additional list."
+    },
+    {
+      "courseId": "CEE-3230",
+      "rowId": "additional-courses",
+      "why": "The economics course is a required-group course, not on the additional list."
+    },
+    {
+      "courseId": "ENGRD-2700",
+      "rowId": "additional-courses",
+      "why": "Statistics choices are not on the additional list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CEE-3230",
+      "subject": "CEE",
+      "number": "3230",
+      "title": "Engineering Economics and Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CEE-3040",
+      "subject": "CEE",
+      "number": "3040",
+      "title": "Uncertainty Analysis in Engineering",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENGRG-3600",
+      "subject": "ENGRG",
+      "number": "3600",
+      "title": "Ethical Issues in Engineering Practice",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CEE-5900",
+      "subject": "CEE",
+      "number": "5900",
+      "title": "Project Management",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CEE-5980",
+      "subject": "CEE",
+      "number": "5980",
+      "title": "Decision Framing and Analytics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENMGT-5990",
+      "subject": "ENMGT",
+      "number": "5990",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ENGRD-2700",
+      "subject": "ENGRD",
+      "number": "2700",
+      "title": "Eng Probability and Statistics: Modeling and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    }
+  ]
+}

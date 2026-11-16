@@ -238,7 +238,8 @@ const majorStep = (undecided: boolean): TourStep => ({
   ) : (
     <>
       <p>
-        Switch majors here. Each one keeps its own plan, so trying another never erases this one.
+        Your programs live here. Click to switch majors (each keeps its own plan, so trying another
+        never erases this one) or <b>+</b> to add a second major or a minor to this plan.
       </p>
       <p>
         <b>Flowchart</b> and <b>Major page</b> open Cornell's official versions, when your major has

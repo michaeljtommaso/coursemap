@@ -1,0 +1,148 @@
+{
+  "programId": "cornell-electrical-computer-engineering-minor-2026",
+  "description": "A computer science student who adds the electrical and computer engineering minor with seven distinct courses.",
+  "layerIds": [
+    "cornell-electrical-computer-engineering-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CS-3410",
+    "ECE-2100",
+    "ECE-2300",
+    "ECE-3140",
+    "ECE-3250",
+    "ECE-3200",
+    "ECE-4750"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ECE-2720",
+      "rowId": "ece-3000-plus",
+      "why": "A 2000-level course is below the level floor of that row."
+    },
+    {
+      "courseId": "ECE-3200",
+      "rowId": "ece-4000-plus",
+      "why": "A 3000-level course is below the 4000-level floor."
+    },
+    {
+      "courseId": "ECE-3200",
+      "rowId": "core-two",
+      "why": "Not one of the five listed core courses."
+    },
+    {
+      "courseId": "ECE-2400",
+      "rowId": "intro-two",
+      "why": "Not one of the three listed foundation courses."
+    },
+    {
+      "courseId": "CS-3420",
+      "rowId": "cs-3410",
+      "why": "Only the named systems course fills this row."
+    },
+    {
+      "courseId": "ECE-4980",
+      "rowId": "ece-4000-plus",
+      "why": "Independent project work is excluded from the upper-level row."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CS-3410",
+      "subject": "CS",
+      "number": "3410",
+      "title": "Computer System Organization and Programming",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECE-2100",
+      "subject": "ECE",
+      "number": "2100",
+      "title": "Introduction to Circuits for Electrical and Computer Engineers",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-2300",
+      "subject": "ECE",
+      "number": "2300",
+      "title": "Digital Logic and Computer Organization",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-3140",
+      "subject": "ECE",
+      "number": "3140",
+      "title": "Embedded Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-3250",
+      "subject": "ECE",
+      "number": "3250",
+      "title": "Signals and Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-3200",
+      "subject": "ECE",
+      "number": "3200",
+      "title": "Foundations Machine Learning",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-4750",
+      "subject": "ECE",
+      "number": "4750",
+      "title": "Computer Architecture",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-2720",
+      "subject": "ECE",
+      "number": "2720",
+      "title": "Data Science for Engineers",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-2400",
+      "subject": "ECE",
+      "number": "2400",
+      "title": "Computer Systems Programming",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-3420",
+      "subject": "CS",
+      "number": "3420",
+      "title": "Embedded Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ECE-4980",
+      "subject": "ECE",
+      "number": "4980",
+      "title": "Supervised Teaching Experience",
+      "credits": 1,
+      "creditsMax": 2,
+      "attrs": []
+    }
+  ]
+}

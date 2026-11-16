@@ -1,0 +1,144 @@
+{
+  "id": "cornell-history-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "History (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-history-minor-2026",
+  "rows": [
+    {
+      "id": "five-history-courses",
+      "label": "Five History department courses of 3 or 4 credits each, taken at Cornell",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts HIST courses and their cross-listings of at least 3 credits. Transfer, AP and other exam credit are left out. First-year writing seminars are left out by title. The 4-credit ceiling cannot be checked by the board; see the credit-size reminder.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "HIST"
+            ],
+            "crossListed": true
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "HIST"
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "number": {
+                      "min": 2006,
+                      "max": 2499
+                    }
+                  },
+                  {
+                    "number": {
+                      "min": 4000,
+                      "max": 4999
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "label": "At least one seminar at the 2000 level or above",
+          "minCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "credit-size",
+      "label": "Take each of the five courses for 3 or 4 credits",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "seminar-check",
+      "label": "Confirm your seminar is a History seminar at the 2000 level or above (cross-listed seminars are not matched on the board)",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-fws",
+      "label": "Do not count a first-year writing seminar toward the minor",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c",
+      "label": "Earn a C or better in each minor course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-outside-credit",
+      "label": "Transfer, AP and study abroad credit are not eligible; take all five at Cornell",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

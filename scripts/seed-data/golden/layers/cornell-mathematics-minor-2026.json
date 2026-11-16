@@ -1,0 +1,247 @@
+{
+  "programId": "cornell-mathematics-minor-2026",
+  "description": "A computer science student finishes the math minor with the standard two admission courses plus four upper-level MATH courses.",
+  "layerIds": [
+    "cornell-mathematics-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MATH-2210",
+    "MATH-2220",
+    "MATH-3340",
+    "MATH-3110",
+    "MATH-3320",
+    "MATH-4180"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-4900",
+      "rowId": "upper-four",
+      "why": "Named by the page as a course that never counts toward the minor."
+    },
+    {
+      "courseId": "MATH-4980",
+      "rowId": "upper-four",
+      "why": "Named by the page as a course that never counts toward the minor."
+    },
+    {
+      "courseId": "MATH-4997",
+      "rowId": "upper-four",
+      "why": "Named by the page as a course that never counts toward the minor."
+    },
+    {
+      "courseId": "MATH-5200",
+      "rowId": "upper-four",
+      "why": "Graduate-level MATH courses at the 5000 level are excluded."
+    },
+    {
+      "courseId": "CS-3110",
+      "rowId": "upper-four",
+      "why": "Only courses with the MATH prefix are accepted, no substitutions."
+    },
+    {
+      "courseId": "MATH-2930",
+      "rowId": "upper-four",
+      "why": "Below the 3000 level, so it cannot be one of the four upper courses."
+    },
+    {
+      "courseId": "MATH-4310",
+      "rowId": "linear-algebra",
+      "why": "A 4000-level linear algebra course may not replace the admission linear algebra course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MATH-2210",
+      "subject": "MATH",
+      "number": "2210",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2220",
+      "subject": "MATH",
+      "number": "2220",
+      "title": "Multivariable Calculus",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3340",
+      "subject": "MATH",
+      "number": "3340",
+      "title": "Abstract Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3110",
+      "subject": "MATH",
+      "number": "3110",
+      "title": "Introduction to Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-3320",
+      "subject": "MATH",
+      "number": "3320",
+      "title": "Introduction to Number Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4180",
+      "subject": "MATH",
+      "number": "4180",
+      "title": "Complex Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4900",
+      "subject": "MATH",
+      "number": "4900",
+      "title": "Supervised Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4980",
+      "subject": "MATH",
+      "number": "4980",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "MATH-4997",
+      "subject": "MATH",
+      "number": "4997",
+      "title": "Practical Training in Mathematics",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MATH-5200",
+      "subject": "MATH",
+      "number": "5200",
+      "title": "Differential Equations and Dynamical Systems",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CS-3110",
+      "subject": "CS",
+      "number": "3110",
+      "title": "Functional Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-2930",
+      "subject": "MATH",
+      "number": "2930",
+      "title": "Differential Equations for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4310",
+      "subject": "MATH",
+      "number": "4310",
+      "title": "Linear Algebra",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

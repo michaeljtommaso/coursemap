@@ -1,0 +1,510 @@
+{
+  "id": "cornell-entrepreneurship-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Entrepreneurship (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-entrepreneurship-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 1,
+      "maxCredits": 4
+    },
+    "minors": {
+      "maxCredits": 4
+    }
+  },
+  "rows": [
+    {
+      "id": "overview",
+      "label": "Overview: the dilemmas in entrepreneurship course",
+      "group": "Six areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Core Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2220"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "accounting",
+      "label": "Accounting: one financial accounting course (hotel-school and ORIE versions only for those students)",
+      "group": "Six areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Core Requirements"
+      },
+      "note": "The hotel-school course is limited to Nolan students and the ORIE course to ORIE majors. The Nolan major is not in the planner's program list, so that branch cannot match here and shows as short; the confirm row covers Nolan students.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "AEM-2210",
+              "HADM-2230",
+              "NCC-5500"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "HADM-1210"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-hotel-administration-bs"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "ORIE-3150"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-ore-bs"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "ideation",
+      "label": "Ideation: 1.5 credits from the ideation list",
+      "group": "Six areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Ideation"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2180",
+          "AEM-3110",
+          "HADM-4144",
+          "NBA-5380",
+          "DEA-2730",
+          "SYSEN-5740"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 1.5
+    },
+    {
+      "id": "strategy",
+      "label": "Entrepreneurial strategy: 3 credits from the strategy list",
+      "group": "Six areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Entrepreneurial Strategy"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3249",
+          "AEM-3251",
+          "AEM-4080",
+          "AEM-4650",
+          "HADM-4140",
+          "HADM-4145",
+          "HADM-4432",
+          "NBA-3000",
+          "NBA-6230",
+          "NBA-6330"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "industries",
+      "label": "Industries and topics: 4.5 credits from the industries list",
+      "group": "Six areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Industries and Topics"
+      },
+      "note": "Courses that also appear on another area's list can fill only one area.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3220",
+          "AEM-3275",
+          "AEM-3330",
+          "AEM-3380",
+          "AEM-3385",
+          "AEM-4355",
+          "AEM-4572",
+          "AEM-4615",
+          "AEM-4650",
+          "ENGRG-2270",
+          "FSAD-4444",
+          "FSAD-4660",
+          "HADM-3610",
+          "HADM-4130",
+          "HADM-4315",
+          "HADM-4800",
+          "NBA-4720",
+          "NBA-5070",
+          "NBA-6135",
+          "NBA-6910",
+          "PUBPOL-5813"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 4.5
+    },
+    {
+      "id": "practical",
+      "label": "Practical experience: 1.5 credits from the practical experience list",
+      "group": "Six areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Practical Experience"
+      },
+      "note": "The independent-study course on this list needs a form or petition to the minors office; see the confirm row.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-3251",
+          "AEM-3385",
+          "AEM-3255",
+          "AEM-4421",
+          "AEM-4975",
+          "HADM-4315",
+          "NBA-6230",
+          "NBA-6330"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 1.5
+    },
+    {
+      "id": "credits-cornell",
+      "label": "At least 9 of the minor's credits taken at Cornell (no exam or transfer credit)",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Either-or-both with the SC Johnson credits: one course can count toward both. This re-counts minor-list courses on the plan; the six area rows decide which courses the minor uses. The hotel-school and ORIE accounting options count only for Nolan and ORIE students, as in the accounting row.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AEM-2220",
+              "AEM-2210",
+              "HADM-1210",
+              "HADM-2230",
+              "NCC-5500",
+              "ORIE-3150",
+              "AEM-2180",
+              "AEM-3110",
+              "HADM-4144",
+              "NBA-5380",
+              "DEA-2730",
+              "SYSEN-5740",
+              "AEM-3249",
+              "AEM-3251",
+              "AEM-4080",
+              "AEM-4650",
+              "HADM-4140",
+              "HADM-4145",
+              "HADM-4432",
+              "NBA-3000",
+              "NBA-6230",
+              "NBA-6330",
+              "AEM-3220",
+              "AEM-3275",
+              "AEM-3330",
+              "AEM-3380",
+              "AEM-3385",
+              "AEM-4355",
+              "AEM-4572",
+              "AEM-4615",
+              "ENGRG-2270",
+              "FSAD-4444",
+              "FSAD-4660",
+              "HADM-3610",
+              "HADM-4130",
+              "HADM-4315",
+              "HADM-4800",
+              "NBA-4720",
+              "NBA-5070",
+              "NBA-6135",
+              "NBA-6910",
+              "PUBPOL-5813",
+              "AEM-3255",
+              "AEM-4421",
+              "AEM-4975"
+            ]
+          },
+          {
+            "anyOf": [
+              {
+                "not": {
+                  "course": [
+                    "HADM-1210",
+                    "ORIE-3150"
+                  ]
+                }
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "HADM-1210"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-hotel-administration-bs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "ORIE-3150"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-ore-bs"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCredits": 9
+    },
+    {
+      "id": "credits-jcb",
+      "label": "At least 7.5 of the minor's credits from SC Johnson courses (AEM, HADM, NBA, NCC); can be the same courses as the Cornell credits",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Either-or-both with the Cornell credits. Counts only courses on the minor's lists. The hotel-school and ORIE accounting options count only for Nolan and ORIE students.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AEM-2220",
+              "AEM-2210",
+              "HADM-1210",
+              "HADM-2230",
+              "NCC-5500",
+              "ORIE-3150",
+              "AEM-2180",
+              "AEM-3110",
+              "HADM-4144",
+              "NBA-5380",
+              "DEA-2730",
+              "SYSEN-5740",
+              "AEM-3249",
+              "AEM-3251",
+              "AEM-4080",
+              "AEM-4650",
+              "HADM-4140",
+              "HADM-4145",
+              "HADM-4432",
+              "NBA-3000",
+              "NBA-6230",
+              "NBA-6330",
+              "AEM-3220",
+              "AEM-3275",
+              "AEM-3330",
+              "AEM-3380",
+              "AEM-3385",
+              "AEM-4355",
+              "AEM-4572",
+              "AEM-4615",
+              "ENGRG-2270",
+              "FSAD-4444",
+              "FSAD-4660",
+              "HADM-3610",
+              "HADM-4130",
+              "HADM-4315",
+              "HADM-4800",
+              "NBA-4720",
+              "NBA-5070",
+              "NBA-6135",
+              "NBA-6910",
+              "PUBPOL-5813",
+              "AEM-3255",
+              "AEM-4421",
+              "AEM-4975"
+            ]
+          },
+          {
+            "anyOf": [
+              {
+                "not": {
+                  "course": [
+                    "HADM-1210",
+                    "ORIE-3150"
+                  ]
+                }
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "HADM-1210"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-hotel-administration-bs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "ORIE-3150"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-ore-bs"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "subject": [
+              "AEM",
+              "HADM",
+              "NBA",
+              "NCC"
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 7.5
+    },
+    {
+      "id": "cornell-credits-check",
+      "label": "Check that at least 9 of the minor's credits were earned at Cornell and at least 7.5 are SC Johnson courses",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Backs up the two credit rows above, which count every minor-list course on the plan and could read generously if you hold extra ones.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Check the minor totals at least 16.5 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "nolan-accounting",
+      "label": "Nolan students: confirm the hotel-school accounting course (HADM 1210) counts for you in the accounting area",
+      "group": "Six areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Core Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "practical-form",
+      "label": "If you use the independent-study course for practical experience, get the required form or petition approved by the minors office",
+      "group": "Six areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Practical Experience"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (S/U and SX/UX are not accepted)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "signup-eligibility",
+      "label": "Sign up by your sixth semester, and check your major is allowed (not Dyson, and not a major sharing two or more core courses)",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Eligibility"
+      },
+      "note": "Dyson students are listed as barred in the minor index; the unnamed core-course overlap rule is approximated by the sharing cap of one course with a major.",
+      "kind": "confirm"
+    },
+    {
+      "id": "unique-credits",
+      "label": "Keep at least 12 of the minor's credits outside your major's core requirements; some majors need an extra course to get there",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entrepreneurship-minor/",
+        "anchor": "Academic Policies"
+      },
+      "note": "The real rule covers only the major's core. The sharing limit encodes the stricter 4 credits of overlap with any major or other minor.",
+      "kind": "confirm"
+    }
+  ]
+}

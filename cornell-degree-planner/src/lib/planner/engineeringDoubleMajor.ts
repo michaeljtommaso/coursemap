@@ -1,0 +1,415 @@
+import type { ProgramSlotWithData } from "@/types/db";
+import { programCollegeId, programFamily } from "./colleges";
+import { matchesProgramPrefix } from "./distribution/overlap";
+
+/**
+ * engineeringDoubleMajor.ts (spec 047 D15) — Engineering + Engineering double
+ * majors, as data and pure functions. No live data: the rules live here.
+ *
+ * Sources: the Engineering Undergraduate Handbook (Fall 2026, "Double Majors"),
+ * the 2026-27 catalog's Engineering page and the 13 Engineering B.S. program
+ * pages. Any two Engineering majors may be combined, "All requirements of both
+ * majors must be satisfied", and the student earns one B.S. degree. No page
+ * caps the courses that count toward both majors, so the pair has no overlap
+ * limit (a course may count for both).
+ *
+ * Two readings are ASSUMED, not quoted:
+ *  1. The college-wide common curriculum (writing seminars, PE, CS 111x,
+ *     ENGRI, liberal studies, the two-category ENGRD count and the college
+ *     math/physics/chemistry core) is satisfied ONCE, by the primary major's
+ *     template. Inferred from the single degree: both majors certify "all
+ *     requirements for the B.S. degree", and the common curriculum is set by
+ *     the college, not the major.
+ *  2. Advisor-approved electives count once (the primary's), not once per
+ *     major. Unstated either way.
+ *
+ * secondMajorSlots() applies them: the second major's template minus the
+ * college-wide rows and minus every row naming the same course, pattern,
+ * attribute or elective group as a primary row. Matching is never by slot id
+ * (slot ids carry a major prefix: "cs-s1-math1910", "me-s1-math1910").
+ * primaryRowsNotShared() and ADVISOR_ELECTIVE_GROUP keep the courses that
+ * fill the common curriculum from counting again toward the second major
+ * (the engine side is requirementProgress.ts withSecondMajor).
+ *
+ * Fail closed: a college row leaves the second major only when the primary's
+ * template really carries it. The math / physics / chemistry core, a choice
+ * group made of it, and Engineering Communications are dropped only when the
+ * primary has a row that the same course meets; otherwise the second major
+ * keeps them (BME's template has no PHYS 2213 row, so beside a BME primary
+ * the second major still asks for PHYS 2213).
+ */
+
+/** The college's fixed math / physics / chemistry core (catalog "Common
+ *  Curriculum": MATH 1910, 1920; PHYS 1112, 1110, 2213; CHEM 2090 + 2091).
+ *  Dropped from a second major only when the primary's template has a row the
+ *  course meets: its own seat, or a core choice group listing it (EP's honors
+ *  physics, BE's intro chemistry). See primaryCoreCoverage. */
+export const COLLEGE_CORE_COURSES: ReadonlySet<string> = new Set([
+  "MATH-1910",
+  "MATH-1920",
+  "PHYS-1112",
+  "PHYS-1110",
+  "PHYS-2213",
+  "CHEM-2090",
+  "CHEM-2091",
+]);
+
+/** College-wide pattern seats: intro computing, ENGRI, phys ed. */
+export const COLLEGE_WIDE_PATTERNS: ReadonlySet<string> = new Set(["CS-111x", "ENGRI-1xxx", "PE-1xxx"]);
+
+/** College-wide elective groups (shared ids, no owning program). */
+export const COLLEGE_WIDE_GROUPS: ReadonlySet<string> = new Set(["liberal-studies", "advisor-elective-open"]);
+
+/**
+ * Each major's generic "second ENGRD" group: it exists only to complete the
+ * college's two-category ENGRD count, which the primary already meets. NOT
+ * listed (kept as the second major's own requirement):
+ *  - `mse-engr-dist`: MSE's required ENGRD 2610/2620 category;
+ *  - `ce-engrd-second`: CE's version carries a major-approved-elective branch;
+ *  - `enve-engrd-second`: the same shape as CE's. When ENGRD 3200 (required
+ *    by the major) is the second distribution, this seat takes "any other
+ *    ENGRD or an engineering course at the 3000 level or above" for the
+ *    major's credits, so it carries EnvE major credits.
+ * `eas-engrd` and `eas-engrd-second` ARE listed: the EAS template's own notes
+ * describe the pair as "the college requires two ENGRD courses from two
+ * different categories (this seat and the second one)", and their only
+ * alternative (counting EAS 2250 as an ENGRD) turns a seat into one more
+ * advisor-approved elective, which is a college row, not EAS major credit.
+ * Nothing in either group's text ties it to the EAS major, so the stricter
+ * reading (keep it) has no ground here.
+ */
+export const GENERIC_SECOND_ENGRD_GROUPS: ReadonlySet<string> = new Set([
+  "cs-engrd-dist",
+  "ece-engrd-dist",
+  "eas-engrd",
+  "eas-engrd-second",
+  "ep-engrd-second",
+  "mse-engrd-second",
+]);
+
+/** Recognised alternates of the college core inside a major's own choice
+ *  group: the honors physics sequence (PHYS 1116, 2216, 2217) and the
+ *  CHEM 2070 / 2071 general chemistry pair. */
+export const COLLEGE_CORE_ALTERNATES: ReadonlySet<string> = new Set([
+  "PHYS-1116",
+  "PHYS-2216",
+  "PHYS-2217",
+  "CHEM-2070",
+  "CHEM-2071",
+]);
+
+/** Engineering Communications groups by id (catalog footnote 2: "may
+ *  simultaneously fulfill another requirement"). A list group made only of
+ *  ENGRC courses and the college's named alternates is recognised too. */
+export const ENGINEERING_COMMUNICATIONS_GROUPS: ReadonlySet<string> = new Set(["ce-eng-comm"]);
+const ECR_NON_ENGRC: ReadonlySet<string> = new Set(["COMM-3020", "COMM-3030", "HADM-3670"]);
+
+/** A First-Year Writing Seminar attribute seat (title starts "FWS:"). */
+function isFwsMatch(match: unknown): boolean {
+  return JSON.stringify(match ?? null).includes('"FWS:"');
+}
+
+function courseOf(s: ProgramSlotWithData): string | null {
+  return s.course_id ?? s.courses?.id ?? null;
+}
+
+function groupOf(s: ProgramSlotWithData): string | null {
+  return s.elective_group_id ?? s.elective_groups?.id ?? null;
+}
+
+/** A named-list elective group's member course ids (empty for other rules). */
+function listMembers(s: ProgramSlotWithData): readonly string[] {
+  const g = s.elective_groups;
+  if (s.kind !== "elective" || !g || g.qualifying_rule?.type !== "list") return [];
+  return g.course_ids ?? [];
+}
+
+const isCore = (id: string, canonical: (id: string) => string) =>
+  COLLEGE_CORE_COURSES.has(id) || COLLEGE_CORE_COURSES.has(canonical(id));
+
+/** The college core members of a core choice group: a list group whose every
+ *  member is a college core course or a recognised alternate, with at least
+ *  one core course (EP's "PHYS 1112 or 1116", BE's intro chemistry). Null
+ *  when the slot isn't one. */
+function coreChoiceMembers(s: ProgramSlotWithData, canonical: (id: string) => string): string[] | null {
+  const members = listMembers(s);
+  if (members.length === 0) return null;
+  const core: string[] = [];
+  for (const m of members) {
+    if (isCore(m, canonical)) core.push(COLLEGE_CORE_COURSES.has(m) ? m : canonical(m));
+    else if (!COLLEGE_CORE_ALTERNATES.has(m) && !COLLEGE_CORE_ALTERNATES.has(canonical(m))) return null;
+  }
+  return core.length > 0 ? core : null;
+}
+
+/** An Engineering Communications elective row (by id, or a list made only of
+ *  ENGRC courses and COMM 3020 / 3030 / HADM 3670). */
+function isEngineeringCommunications(s: ProgramSlotWithData): boolean {
+  if (s.kind !== "elective") return false;
+  const g = groupOf(s);
+  if (g != null && ENGINEERING_COMMUNICATIONS_GROUPS.has(g)) return true;
+  const members = listMembers(s);
+  return members.length > 0 && members.every((m) => m.startsWith("ENGRC-") || ECR_NON_ENGRC.has(m));
+}
+
+/** The canonical college core courses the primary's template has a row for:
+ *  a course seat naming it, or a core choice group listing it. */
+function primaryCoreCoverage(
+  primary: readonly ProgramSlotWithData[],
+  canonical: (id: string) => string
+): Set<string> {
+  const out = new Set<string>();
+  for (const s of primary) {
+    const c = courseOf(s);
+    if (s.kind === "course" && c && isCore(c, canonical)) out.add(canonical(c));
+    for (const m of coreChoiceMembers(s, canonical) ?? []) out.add(canonical(m));
+  }
+  return out;
+}
+
+/** Is this slot part of the college-wide common curriculum (by its nature)?
+ *  A core course seat, a core choice group and the college patterns,
+ *  attributes and groups. In a second major, the core rows leave only when
+ *  the primary covers them (secondMajorSlots). */
+export function isCollegeWideSlot(s: ProgramSlotWithData, canonical: (id: string) => string = (id) => id): boolean {
+  switch (s.kind) {
+    case "course": {
+      const id = courseOf(s);
+      return id != null && isCore(id, canonical);
+    }
+    case "pattern":
+      return s.pattern != null && COLLEGE_WIDE_PATTERNS.has(s.pattern);
+    case "attribute":
+      return isFwsMatch(s.attribute_match);
+    case "elective": {
+      const g = groupOf(s);
+      if (g != null && (COLLEGE_WIDE_GROUPS.has(g) || GENERIC_SECOND_ENGRD_GROUPS.has(g))) return true;
+      return coreChoiceMembers(s, canonical) != null;
+    }
+  }
+}
+
+/**
+ * The second Engineering major's own requirements: its template minus the
+ * college-wide rows (isCollegeWideSlot) and minus every row naming the same
+ * course (`courseId`, compared canonically), pattern, attribute match or
+ * elective-group id as a row of the primary's template. What stays: the major
+ * program, its second math / physics / chemistry choices, PHYS 2214 where
+ * required, its own ENGRD courses and major-specific ENGRD rules.
+ *
+ * Conditional college rows (fail closed): a college core course seat, a core
+ * choice group, and an Engineering Communications row leave the second major
+ * only when the primary's template has a row the same course meets (for a
+ * choice group: every core member; for communications: a communications row).
+ * Otherwise the second major keeps them. Pure.
+ */
+export function secondMajorSlots(
+  primary: readonly ProgramSlotWithData[],
+  second: readonly ProgramSlotWithData[],
+  canonical: (id: string) => string = (id) => id
+): ProgramSlotWithData[] {
+  const courses = new Set<string>();
+  const patterns = new Set<string>();
+  const attributes = new Set<string>();
+  const groups = new Set<string>();
+  for (const s of primary) {
+    const c = courseOf(s);
+    if (s.kind === "course" && c) courses.add(canonical(c));
+    if (s.kind === "pattern" && s.pattern) patterns.add(s.pattern);
+    if (s.kind === "attribute") attributes.add(JSON.stringify(s.attribute_match ?? null));
+    const g = groupOf(s);
+    if (s.kind === "elective" && g) groups.add(g);
+  }
+  const covered = primaryCoreCoverage(primary, canonical);
+  const primaryHasEcr = primary.some(isEngineeringCommunications);
+  return second.filter((s) => {
+    const c = courseOf(s);
+    if (s.kind === "course" && c && isCore(c, canonical)) return !covered.has(canonical(c));
+    const coreMembers = coreChoiceMembers(s, canonical);
+    if (coreMembers) return !coreMembers.every((m) => covered.has(canonical(m)));
+    if (isEngineeringCommunications(s)) return !primaryHasEcr;
+    if (isCollegeWideSlot(s, canonical)) return false;
+    switch (s.kind) {
+      case "course": {
+        const c = courseOf(s);
+        return !(c && courses.has(canonical(c)));
+      }
+      case "pattern":
+        return !(s.pattern && patterns.has(s.pattern));
+      case "attribute":
+        return !attributes.has(JSON.stringify(s.attribute_match ?? null));
+      case "elective": {
+        const g = groupOf(s);
+        return !(g && groups.has(g));
+      }
+    }
+  });
+}
+
+/** The college's advisor-approved electives group. Its courses may not be
+ *  "used elsewhere toward degree requirements" (catalog, Electives), so a
+ *  course the second major counts never fills it: the engine re-matches the
+ *  primary with those courses excluded from it (and from liberal studies). */
+export const ADVISOR_ELECTIVE_GROUP = "advisor-elective-open";
+
+/** The college's liberal studies group: a course it counts may not count
+ *  toward either major. */
+export const LIBERAL_STUDIES_GROUP = "liberal-studies";
+
+/**
+ * The primary's requirement ids whose courses the second major may not count
+ * again: its common-curriculum seats (writing seminars, PE, CS 111x, ENGRI,
+ * the math/physics/chemistry core), every seat naming the same course,
+ * pattern or attribute as a second-major row (the row the second major
+ * dropped), its core choice groups (EP's physics and chemistry choices, BE's
+ * and EnvE's intro chemistry) and liberal studies. Seats are slot ids, pools
+ * their group id
+ * (programToRequirements' ids). Not listed: the primary's own ENGRD groups (a
+ * major's required ENGRD course also counts toward the college's ENGRD
+ * distribution, as in a single major) and advisor electives (see
+ * ADVISOR_ELECTIVE_GROUP). Pure.
+ */
+export function primaryRowsNotShared(
+  primary: readonly ProgramSlotWithData[],
+  second: readonly ProgramSlotWithData[],
+  canonical: (id: string) => string = (id) => id
+): Set<string> {
+  const courses = new Set<string>();
+  const patterns = new Set<string>();
+  const attributes = new Set<string>();
+  for (const s of second) {
+    const c = courseOf(s);
+    if (s.kind === "course" && c) courses.add(canonical(c));
+    if (s.kind === "pattern" && s.pattern) patterns.add(s.pattern);
+    if (s.kind === "attribute") attributes.add(JSON.stringify(s.attribute_match ?? null));
+  }
+  const out = new Set<string>();
+  for (const s of primary) {
+    if (s.kind === "elective") {
+      const g = groupOf(s);
+      // Liberal studies, and a core choice group (EP's "PHYS 1112 or 1116"):
+      // the primary's college core, met through its own group.
+      if (g != null && (g === LIBERAL_STUDIES_GROUP || coreChoiceMembers(s, canonical) != null)) out.add(g);
+      continue;
+    }
+    const c = courseOf(s);
+    const same =
+      (s.kind === "course" && c != null && courses.has(canonical(c))) ||
+      (s.kind === "pattern" && s.pattern != null && patterns.has(s.pattern)) ||
+      (s.kind === "attribute" && attributes.has(JSON.stringify(s.attribute_match ?? null)));
+    if (same || isCollegeWideSlot(s, canonical)) out.add(s.id);
+  }
+  return out;
+}
+
+// ─── Pairs ────────────────────────────────────────────────────────────────────
+
+/** Program-id prefixes (every catalog year matches, like the `program` rule
+ *  leaf). Engineering ids only. */
+export const ENGINEERING_PROGRAM_PREFIXES = {
+  cs: "cornell-cs-bs",
+  ore: "cornell-ore-bs",
+  isst: "cornell-isst-bs",
+  enve: "cornell-enve-bs",
+  ce: "cornell-ce-bs",
+  be: "cornell-be-bs",
+} as const;
+
+/** The 13 Engineering B.S. majors' program-id prefixes (every catalog year
+ *  matches). The CALS Biological Engineering major has its own id
+ *  ("cornell-biological-engineering-bs-…"), so it never matches "cornell-be-bs". */
+export const ENGINEERING_MAJOR_PREFIXES: readonly string[] = [
+  "cornell-be-bs",
+  "cornell-bme-bs",
+  "cornell-ce-bs",
+  "cornell-cheme-bs",
+  "cornell-cs-bs",
+  "cornell-eas-bs",
+  "cornell-ece-bs",
+  "cornell-enve-bs",
+  "cornell-ep-bs",
+  "cornell-isst-bs",
+  "cornell-me-bs",
+  "cornell-mse-bs",
+  "cornell-ore-bs",
+];
+
+/** The Engineering major a program id belongs to (its prefix), or null. */
+function engineeringMajorPrefix(id: string): string | null {
+  return ENGINEERING_MAJOR_PREFIXES.find((p) => matchesProgramPrefix(id, [p])) ?? null;
+}
+
+const ISST_REASON =
+  "ISST can't be paired with Computer Science or Operations Research (curricular overlap).";
+
+/** Pairs the college forbids, either order (Handbook, Double Majors, note 2:
+ *  "students majoring in ISST may not pursue a Double Major with either
+ *  Computer Science (CS) or Operations Research and Engineering (ORE)"). The
+ *  Independent Major may not pair with anything, but has no template. */
+export const ENGINEERING_FORBIDDEN_PAIRS: readonly { a: string; b: string; reason: string }[] = [
+  { a: ENGINEERING_PROGRAM_PREFIXES.isst, b: ENGINEERING_PROGRAM_PREFIXES.cs, reason: ISST_REASON },
+  { a: ENGINEERING_PROGRAM_PREFIXES.isst, b: ENGINEERING_PROGRAM_PREFIXES.ore, reason: ISST_REASON },
+];
+
+const ENVE_NOTE =
+  "Both majors' undergraduate coordinators must approve this pair, and your plan must show distinct thrusts in the two areas.";
+
+/** Every allowed Engineering pair's note: no source caps the courses that count
+ *  toward both majors, so the engine lets a course the first major uses fill
+ *  the second major's electives too, and the student confirms it with both
+ *  advisors. */
+export const ENGINEERING_SHARING_NOTE =
+  "Courses can count toward both majors here — confirm with both majors' advisors before relying on it.";
+
+/** Allowed pairs that carry an extra note, shown before the sharing note
+ *  (Handbook note 3; the Environmental Engineering handbook's "distinct
+ *  thrusts" rule). */
+export const ENGINEERING_PAIR_NOTES: readonly { a: string; b: string; note: string }[] = [
+  { a: ENGINEERING_PROGRAM_PREFIXES.enve, b: ENGINEERING_PROGRAM_PREFIXES.ce, note: ENVE_NOTE },
+  { a: ENGINEERING_PROGRAM_PREFIXES.enve, b: ENGINEERING_PROGRAM_PREFIXES.be, note: ENVE_NOTE },
+];
+
+function pairMatches(pair: { a: string; b: string }, x: string, y: string): boolean {
+  return (
+    (matchesProgramPrefix(x, [pair.a]) && matchesProgramPrefix(y, [pair.b])) ||
+    (matchesProgramPrefix(x, [pair.b]) && matchesProgramPrefix(y, [pair.a]))
+  );
+}
+
+/** Why two Engineering majors can't be a double major, or null when they can
+ *  (either order, any catalog year). */
+export function engineeringForbiddenReason(x: string, y: string): string | null {
+  return ENGINEERING_FORBIDDEN_PAIRS.find((p) => pairMatches(p, x, y))?.reason ?? null;
+}
+
+/** The note for an allowed pair of two different Engineering majors (either
+ *  order, any catalog year): the pair's own note, if any, then the sharing
+ *  note. Null for a forbidden pair (it shows its reason instead), the same
+ *  major twice, or a pair that isn't two Engineering majors. */
+export function engineeringPairNote(x: string, y: string): string | null {
+  const a = engineeringMajorPrefix(x);
+  const b = engineeringMajorPrefix(y);
+  if (!a || !b || a === b || engineeringForbiddenReason(x, y) != null) return null;
+  const own = ENGINEERING_PAIR_NOTES.find((p) => pairMatches(p, x, y))?.note;
+  return own ? `${own} ${ENGINEERING_SHARING_NOTE}` : ENGINEERING_SHARING_NOTE;
+}
+
+/** The program-id prefixes `programId` may not be paired with — an overlap
+ *  program's `forbiddenWith`. */
+export function engineeringForbiddenWith(programId: string): string[] {
+  const out: string[] = [];
+  for (const p of ENGINEERING_FORBIDDEN_PAIRS) {
+    if (matchesProgramPrefix(programId, [p.a])) out.push(p.b);
+    else if (matchesProgramPrefix(programId, [p.b])) out.push(p.a);
+  }
+  return [...new Set(out)];
+}
+
+/** Is this program an Engineering major (the slot-template engine, in the
+ *  College of Engineering)? A second major of one needs an Engineering
+ *  primary (D1: same college). */
+export function isEngineeringProgram(
+  p: { college: string; collegeId?: "engineering" | "cas" | "cals" | null; family?: "engineering" | "cas" | "cals" } | null | undefined
+): boolean {
+  return !!p && programFamily(p) === "engineering" && programCollegeId(p) === "engineering";
+}

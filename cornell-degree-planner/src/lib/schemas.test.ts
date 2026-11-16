@@ -3,12 +3,18 @@ import {
   CourseMarksSchema,
   FactAnswersSchema,
   LayerSchema,
+  MAX_ADDITIONAL_PROGRAMS,
+  MAX_MINORS,
+  MAX_SECOND_MAJORS,
+  MinorIndexEntrySchema,
+  MinorIndexSchema,
   PlacementSchema,
   PlanSchema,
   QuestionSchema,
   ShareCreateSchema,
   ShareSchema,
   UserProfileSchema,
+  strictAdditionalPrograms,
 } from "./schemas";
 
 /** Schema tests for the spec 020 answer fields and the layer `questions` list. */
@@ -232,5 +238,149 @@ describe("QuestionSchema / LayerSchema.questions", () => {
     expect(nested(questions)).toBe(false);
     expect(nested(PlanSchema.parse(plan({ courseMarks: { "creditsTaken:BIOMI-4850": 3 } })))).toBe(false);
     expect(nested(ShareSchema.parse(share({ concentrationIds: ["a"], courseMarks: { "creditsTaken:X-1": 3 } })))).toBe(false);
+  });
+});
+
+describe("additionalPrograms (spec 047 D2/D13) on plans and shares", () => {
+  const major = (programId = "mathematics-ba", extra: Record<string, unknown> = {}) => ({ programId, kind: "major", ...extra });
+  const minor = (programId: string, extra: Record<string, unknown> = {}) => ({ programId, kind: "minor", ...extra });
+  const full = [major("mathematics-ba", { concentrationIds: ["applied"] }), minor("cs-minor"), minor("econ-minor"), minor("music-minor")];
+
+  it("plans and shares without it parse unchanged (no key added)", () => {
+    expect("additionalPrograms" in PlanSchema.parse(plan())).toBe(false);
+    expect("additionalPrograms" in ShareSchema.parse(share())).toBe(false);
+    expect(ShareCreateSchema.safeParse(share()).success).toBe(true);
+    expect("additionalPrograms" in PlanSchema.partial().parse({ name: "x" })).toBe(false);
+  });
+
+  it("reads a full list (1 second major + 3 minors) in order", () => {
+    expect(PlanSchema.parse(plan({ additionalPrograms: full })).additionalPrograms).toEqual(full);
+    expect(ShareSchema.parse(share({ additionalPrograms: full })).additionalPrograms).toEqual(full);
+    expect(PlanSchema.partial().parse({ additionalPrograms: [minor("cs-minor")] }).additionalPrograms).toEqual([minor("cs-minor")]);
+  });
+
+  it("read drops malformed entries, repeats, over-cap kinds and concentrations on a minor; a non-list reads as absent", () => {
+    const messy = [
+      minor("cs-minor"),
+      { programId: "", kind: "minor" },
+      { programId: "x", kind: "certificate" },
+      { programId: "y", kind: "minor", extra: 1 },
+      "cs-minor",
+      minor("cs-minor"),
+      major("mathematics-ba"),
+      major("physics-ba"),
+      minor("econ-minor", { concentrationIds: ["a"] }),
+      minor("music-minor"),
+      minor("art-minor"),
+      minor("dance-minor"),
+    ];
+    expect(PlanSchema.parse(plan({ additionalPrograms: messy })).additionalPrograms).toEqual([
+      minor("cs-minor"),
+      major("mathematics-ba"),
+      minor("music-minor"),
+      minor("art-minor"),
+    ]);
+    for (const bad of ["cs-minor", { 0: minor("cs-minor") }, 4, null]) {
+      const p = PlanSchema.safeParse(plan({ additionalPrograms: bad }));
+      expect(p.success).toBe(true);
+      expect(p.success && p.data.additionalPrograms).toBeUndefined();
+    }
+    expect(PlanSchema.parse(plan({ additionalPrograms: [] })).additionalPrograms).toEqual([]);
+  });
+
+  it("strictAdditionalPrograms accepts a valid list and throws on every D2 violation", () => {
+    expect(strictAdditionalPrograms(full, "economics-ba")).toEqual(full);
+    expect(strictAdditionalPrograms([], "economics-ba")).toEqual([]);
+    const throwsOn = (list: unknown, msg: RegExp) => expect(() => strictAdditionalPrograms(list, "economics-ba")).toThrow(msg);
+    throwsOn("nope", /additionalPrograms|expected/i);
+    throwsOn([...full, minor("art-minor")], /additionalPrograms|4|too big/i);
+    throwsOn([major("mathematics-ba"), major("physics-ba")], /one second major/);
+    throwsOn([minor("a-minor"), minor("b-minor"), minor("c-minor"), minor("d-minor")], /at most 3 minors/);
+    throwsOn([minor("cs-minor"), minor("cs-minor")], /twice/);
+    throwsOn([minor("cs-minor", { concentrationIds: ["x"] })], /minor has no concentrations/);
+    throwsOn([major("economics-ba")], /primary major/);
+    throwsOn([{ programId: "x", kind: "minor", extra: true }], /.+/);
+    throwsOn([major("m", { concentrationIds: ["a", "b", "c", "d"] })], /.+/);
+    expect(MAX_ADDITIONAL_PROGRAMS).toBe(MAX_SECOND_MAJORS + MAX_MINORS);
+  });
+
+  it("ShareCreateSchema checks the list strictly, primary included", () => {
+    expect(ShareCreateSchema.safeParse(share({ additionalPrograms: full })).success).toBe(true);
+    expect(ShareCreateSchema.safeParse(share({ additionalPrograms: [...full, minor("art-minor")] })).success).toBe(false);
+    expect(ShareCreateSchema.safeParse(share({ additionalPrograms: [minor("a"), minor("a")] })).success).toBe(false);
+    expect(ShareCreateSchema.safeParse(share({ additionalPrograms: [major("p")] })).success).toBe(false);
+    expect(ShareCreateSchema.safeParse(share({ additionalPrograms: "x" })).success).toBe(false);
+  });
+});
+
+describe("LayerSchema — minor layers and sharing (spec 047 D7/D12/D14)", () => {
+  const source = { url: "https://catalog.cornell.edu/", anchor: "test" };
+  const layer = (extra: Record<string, unknown> = {}) => ({
+    id: "cs-minor",
+    kind: "minor",
+    family: "other",
+    name: "Computer Science minor",
+    catalogYear: "2026-27",
+    programId: "cs-minor",
+    rows: [{ id: "intro", kind: "seat", label: "Intro", group: "G", source, rule: { course: ["CS-2110"] } }],
+    ...extra,
+  });
+
+  it("accepts a minor layer, family other, and sharing limits", () => {
+    expect(LayerSchema.safeParse(layer()).success).toBe(true);
+    expect(LayerSchema.safeParse(layer({ sharing: { otherMajors: { maxCourses: 2 }, minors: "none" } })).success).toBe(true);
+    expect(
+      LayerSchema.safeParse(layer({ kind: "major", family: "cas", sharing: { otherMajors: "forbidden", minors: { maxCredits: 8 } } }))
+        .success
+    ).toBe(true);
+    expect(
+      LayerSchema.safeParse(
+        layer({ sharing: { otherMajors: { maxCredits: 12, with: ["econ-ba", "government-ba"] }, forbiddenWith: ["cs-bs"] } })
+      ).success
+    ).toBe(true);
+  });
+
+  it("rejects malformed sharing", () => {
+    for (const sharing of [
+      { minors: "forbidden" },
+      { otherMajors: "some" },
+      { minors: { maxCourses: -1 } },
+      { minors: { maxCourses: 1.5 } },
+      { minors: { maxCourses: 2, other: 1 } },
+      { majors: "none" },
+      { minors: { maxCourses: 1, with: [] } },
+      { minors: { maxCourses: 1, with: ["Econ-BA"] } },
+      { forbiddenWith: [] },
+      { forbiddenWith: ["econ-"] },
+      { forbiddenWith: "econ-ba" },
+    ]) {
+      expect(LayerSchema.safeParse(layer({ sharing })).success, JSON.stringify(sharing)).toBe(false);
+    }
+    expect(LayerSchema.safeParse(layer({ family: "engineering" })).success).toBe(false);
+  });
+});
+
+describe("MinorIndexSchema (spec 047 D12)", () => {
+  const entry = (extra: Record<string, unknown> = {}) => ({
+    id: "cs-minor",
+    name: "Computer Science",
+    shortName: "CS minor",
+    offeredBy: "Bowers CIS",
+    catalogYear: "2026-27",
+    ...extra,
+  });
+
+  it("accepts entries with and without the optional fields", () => {
+    expect(MinorIndexSchema.safeParse({ entries: [entry(), entry({ notOpenTo: ["cs-bs"], visible: false })] }).success).toBe(true);
+    expect(MinorIndexEntrySchema.parse(entry({ futureField: 1 }))).toMatchObject({ futureField: 1, offeredBy: "Bowers CIS" });
+  });
+
+  it("rejects malformed entries and more than 300", () => {
+    expect(MinorIndexEntrySchema.safeParse(entry({ offeredBy: undefined })).success).toBe(false);
+    expect(MinorIndexEntrySchema.safeParse(entry({ offeredBy: "" })).success).toBe(false);
+    expect(MinorIndexEntrySchema.safeParse(entry({ offeredBy: "x".repeat(81) })).success).toBe(false);
+    expect(MinorIndexEntrySchema.safeParse(entry({ catalogYear: 2026 })).success).toBe(false);
+    expect(MinorIndexEntrySchema.safeParse(entry({ name: "" })).success).toBe(false);
+    expect(MinorIndexSchema.safeParse({ entries: Array.from({ length: 301 }, () => entry()) }).success).toBe(false);
   });
 });

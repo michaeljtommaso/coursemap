@@ -1,0 +1,199 @@
+{
+  "programId": "cornell-computer-science-minor-2026",
+  "description": "A student outside computing takes a programming course, a second core course, and four more computer science courses to finish this minor.",
+  "layerIds": [
+    "cornell-computer-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CS-2110",
+    "CS-3110",
+    "CS-2800",
+    "CS-3410",
+    "CS-3420",
+    "CS-4820"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CS-4090",
+      "rowId": "additional-courses",
+      "why": "Named as never usable toward the minor."
+    },
+    {
+      "courseId": "CS-4997",
+      "rowId": "additional-courses",
+      "why": "Named as never usable toward the minor."
+    },
+    {
+      "courseId": "CS-4998",
+      "rowId": "additional-courses",
+      "why": "Named as never usable toward the minor."
+    },
+    {
+      "courseId": "CS-4999",
+      "rowId": "additional-courses",
+      "why": "Named as never usable toward the minor."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "additional-courses",
+      "why": "Below the 3000 floor and not one of the two named 2800-series courses."
+    },
+    {
+      "courseId": "CS-3110",
+      "rowId": "intro-programming",
+      "why": "Belongs to the second required choice, not the programming choice."
+    },
+    {
+      "courseId": "CS-2800",
+      "rowId": "systems-core",
+      "why": "Discrete math is not one of the three listed second-core courses."
+    },
+    {
+      "courseId": "CS-7090",
+      "rowId": "additional-courses",
+      "why": "The CS colloquium is a seminar; only non-seminar courses count."
+    },
+    {
+      "courseId": "CS-7790",
+      "rowId": "additional-courses",
+      "why": "A one-credit graduate seminar; only non-seminar courses count."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-3110",
+      "subject": "CS",
+      "number": "3110",
+      "title": "Functional Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-2800",
+      "subject": "CS",
+      "number": "2800",
+      "title": "Mathematical Foundations of Computing",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3410",
+      "subject": "CS",
+      "number": "3410",
+      "title": "Computer System Organization and Programming",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3420",
+      "subject": "CS",
+      "number": "3420",
+      "title": "Embedded Systems",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4820",
+      "subject": "CS",
+      "number": "4820",
+      "title": "Introduction to Analysis of Algorithms",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4090",
+      "subject": "CS",
+      "number": "4090",
+      "title": "Teaching Experience in Computer Science",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4997",
+      "subject": "CS",
+      "number": "4997",
+      "title": "Practical Training in Computer Science",
+      "credits": 0.25,
+      "attrs": []
+    },
+    {
+      "id": "CS-4998",
+      "subject": "CS",
+      "number": "4998",
+      "title": "Team Projects",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "CS-4999",
+      "subject": "CS",
+      "number": "4999",
+      "title": "Independent Reading and Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "CS-7090",
+      "subject": "CS",
+      "number": "7090",
+      "title": "Computer Science Colloquium",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CS-7790",
+      "subject": "CS",
+      "number": "7790",
+      "title": "Seminar in Artificial Intelligence",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "programId": "cornell-cognitive-science-minor-2026",
+  "description": "A fictional psychology major finishes the minor with one intro course and four upper-level courses from four departments.",
+  "layerIds": [
+    "cornell-cognitive-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-psychology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "COGST-1101",
+    "COGST-3420",
+    "BIONB-3300",
+    "LING-3302",
+    "CS-3700"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "HD-2200",
+      "rowId": "upper-courses",
+      "why": "Below the 3000 floor for the upper-level row; only a petition could admit it."
+    },
+    {
+      "courseId": "COGST-2415",
+      "rowId": "upper-courses",
+      "why": "A 2000-level course does not meet the upper-level floor."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "upper-courses",
+      "why": "A 2000-level course does not meet the upper-level floor."
+    },
+    {
+      "courseId": "COGST-4700",
+      "rowId": "upper-courses",
+      "why": "Research course tied to committee approval, not on the recognized lists."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "min-credits",
+      "why": "A 2000-level track course the minor rows do not hold must not pad the credit total."
+    },
+    {
+      "courseId": "LING-6422",
+      "rowId": "min-credits",
+      "why": "A graduate-level track course the minor rows do not hold must not pad the credit total."
+    }
+  ],
+  "courses": [
+    {
+      "id": "COGST-1101",
+      "subject": "COGST",
+      "number": "1101",
+      "title": "Introduction to Cognitive Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "COGST-3420",
+      "subject": "COGST",
+      "number": "3420",
+      "title": "Human Perception: Application to Computer Graphics, Art, and Visual Display",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIONB-3300",
+      "subject": "BIONB",
+      "number": "3300",
+      "title": "Introduction to Computational Neuroscience",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "LING-3302",
+      "subject": "LING",
+      "number": "3302",
+      "title": "Introduction to Phonetics and Phonology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3700",
+      "subject": "CS",
+      "number": "3700",
+      "title": "Foundations of AI Reasoning and Decision-Making",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "HD-2200",
+      "subject": "HD",
+      "number": "2200",
+      "title": "The Human Brain and Mind: An Introduction to Cognitive Neuroscience",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "KCM-HE"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "COGST-2415",
+      "subject": "COGST",
+      "number": "2415",
+      "title": "Introduction to Moral Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "COGST-4700",
+      "subject": "COGST",
+      "number": "4700",
+      "title": "Undergraduate Research in Cognitive Science",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "LING-6422",
+      "subject": "LING",
+      "number": "6422",
+      "title": "Semantics II",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

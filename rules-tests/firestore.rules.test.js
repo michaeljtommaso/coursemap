@@ -1206,3 +1206,72 @@ test("DENY (042): a share with wrong-type shortTerms (not a list)", async () => 
     shareBatchCommit(authed(ALICE), ALICE, "s-st3", validNewShare({ shortTerms: { 1: true } }))
   );
 });
+
+// ── Spec 047 D2/D13: a plan's second major and minors (additionalPrograms, list, <= 4) on plans and shares ──
+const programList = (n) =>
+  Array.from({ length: n }, (_, i) =>
+    i === 0
+      ? { programId: "mathematics-ba", kind: "major", concentrationIds: ["applied"] }
+      : { programId: `minor-${i}`, kind: "minor" }
+  );
+test("ALLOW (047): plan without additionalPrograms still creates and updates (field absent)", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/ap0`), validNewPlan()));
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/ap0`), { completedIds: [], updatedAt: new Date() })
+  );
+});
+test("ALLOW (047): plan with additionalPrograms at the cap (4), on create and update; delete the field", async () => {
+  const db = authed(ALICE);
+  await assertSucceeds(
+    setDoc(doc(db, `users/${ALICE}/plans/ap1`), validNewPlan({ additionalPrograms: programList(4) }))
+  );
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/ap1b`), validNewPlan()));
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/ap1b`), { additionalPrograms: programList(4), updatedAt: new Date() })
+  );
+  await assertSucceeds(
+    updateDoc(doc(db, `users/${ALICE}/plans/ap1b`), { additionalPrograms: deleteField(), updatedAt: new Date() })
+  );
+});
+test("DENY (047): additionalPrograms over the cap (5), on create and update", async () => {
+  const db = authed(ALICE);
+  await assertFails(
+    setDoc(doc(db, `users/${ALICE}/plans/ap2`), validNewPlan({ additionalPrograms: programList(5) }))
+  );
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/ap2`), validNewPlan()));
+  await assertFails(
+    updateDoc(doc(db, `users/${ALICE}/plans/ap2`), { additionalPrograms: programList(5), updatedAt: new Date() })
+  );
+});
+test("DENY (047): wrong-type additionalPrograms on a plan (a map, a string), on create and update", async () => {
+  const db = authed(ALICE);
+  await assertFails(
+    setDoc(doc(db, `users/${ALICE}/plans/ap3`), validNewPlan({ additionalPrograms: { 0: programList(1)[0] } }))
+  );
+  await assertFails(setDoc(doc(db, `users/${ALICE}/plans/ap3b`), validNewPlan({ additionalPrograms: "cs-minor" })));
+  await assertSucceeds(setDoc(doc(db, `users/${ALICE}/plans/ap3c`), validNewPlan()));
+  await assertFails(
+    updateDoc(doc(db, `users/${ALICE}/plans/ap3c`), { additionalPrograms: { 0: "cs-minor" }, updatedAt: new Date() })
+  );
+});
+test("DENY (047): another user writes additionalPrograms on a plan", async () => {
+  await assertFails(
+    setDoc(doc(authed(BOB), `users/${ALICE}/plans/ap4`), validNewPlan({ additionalPrograms: programList(1) }))
+  );
+});
+test("ALLOW (047): a share with additionalPrograms at the cap (4)", async () => {
+  await assertSucceeds(
+    shareBatchCommit(authed(ALICE), ALICE, "s-ap1", validNewShare({ additionalPrograms: programList(4) }))
+  );
+});
+test("DENY (047): a share with additionalPrograms over the cap (5)", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-ap2", validNewShare({ additionalPrograms: programList(5) }))
+  );
+});
+test("DENY (047): a share with wrong-type additionalPrograms (not a list)", async () => {
+  await assertFails(
+    shareBatchCommit(authed(ALICE), ALICE, "s-ap3", validNewShare({ additionalPrograms: { 0: "cs-minor" } }))
+  );
+});

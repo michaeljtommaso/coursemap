@@ -23,20 +23,40 @@ import {
   type UpdatePlanPatch,
 } from "@/services/plans";
 import {
+  AdditionalProgramSchema,
   CourseMarksSchema,
+  MAX_ADDITIONAL_PROGRAMS,
   MAX_COURSE_MARKS,
+  MAX_MINORS,
+  MAX_SECOND_MAJORS,
   MAX_TRIED_COURSES,
   PLAN_SCHEMA_VERSION,
+  type AdditionalProgram,
+  type MinorIndexEntry,
 } from "@/lib/schemas";
+import { matchesProgramPrefix } from "@/lib/planner/distribution/overlap";
 import type { MarkValue } from "@/lib/planner/distribution/types";
+import { countsForKey, parseCountsForKey, parseRef } from "@/lib/planner/questions/keys";
+import { canonicalProgramId } from "@/lib/planner/legacyPrograms";
+import { programCollegeId } from "@/lib/planner/colleges";
+import { engineeringForbiddenReason } from "@/lib/planner/engineeringDoubleMajor";
+import { peekMinorIndex } from "@/services/minorIndexCache";
 import { snapshotToCourse, courseToSnapshot } from "@/lib/normalize/courseSnapshot";
 import type { Course, ProgramSlotWithData } from "@/types/db";
 import type { ColumnRef, Placement } from "@/types/plan";
-import { MAX_SHORT_TERMS, sanitizeShortTerms } from "@/lib/planner/terms";
+import {
+  MAX_SHORT_TERMS,
+  refOf,
+  sameColumn,
+  sanitizeShortTerms,
+  termOfColumn,
+  toColumnRef,
+} from "@/lib/planner/terms";
 import { usePlannerStore } from "@/store/usePlannerStore";
 import type { RemapTargetSlot } from "@/lib/planner/remapPlacements";
 import {
   MAX_PLACEMENTS,
+  columnHasCourse,
   insertPlacement,
   movePlacementTo,
   removePlacementById,
@@ -47,6 +67,7 @@ import {
   mergeSeedMarks,
   mergeSeedTried,
   carryShortTerms,
+  mergeSeedPrograms,
   planContentIsEmpty,
   coursesLeftBehind,
   leftBehindMessage,
@@ -125,6 +146,10 @@ export type PlanState = {
    *  short term adds its k here in the same save. A reset clears them (the
    *  starting board has none); a new starting board laid on load keeps them. */
   shortTerms: number[];
+  /** Spec 047 D2: the plan's second major and minors, in the order added
+   *  (at most 1 + 3). Persisted with the plan; `[]` deletes the field. A
+   *  reset or a new starting board keeps them. */
+  additionalPrograms: AdditionalProgram[];
 };
 
 type PlanContextValue = PlanState & {
@@ -185,6 +210,36 @@ type PlanContextValue = PlanState & {
   switchPlan: (planId: string, programId: string) => Promise<void>;
   createNewPlan: (programId: string, name: string) => Promise<void>;
   deletePlan: (planId: string) => Promise<void>;
+  // -- Spec 047: extra programs (second major, minors) --
+  /** Add a program to the plan (appended; a legacy id is stored as its
+   *  current id). "duplicate": already on it; "cap": one second major /
+   *  three minors already; "primary": it is the plan's own major;
+   *  "invalid": a malformed entry, or a second major from another college
+   *  than the primary's (D1) or not in the program list. A refusal also
+   *  shows a toast saying why — callers need not toast again. */
+  addProgram: (p: AdditionalProgram) => "added" | "duplicate" | "cap" | "primary" | "invalid";
+  /** Soft remove (D10): drops the program and `triedToDrop` (tried classes
+   *  counting only toward it); waivers and course marks stay. Shows the
+   *  "Removed X" toast with Undo (refused after a plan switch). */
+  removeProgram: (programId: string, triedToDrop: string[]) => void;
+  /** A second major's chosen concentrations (deduped, at most 3; [] clears).
+   *  Refused with a toast for a minor or a malformed list. */
+  setProgramConcentrations: (programId: string, ids: string[]) => void;
+  /** D3/D9: try these classes in order, passing over any already placed or
+   *  tried, until the tried cap. `added`: the ids tried; `skipped`: how many
+   *  were left out because tried was full. No toast (the caller words it). */
+  addTriedCourses: (courseIds: string[]) => { added: string[]; skipped: number };
+  /** D8: the one countsFor mark for a course (questions/keys.ts countsForKey);
+   *  any other countsFor mark for that course is removed; null clears. A
+   *  refusal (marks cap, malformed key) shows a toast. */
+  setCountsFor: (courseId: string, layerId: string | null) => void;
+  /** D10: drop waivers and course marks that name a layer not in
+   *  `liveLayerIds`. Only entries that NAME a layer are candidates: layer
+   *  waivers `${layerId}:${rowId}`, row-scoped marks
+   *  `${type}:${layerId}/${row}@${course}` and `countsFor:${layerId}@${course}`.
+   *  Engineering slot/group-id waivers, credit marks (`creditsTaken:<course>`)
+   *  and profile facts are never pruned. Returns how many were dropped. */
+  pruneOrphans: (liveLayerIds: string[]) => number;
 };
 
 const PlanContext = createContext<PlanContextValue | null>(null);
@@ -198,7 +253,14 @@ const EMPTY: PlanState = {
   courseMarks: {},
   triedCourseIds: [],
   shortTerms: [],
+  additionalPrograms: [],
 };
+
+/** A loaded plan's additional programs (spec 047 D2): normalizePlan already
+ *  read them tolerantly under their current ids; [] when the plan has none. */
+function additionalProgramsOf(plan: { additionalPrograms?: AdditionalProgram[] }): AdditionalProgram[] {
+  return plan.additionalPrograms ?? [];
+}
 
 /** Requirement-waiver cap — keep in sync with schemas.ts / firestore.rules. */
 const MAX_WAIVERS = 80;
@@ -288,6 +350,13 @@ function toPayload(s: PlanState) {
     // empty one (and createContent leaves it out), so a plan without short
     // terms keeps the pre-042 doc shape.
     shortTerms: s.shortTerms,
+    // Spec 047 D2: the WHOLE list, empty included (updatePlan deletes the
+    // field for an empty one; createContent leaves it out). Entries are
+    // copied, so a later edit can't reach into a pending payload.
+    additionalPrograms: s.additionalPrograms.map((p) => ({
+      ...p,
+      ...(p.concentrationIds ? { concentrationIds: [...p.concentrationIds] } : {}),
+    })),
     schemaVersion: PLAN_SCHEMA_VERSION,
   };
 }
@@ -302,8 +371,11 @@ function planSignature(p: {
   courseMarks?: Record<string, MarkValue>;
   triedCourseIds?: string[];
   shortTerms?: number[];
+  additionalPrograms?: AdditionalProgram[];
 }): string {
   return JSON.stringify({
+    // Spec 047: order kept (it is the order the programs were added in).
+    ap: (p.additionalPrograms ?? []).map((x) => [x.kind, x.programId, x.concentrationIds ?? []]),
     p: [...p.placements]
       .map((x) => [x.id, x.courseId, x.sem, x.order, x.shortTerm === true ? 1 : 0])
       .sort((a, b) => String(a[0]).localeCompare(String(b[0]))),
@@ -353,24 +425,47 @@ export type RemovedPlacement = {
   wasInProgress: boolean;
 };
 
+/** Spec 047 D4's refusal: "CS 2110 is already in Fall 2027." (bare season when
+ *  the entering year is unknown). Pure — unit-tested. */
+// eslint-disable-next-line react-refresh/only-export-components
+export function alreadyInColumnMessage(
+  code: string,
+  target: number | ColumnRef,
+  enteringYear: number | null | undefined
+): string {
+  return `${code} is already in ${termOfColumn(toColumnRef(target), enteringYear).label}.`;
+}
+
 /**
  * The state after undoing a removal: the placement back at its column and
  * position with its course and mark. "other-plan" when the plan on screen is
  * no longer the one it was removed from; the same `s` when it is already back;
  * "cap" when the board is full (the caller must say so — never a silent
- * no-op, fix pass P5). Pure — unit-tested.
+ * no-op, fix pass P5); "duplicate" when its column now holds the same course
+ * (spec 047 D4; `canonical` is the plan's alias map). Pure — unit-tested.
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function restoreRemovedPlacement(
   s: PlanState,
   r: RemovedPlacement,
-  currentPlanId: string | null
-): PlanState | "cap" | "other-plan" {
+  currentPlanId: string | null,
+  canonical: (id: string) => string = (id) => id
+): PlanState | "cap" | "other-plan" | "duplicate" {
   // Never restore into a different plan than the one it left (fix pass P1).
   if (currentPlanId !== r.planId) return "other-plan";
   const { placement, course } = r;
   if (s.placements.some((p) => p.id === placement.id)) return s; // already back
   if (s.placements.length >= MAX_PLACEMENTS) return "cap";
+  if (
+    columnHasCourse(
+      s.placements,
+      placement.courseId,
+      { sem: placement.sem, shortTerm: placement.shortTerm === true },
+      canonical
+    )
+  ) {
+    return "duplicate";
+  }
   // Back into its own column — a short term included (spec 042), whose
   // column comes back too if it was removed meanwhile.
   const placements = insertPlacement(
@@ -461,13 +556,19 @@ export function nextCourseMarks(
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function seedStates(
-  board: Omit<PlanState, "courseMarks" | "triedCourseIds" | "shortTerms">,
+  board: Omit<PlanState, "courseMarks" | "triedCourseIds" | "shortTerms" | "additionalPrograms">,
   carriedMarks: Record<string, MarkValue>,
   targetMarks: Record<string, MarkValue>,
   carriedTried: string[] = [],
   targetTried: string[] = [],
   carriedShortTerms: readonly number[] = [],
-  targetShortTerms: readonly number[] = []
+  targetShortTerms: readonly number[] = [],
+  // Spec 047 D13: the target plan's own extra programs (kept on both sides)
+  // and the carried ones (seed.additionalPrograms, after the target's own,
+  // within the caps; the rollback keeps only the target's own).
+  targetPrograms: AdditionalProgram[] = [],
+  carriedPrograms: AdditionalProgram[] = [],
+  primaryProgramId?: string
 ): { next: PlanState; confirmed: PlanState } {
   return {
     next: {
@@ -475,12 +576,17 @@ export function seedStates(
       courseMarks: mergeSeedMarks(targetMarks, carriedMarks),
       triedCourseIds: mergeSeedTried(targetTried, carriedTried),
       shortTerms: carryShortTerms([...targetShortTerms, ...carriedShortTerms], board.placements),
+      additionalPrograms:
+        carriedPrograms.length > 0
+          ? mergeSeedPrograms(targetPrograms, carriedPrograms, primaryProgramId)
+          : targetPrograms,
     },
     confirmed: {
       ...EMPTY,
       courseMarks: targetMarks,
       triedCourseIds: targetTried,
       shortTerms: sanitizeShortTerms(targetShortTerms),
+      additionalPrograms: targetPrograms,
     },
   };
 }
@@ -521,6 +627,381 @@ export function triedAfterPlacing(
   return next.length === tried.length ? tried : next;
 }
 
+// ── Spec 047: extra programs (second major, minors) — pure state helpers ──
+
+/** addProgram's answer (contract §4). */
+export type AddProgramResult = "added" | "duplicate" | "cap" | "primary" | "invalid";
+
+/** A layer id as LayerSchema allows it (the part of a waiver before ":"). */
+const LAYER_ID_RE = /^[a-z0-9][a-z0-9-]{0,100}$/;
+
+/** `p` as it is stored: canonical program id (spec 019 D12), concentrations
+ *  deduped and only when there are some; null when malformed (the strict
+ *  entry schema, concentrations on a minor). Pure. */
+function storedProgram(p: AdditionalProgram): AdditionalProgram | null {
+  if (!p || typeof p.programId !== "string") return null;
+  if (p.kind === "minor" && p.concentrationIds !== undefined) return null;
+  const ids = Array.isArray(p.concentrationIds) ? [...new Set(p.concentrationIds)] : [];
+  const entry: AdditionalProgram = {
+    programId: canonicalProgramId(p.programId),
+    kind: p.kind,
+    ...(ids.length > 0 ? { concentrationIds: ids } : {}),
+  };
+  return AdditionalProgramSchema.safeParse(entry).success ? entry : null;
+}
+
+/** The cap on programs of `kind` (spec 047 D2). */
+function kindCap(kind: AdditionalProgram["kind"]): number {
+  return kind === "major" ? MAX_SECOND_MAJORS : MAX_MINORS;
+}
+
+/** Is there room for one more program of `kind`? */
+function hasRoomFor(cur: readonly AdditionalProgram[], kind: AdditionalProgram["kind"]): boolean {
+  return (
+    cur.length < MAX_ADDITIONAL_PROGRAMS && cur.filter((q) => q.kind === kind).length < kindCap(kind)
+  );
+}
+
+/**
+ * The extra-programs list after adding `p` (spec 047 D2): appended. Refused
+ * as "invalid" (malformed, or a second major whose college is unknown or not
+ * the primary's — D1; `collegeOf` reads the program list), "primary" (the
+ * plan's own major), "duplicate" (already on the plan) or "cap" (one second
+ * major / three minors already). Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function programsAfterAdding(
+  cur: readonly AdditionalProgram[],
+  p: AdditionalProgram,
+  primaryProgramId: string | null,
+  collegeOf: (programId: string) => string | null
+): AdditionalProgram[] | Exclude<AddProgramResult, "added"> {
+  const entry = storedProgram(p);
+  if (!entry || !primaryProgramId) return "invalid";
+  if (entry.programId === primaryProgramId) return "primary";
+  if (cur.some((q) => q.programId === entry.programId)) return "duplicate";
+  if (!hasRoomFor(cur, entry.kind)) return "cap";
+  if (entry.kind === "major") {
+    const college = collegeOf(entry.programId);
+    if (!college || college !== collegeOf(primaryProgramId)) return "invalid";
+  }
+  return [...cur, entry];
+}
+
+/**
+ * The second major on `programs` that Cornell won't pair with the primary
+ * (spec 047 D15: ISST with CS or ORE, either order), with the reason; null
+ * when there is none. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function forbiddenSecondMajor(
+  programs: readonly AdditionalProgram[],
+  primaryId: string | null
+): { programId: string; reason: string } | null {
+  if (!primaryId) return null;
+  for (const p of programs) {
+    if (p.kind !== "major") continue;
+    const reason = engineeringForbiddenReason(primaryId, p.programId);
+    if (reason) return { programId: p.programId, reason };
+  }
+  return null;
+}
+
+/** A minor Cornell closes to a major on the plan (spec 047 D12 notOpenTo). */
+export type ClosedMinorPair = { minor: AdditionalProgram; majorId: string };
+
+/**
+ * The first minor on `programs` whose minor-index entry closes it to a major
+ * on the plan — the primary (`primaryId`) or a second major on `programs` —
+ * matched like the `program` rule leaf (a prefix matches every catalog year).
+ * With `involving`, only a pair that program is part of (as the minor or the
+ * major). `index` is the minor index the session already read; without it
+ * nothing is known closed (null). Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function closedMinorPair(
+  programs: readonly AdditionalProgram[],
+  primaryId: string | null,
+  index: readonly MinorIndexEntry[] | null,
+  involving?: string
+): ClosedMinorPair | null {
+  if (!index) return null;
+  const majors = [
+    ...(primaryId ? [primaryId] : []),
+    ...programs.filter((p) => p.kind === "major").map((p) => p.programId),
+  ];
+  for (const minor of programs) {
+    if (minor.kind !== "minor") continue;
+    const closedTo = index.find((e) => e.id === minor.programId)?.notOpenTo;
+    if (!closedTo || closedTo.length === 0) continue;
+    for (const majorId of majors) {
+      if (involving !== undefined && involving !== minor.programId && involving !== majorId) continue;
+      if (matchesProgramPrefix(majorId, closedTo)) return { minor, majorId };
+    }
+  }
+  return null;
+}
+
+/**
+ * `programs` without the minors Cornell closes to a major on the plan (spec
+ * 047 D12/D13: a major switch never carries a minor the new primary or the
+ * carried second major can't take). Only minors `droppable` says may go are
+ * dropped (a seed drops carried ones, never the target plan's own). Without
+ * the minor index nothing is dropped. The same array when nothing is. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function withoutClosedMinors(
+  programs: AdditionalProgram[],
+  primaryId: string | null,
+  index: readonly MinorIndexEntry[] | null,
+  droppable: (programId: string) => boolean = () => true
+): { programs: AdditionalProgram[]; dropped: ClosedMinorPair[] } {
+  if (!index) return { programs, dropped: [] };
+  const majors = programs.filter((p) => p.kind === "major");
+  const dropped: ClosedMinorPair[] = [];
+  const kept = programs.filter((p) => {
+    if (p.kind !== "minor" || !droppable(p.programId)) return true;
+    const hit = closedMinorPair([p, ...majors], primaryId, index);
+    if (hit) dropped.push(hit);
+    return hit === null;
+  });
+  return { programs: dropped.length > 0 ? kept : programs, dropped };
+}
+
+/** Everything a program removal's Undo needs (spec 047 D10), captured before
+ *  the removal: the entry, its place in the list, the tried classes dropped
+ *  with it, and the plan it was in. */
+export type RemovedProgram = {
+  planId: string | null;
+  program: AdditionalProgram;
+  index: number;
+  /** The tried classes that left with it, in their tried order. */
+  tried: string[];
+};
+
+/**
+ * The state after removing program `programId` (spec 047 D10, soft remove):
+ * the entry leaves the list and so do the tried classes in `triedToDrop`
+ * (the caller's "counts only toward it" list; matched by course, aliases
+ * included). Waivers and course marks stay. Null when it isn't on the plan.
+ * Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function programRemoval(
+  s: PlanState,
+  programId: string,
+  triedToDrop: readonly string[],
+  canonical: (id: string) => string = (id) => id
+): { next: PlanState; removed: Omit<RemovedProgram, "planId"> } | null {
+  const index = s.additionalPrograms.findIndex((p) => p.programId === programId);
+  if (index < 0) return null;
+  const drop = new Set(triedToDrop.map(canonical));
+  const tried = s.triedCourseIds.filter((id) => drop.has(canonical(id)));
+  return {
+    next: {
+      ...s,
+      additionalPrograms: s.additionalPrograms.filter((_, i) => i !== index),
+      triedCourseIds:
+        tried.length > 0 ? s.triedCourseIds.filter((id) => !drop.has(canonical(id))) : s.triedCourseIds,
+    },
+    removed: { program: s.additionalPrograms[index], index, tried },
+  };
+}
+
+/**
+ * The state after undoing a program removal (spec 047 D10): the entry back
+ * at its place, and its tried classes back unless placed or tried meanwhile,
+ * up to MAX_TRIED_COURSES (`triedLeftOut` counts those that didn't fit).
+ * "other-plan" when the plan on screen is not the one it left (like
+ * restoreRemovedPlacement); "cap" when its kind's cap filled meanwhile;
+ * "closed" when, with `closedCheck` (the plan's primary and the session's
+ * minor index), bringing it back would pair a minor with a major Cornell
+ * closes it to (D12 notOpenTo — e.g. a CS second major added meanwhile); the
+ * same `s` (nothing left out) when it is already back. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function restoreRemovedProgram(
+  s: PlanState,
+  r: RemovedProgram,
+  currentPlanId: string | null,
+  canonical: (id: string) => string = (id) => id,
+  closedCheck?: { primaryId: string | null; minorIndex: readonly MinorIndexEntry[] | null }
+): { next: PlanState; triedLeftOut: number } | "other-plan" | "cap" | "closed" {
+  if (currentPlanId !== r.planId) return "other-plan";
+  if (s.additionalPrograms.some((p) => p.programId === r.program.programId)) return { next: s, triedLeftOut: 0 };
+  if (!hasRoomFor(s.additionalPrograms, r.program.kind)) return "cap";
+  const additionalPrograms = [...s.additionalPrograms];
+  additionalPrograms.splice(Math.min(r.index, additionalPrograms.length), 0, r.program);
+  if (
+    closedCheck &&
+    closedMinorPair(additionalPrograms, closedCheck.primaryId, closedCheck.minorIndex, r.program.programId)
+  ) {
+    return "closed";
+  }
+  const back = triedAfterAdding(s.triedCourseIds, s.placements, r.tried, canonical);
+  return {
+    next: { ...s, additionalPrograms, triedCourseIds: back.next },
+    triedLeftOut: back.skipped,
+  };
+}
+
+/**
+ * A second major's concentrations after choosing `ids` (spec 047 D2): deduped,
+ * in the order given; none removes the field. "absent" when the program is
+ * not on the plan; "minor" for a minor (never concentrations); "invalid" for
+ * more than three or a malformed id; "same" when nothing changes. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function programsWithConcentrations(
+  cur: readonly AdditionalProgram[],
+  programId: string,
+  ids: readonly string[]
+): AdditionalProgram[] | "absent" | "minor" | "invalid" | "same" {
+  const index = cur.findIndex((p) => p.programId === programId);
+  if (index < 0) return "absent";
+  const p = cur[index];
+  if (p.kind === "minor") return "minor";
+  const chosen = [...new Set(ids)];
+  const entry: AdditionalProgram = {
+    programId: p.programId,
+    kind: p.kind,
+    ...(chosen.length > 0 ? { concentrationIds: chosen } : {}),
+  };
+  if (!AdditionalProgramSchema.safeParse(entry).success) return "invalid";
+  if (JSON.stringify(entry.concentrationIds ?? []) === JSON.stringify(p.concentrationIds ?? [])) return "same";
+  return cur.map((q, i) => (i === index ? entry : q));
+}
+
+/**
+ * The tried-classes list after trying `courseIds` in order (spec 047 D3/D9):
+ * a class already placed or already tried (by course, aliases included), a
+ * repeat within `courseIds` and a malformed id are passed over; the rest are
+ * appended until MAX_TRIED_COURSES. `added` are the ids appended; `skipped`
+ * counts those left out because tried was full. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function triedAfterAdding(
+  tried: readonly string[],
+  placements: readonly Pick<Placement, "courseId">[],
+  courseIds: readonly string[],
+  canonical: (id: string) => string = (id) => id
+): { next: string[]; added: string[]; skipped: number } {
+  const taken = new Set([...placements.map((p) => canonical(p.courseId)), ...tried.map(canonical)]);
+  const next = [...tried];
+  const added: string[] = [];
+  let skipped = 0;
+  for (const id of courseIds) {
+    if (typeof id !== "string" || id.length === 0 || id.length > 40) continue;
+    const c = canonical(id);
+    if (taken.has(c)) continue;
+    taken.add(c);
+    if (next.length >= MAX_TRIED_COURSES) {
+      skipped++;
+      continue;
+    }
+    next.push(id);
+    added.push(id);
+  }
+  return { next: added.length > 0 ? next : [...tried], added, skipped };
+}
+
+/**
+ * The course marks after choosing where `courseId` counts (spec 047 D8): the
+ * one `countsFor:${layerId}@${courseId}` mark ("yes"), with any other
+ * countsFor mark for that course removed; `layerId` null clears them all.
+ * "same" when nothing changes; "cap" when the new mark would pass
+ * MAX_COURSE_MARKS; "invalid" when the key is malformed. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function marksWithCountsFor(
+  cur: Record<string, MarkValue>,
+  courseId: string,
+  layerId: string | null
+): Record<string, MarkValue> | "same" | "cap" | "invalid" {
+  const key = layerId === null ? null : countsForKey(layerId, courseId);
+  if (key !== null) {
+    const parsed = parseCountsForKey(key);
+    if (!parsed || parsed.layerId !== layerId || parsed.courseId !== courseId) return "invalid";
+  }
+  const next: Record<string, MarkValue> = {};
+  for (const [k, v] of Object.entries(cur)) {
+    if (k !== key && parseCountsForKey(k)?.courseId === courseId) continue;
+    next[k] = v;
+  }
+  if (key !== null) {
+    if (!(key in next) && Object.keys(next).length >= MAX_COURSE_MARKS) return "cap";
+    next[key] = "yes";
+  }
+  const keys = Object.keys(next);
+  if (keys.length === Object.keys(cur).length && keys.every((k) => cur[k] === next[k])) return "same";
+  return CourseMarksSchema.safeParse(next).success ? next : "invalid";
+}
+
+/** The layer a waiver names (spec 047 D10): `${layerId}:${rowId}`. An
+ *  Engineering slot / group-id waiver names none (null). */
+function waiverLayer(id: string): string | null {
+  const colon = id.indexOf(":");
+  if (colon <= 0) return null;
+  const layerId = id.slice(0, colon);
+  return LAYER_ID_RE.test(layerId) ? layerId : null;
+}
+
+/** The layer a course-mark key names (spec 047 D10): `countsFor:${layerId}@…`
+ *  and row-scoped `${type}:${layerId}/${row}@…`. Credit marks
+ *  (`creditsTaken:<course>`) and anything else name none (null). */
+function markLayer(key: string): string | null {
+  const countsFor = parseCountsForKey(key);
+  if (countsFor) return countsFor.layerId;
+  const at = key.indexOf("@");
+  if (at <= 0) return null;
+  const ref = parseRef(key.slice(0, at));
+  return ref && "layerId" in ref ? ref.layerId : null;
+}
+
+/**
+ * The waivers and course marks without orphans (spec 047 D10): entries that
+ * name a layer not in `liveLayerIds`. Only entries that name a layer are
+ * candidates (waiverLayer / markLayer). A layer counts as live when it IS a
+ * live id or is `${liveId}--…` — a concentration of a live program (a major
+ * layer's id is its program id), so a second major's unchosen concentration
+ * keeps its waivers just like the primary's (whose concentrations all load).
+ * An empty `liveLayerIds` prunes nothing (it would orphan the primary's own
+ * entries). `removed` counts what was dropped; the same list/map when
+ * nothing was. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function withoutOrphans(
+  s: Pick<PlanState, "waivedRequirementIds" | "courseMarks">,
+  liveLayerIds: readonly string[]
+): { waivedRequirementIds: string[]; courseMarks: Record<string, MarkValue>; removed: number } {
+  if (liveLayerIds.length === 0) {
+    return { waivedRequirementIds: s.waivedRequirementIds, courseMarks: s.courseMarks, removed: 0 };
+  }
+  const live = new Set(liveLayerIds);
+  const isLive = (layerId: string) => {
+    if (live.has(layerId)) return true;
+    // Every "--" split, not only the first: LAYER_ID_RE allows "--" inside ids.
+    for (let i = layerId.indexOf("--"); i > 0; i = layerId.indexOf("--", i + 1)) {
+      if (live.has(layerId.slice(0, i))) return true;
+    }
+    return false;
+  };
+  const orphan = (layerId: string | null) => layerId !== null && !isLive(layerId);
+  const waivers = s.waivedRequirementIds.filter((id) => !orphan(waiverLayer(id)));
+  const marks: Record<string, MarkValue> = {};
+  let droppedMarks = 0;
+  for (const [k, v] of Object.entries(s.courseMarks)) {
+    if (orphan(markLayer(k))) droppedMarks++;
+    else marks[k] = v;
+  }
+  const droppedWaivers = s.waivedRequirementIds.length - waivers.length;
+  return {
+    waivedRequirementIds: droppedWaivers > 0 ? waivers : s.waivedRequirementIds,
+    courseMarks: droppedMarks > 0 ? marks : s.courseMarks,
+    removed: droppedWaivers + droppedMarks,
+  };
+}
+
 /** A plan state's content fields for createPlan — plain data, no undefined
  *  (Firestore rejects undefined and fails the whole write). */
 function createContent(s: PlanState) {
@@ -535,24 +1016,40 @@ function createContent(s: PlanState) {
     triedCourseIds: p.triedCourseIds,
     // createPlan writes the field only when the list is non-empty.
     shortTerms: p.shortTerms,
+    // Spec 047 D2: likewise (checked strictly against the plan's program).
+    additionalPrograms: p.additionalPrograms,
   };
 }
 
-/** `s` with `kept`'s course marks and tried classes (same ref when they
- *  already match). Laying a starting board or resetting replaces the board,
- *  not the student's answers (spec 020 D5: a mark outlives its course leaving
- *  the board) nor the classes they are trying (spec 028 D12: only untry /
- *  clear removes one). */
+/** `s` with `kept`'s course marks, tried classes and extra programs (same ref
+ *  when they already match). Laying a starting board or resetting replaces the
+ *  board, not the student's answers (spec 020 D5: a mark outlives its course
+ *  leaving the board), the classes they are trying (spec 028 D12: only untry /
+ *  clear removes one) nor the programs on the plan (spec 047). */
 function withMarks(
   s: PlanState,
-  kept: Pick<PlanState, "courseMarks" | "triedCourseIds">
+  kept: Pick<PlanState, "courseMarks" | "triedCourseIds" | "additionalPrograms">
 ): PlanState {
-  if (s.courseMarks === kept.courseMarks && s.triedCourseIds === kept.triedCourseIds) return s;
-  return { ...s, courseMarks: kept.courseMarks, triedCourseIds: kept.triedCourseIds };
+  if (
+    s.courseMarks === kept.courseMarks &&
+    s.triedCourseIds === kept.triedCourseIds &&
+    s.additionalPrograms === kept.additionalPrograms
+  ) {
+    return s;
+  }
+  return {
+    ...s,
+    courseMarks: kept.courseMarks,
+    triedCourseIds: kept.triedCourseIds,
+    additionalPrograms: kept.additionalPrograms,
+  };
 }
 
 export function PlanProvider({ children }: { children: React.ReactNode }) {
-  const { uid, profile, loading: authLoading, setActivePlanId } = useAuth();
+  const { uid, profile, loading: authLoading, setActivePlanId, enteringYear } = useAuth();
+  // Spec 047 D4: names the column in the "already in <term>" toast.
+  const enteringYearRef = useRef(enteringYear);
+  enteringYearRef.current = enteringYear;
   // Cross-listing aliases: a tried class placed under another code still
   // leaves the tried list (triedAfterPlacing). Read through a ref so the
   // mutations keep their identity when the catalog meta lands.
@@ -615,6 +1112,42 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     programsRef.current = programs;
   }, [programs]);
+  // Spec 047 D1: a program's college from the program list (null when the
+  // list doesn't have it); two programs are "same college" only when both
+  // are known and match.
+  const collegeOf = useCallback(
+    (programId: string): string | null =>
+      programCollegeId(programsRef.current.find((p) => p.id === programId)),
+    []
+  );
+  const sameCollege = useCallback(
+    (a: string, b: string): boolean => {
+      const college = collegeOf(a);
+      return college !== null && college === collegeOf(b);
+    },
+    [collegeOf]
+  );
+  // A program's short display name for toasts ("Mathematics", "CS minor"):
+  // the program list for a major, the minor index (if read) for a minor.
+  const programLabel = useCallback((p: Pick<AdditionalProgram, "programId" | "kind">): string => {
+    if (p.kind === "major") {
+      const prog = programsRef.current.find((x) => x.id === p.programId);
+      return prog?.short_name || prog?.name || "the second major";
+    }
+    return peekMinorIndex()?.find((e) => e.id === p.programId)?.shortName || "the minor";
+  }, []);
+  // Spec 047 D12 (notOpenTo) toasts: "the CS minor isn't open to Computer
+  // Science majors". Any major on the plan, the primary included.
+  const closedSentence = useCallback((pair: ClosedMinorPair): string => {
+    const prog = programsRef.current.find((x) => x.id === pair.majorId);
+    const major = prog?.short_name || prog?.name || "that major's";
+    const minor = peekMinorIndex()?.find((e) => e.id === pair.minor.programId)?.shortName;
+    return `${minor ? `the ${minor}` : "that minor"} isn't open to ${major} majors`;
+  }, []);
+  // The program removal whose "Removed X · Undo" toast is showing (spec 047
+  // D10): its layers' waivers and answers are not orphans while Undo can
+  // still bring it back (pruneOrphans).
+  const undoProgramRef = useRef<{ key: number | null; planId: string | null; programId: string } | null>(null);
 
   // Echo suppression: signature of our own last write; the snapshot matching it
   // is skipped.
@@ -627,6 +1160,8 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     planId: string;
     state: PlanState;
     payload: ReturnType<typeof toPayload>;
+    /** The plan's primary program, for the strict additional-programs check. */
+    programId: string | null;
   } | null>(null);
   const planIdRef = useRef<string | null>(null);
   const uidRef = useRef<string | null>(null);
@@ -873,7 +1408,9 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       ReturnType<typeof toPayload>;
     // Record the signature so the resulting snapshot is echo-suppressed.
     lastWrittenRef.current = planSignature(payload);
-    updatePlan(pending.uid, pending.planId, payload)
+    updatePlan(pending.uid, pending.planId, payload, {
+      ...(pending.programId ? { primaryProgramId: pending.programId } : {}),
+    })
       .then(() => {
         if (planIdRef.current === pending.planId) confirmedRef.current = pending.state;
       })
@@ -904,6 +1441,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         planId: planIdNow,
         state: next,
         payload: toPayload(next),
+        programId: planProgramIdRef.current,
       };
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(flushPendingWrite, DEBOUNCE_MS);
@@ -1019,11 +1557,22 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               courseMarks: prev.courseMarks,
               triedCourseIds: prev.triedCourseIds,
               shortTerms: prev.shortTerms,
+              additionalPrograms: prev.additionalPrograms,
             },
             target.slots.map(toRemapTarget),
-            startingPlacements(target.slots)
-            // carryMark: the default (college-layer and credit marks); see
-            // seedPlanFromPrevious defaultCarryMark.
+            startingPlacements(target.slots),
+            {
+              // carryMark: the default (college-layer and credit marks); see
+              // seedPlanFromPrevious defaultCarryMark.
+              // Spec 047 D13: the extra programs carry, minus the new major
+              // itself and a second major outside its college (D1).
+              primaryProgramId: plan.programId,
+              // D15: nor a pair Cornell forbids (ISST with CS or ORE).
+              keepProgram: (p) =>
+                p.kind === "minor" ||
+                (sameCollege(p.programId, plan.programId) &&
+                  engineeringForbiddenReason(p.programId, plan.programId) === null),
+            }
           );
           if (seed) {
             const fromTemplate = templateCourses(target.slots);
@@ -1036,7 +1585,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
             // plan already holds win, and the total stays under the cap. A
             // failed save rolls back to what the server holds: an empty board
             // with the target plan's own marks.
-            const { next, confirmed } = seedStates(
+            const { next: seeded, confirmed } = seedStates(
               {
                 placements: seed.placements,
                 placedCourses,
@@ -1052,8 +1601,24 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               // (and the column of every carried short-term class) come
               // along, after the target plan's own.
               seed.shortTerms,
-              plan.shortTerms
+              plan.shortTerms,
+              additionalProgramsOf(plan),
+              seed.additionalPrograms,
+              plan.programId
             );
+            // D12/D13: a carried minor Cornell closes to the new major or the
+            // carried second major leaves (the target plan's own stay). Only
+            // known once the session read the minor index; until then it is
+            // carried and the programs panel warns.
+            const ownIds = new Set(additionalProgramsOf(plan).map((p) => p.programId));
+            const closed = withoutClosedMinors(
+              seeded.additionalPrograms,
+              plan.programId,
+              peekMinorIndex(),
+              (id) => !ownIds.has(id)
+            );
+            const next =
+              closed.dropped.length > 0 ? { ...seeded, additionalPrograms: closed.programs } : seeded;
             confirmedRef.current = confirmed;
             seededPlanRef.current = forPlanId;
             const shown = replayEarly(next);
@@ -1066,16 +1631,32 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
               programsRef.current.find((p) => p.id === plan.programId)?.short_name ??
               "the new major";
             // Nothing from the old board (only its tried classes / marks
-            // came along): no "Kept your courses" toast.
+            // came along): no "Kept your courses" sentence.
+            let kept = "";
             if (seed.kept > 0) {
               const keptPhrase =
                 seed.kept === 1 ? "Kept your course" : `Kept your ${seed.kept} courses`;
-              showToast(
+              kept =
                 seed.matched > 0
                   ? `${keptPhrase} — ${seed.matched} count toward ${shortName} requirements`
-                  : `${keptPhrase} on your new board`
-              );
+                  : `${keptPhrase} on your new board`;
             }
+            // Never silent: each minor left behind says why.
+            const removedMinors = closed.dropped
+              .map((pair) => `${closedSentence(pair)}, so it was removed`)
+              .join("; ");
+            const capital = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+            const body = kept && removedMinors
+              ? `${kept}; ${removedMinors}.`
+              : kept || (removedMinors ? `${capital(removedMinors)}.` : "");
+            // The new major was the second major (it leaves the extra list,
+            // and the old primary isn't carried): say so.
+            const wasSecond = prev.additionalPrograms.some(
+              (p) => p.kind === "major" && p.programId === plan.programId
+            );
+            const promoted = wasSecond ? `${shortName} is now your major; it was your second major.` : "";
+            const message = [promoted, body].filter(Boolean).join(" ");
+            if (message) showToast(message);
             return;
           }
         }
@@ -1112,6 +1693,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         courseMarks: plan.courseMarks,
         triedCourseIds: plan.triedCourseIds,
         shortTerms: plan.shortTerms,
+        additionalPrograms: additionalProgramsOf(plan),
       };
       confirmedRef.current = next;
       const shown = replayEarly(next);
@@ -1127,7 +1709,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         layStartingBoard(plan.programId, forPlanId, plan.legacy);
       }
     },
-    [getProgramData, showToast, scheduleWrite, layStartingBoard, setLoadedProgram]
+    [getProgramData, showToast, scheduleWrite, layStartingBoard, setLoadedProgram, sameCollege, closedSentence]
   );
 
   // ── Mutations (optimistic state + debounced write) ─────────────────────────
@@ -1159,7 +1741,15 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       const id = crypto.randomUUID();
       const aliasMap = aliasesRef.current;
       const canonical = (cid: string) => aliasMap[cid] ?? cid;
+      // Spec 047 D4: never the same class twice in one column (a retake in
+      // another term stays allowed). Checked here for the toast and again in
+      // the commit, which may replay onto a newer state.
+      if (columnHasCourse(stateRef.current.placements, course.id, target, canonical)) {
+        showToast(alreadyInColumnMessage(`${course.subject} ${course.number}`, target, enteringYearRef.current));
+        return null;
+      }
       commit((s) => {
+        if (columnHasCourse(s.placements, course.id, target, canonical)) return s;
         const placements = insertPlacement(s.placements, { id, courseId: course.id }, target, index);
         if (placements === s.placements) return s;
         // A tried class placed by any path stops being tried, in the same
@@ -1180,7 +1770,25 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
 
   const movePlacement = useCallback(
     (id: string, target: number | ColumnRef, index: number) => {
+      const aliasMap = aliasesRef.current;
+      const canonical = (cid: string) => aliasMap[cid] ?? cid;
+      // Spec 047 D4: a move INTO another column that already holds the same
+      // class is refused (the card stays where it was). A reorder within its
+      // own column is never refused, even on a board saved before the rule.
+      const intoDuplicate = (s: PlanState): Placement | null => {
+        const mover = s.placements.find((p) => p.id === id);
+        if (!mover || sameColumn(refOf(mover), toColumnRef(target))) return null;
+        return columnHasCourse(s.placements, mover.courseId, target, canonical, id) ? mover : null;
+      };
+      const blocked = intoDuplicate(stateRef.current);
+      if (blocked) {
+        const c = stateRef.current.placedCourses[blocked.courseId];
+        const code = c ? `${c.subject} ${c.number}` : blocked.courseId.replace(/-/g, " ");
+        showToast(alreadyInColumnMessage(code, target, enteringYearRef.current));
+        return;
+      }
       commit((s) => {
+        if (intoDuplicate(s)) return s;
         const placements = movePlacementTo(s.placements, id, target, index);
         if (placements === s.placements) return s;
         return {
@@ -1190,7 +1798,7 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         };
       });
     },
-    [commit]
+    [commit, showToast]
   );
 
   // Short-term columns (spec 042 D2/D4/D7). Checked against the current
@@ -1253,8 +1861,25 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
         onAction: () => {
           // "other-plan": the plan changed since the removal — never restore into
           // a different plan (fix pass P1; the toast is also dismissed on change).
-          const result = restoreRemovedPlacement(stateRef.current, removed, planIdRef.current);
+          const aliasMap = aliasesRef.current;
+          const result = restoreRemovedPlacement(
+            stateRef.current,
+            removed,
+            planIdRef.current,
+            (cid) => aliasMap[cid] ?? cid
+          );
           if (result === "other-plan") return;
+          if (result === "duplicate") {
+            // Spec 047 D4: the column got the same class back meanwhile.
+            showToast(
+              alreadyInColumnMessage(
+                code,
+                { sem: placement.sem, shortTerm: placement.shortTerm === true },
+                enteringYearRef.current
+              )
+            );
+            return;
+          }
           if (result === "cap") {
             // Never a silent no-op (fix pass P5).
             showToast(
@@ -1421,11 +2046,19 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       const sameProgram = useProgramStore.getState().selectedProgramId === programId;
       if (sameProgram) await loadProgramData(programId).catch(() => null);
       const start = sameProgram ? startingStateFor(programId) : null;
+      // Spec 047 D13: a what-if for the plan's own program keeps its second
+      // major and minors (the point of a what-if is to vary from here).
+      // Another program's plan gets them through the C4 seed instead.
+      const programsNow =
+        planProgramIdRef.current === programId
+          ? mergeSeedPrograms([], stateRef.current.additionalPrograms, programId)
+          : [];
       justCreatedRef.current.add(newId);
       await createPlan(uidNow, newId, {
         name: name.trim().slice(0, 80) || "My Plan",
         programId,
         ...(start ? createContent(start) : {}),
+        ...(programsNow.length > 0 ? { additionalPrograms: programsNow } : {}),
       });
       setPlansList((l) => [...l, { id: newId, name, programId }]);
       await switchPlan(newId, programId);
@@ -1474,6 +2107,218 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     [planName, showToast]
   );
 
+  // -- Spec 047 extra programs (second major, minors) --
+  // Each is checked against the current state for its answer / toast and
+  // re-checked against the state the commit applies to (an edit held before
+  // the first snapshot replays onto the loaded plan — U-13).
+  const addProgram = useCallback(
+    (p: AdditionalProgram): AddProgramResult => {
+      const primary = planProgramIdRef.current ?? useProgramStore.getState().selectedProgramId;
+      const next = programsAfterAdding(stateRef.current.additionalPrograms, p, primary, collegeOf);
+      if (!Array.isArray(next)) {
+        const label = p && typeof p.programId === "string" ? programLabel(p) : "that program";
+        const upper = label.charAt(0).toUpperCase() + label.slice(1);
+        if (next === "duplicate") showToast(`${upper} is already on this plan.`);
+        else if (next === "primary") showToast(`${upper} is already this plan's major.`);
+        else if (next === "cap") {
+          showToast(
+            p.kind === "major"
+              ? "A plan holds one second major — remove it to add another."
+              : `A plan holds up to ${MAX_MINORS} minors — remove one to add another.`
+          );
+        } else if (p?.kind === "major" && primary && AdditionalProgramSchema.safeParse(p).success) {
+          showToast("A second major has to be in the same college as your major.");
+        } else {
+          console.warn("[plan] refused a malformed program", p);
+          showToast("Couldn't add that program.");
+        }
+        return next;
+      }
+      // D15: never a second major Cornell won't pair with the primary.
+      const forbidden = forbiddenSecondMajor(next, primary);
+      if (forbidden) {
+        showToast(`Can't add ${programLabel(p)} as a second major: ${forbidden.reason}`);
+        return "invalid";
+      }
+      // D12: never pair a minor with a major Cornell closes it to (a CS
+      // second major beside the CS minor, or the reverse). Only known once
+      // the session read the minor index; until then the panel warns.
+      const closedNow = (list: readonly AdditionalProgram[]) =>
+        closedMinorPair(list, primary, peekMinorIndex(), canonicalProgramId(p.programId));
+      const closed = closedNow(next);
+      if (closed) {
+        const sentence = closedSentence(closed);
+        showToast(
+          closed.minor.programId === canonicalProgramId(p.programId)
+            ? `${sentence.charAt(0).toUpperCase()}${sentence.slice(1)}.`
+            : `Can't add ${programLabel(p)}: ${sentence}. Remove the minor first.`
+        );
+        return "invalid";
+      }
+      commit((s) => {
+        const applied = programsAfterAdding(s.additionalPrograms, p, primary, collegeOf);
+        return Array.isArray(applied) && !closedNow(applied) && !forbiddenSecondMajor(applied, primary)
+          ? { ...s, additionalPrograms: applied }
+          : s;
+      });
+      return "added";
+    },
+    [commit, collegeOf, programLabel, closedSentence, showToast]
+  );
+
+  const removeProgram = useCallback(
+    (programId: string, triedToDrop: string[]) => {
+      const canonicalNow = (cid: string) => aliasesRef.current[cid] ?? cid;
+      const planned = programRemoval(stateRef.current, programId, triedToDrop, canonicalNow);
+      if (!planned) return; // not on the plan (a stale caller): nothing to undo
+      const removed: RemovedProgram = { planId: planIdRef.current, ...planned.removed };
+      commit((s) => programRemoval(s, programId, triedToDrop, canonicalNow)?.next ?? s);
+
+      const label = programLabel(removed.program);
+      showToast(`Removed ${label}`, {
+        actionLabel: "Undo",
+        onAction: () => {
+          // "other-plan": never restore into a different plan (like a card's
+          // Undo; the toast is also dismissed when the plan changes).
+          // D12: never bring back a minor beside a major Cornell closes it to
+          // (or a major beside such a minor) — known once the index is read.
+          const closedCheck = { primaryId: planProgramIdRef.current, minorIndex: peekMinorIndex() };
+          const result = restoreRemovedProgram(
+            stateRef.current,
+            removed,
+            planIdRef.current,
+            canonicalNow,
+            closedCheck
+          );
+          if (result === "other-plan") return;
+          if (result === "closed") {
+            const restored = [...stateRef.current.additionalPrograms, removed.program];
+            const pair = closedMinorPair(
+              restored,
+              closedCheck.primaryId,
+              closedCheck.minorIndex,
+              removed.program.programId
+            );
+            showToast(
+              pair
+                ? `Can't bring back ${label}: ${closedSentence(pair)}.`
+                : `Can't bring back ${label}.`
+            );
+            return;
+          }
+          if (result === "cap") {
+            showToast(
+              removed.program.kind === "major"
+                ? `This plan already has a second major — remove it to bring back ${label}.`
+                : `This plan already has ${MAX_MINORS} minors — remove one to bring back ${label}.`
+            );
+            return;
+          }
+          commit((s) => {
+            const applied = restoreRemovedProgram(s, removed, planIdRef.current, canonicalNow, closedCheck);
+            return typeof applied === "object" ? applied.next : s;
+          });
+          if (result.triedLeftOut > 0) {
+            showToast(
+              `Brought back ${label}. Tried holds ${MAX_TRIED_COURSES} — ${result.triedLeftOut} of its classes didn't fit.`
+            );
+          }
+        },
+      });
+      undoToastKeyRef.current = usePlannerStore.getState().toast?.key ?? null;
+      undoProgramRef.current = {
+        key: undoToastKeyRef.current,
+        planId: removed.planId,
+        programId: removed.program.programId,
+      };
+    },
+    [commit, programLabel, closedSentence, showToast]
+  );
+
+  const setProgramConcentrations = useCallback(
+    (programId: string, ids: string[]) => {
+      const next = programsWithConcentrations(stateRef.current.additionalPrograms, programId, ids);
+      if (next === "same" || next === "absent") return; // nothing to change / a stale caller
+      if (next === "minor" || next === "invalid") {
+        console.warn("[plan] refused concentrations", programId, ids);
+        showToast(
+          next === "invalid" && new Set(ids).size > 3
+            ? "A major takes up to 3 concentrations."
+            : "Couldn't save those concentrations."
+        );
+        return;
+      }
+      commit((s) => {
+        const applied = programsWithConcentrations(s.additionalPrograms, programId, ids);
+        return Array.isArray(applied) ? { ...s, additionalPrograms: applied } : s;
+      });
+    },
+    [commit, showToast]
+  );
+
+  const addTriedCourses = useCallback(
+    (courseIds: string[]): { added: string[]; skipped: number } => {
+      const canonicalNow = (cid: string) => aliasesRef.current[cid] ?? cid;
+      const cur = stateRef.current;
+      const result = triedAfterAdding(cur.triedCourseIds, cur.placements, courseIds, canonicalNow);
+      if (result.added.length === 0) return { added: [], skipped: result.skipped };
+      commit((s) => {
+        const applied = triedAfterAdding(s.triedCourseIds, s.placements, courseIds, canonicalNow);
+        return applied.added.length > 0 ? { ...s, triedCourseIds: applied.next } : s;
+      });
+      return { added: result.added, skipped: result.skipped };
+    },
+    [commit]
+  );
+
+  const setCountsFor = useCallback(
+    (courseId: string, layerId: string | null) => {
+      const next = marksWithCountsFor(stateRef.current.courseMarks, courseId, layerId);
+      if (next === "same") return;
+      if (next === "cap") {
+        showToast(`A plan holds up to ${MAX_COURSE_MARKS} course answers — clear one to add another.`);
+        return;
+      }
+      if (next === "invalid") {
+        console.warn("[plan] refused a malformed countsFor choice", courseId, layerId);
+        showToast("Couldn't save that choice.");
+        return;
+      }
+      commit((s) => {
+        const applied = marksWithCountsFor(s.courseMarks, courseId, layerId);
+        return typeof applied === "object" ? { ...s, courseMarks: applied } : s;
+      });
+    },
+    [commit, showToast]
+  );
+
+  const pruneOrphans = useCallback(
+    (liveLayerIds: string[]): number => {
+      // D10: a program removed with its Undo toast still showing is not gone
+      // yet — Undo must bring back its waivers and answers too. Its id keeps
+      // its own layer and (withoutOrphans' "--" rule) its concentrations live.
+      // Never added to an empty list (that would prune the primary's own).
+      const undo = undoProgramRef.current;
+      const undoOpen =
+        undo !== null &&
+        undo.key !== null &&
+        undo.key === usePlannerStore.getState().toast?.key &&
+        undo.planId === planIdRef.current;
+      const live = undoOpen && liveLayerIds.length > 0 ? [...liveLayerIds, undo.programId] : liveLayerIds;
+      const { removed } = withoutOrphans(stateRef.current, live);
+      if (removed === 0) return 0;
+      // One save: waivers and marks in the same commit.
+      commit((s) => {
+        const applied = withoutOrphans(s, live);
+        return applied.removed === 0
+          ? s
+          : { ...s, waivedRequirementIds: applied.waivedRequirementIds, courseMarks: applied.courseMarks };
+      });
+      return removed;
+    },
+    [commit]
+  );
+
   const value = useMemo<PlanContextValue>(
     () => ({
       ...state,
@@ -1500,6 +2345,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       switchPlan,
       createNewPlan,
       deletePlan,
+      addProgram,
+      removeProgram,
+      setProgramConcentrations,
+      addTriedCourses,
+      setCountsFor,
+      pruneOrphans,
     }),
     [
       state,
@@ -1526,6 +2377,12 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       switchPlan,
       createNewPlan,
       deletePlan,
+      addProgram,
+      removeProgram,
+      setProgramConcentrations,
+      addTriedCourses,
+      setCountsFor,
+      pruneOrphans,
     ]
   );
 

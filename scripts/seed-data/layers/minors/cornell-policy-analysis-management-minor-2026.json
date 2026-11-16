@@ -1,0 +1,179 @@
+{
+  "id": "cornell-policy-analysis-management-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Policy Analysis and Management (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-policy-analysis-management-minor-2026",
+  "rows": [
+    {
+      "id": "intro-public-policy",
+      "label": "Take the introductory public policy course, PUBPOL 2301",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/policy-analysis-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Required by name; the page allows no substitutes.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PUBPOL-2301"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "upper-level-credits",
+      "label": "Nine credits of upper-level PUBPOL courses (3000 or 4000 level)",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/policy-analysis-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The four Special Studies courses are left out. Variable-credit courses are held out too (a confirm row covers them), which may be stricter than needed. Only courses under the PUBPOL code are counted; cross-listed courses under another code are not.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PUBPOL"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "PUBPOL-4000",
+                "PUBPOL-4010",
+                "PUBPOL-4020",
+                "PUBPOL-4030"
+              ]
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "PUBPOL-2301"
+              ]
+            }
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9
+    },
+    {
+      "id": "additional-credits",
+      "label": "Two more credits of PUBPOL courses at the 2000 level or above",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/policy-analysis-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Same exclusions as the upper-level row; PUBPOL 2301 is held out because it already fills its own row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PUBPOL"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "PUBPOL-4000",
+                "PUBPOL-4010",
+                "PUBPOL-4020",
+                "PUBPOL-4030"
+              ]
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "PUBPOL-2301"
+              ]
+            }
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 4999
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 2
+    },
+    {
+      "id": "variable-credit-courses",
+      "label": "If a variable-credit PUBPOL course is part of your plan, confirm the credits you took count toward the 9 and 2 credit requirements",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/policy-analysis-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board does not count variable-credit courses toward the two credit rows.",
+      "kind": "confirm"
+    },
+    {
+      "id": "cross-list-timing",
+      "label": "Confirm any cross-listed course had its PUBPOL cross-list at the time you completed it",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/policy-analysis-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts only courses under the PUBPOL code.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn B- or better in every course counted (SX if offered only S-U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/policy-analysis-management-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the Brooks School intention-to-minor form to declare the minor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/policy-analysis-management-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-to-graduate",
+      "label": "Submit the Brooks application to graduate with a minor once enrolled in your final required course",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/policy-analysis-management-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

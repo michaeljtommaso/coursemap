@@ -1,7 +1,49 @@
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
 import type { Placement } from "@/types/plan";
-import type { MarkValue } from "./distribution/types";
-import { assign, programToRequirements, type RequirementInstance } from "./majorMatch";
+import type { Answers, DistCourse, DistributionResult, MarkValue, Row, SolveInput } from "./distribution/types";
+import { solve } from "./distribution";
+import { applyCourseMarks } from "./questions/applyCourseMarks";
+import { parseCountsForKey } from "./questions/keys";
+import {
+  enforceOverlap,
+  heldByLayer,
+  holdBackLayers,
+  measurePairs,
+  stripHeldPlacements,
+  type CountedByProgram,
+  type HeldEntry,
+  type OverlapOutcome,
+  type OverlapProgram,
+} from "./distribution/overlap";
+import {
+  cappedSections,
+  countedFromResult,
+  countsForChoices,
+  downgradeUnresolved,
+  earliestNeededFirst,
+  extraSections,
+  fillCandidatesFor,
+  groupCounts,
+  holdCost,
+  needsConcentration,
+  overlapOutputs,
+  overlapPrograms,
+  pctOfLayers,
+  programOfLayer,
+  progressScore,
+  solvableExtras,
+  unresolvedRowKeys,
+} from "./multiProgram";
+import { buildAttribution, buildLayerGroups } from "./distributionProgress";
+import type { LoadedProgram } from "@/hooks/useAdditionalProgramData";
+import { assign, programToRequirements, type Assignment, type RequirementInstance } from "./majorMatch";
+import {
+  ADVISOR_ELECTIVE_GROUP,
+  LIBERAL_STUDIES_GROUP,
+  engineeringForbiddenWith,
+  primaryRowsNotShared,
+  secondMajorSlots,
+} from "./engineeringDoubleMajor";
 import { buildMatchPool, programSlotsToMatchInput, type PoolCreditEntry } from "./matchAdapters";
 import { columnKey, refOf } from "./terms";
 import { creditEntryByCourse, creditEntryLabel, pushUnique } from "./creditPool";
@@ -11,11 +53,13 @@ import {
   applyLiberalStudies,
   liberalStudiesCohort,
   liberalStudiesGroups,
+  liberalStudiesGroupsOf,
   liberalStudiesRules,
   type LiberalStudiesOutcome,
 } from "./liberalStudies";
 import type {
   DistributionItemInfo,
+  ProgramSection,
   RequirementGroup,
   RequirementItem,
   RequirementProgress,
@@ -73,7 +117,31 @@ export type RequirementProgressInput = {
   catalogAttrs?: (id: string) => readonly string[] | undefined;
   /** The plan's course marks: chosen credits on variable-credit courses. */
   courseMarks?: Readonly<Record<string, MarkValue>>;
+  /** Spec 047: the plan's program id (the primary's section id). */
+  programId?: string;
+  /** Spec 047: the plan's other programs (minors), in plan order. Loaded
+   *  ones are solved by the Distribution engine over the same course pool
+   *  after the slot matcher; overlap limits hold courses back from them
+   *  (never from the Engineering major, which isn't re-solved). */
+  extraPrograms?: readonly LoadedProgram[];
+  /** Spec 047: the primary's names for its section. */
+  primaryName?: { name: string; shortName: string };
+  /** Spec 047: student facts, for the extra programs' questions. */
+  facts?: Answers["facts"];
+  /** Spec 047 D3: the catalog index's `unlocks` by course id. */
+  unlocks?: (courseId: string) => readonly string[] | undefined;
 };
+
+/** Spec 047 D7: Engineering requirement categories that stay out of overlap,
+ *  like a college layer: liberal studies, the writing seminars and phys ed.
+ *  Math and science DO count. A slot's category is derived from its course's
+ *  subject (slotCategory.ts), so "science" also covers a major's own required
+ *  courses (EAS 2250, CHEM 3890, PHYS 4410, BIOMG 1350 …): leaving them out
+ *  would let a minor share them past its limit. The stricter reading: when a
+ *  minor's rule says "no course may count toward both", the first-year
+ *  calculus and physics a minor also lists count as shared too (fails closed:
+ *  the minor may read lower, never falsely met). */
+const OUTSIDE_OVERLAP: ReadonlySet<string> = new Set(["liberal", "fws", "pe"]);
 
 /** Spec 037 D8: shown on the liberal studies row while the entering class is
  *  unknown (the same wording as the start-term notice). */
@@ -134,39 +202,46 @@ function poolMinCredits(r: RequirementInstance): number {
   return r.kind === "pool" ? r.minCredits : r.credits;
 }
 
-/** The pure transformation (unit-tested). */
-export function computeRequirementProgress(input: RequirementProgressInput): RequirementProgress {
-  const {
-    templateSlots,
-    placements,
-    placedCourses,
-    creditProfile,
-    waivedRequirementIds,
-    canonical = (id: string) => id,
-    entryTerm = null,
-    enteringYear = null,
-    catalogAttrs,
-    courseMarks,
-  } = input;
+/** What every template solve on one board shares: the course pool and the
+ *  board's lookups (spec 047 D15: the primary and an Engineering second major
+ *  are matched over the same pool). */
+type TemplateEnv = {
+  pool: DistCourse[];
+  canonical: (id: string) => string;
+  cohort: ReturnType<typeof liberalStudiesCohort>["cohort"];
+  olderPolicy: boolean;
+  placementByCourse: Map<string, string>;
+  creditByCourse: ReturnType<typeof creditEntryByCourse>;
+  codeOf: Map<string, string>;
+};
 
-  const requirements = programToRequirements(programSlotsToMatchInput(templateSlots));
-  if (requirements.length === 0) {
-    return { groups: [], attribution: {}, satisfiedCount: 0, total: 0 };
-  }
+/** One template matched over the pool: its progress (groups, attribution,
+ *  counts, creditFills) plus what the multi-program pass reads. */
+type TemplateSolved = {
+  progress: RequirementProgress;
+  matched: Assignment["matched"];
+  meta: Map<string, ReqMeta>;
+  items: RequirementItem[];
+  requirements: RequirementInstance[];
+};
 
+/**
+ * A slot template's requirements matched over the pool (assign, then the
+ * liberal studies post-pass), shaped as the useRequirementProgress contract.
+ * `groupKeyPrefix` keeps group keys unique when a second Engineering major's
+ * groups sit beside the primary's ("cornell-cs-bs-2026:math").
+ */
+function solveTemplate(
+  templateSlots: ProgramSlotWithData[],
+  requirements: RequirementInstance[],
+  waivedRequirementIds: readonly string[],
+  env: TemplateEnv,
+  groupKeyPrefix = ""
+): TemplateSolved {
+  const { pool, canonical, cohort, olderPolicy, placementByCourse, creditByCourse, codeOf } = env;
   const waived = new Set(waivedRequirementIds);
   const active = requirements.filter((r) => !waived.has(r.id));
 
-  const { cohort, olderPolicy } = liberalStudiesCohort(entryTerm, enteringYear);
-  const boardYear = enteringYear ?? enteringYearForEntryTerm(entryTerm);
-  const pool = buildMatchPool({
-    placements,
-    placedCourses,
-    creditProfile,
-    ...(courseMarks ? { courseMarks } : {}),
-    ...(boardYear != null ? { enteringYear: boardYear } : {}),
-    ...(catalogAttrs ? { catalogAttrs } : {}),
-  });
   const matcher = assign(pool, active, canonical, { liberalStudiesCohort: cohort });
   // Spec 037 D6/D7: the liberal studies pool judged by its group rules.
   const ls = applyLiberalStudies({
@@ -178,36 +253,11 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
     olderPolicy,
   });
   const result = ls?.assignment ?? matcher;
-  // canonical id → display code ("ECON 1110"), first wins.
-  const codeOf = new Map<string, string>();
-  for (const c of pool) {
-    const cid = canonical(c.id);
-    if (!codeOf.has(cid) && c.subject) codeOf.set(cid, `${c.subject} ${c.number}`.trim());
-  }
-
-  // canonical course id → the ONE placement that carries it into the pool:
-  // board order (time — terms.ts columnKey, so a short term sorts before its
-  // semester — then order), first wins — mirrors buildMatchPool's dedup, so a
-  // course placed twice is attributed to its first placement only.
-  const placementByCourse = new Map<string, string>();
-  const ordered = placements
-    .map((p, i) => ({ p, i, key: columnKey(refOf(p)) }))
-    .sort((a, b) => a.key - b.key || a.p.order - b.p.order || a.i - b.i);
-  for (const { p } of ordered) {
-    const cid = canonical(p.courseId);
-    if (!placementByCourse.has(cid)) placementByCourse.set(cid, p.id);
-  }
 
   // requirement id → covering placement ids + counted credits + counted courses.
   const coveredBy = new Map<string, string[]>();
   const countedCredits = new Map<string, number>();
   const countedCourses = new Map<string, number>();
-  // Spec 028 D7: credit courses (not on the board) → the entry carrying them.
-  const creditByCourse = creditEntryByCourse(
-    creditProfile,
-    placements.map((p) => p.courseId),
-    canonical
-  );
   const creditLabels: Record<string, string[]> = {};
   const creditEntryIds: Record<string, string[]> = {};
   // The matcher lists every requirement still short (a pool short on courses OR
@@ -305,14 +355,13 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
     list.push(it);
     byKey.set(key, list);
   }
-  const isDone = (it: RequirementItem) => it.status === "satisfied" || it.status === "waived";
   const groups: RequirementGroup[] = [];
   for (const key of GROUP_ORDER) {
     const list = byKey.get(key);
     if (!list || list.length === 0) continue;
     list.sort(compareBySemester);
     groups.push({
-      key,
+      key: `${groupKeyPrefix}${key}`,
       label: GROUP_LABELS[key],
       items: list,
       satisfiedCount: list.filter(isDone).length,
@@ -321,11 +370,507 @@ export function computeRequirementProgress(input: RequirementProgressInput): Req
   }
 
   return {
-    groups,
+    progress: {
+      groups,
+      attribution,
+      satisfiedCount: items.filter(isDone).length,
+      total: items.length,
+      ...(Object.keys(creditFills).length > 0 ? { creditFills } : {}),
+    },
+    matched: result.matched,
+    meta,
+    items,
+    requirements,
+  };
+}
+
+const isDone = (it: RequirementItem) => it.status === "satisfied" || it.status === "waived";
+
+/** The pure transformation (unit-tested). */
+export function computeRequirementProgress(input: RequirementProgressInput): RequirementProgress {
+  const {
+    templateSlots,
+    placements,
+    placedCourses,
+    creditProfile,
+    waivedRequirementIds,
+    canonical = (id: string) => id,
+    entryTerm = null,
+    enteringYear = null,
+    catalogAttrs,
+    courseMarks,
+  } = input;
+
+  const requirements = programToRequirements(programSlotsToMatchInput(templateSlots));
+  if (requirements.length === 0) {
+    return { groups: [], attribution: {}, satisfiedCount: 0, total: 0 };
+  }
+
+  const { cohort, olderPolicy } = liberalStudiesCohort(entryTerm, enteringYear);
+  const boardYear = enteringYear ?? enteringYearForEntryTerm(entryTerm);
+  const pool = buildMatchPool({
+    placements,
+    placedCourses,
+    creditProfile,
+    ...(courseMarks ? { courseMarks } : {}),
+    ...(boardYear != null ? { enteringYear: boardYear } : {}),
+    ...(catalogAttrs ? { catalogAttrs } : {}),
+  });
+  // canonical id → display code ("ECON 1110"), first wins.
+  const codeOf = new Map<string, string>();
+  for (const c of pool) {
+    const cid = canonical(c.id);
+    if (!codeOf.has(cid) && c.subject) codeOf.set(cid, `${c.subject} ${c.number}`.trim());
+  }
+
+  // canonical course id → the ONE placement that carries it into the pool:
+  // board order (time — terms.ts columnKey, so a short term sorts before its
+  // semester — then order), first wins — mirrors buildMatchPool's dedup, so a
+  // course placed twice is attributed to its first placement only.
+  const placementByCourse = new Map<string, string>();
+  const ordered = placements
+    .map((p, i) => ({ p, i, key: columnKey(refOf(p)) }))
+    .sort((a, b) => a.key - b.key || a.p.order - b.p.order || a.i - b.i);
+  for (const { p } of ordered) {
+    const cid = canonical(p.courseId);
+    if (!placementByCourse.has(cid)) placementByCourse.set(cid, p.id);
+  }
+
+  // Spec 028 D7: credit courses (not on the board) → the entry carrying them.
+  const creditByCourse = creditEntryByCourse(
+    creditProfile,
+    placements.map((p) => p.courseId),
+    canonical
+  );
+  const env: TemplateEnv = {
+    pool,
+    canonical,
+    cohort,
+    olderPolicy,
+    placementByCourse,
+    creditByCourse,
+    codeOf,
+  };
+  const solved = solveTemplate(templateSlots, requirements, waivedRequirementIds, env);
+  const extraAll = input.extraPrograms ?? [];
+  if (extraAll.length === 0) return solved.progress;
+  return withExtraPrograms(extraAll, { input, env, primary: solved });
+}
+
+/** Spec 047 D7: what an Engineering template counts toward overlap: every
+ *  matched requirement except liberal studies, FWS and PE (math and science
+ *  count), at the course's pool credits. */
+function engineeringCounted(
+  solved: TemplateSolved,
+  creditsOf: ReadonlyMap<string, number>,
+  canonical: (id: string) => string
+): Map<string, number> {
+  const out = new Map<string, number>();
+  for (const m of solved.matched) {
+    const category = solved.meta.get(m.requirementId)?.category;
+    if (category && OUTSIDE_OVERLAP.has(category)) continue;
+    const cid = canonical(m.courseId);
+    out.set(cid, Math.max(out.get(cid) ?? 0, creditsOf.get(cid) ?? m.credits));
+  }
+  return out;
+}
+
+/** The plan's Engineering second major (spec 047 D15): the first loaded
+ *  major extra carrying a template. */
+function engineeringSecondMajor(extras: readonly LoadedProgram[]): LoadedProgram | null {
+  return extras.find((p) => p.kind === "major" && p.status === "ok" && (p.template?.length ?? 0) > 0) ?? null;
+}
+
+/** Spec 047 D15: the primary's college rows that may never take a course the
+ *  second major counts (research D2): liberal studies and advisor-approved
+ *  electives. */
+const COLLEGE_ONLY_POOLS: ReadonlySet<string> = new Set([LIBERAL_STUDIES_GROUP, ADVISOR_ELECTIVE_GROUP]);
+
+/** How many times the primary is re-matched beside a second major. */
+const SECOND_MAJOR_ROUNDS = 2;
+
+/**
+ * The pool for re-matching the primary with `excluded` kept out of liberal
+ * studies: each excluded course loses what makes it count there (its liberal
+ * studies roster tags, credit groups, and a placement on a college pool).
+ * A petition is keyed on the course id and can't be masked; the caller's
+ * final check catches it (the second major then counts less).
+ */
+function maskLiberalStudies(
+  pool: readonly DistCourse[],
+  excluded: ReadonlySet<string>,
+  canonical: (id: string) => string
+): DistCourse[] {
+  const lsTag = (value: string) =>
+    (["fa2024", "fa2020"] as const).some(
+      (cohort) => liberalStudiesGroupsOf({ id: "", attrs: [{ value }] }, cohort).length > 0
+    );
+  return pool.map((c) => {
+    if (!excluded.has(canonical(c.id))) return c;
+    const { liberalStudies: _ls, liberalStudiesGroups: _lsg, placedFor, ...rest } = c;
+    return {
+      ...rest,
+      attrs: (c.attrs ?? []).filter((a) => !lsTag(a.value)),
+      ...(placedFor && !COLLEGE_ONLY_POOLS.has(placedFor.row) ? { placedFor } : {}),
+    };
+  });
+}
+
+/**
+ * Spec 047 D15: the Engineering second major matched over the same pool as
+ * the primary, independently of it (a course may count for both majors: no
+ * cap), with its template filtered by secondMajorSlots. Two rules keep the
+ * common curriculum counted once:
+ *  - the courses the primary counts toward its common-curriculum seats, the
+ *    seats the second major dropped as duplicates, and liberal studies are
+ *    left out of the second major's pool (primaryRowsNotShared);
+ *  - the primary's liberal studies and advisor-approved electives never take
+ *    a course the second major counts (research D2): when they did, the
+ *    primary is matched again with those courses kept out of both pools, and
+ *    the second major is matched again against that primary. At most
+ *    SECOND_MAJOR_ROUNDS rounds; if they still overlap, the second major is
+ *    matched once more without the primary's liberal studies and advisor
+ *    courses, so it counts less, never more, and no course counts twice.
+ * The re-matched primary is a different matching, not a subset of the first:
+ * the matcher is greedy, so its count may move either way (a freed course can
+ * fill another seat). What holds is that no course fills a college row of the
+ * primary and a requirement of the second major at once.
+ * No second major (or none loaded): the primary unchanged, second null.
+ */
+function withSecondMajor(
+  primary: TemplateSolved,
+  extraAll: readonly LoadedProgram[],
+  input: RequirementProgressInput,
+  env: TemplateEnv
+): { primary: TemplateSolved; second: { program: LoadedProgram; solved: TemplateSolved } | null } {
+  const program = engineeringSecondMajor(extraAll);
+  if (!program) return { primary, second: null };
+  const { canonical } = env;
+  const template = program.template ?? [];
+  const slots = secondMajorSlots(input.templateSlots, template, canonical);
+  const secondRequirements = programToRequirements(programSlotsToMatchInput(slots));
+  const notShared = primaryRowsNotShared(input.templateSlots, template, canonical);
+  const coursesIn = (p: TemplateSolved, ids: ReadonlySet<string>) =>
+    new Set(p.matched.filter((m) => ids.has(m.requirementId)).map((m) => canonical(m.courseId)));
+  const solveSecond = (p: TemplateSolved, alsoHeld: ReadonlySet<string> = new Set()) => {
+    const held = coursesIn(p, notShared);
+    for (const id of alsoHeld) held.add(id);
+    const secondEnv = held.size > 0 ? { ...env, pool: env.pool.filter((c) => !held.has(canonical(c.id))) } : env;
+    return solveTemplate(slots, secondRequirements, input.waivedRequirementIds, secondEnv, `${program.programId}:`);
+  };
+  const clashes = (p: TemplateSolved, s: TemplateSolved) => {
+    const college = coursesIn(p, COLLEGE_ONLY_POOLS);
+    return s.matched.some((m) => college.has(canonical(m.courseId)));
+  };
+
+  let current = primary;
+  let solved = solveSecond(current);
+  const excluded = new Set<string>();
+  for (let round = 0; round < SECOND_MAJOR_ROUNDS && clashes(current, solved); round++) {
+    for (const m of solved.matched) excluded.add(canonical(m.courseId));
+    const ids = [...excluded];
+    const requirements = primary.requirements.map((r) =>
+      r.kind === "pool" && r.id === ADVISOR_ELECTIVE_GROUP && r.rule.type === "open"
+        ? { ...r, rule: { ...r.rule, exclude_courses: [...(r.rule.exclude_courses ?? []), ...ids] } }
+        : r
+    );
+    current = solveTemplate(input.templateSlots, requirements, input.waivedRequirementIds, {
+      ...env,
+      pool: maskLiberalStudies(env.pool, excluded, canonical),
+    });
+    solved = solveSecond(current);
+  }
+  // Not settled: the second major gives up the primary's college courses.
+  if (clashes(current, solved)) solved = solveSecond(current, coursesIn(current, COLLEGE_ONLY_POOLS));
+  return { primary: current, second: { program, solved } };
+}
+
+/** D3 for a template: the courses of its still-unmet single-course seats, in
+ *  suggested-semester order then earliest-needed first, minus courses placed
+ *  or already in the pool (credit included). */
+function templateFillCandidates(
+  solved: TemplateSolved,
+  options: {
+    canonical: (id: string) => string;
+    placed: ReadonlySet<string>;
+    have: ReadonlySet<string>;
+    unlocks?: (courseId: string) => readonly string[] | undefined;
+  }
+): string[] {
+  const { canonical } = options;
+  const itemOf = new Map(solved.items.map((it) => [it.id, it]));
+  const seats = solved.requirements
+    .map((r, i) => ({ r, i, sem: solved.meta.get(r.id)?.suggestedSem ?? Number.POSITIVE_INFINITY }))
+    .sort((a, b) => a.sem - b.sem || a.i - b.i);
+  const out: string[] = [];
+  for (const { r } of seats) {
+    if (r.kind !== "seat" || r.req.kind !== "course") continue;
+    const status = itemOf.get(r.id)?.status;
+    if (status !== "unmet" && status !== "partial") continue;
+    const id = canonical(r.req.courseId);
+    if (options.placed.has(id) || options.have.has(id) || out.includes(id)) continue;
+    out.push(id);
+  }
+  return earliestNeededFirst(out, (id) => (options.unlocks?.(id) ?? []).map(canonical));
+}
+
+/** Spec 047: an Engineering plan's extra programs. Minors are solved by the
+ *  Distribution engine over the same course pool after the slot matcher; an
+ *  Engineering second major (D15) is matched like the primary, over the same
+ *  pool, independently of it (a course may count for both: no cap). */
+function withExtraPrograms(
+  extraAll: readonly LoadedProgram[],
+  ctx: { input: RequirementProgressInput; env: TemplateEnv; primary: TemplateSolved }
+): RequirementProgress {
+  const { input, env } = ctx;
+  const { pool, canonical, placementByCourse } = env;
+  const programId = input.programId ?? "";
+  const extras = solvableExtras(extraAll, new Set());
+  // What an Engineering major counts toward overlap: every matched
+  // requirement except liberal studies, FWS and PE (math and science count).
+  const creditsOf = new Map<string, number>();
+  for (const c of pool) {
+    const cid = canonical(c.id);
+    creditsOf.set(cid, Math.max(creditsOf.get(cid) ?? 0, c.credits));
+  }
+  const placed = new Set(input.placements.map((p) => canonical(p.courseId)));
+
+  // D15: the Engineering second major, and the primary as it stands beside it.
+  const { primary: primarySolved, second } = withSecondMajor(ctx.primary, extraAll, input, env);
+  const primary = primarySolved.progress;
+  const primaryCounted = engineeringCounted(primarySolved, creditsOf, canonical);
+  const secondCounted = second ? engineeringCounted(second.solved, creditsOf, canonical) : null;
+
+  const primaryGroups = primary.groups.map((g) => ({ ...g, sectionId: programId }));
+  const attributionDetail: Record<string, { label: string; sectionId: string }[]> = {};
+  for (const [pid, labels] of Object.entries(primary.attribution)) {
+    attributionDetail[pid] = labels.map((label) => ({ label, sectionId: programId }));
+  }
+  const attribution: Record<string, string[]> = { ...primary.attribution };
+  const secondGroups: RequirementGroup[] = [];
+  const fillCandidates: Record<string, string[]> = {};
+  if (second) {
+    const sid = second.program.programId;
+    for (const g of second.solved.progress.groups) secondGroups.push({ ...g, sectionId: sid });
+    for (const [pid, labels] of Object.entries(second.solved.progress.attribution)) {
+      attribution[pid] = [...(attribution[pid] ?? []), ...labels];
+      attributionDetail[pid] = [...(attributionDetail[pid] ?? []), ...labels.map((label) => ({ label, sectionId: sid }))];
+    }
+    fillCandidates[sid] = templateFillCandidates(second.solved, {
+      canonical,
+      placed,
+      have: new Set(pool.map((c) => canonical(c.id))),
+      ...(input.unlocks ? { unlocks: input.unlocks } : {}),
+    });
+  }
+  const primarySection: ProgramSection = {
+    id: programId,
+    kind: "primary",
+    name: input.primaryName?.name ?? programId,
+    shortName: input.primaryName?.shortName ?? input.primaryName?.name ?? programId,
+    color: null,
+    pct: primary.total > 0 ? Math.round((100 * primary.satisfiedCount) / primary.total) : 0,
+    satisfiedCount: primary.satisfiedCount,
+    total: primary.total,
+    status: "ok",
+  };
+  const secondStats = (pid: string) => {
+    if (!second || second.program.programId !== pid) return null;
+    const { satisfiedCount, total } = second.solved.progress;
+    return { pct: total > 0 ? Math.round((100 * satisfiedCount) / total) : 0, satisfiedCount, total };
+  };
+
+  // D15 / D14: both Engineering majors are re-solve-proof (holdable false);
+  // a forbidden pair is reported and caps the later program. Plan order.
+  const primaryEntry: OverlapProgram = {
+    id: programId,
+    kind: "major",
+    layerIds: [],
+    ...(engineeringForbiddenWith(programId).length > 0 ? { forbiddenWith: engineeringForbiddenWith(programId) } : {}),
+    holdable: false,
+  };
+  const minorEntries = new Map(
+    overlapPrograms({ id: programId, layers: [], holdable: false }, extras)
+      .slice(1)
+      .map((p) => [p.id, p])
+  );
+  const programs: OverlapProgram[] = [primaryEntry];
+  for (const p of extraAll) {
+    if (second && p === second.program) {
+      const forbidden = engineeringForbiddenWith(p.programId);
+      programs.push({
+        id: p.programId,
+        kind: "major",
+        layerIds: [],
+        ...(forbidden.length > 0 ? { forbiddenWith: forbidden } : {}),
+        holdable: false,
+      });
+    } else {
+      const entry = minorEntries.get(p.programId);
+      if (entry) programs.push(entry);
+    }
+  }
+  const fixedCounted = (): CountedByProgram => {
+    const out: CountedByProgram = new Map([[programId, primaryCounted]]);
+    if (second && secondCounted) out.set(second.program.programId, secondCounted);
+    return out;
+  };
+
+  if (extras.length === 0) {
+    if (!second) {
+      return {
+        ...primary,
+        groups: primaryGroups,
+        sections: [primarySection, ...extraSections(extraAll, () => null, new Set())],
+        attributionDetail,
+      };
+    }
+    // A second major, no minors: nothing to re-solve, the pairs are only reported.
+    const counted = fixedCounted();
+    const outcome: OverlapOutcome<null> = {
+      result: null,
+      held: [],
+      pairs: measurePairs(programs, counted),
+      estimated: false,
+      resolves: 0,
+      unresolved: false,
+    };
+    const outputs = overlapOutputs(outcome, counted, placementByCourse);
+    return {
+      ...primary,
+      groups: [...primaryGroups, ...secondGroups],
+      attribution,
+      sections: [primarySection, ...extraSections(extraAll, secondStats, cappedSections(outcome))],
+      attributionDetail,
+      fillCandidates,
+      ...(outputs.overlap.length > 0 ? { overlap: outputs.overlap } : {}),
+    };
+  }
+
+  const layers = extras.flatMap((p) => p.layers);
+  const layerIds = new Set(layers.map((l) => l.id));
+  const marks = { ...(input.courseMarks ?? {}) };
+  const facts = input.facts ?? {};
+  const answers: Answers = { marks, facts };
+  const hasAnswers = Object.keys(marks).length > 0 || Object.keys(facts).length > 0;
+  const courses: DistCourse[] = hasAnswers ? applyCourseMarks(pool, layers, marks, canonical) : pool;
+  const solveInput: SolveInput = {
+    layers,
+    courses,
+    ctx: {
+      programId,
+      additionalProgramIds: extraAll.map((p) => p.programId),
+      entryTerm: input.entryTerm ?? null,
+    },
+    waived: input.waivedRequirementIds.filter((id) => {
+      const at = id.indexOf(":");
+      return at > 0 && layerIds.has(id.slice(0, at));
+    }),
+    canonical,
+    ...(hasAnswers ? { answers } : {}),
+  };
+  const defs = new Map<string, Row>();
+  for (const l of layers) for (const r of l.rows) defs.set(`${l.id}:${r.id}`, r);
+  const kindOf = new Map(layers.map((l) => [l.id, l.kind]));
+
+  // D7: an Engineering major can't be re-solved without a course, so only
+  // the extra layer programs give a course up.
+  const layerProgram = programOfLayer(programs);
+  const countedOf = (r: DistributionResult) => countedFromResult(r, defs, layerProgram, fixedCounted());
+  const outcome = enforceOverlap({
+    programs,
+    base: solve(solveInput),
+    solve: (h: HeldEntry[]) => {
+      const byLayer = heldByLayer(h, programs);
+      return solve({
+        ...solveInput,
+        layers: holdBackLayers(layers, byLayer),
+        courses: stripHeldPlacements(courses, byLayer, canonical),
+      });
+    },
+    counted: countedOf,
+    score: (r) => progressScore(r, programs),
+    cost: (r, pid, cid) => holdCost(r, programs, pid, cid),
+    countsFor: countsForChoices(marks, layerProgram, canonical, parseCountsForKey),
+  });
+  const solved = outcome.result;
+
+  const boardIndex = new Map<string, number>();
+  pool.forEach((c, i) => {
+    const cid = canonical(c.id);
+    if (!boardIndex.has(cid)) boardIndex.set(cid, i);
+  });
+  const sectionOf = (layerId: string) => layerProgram.get(layerId);
+  const unresolved = unresolvedRowKeys(outcome, solved, programs);
+  const { groups: extraGroups, labelByKey } = buildLayerGroups(
+    solved,
+    defs,
+    kindOf,
+    {
+      placementByCourse,
+      codeOf: (cid) => env.codeOf.get(cid) ?? cid.replace(/-/g, " "),
+      byBoard: (a, b) =>
+        (boardIndex.get(a) ?? Number.MAX_SAFE_INTEGER) - (boardIndex.get(b) ?? Number.MAX_SAFE_INTEGER),
+      creditByCourse: env.creditByCourse,
+    },
+    {
+      sectionOf,
+      // D7: a pair still over its limit: the minor's rows counting a
+      // still-shared course never read as met.
+      decorate: (key, item) => {
+        if (unresolved.has(key)) downgradeUnresolved(item);
+      },
+    }
+  );
+  const extraLabels = buildAttribution(solved, defs, labelByKey, placementByCourse, sectionOf);
+  for (const [pid, labels] of Object.entries(extraLabels.attribution)) {
+    attribution[pid] = [...(attribution[pid] ?? []), ...labels];
+  }
+  for (const [pid, detail] of Object.entries(extraLabels.attributionDetail)) {
+    attributionDetail[pid] = [...(attributionDetail[pid] ?? []), ...detail];
+  }
+
+  const capped = cappedSections(outcome);
+  for (const p of extras) if (needsConcentration(p)) capped.add(p.programId);
+  const sections: ProgramSection[] = [
+    primarySection,
+    ...extraSections(
+      extraAll,
+      (pid) => {
+        const fromSecond = secondStats(pid);
+        if (fromSecond) return fromSecond;
+        const p = extras.find((x) => x.programId === pid);
+        if (!p) return null;
+        return {
+          pct: pctOfLayers(solved, new Set(p.layers.map((l) => l.id))),
+          ...groupCounts(extraGroups.filter((g) => g.sectionId === pid)),
+        };
+      },
+      capped
+    ),
+  ];
+  for (const p of extras) {
+    fillCandidates[p.programId] = fillCandidatesFor(p.layers, solved, {
+      canonical,
+      placed,
+      have: courses,
+      ruleCtx: { ...solveInput.ctx, ...(hasAnswers ? { answers } : {}) },
+      ...(input.unlocks ? { unlocks: input.unlocks } : {}),
+    });
+  }
+  const outputs = overlapOutputs(outcome, countedOf(solved), placementByCourse);
+  return {
+    ...primary,
+    // D6 order: the primary, the second major, then the minors.
+    groups: [...primaryGroups, ...secondGroups, ...extraGroups],
     attribution,
-    satisfiedCount: items.filter(isDone).length,
-    total: items.length,
-    ...(Object.keys(creditFills).length > 0 ? { creditFills } : {}),
+    sections,
+    attributionDetail,
+    fillCandidates,
+    ...(outputs.overlap.length > 0 ? { overlap: outputs.overlap } : {}),
+    ...(Object.keys(outputs.heldBackByPlacement).length > 0
+      ? { heldBackByPlacement: outputs.heldBackByPlacement }
+      : {}),
   };
 }
 

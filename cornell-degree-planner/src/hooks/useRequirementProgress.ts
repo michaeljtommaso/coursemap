@@ -1,13 +1,14 @@
 import { useDeferredValue, useEffect, useMemo } from "react";
 import type { Course, ProgramSlotWithData, SlotCategory } from "@/types/db";
-import type { CatalogIndexRecord, CreditEntry } from "@/lib/schemas";
+import type { AdditionalProgram, CatalogIndexRecord, CreditEntry } from "@/lib/schemas";
 import type { Placement } from "@/types/plan";
 import type { Requirement } from "@/lib/planner/satisfies";
-import type { FactValue, Layer, MarkValue } from "@/lib/planner/distribution/types";
+import type { FactValue, Layer, MarkValue, SharingLimit } from "@/lib/planner/distribution/types";
 import type { StudentPrefs } from "@/services/profile";
 import { usePlan } from "@/hooks/usePlan";
 import { useProgramData } from "@/hooks/useProgramData";
 import { usePrograms } from "@/hooks/usePrograms";
+import { useAdditionalProgramData, type LoadedProgram } from "@/hooks/useAdditionalProgramData";
 import { useProgramStore } from "@/store/useProgramStore";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useCatalogContext } from "@/contexts/CatalogProvider";
@@ -49,6 +50,17 @@ import {
  * Spec 037: the Engineering path also passes the student's entry term and
  * entering year (the liberal studies rules and the placements' terms) and the
  * class index's roster tags (credit courses granting a real catalog course).
+ *
+ * Spec 047: the plan's second major and minors (useAdditionalProgramData) are
+ * engine inputs on both paths (their layers join the solve; overlap limits
+ * re-solve), and so are the plan's countsFor marks (inside the course marks).
+ * An Engineering second major on an Engineering plan (D15) arrives as a
+ * template, not layers, and is matched beside the primary
+ * (lib/planner/requirementProgress.ts, engineeringDoubleMajor.ts).
+ * The result gains sections, overlap, held-back notes and fill candidates;
+ * this hook adds what only it knows: fill candidates minus tried classes,
+ * `triedOnlyFor` from the tried rerun, and `liveLayerIds` / `allLayersLoaded`
+ * for D10's orphan pruning.
  */
 
 export type RequirementStatus = "unmet" | "partial" | "satisfied" | "waived";
@@ -103,14 +115,16 @@ export type RequirementItem = {
 export type DistributionItemInfo = {
   layerId: string;
   rowId: string;
-  layerKind: "college" | "major" | "concentration";
+  layerKind: "college" | "major" | "concentration" | "minor";
   rowKind: "seat" | "pool" | "distribution" | "credits" | "anyOf" | "confirm";
   /** The engine's own status, for wording ("can't check" vs "confirm"). */
   engineStatus: "met" | "partial" | "unmet" | "unchecked" | "confirm" | "waived";
   /** "confirm with your advisor" row: outside the percentage. */
   confirm?: boolean;
-  /** Why an "unchecked" row couldn't be proved. */
-  reason?: "node-cap" | "engine-error" | "verify-rejected" | "bad-layer";
+  /** Why an "unchecked" row couldn't be proved; "overlap-unresolved" (spec
+   *  047 D7): the row counts a course two programs still share past their
+   *  limit, so it reads "partial", never met. */
+  reason?: "node-cap" | "engine-error" | "verify-rejected" | "bad-layer" | "overlap-unresolved";
   coursesHave?: number;
   coursesNeed?: number;
   creditsHave?: number;
@@ -175,6 +189,58 @@ export type RequirementGroup = {
   items: RequirementItem[];
   satisfiedCount: number;
   total: number;
+  /** Spec 047: the ProgramSection this group belongs to (its `id`). Absent on
+   *  a plan with no extra programs, and from engines that don't set it yet. */
+  sectionId?: string;
+};
+
+// ─── Spec 047: several programs on one plan ─────────────────────────────────
+
+/** Which program a section is. */
+export type ProgramSectionKind = "college" | "primary" | "secondMajor" | "minor";
+/** `--program-1..4` (lib/planner/programColors.ts); the primary and the college have none. */
+export type ProgramColor = 1 | 2 | 3 | 4;
+/** One program's slice of the requirements (a page section, a rail group, a stack segment). */
+export type ProgramSection = {
+  /** The programId, or the college layer id. */
+  id: string;
+  kind: ProgramSectionKind;
+  /** "Mathematics, B.A." / "Computer Science" / "Arts & Sciences". */
+  name: string;
+  /** "Mathematics" / "CS minor". */
+  shortName: string;
+  color: ProgramColor | null;
+  /** 0–100. */
+  pct: number;
+  satisfiedCount: number;
+  total: number;
+  status: "ok" | "loading" | "unavailable";
+};
+/** A course an overlap limit keeps from counting for one program (spec 047 D7/D8). */
+export type HeldBack = {
+  courseId: string;
+  /** The board placement, or null for a course that isn't placed (credit, tried). */
+  placementId: string | null;
+  /** The section (programId) it still counts for. */
+  countsFor: string;
+  /** The section (programId) it was held back from. */
+  heldFrom: string;
+};
+/** Two programs whose shared courses a limit caps (spec 047 D7). */
+export type OverlapPair = {
+  /** Section ids (programIds); `a` is the earlier program. */
+  a: string;
+  b: string;
+  limit: SharingLimit | "forbidden";
+  /** The programId whose `sharing` set the binding (stricter) limit; for a
+   *  "forbidden" pair, the side whose rule forbids it. The engine always sets
+   *  it; optional only so hand-built fixtures may leave it out. */
+  limitFrom?: string;
+  /** Courses counting for both, after enforcement. */
+  sharedCourseIds: string[];
+  heldBack: HeldBack[];
+  /** The greedy fallback was used (D7): progress may be understated, never overstated. */
+  estimated: boolean;
 };
 
 /** Spec 019 — why a Distribution program's requirements can't be shown yet:
@@ -233,6 +299,26 @@ export type RequirementProgress = {
   /** Spec 028 D11: the same requirements solved with the plan's tried classes
    *  added. Absent when nothing is being tried. Major Match never sees it. */
   tried?: TriedProgress;
+  // ── Spec 047 (extra programs). Top-level pct / satisfiedCount / total keep
+  //    meaning the primary degree (D14); `attribution` keeps its labels,
+  //    primary first, so existing readers don't change. All absent until the
+  //    engine fills them. ──
+  /** College, primary, then the additional programs in plan order. */
+  sections?: ProgramSection[];
+  /** Only pairs that have a limit. */
+  overlap?: OverlapPair[];
+  /** placementId → each label it counts toward, with the section it belongs to. */
+  attributionDetail?: Record<string, { label: string; sectionId: string }[]>;
+  /** placementId → the limits holding that course back. */
+  heldBackByPlacement?: Record<string, HeldBack[]>;
+  /** programId → D3 course ids (unmet seat rows, earliest-needed first, minus placed and tried). */
+  fillCandidates?: Record<string, string[]>;
+  /** programId → tried course ids counting only toward it (D10). */
+  triedOnlyFor?: Record<string, string[]>;
+  /** Every loaded layer id across all programs (D10 orphan pruning). */
+  liveLayerIds?: string[];
+  /** True when every program's layers loaded; pruning runs only then (D10). */
+  allLayersLoaded?: boolean;
 };
 
 /** Spec 028 D11/D13 — "if you take what you're trying". */
@@ -248,6 +334,9 @@ export type TriedProgress = {
   fills: Record<string, string[]>;
   /** Tried course ids no longer in the catalog (shown "no longer offered"). */
   missing: string[];
+  /** Spec 047 D10: programId → tried ids (not on the board) that count only
+   *  toward that extra program. Lifted to RequirementProgress.triedOnlyFor. */
+  onlyFor?: Record<string, string[]>;
 };
 
 const EMPTY: RequirementProgress = { groups: [], attribution: {}, satisfiedCount: 0, total: 0 };
@@ -290,6 +379,14 @@ type CacheArgs = readonly [
   (id: string) => readonly string[] | undefined,
   // The plan's course marks (chosen credits on variable-credit courses).
   Record<string, MarkValue>,
+  // Spec 047: the plan's program id and names, its extra programs, the
+  // student's facts (the extra programs' questions), the index's unlocks.
+  string,
+  string,
+  string,
+  LoadedProgram[],
+  Record<string, FactValue>,
+  (id: string) => readonly string[] | undefined,
 ];
 let lastArgs: CacheArgs | null = null;
 let lastResult: RequirementProgress = EMPTY;
@@ -301,8 +398,25 @@ function solveEngineering(
   placements: Placement[] = args[1],
   placedCourses: Record<string, Course> = args[2]
 ): RequirementProgress {
-  const [templateSlots, , , courseDetails, creditProfile, waived, aliases, entryTerm, enteringYear, catalogAttrs, courseMarks] =
-    args;
+  const [
+    templateSlots,
+    ,
+    ,
+    courseDetails,
+    creditProfile,
+    waived,
+    aliases,
+    entryTerm,
+    enteringYear,
+    catalogAttrs,
+    courseMarks,
+    programId,
+    programName,
+    programShortName,
+    extraPrograms,
+    facts,
+    unlocks,
+  ] = args;
   return templateSlots.length === 0
     ? EMPTY
     : computeRequirementProgress({
@@ -318,6 +432,15 @@ function solveEngineering(
         enteringYear,
         catalogAttrs,
         courseMarks,
+        ...(extraPrograms.length > 0
+          ? {
+              programId,
+              extraPrograms,
+              primaryName: { name: programName, shortName: programShortName },
+              facts,
+              unlocks,
+            }
+          : {}),
       });
 }
 
@@ -350,6 +473,11 @@ type DistArgs = readonly [
   marks: Record<string, MarkValue>,
   facts: Record<string, FactValue>,
   programNames: Record<string, string>,
+  // Spec 047: the plan's extra programs, the primary's names, the index's unlocks.
+  extraPrograms: LoadedProgram[],
+  programName: string,
+  programShortName: string,
+  unlocks: (id: string) => readonly string[] | undefined,
 ];
 let lastDistArgs: DistArgs | null = null;
 let lastDistResult: RequirementProgress = DIST_PENDING;
@@ -383,6 +511,10 @@ function solveDistribution(
     marks,
     facts,
     programNames,
+    extraPrograms,
+    programName,
+    programShortName,
+    unlocks,
   ] = args;
   return computeDistributionProgress({
     layers,
@@ -404,6 +536,9 @@ function solveDistribution(
     answers: { marks, facts },
     programNames,
     ...(skipOpenQuestions ? { skipOpenQuestions: true } : {}),
+    ...(extraPrograms.length > 0
+      ? { extraPrograms, primaryName: { name: programName, shortName: programShortName }, unlocks }
+      : {}),
   });
 }
 
@@ -520,9 +655,111 @@ function stableCredits(resolved: CreditEntry[]): CreditEntry[] {
 }
 
 const NO_TRIED: string[] = [];
+const NO_ADDITIONAL: AdditionalProgram[] = [];
+const NO_EXTRAS: LoadedProgram[] = [];
+
+/** The loaded extra programs with one identity across hook instances (each
+ *  caller's useAdditionalProgramData memo is its own; the module caches
+ *  compare by identity, so equal lists must share one array, or every course
+ *  card would re-solve). Equal: same programs, statuses, names, sharing and
+ *  the very same layer objects. */
+let lastExtras: LoadedProgram[] = NO_EXTRAS;
+function sameLoaded(a: LoadedProgram, b: LoadedProgram): boolean {
+  return (
+    a.programId === b.programId &&
+    a.kind === b.kind &&
+    a.status === b.status &&
+    a.name === b.name &&
+    a.shortName === b.shortName &&
+    JSON.stringify(a.sharing ?? null) === JSON.stringify(b.sharing ?? null) &&
+    // Spec 047 D15: an Engineering second major's template (the loader's
+    // cached slots array, so identity is enough).
+    a.template === b.template &&
+    a.layers.length === b.layers.length &&
+    a.layers.every((l, i) => l === b.layers[i])
+  );
+}
+export function stableExtras(programs: LoadedProgram[]): LoadedProgram[] {
+  if (programs.length === 0) return NO_EXTRAS;
+  if (programs === lastExtras) return lastExtras;
+  if (programs.length === lastExtras.length && programs.every((p, i) => sameLoaded(p, lastExtras[i]))) {
+    return lastExtras;
+  }
+  lastExtras = programs;
+  return lastExtras;
+}
+
+/** Spec 047 D3: the index's `unlocks` by course id, one function per index. */
+let lastUnlocksIndex: CatalogIndexRecord[] | null = null;
+let lastUnlocksLookup: (id: string) => readonly string[] | undefined = () => undefined;
+function unlocksLookup(index: CatalogIndexRecord[]): (id: string) => readonly string[] | undefined {
+  if (index !== lastUnlocksIndex) {
+    lastUnlocksIndex = index;
+    const byId = indexById(index);
+    lastUnlocksLookup = (id) => byId.get(id)?.unlocks;
+  }
+  return lastUnlocksLookup;
+}
+
+/** What the hook adds to an engine's result (spec 047). */
+type DecorateArgs = readonly [
+  progress: RequirementProgress,
+  tried: string[],
+  aliases: Record<string, string>,
+  primaryLayers: Layer[] | undefined,
+  primaryLayerErrors: string[] | undefined,
+  primaryLoaded: boolean,
+  extras: LoadedProgram[],
+  extrasLoaded: boolean,
+];
+let lastDecorateArgs: DecorateArgs | null = null;
+let lastDecorated: RequirementProgress | null = null;
+
+/**
+ * Spec 047 — the result with:
+ *  - `fillCandidates` minus the plan's tried classes (D3: never suggest a
+ *    class the student is already trying);
+ *  - `triedOnlyFor` lifted from the tried rerun (D10);
+ *  - `liveLayerIds`: every loaded layer id — all the primary program's layers
+ *    (college versions, major, concentrations) and every extra program's —
+ *    and `allLayersLoaded`, false while anything is loading, missing or
+ *    unavailable (D10: orphan pruning runs only then).
+ * Keeps identity while its inputs do.
+ */
+export function decorateProgress(args: DecorateArgs): RequirementProgress {
+  if (lastDecorateArgs && lastDecorated && args.every((a, i) => a === lastDecorateArgs![i])) return lastDecorated;
+  const [progress, tried, aliases, primaryLayers, primaryLayerErrors, primaryLoaded, extras, extrasLoaded] = args;
+  const live = new Set<string>();
+  for (const l of primaryLayers ?? []) live.add(l.id);
+  for (const p of extras) for (const l of p.layers) live.add(l.id);
+  const allLayersLoaded =
+    primaryLoaded &&
+    (primaryLayerErrors ?? []).length === 0 &&
+    extrasLoaded &&
+    extras.every((p) => p.status === "ok");
+  let fillCandidates = progress.fillCandidates;
+  if (fillCandidates && tried.length > 0) {
+    const canon = (id: string) => aliases[id] ?? id;
+    const trying = new Set(tried.map(canon));
+    fillCandidates = Object.fromEntries(
+      Object.entries(fillCandidates).map(([id, list]) => [id, list.filter((c) => !trying.has(canon(c)))])
+    );
+  }
+  const onlyFor = progress.tried?.onlyFor;
+  const next: RequirementProgress = {
+    ...progress,
+    ...(fillCandidates ? { fillCandidates } : {}),
+    ...(onlyFor ? { triedOnlyFor: onlyFor } : {}),
+    liveLayerIds: [...live],
+    allLayersLoaded,
+  };
+  lastDecorateArgs = args;
+  lastDecorated = lastDecorated && sameProgress(next, lastDecorated) ? lastDecorated : next;
+  return lastDecorated;
+}
 
 export function useRequirementProgress(): RequirementProgress {
-  const { placements, placedCourses, waivedRequirementIds, planProgramId, triedCourseIds } = usePlan();
+  const { placements, placedCourses, waivedRequirementIds, planProgramId, triedCourseIds, additionalPrograms } = usePlan();
   const selectedProgramId = useProgramStore((s) => s.selectedProgramId);
   // The LOADED plan's program, not the selection (fix pass P6): waivers and
   // requirements must match the plan on screen during a slow major switch.
@@ -544,6 +781,10 @@ export function useRequirementProgress(): RequirementProgress {
     error: catalogError,
   } = useCatalogContext();
   const { marks, facts } = useStudentAnswers();
+  // Spec 047: the plan's second major and minors (keyed on content inside).
+  const loaded = useAdditionalProgramData(additionalPrograms ?? NO_ADDITIONAL);
+  const extras = stableExtras(loaded.programs);
+  const extrasLoaded = loaded.allLoaded;
 
   // Spec 019 D3 — the program's family picks the engine.
   const program = useMemo(() => programs.find((p) => p.id === programId), [programs, programId]);
@@ -552,6 +793,9 @@ export function useRequirementProgress(): RequirementProgress {
   const family = programFamily(program);
   const distFamily = isDistributionFamily(family) ? family : null;
   const programStatus = program?.status === "hidden" ? "hidden" : "visible";
+  const programName = program?.name ?? programId ?? "";
+  const programShortName = program?.short_name ?? programName;
+  const unlocks = unlocksLookup(index);
 
   // Full docs for the placed courses (≤ ~80 ids, deduped + session-cached in
   // CatalogProvider — never a catalog scan).
@@ -587,6 +831,12 @@ export function useRequirementProgress(): RequirementProgress {
       enteringYear,
       catalogAttrsLookup(index),
       marks,
+      programId ?? "",
+      programName,
+      programShortName,
+      extras,
+      facts,
+      unlocks,
     ];
     const base = cachedProgress(args);
     const t = cachedTried(engineeringTried, args, base, triedArgs, () =>
@@ -609,6 +859,12 @@ export function useRequirementProgress(): RequirementProgress {
     index,
     triedArgs,
     marks,
+    programId,
+    programName,
+    programShortName,
+    extras,
+    facts,
+    unlocks,
   ]);
 
   // Distribution programs: a solve usually takes a few ms, but a hard board
@@ -640,6 +896,10 @@ export function useRequirementProgress(): RequirementProgress {
             marks,
             facts,
             programNames,
+            extras,
+            programName,
+            programShortName,
+            unlocks,
           ]
         : null,
     [
@@ -662,6 +922,10 @@ export function useRequirementProgress(): RequirementProgress {
       marks,
       facts,
       programNames,
+      extras,
+      programName,
+      programShortName,
+      unlocks,
     ]
   );
   const deferredDistArgs = useDeferredValue(distArgs);
@@ -685,12 +949,27 @@ export function useRequirementProgress(): RequirementProgress {
   // Until the program list lands the family is unknown: a CAS/CALS plan
   // would otherwise flash the Engineering path's "no major requirements"
   // (review: cold load). The panel reads this as "Loading requirements…".
-  if (programId && !program && programsLoading) return DIST_PENDING;
-  // A hidden major (index status, D11) a student is already on: its
-  // requirements are being reviewed, whichever engine it runs on.
-  if (programStatus === "hidden") return UNDER_REVIEW;
-  if (engineering) return engineering;
-  return distribution ?? DIST_PENDING;
+  const out =
+    programId && !program && programsLoading
+      ? DIST_PENDING
+      : // A hidden major (index status, D11) a student is already on: its
+        // requirements are being reviewed, whichever engine it runs on.
+        programStatus === "hidden"
+        ? UNDER_REVIEW
+        : (engineering ?? distribution ?? DIST_PENDING);
+  // Spec 047: a result still waiting on its engine (pending, or the deferred
+  // solve catching up) can't vouch that every layer is loaded.
+  const solved = out !== DIST_PENDING && !(distFamily && deferredDistArgs !== distArgs);
+  return decorateProgress([
+    out,
+    tried,
+    aliases,
+    distFamily ? layers : NO_LAYERS,
+    distFamily ? layerErrors : undefined,
+    solved && !programLoading && (!distFamily || layers != null),
+    extras,
+    extrasLoaded,
+  ]);
 }
 
 const UNDER_REVIEW: RequirementProgress = { ...EMPTY, notice: { kind: "under-review" } };

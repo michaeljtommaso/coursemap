@@ -1,0 +1,279 @@
+{
+  "id": "cornell-engineering-management-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Engineering Management (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-engineering-management-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 0,
+      "with": [
+        "cornell-ce-bs",
+        "cornell-enve-bs",
+        "cornell-environmental-engineering-bs"
+      ]
+    }
+  },
+  "rows": [
+    {
+      "id": "core-econ-accounting",
+      "label": "Required: engineering economics or accounting (one course)",
+      "group": "Required",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "ORIE majors are held to a substitution rule for this slot, so neither CEE 3230 nor ORIE 3150 is counted for them here (stricter); they follow the separate ORIE confirm item.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "CEE-3230",
+              "ORIE-3150"
+            ]
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "CEE-3230",
+                    "ORIE-3150"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-ore-bs"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-statistics",
+      "label": "Required: one probability and statistics course",
+      "group": "Required",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "CEE-3040",
+          "ENGRD-2700",
+          "ECE-3100"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "additional-courses",
+      "label": "Three courses from the additional list",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "CEE 5930 is left out for ORIE majors.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ENGRG-3600",
+              "CEE-5900",
+              "CEE-5930",
+              "CEE-5970",
+              "CEE-5980",
+              "ENMGT-5990",
+              "NBA-5070"
+            ]
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "CEE-5930"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-ore-bs"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "sixth-course",
+      "label": "Sixth course: one more course from any of the listed groups",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page asks for six courses but lists five slots; this reads the sixth as one further listed course (the stricter reading). Courses approved by petition are covered by the petition confirm item.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "CEE-3230",
+              "ORIE-3150",
+              "CEE-3040",
+              "ENGRD-2700",
+              "ECE-3100",
+              "ENGRG-3600",
+              "CEE-5900",
+              "CEE-5930",
+              "CEE-5970",
+              "CEE-5980",
+              "ENMGT-5990",
+              "NBA-5070"
+            ]
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "CEE-5930"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-ore-bs"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "course": [
+                    "CEE-3230",
+                    "ORIE-3150"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-ore-bs"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C or better in every course used for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Check the six courses add up to at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "petition-courses",
+      "label": "Any course outside the listed ones counts only if you petitioned and were approved beforehand",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "orie-substitution",
+      "label": "ORIE majors: swap in NCC 5560 or NBA 5000 where the page requires a substitution, and skip CEE 5930",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page's footnote names ORIE 3500, which is not a minor course, so the exact slot is unclear; confirm with the minor advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "independent-major-approval",
+      "label": "Independent Major students: get CEE approval of your minor courses",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "cee-no-double-count",
+      "label": "CEE majors: do not count a minor course as a major-approved or design elective at the same time",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "The overlap limit stops any shared course with the CEE majors (stricter than the page, which only names those elective types).",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approves-minor",
+      "label": "Be enrolled in a major that approves taking this minor",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-and-enrollment",
+      "label": "Complete all undergraduate degree requirements; finish the minor during your continuous undergraduate enrollment",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "certify-minor",
+      "label": "Apply for certification of the minor once the coursework is finished",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-management-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

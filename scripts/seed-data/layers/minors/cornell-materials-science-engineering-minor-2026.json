@@ -1,0 +1,188 @@
+{
+  "id": "cornell-materials-science-engineering-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Materials Science and Engineering (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-materials-science-engineering-minor-2026",
+  "rows": [
+    {
+      "id": "intro-engrd",
+      "label": "Entry course: ENGRD 2610 or ENGRD 2620",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/materials-science-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "One of the two cross-listed engineering distribution courses.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENGRD-2610",
+          "ENGRD-2620"
+        ]
+      }
+    },
+    {
+      "id": "core-mse",
+      "label": "Two core MSE courses from the seven listed",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/materials-science-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Each course must carry at least 3 credits so the six courses reach 18 credits.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "MSE-2010",
+              "MSE-2060",
+              "MSE-3010",
+              "MSE-3030",
+              "MSE-3040",
+              "MSE-3050",
+              "MSE-4020"
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "mse-electives",
+      "label": "Three MSE electives numbered 3000 or above (3+ credits each, research courses held out)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/materials-science-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts MSE courses at 3000+ only. Research and independent-study numbers (4900-4999) and the thesis, MEng project and research courses (titled Senior Thesis, Research in Materials Science, and MEng Project) are held out because the page allows research for at most 3 credits; confirm that separately. Courses from other departments need the MSE coordinator, so they are a confirm row, not counted here.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MSE"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "number": {
+                "min": 4900,
+                "max": 4999
+              }
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Senior Thesis"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Research in"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "MEng Project"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "other-dept-electives",
+      "label": "Confirm any elective taken from another department's 3000+ materials courses is approved as allowable",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/materials-science-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page lists departments, not courses, and sends questions to the MSE Undergraduate Coordinator. Not counted on the board; if you use one in place of an MSE elective, confirm it here and with the coordinator.",
+      "kind": "confirm"
+    },
+    {
+      "id": "research-credit",
+      "label": "Confirm any research-involvement course used as an elective, counting at most 3 of its credits",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/materials-science-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Research courses are held out of the MSE elective row; if you use one, confirm its credits and that you still reach three electives and 18 credits.",
+      "kind": "confirm"
+    },
+    {
+      "id": "credit-floor",
+      "label": "Confirm the six minor courses add up to at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/materials-science-engineering-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The rows already require 3+ credits per course; this reminds you to check the total.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Confirm a C or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/materials-science-engineering-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "note": "The board cannot see grades.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approves",
+      "label": "Confirm your major approves taking this minor (it cannot be your Materials Science and Engineering major)",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/materials-science-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "The MSE major bar is handled in the minor picker.",
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-complete",
+      "label": "Complete all undergraduate degree requirements and finish the minor during continuous enrollment at Cornell",
+      "group": "Degree",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/materials-science-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "The board cannot see overall degree completion.",
+      "kind": "confirm"
+    },
+    {
+      "id": "certification",
+      "label": "Apply for certification of the minor after the coursework is finished",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/materials-science-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "The transcript notation appears after graduation.",
+      "kind": "confirm"
+    }
+  ]
+}

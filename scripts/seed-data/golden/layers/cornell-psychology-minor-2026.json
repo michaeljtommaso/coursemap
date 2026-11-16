@@ -1,0 +1,169 @@
+{
+  "programId": "cornell-psychology-minor-2026",
+  "description": "A fictional economics major reaches eighteen psychology credits with three four-credit and two three-credit courses.",
+  "layerIds": [
+    "cornell-psychology-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PSYCH-2580",
+    "PSYCH-2650",
+    "PSYCH-3300",
+    "PSYCH-1101",
+    "PSYCH-2090"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "MATH-1110",
+      "rowId": "psych-credits",
+      "why": "Calculus is not psychology coursework, so it cannot supply any of the eighteen psychology credits."
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "psych-credits",
+      "why": "Microeconomics is an economics course, not psychology coursework."
+    },
+    {
+      "courseId": "PSYCH-1130",
+      "rowId": "psych-credits",
+      "why": "A first-year writing seminar cannot count toward the credits."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PSYCH-2580",
+      "subject": "PSYCH",
+      "number": "2580",
+      "title": "Six Pretty Good Books: Explorations in Social Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-2650",
+      "subject": "PSYCH",
+      "number": "2650",
+      "title": "Psychology and Law",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-3300",
+      "subject": "PSYCH",
+      "number": "3300",
+      "title": "Introduction to Computational Neuroscience",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-1101",
+      "subject": "PSYCH",
+      "number": "1101",
+      "title": "Introduction to Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-2090",
+      "subject": "PSYCH",
+      "number": "2090",
+      "title": "Developmental Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-1130",
+      "subject": "PSYCH",
+      "number": "1130",
+      "title": "FWS: Behavioral Evolutionary Psychology",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

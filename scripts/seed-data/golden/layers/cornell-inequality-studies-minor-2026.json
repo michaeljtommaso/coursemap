@@ -1,0 +1,158 @@
+{
+  "programId": "cornell-inequality-studies-minor-2026",
+  "description": "A student finishes the six-course inequality minor with a sociology core, one policy overview and four electives spread over several departments.",
+  "layerIds": [
+    "cornell-inequality-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-government-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "SOC-2208",
+    "GOVT-3251",
+    "FGSS-2010",
+    "ASRC-1500",
+    "ANTHR-2424",
+    "STS-2061"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "SOC-2208",
+      "rowId": "overview-course",
+      "why": "The sociology core course is a separate requirement and is not one of the five overview choices."
+    }
+  ],
+  "courses": [
+    {
+      "id": "SOC-2208",
+      "subject": "SOC",
+      "number": "2208",
+      "title": "Social Inequality",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-3251",
+      "subject": "GOVT",
+      "number": "3251",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "FGSS-2010",
+      "subject": "FGSS",
+      "number": "2010",
+      "title": "Introduction to Feminist, Gender, and Sexuality Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "D-HA"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-1500",
+      "subject": "ASRC",
+      "number": "1500",
+      "title": "Introduction to Africana Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-2424",
+      "subject": "ANTHR",
+      "number": "2424",
+      "title": "Culture and Mental Health: Anthropological Perspectives",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "STS-2061",
+      "subject": "STS",
+      "number": "2061",
+      "title": "Ethics and the Environment",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

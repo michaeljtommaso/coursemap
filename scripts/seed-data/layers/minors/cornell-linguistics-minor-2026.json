@@ -1,0 +1,245 @@
+{
+  "id": "cornell-linguistics-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Linguistics (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-linguistics-minor-2026",
+  "rows": [
+    {
+      "id": "intro-ling",
+      "label": "Take the introductory linguistics course, LING 1101",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "Must be taken at Cornell, so exam and transfer credit does not count.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "LING-1101"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "foundation",
+      "label": "Take one foundation course: phonetics and phonology, syntax and semantics, or historical linguistics",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "Must be taken at Cornell, so exam and transfer credit does not count.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "LING-3302",
+              "LING-3303",
+              "LING-3314"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "additional-ling",
+      "label": "Take three more linguistics courses of 3+ credits, at most one at the 1000 level and at least one at 3000 or above",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "Counts LING courses and cross-listings of 3 or more credits taken at Cornell. First-year writing seminars (by title) and variable-credit courses (which can be taken under 3 credits) are held out; language-instruction courses the catalog identifies (Old Norse I and II, Cayuga Language and Culture I and II, Old Irish I and II) are held out by title, and a confirm row covers language courses under other cross-listed codes. The credit target of 10 follows from the 18-credit minimum.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "LING"
+            ],
+            "crossListed": true
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Cayuga Language"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Old Norse"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Introduction to Old Irish"
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 10,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "max": 1999
+            }
+          },
+          "label": "At most one of these at the 1000 level",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At least one of these at the 3000 level or above",
+          "minCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "no-fws-or-language",
+      "label": "Do not count first-year writing seminars or language courses as linguistics courses",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-minor/",
+        "anchor": "Additional Information"
+      },
+      "note": "The board holds out writing seminars by title only; check any language-instruction course yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "variable-credit-floor",
+      "label": "Count only courses taken for 3 or more credits among the three additional courses",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "The board leaves out variable-credit courses (such as independent study); if you took one for 3 or more credits, count it by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "approved-for-major",
+      "label": "Courses approved for the linguistics major count toward the five courses; confirm any such course with the department",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "The board counts only LING courses and cross-listings; an approved course from another department is yours to add by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "substitutions",
+      "label": "Any substitution for these requirements needs a petition to your advisor and approval by the director of undergraduate studies",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-minor/",
+        "anchor": "Additional Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-at-cornell",
+      "label": "Take every qualifying course at Cornell for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "note": "The board already leaves out exam and transfer credit; the letter-grade rule is yours to check.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-minus",
+      "label": "Finish each counting course with a grade of C- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-b-minus",
+      "label": "Earn a B- or better in LING 1101 and in at least one other LING course that counts toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-minor/",
+        "anchor": "Prerequisites"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Meet with the linguistics DUS or your assigned minor advisor to plan courses when you declare",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/linguistics-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

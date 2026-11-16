@@ -1,0 +1,454 @@
+{
+  "id": "cornell-applied-mathematics-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Applied Mathematics (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-mathematics-minor-2026",
+  "rows": [
+    {
+      "id": "math-2930",
+      "label": "Differential equations for engineers (MATH 2930)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-mathematics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2930"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "math-2940",
+      "label": "Linear algebra for engineers (MATH 2940)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-mathematics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "MATH-2940"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "six-courses",
+      "label": "Six more courses from the six groups (caps per group, 3+ from groups 5-6, one 2000-level, one from your major dept)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-mathematics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Group 6 accepts MATH 3000+ courses of 3+ fixed credits except those placed in other groups, MATH twins of listed courses (4250, 5200, 5250) and research, reading and training (4900s); check the area on the confirm row. A MATH twin of CS 4210 is not counted at all (stricter). The major-department cap covers the listed Engineering majors (cross-listings count). 18 credits comes from the general Engineering minor rule.",
+      "kind": "distribution",
+      "categories": [
+        {
+          "id": "group-1",
+          "label": "Group 1: Analysis",
+          "rule": {
+            "course": [
+              "MATH-4200"
+            ]
+          }
+        },
+        {
+          "id": "group-2",
+          "label": "Group 2: Computational methods",
+          "rule": {
+            "course": [
+              "CS-4210",
+              "ENGRD-3200",
+              "ORIE-3300"
+            ]
+          }
+        },
+        {
+          "id": "group-3",
+          "label": "Group 3: Probability and statistics",
+          "rule": {
+            "course": [
+              "CEE-3040",
+              "ECE-3100",
+              "ENGRD-2700",
+              "MATH-4710",
+              "ORIE-3500"
+            ]
+          }
+        },
+        {
+          "id": "group-4",
+          "label": "Group 4: Applications",
+          "rule": {
+            "course": [
+              "AEP-3330",
+              "CEE-3310",
+              "CEE-3710",
+              "CHEME-3230",
+              "CS-2800",
+              "CS-2850",
+              "ECE-4250",
+              "MAE-3230",
+              "MSE-3030",
+              "MATH-3610"
+            ]
+          }
+        },
+        {
+          "id": "group-5-6",
+          "label": "Groups 5 and 6: Advanced and mathematics courses",
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "MATH-4200",
+                  "ECE-4110",
+                  "ORIE-3510"
+                ]
+              },
+              {
+                "course": [
+                  "CS-4220",
+                  "CS-4820",
+                  "ORIE-3310",
+                  "ORIE-4330",
+                  "ORIE-4350",
+                  "ORIE-5600",
+                  "MAE-4730",
+                  "MAE-5730",
+                  "ORIE-5610",
+                  "MAE-5790",
+                  "MATH-4210",
+                  "MAE-6700",
+                  "MAE-6810"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "MATH"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 3000
+                    }
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "MATH-4200",
+                        "MATH-4710",
+                        "MATH-3610"
+                      ]
+                    }
+                  },
+                  {
+                    "not": {
+                      "number": {
+                        "min": 4250,
+                        "max": 4250
+                      }
+                    }
+                  },
+                  {
+                    "not": {
+                      "number": {
+                        "min": 5200,
+                        "max": 5200
+                      }
+                    }
+                  },
+                  {
+                    "not": {
+                      "number": {
+                        "min": 5250,
+                        "max": 5250
+                      }
+                    }
+                  },
+                  {
+                    "not": {
+                      "number": {
+                        "min": 4900,
+                        "max": 4999
+                      }
+                    }
+                  },
+                  {
+                    "minCredits": 3
+                  },
+                  {
+                    "not": {
+                      "variableCredit": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 6,
+      "minDistinctCategories": 1,
+      "requiredCredits": 18,
+      "perCategory": {
+        "group-1": {
+          "max": 1
+        },
+        "group-2": {
+          "max": 1
+        },
+        "group-3": {
+          "max": 1
+        },
+        "group-4": {
+          "max": 1
+        },
+        "group-5-6": {
+          "min": 3
+        }
+      },
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 2000,
+              "max": 2999
+            }
+          },
+          "label": "At most one 2000-level course",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "ECE-4110",
+              "ORIE-3510"
+            ]
+          },
+          "label": "Only one of ECE 4110 and ORIE 3510",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "MATH-3320",
+              "MATH-3360"
+            ]
+          },
+          "label": "Only one of MATH 3320 and MATH 3360",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "MATH-4200",
+              "MAE-5790",
+              "MATH-4210"
+            ]
+          },
+          "label": "MATH 4200 and MAE 5790 / MATH 4210 do not both count",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "CS"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "program": [
+                      "cornell-cs-bs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "ECE"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "program": [
+                      "cornell-ece-bs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "MAE"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "program": [
+                      "cornell-me-bs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "ORIE"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "program": [
+                      "cornell-ore-bs",
+                      "cornell-isst-bs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "CEE"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "program": [
+                      "cornell-ce-bs",
+                      "cornell-enve-bs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "CHEME"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "program": [
+                      "cornell-cheme-bs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "MSE"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "program": [
+                      "cornell-mse-bs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "AEP"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "program": [
+                      "cornell-ep-bs"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "label": "At most one course from your major's department",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "group6-area",
+      "label": "Check that each group 6 course is a 3000+ MATH course in one of the five listed areas of mathematics",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-mathematics-minor/",
+        "anchor": "Group 6: Mathematics Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-department-limit",
+      "label": "Check that no more than one of the six courses comes from the department of your own major",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-mathematics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c",
+      "label": "Earn a C or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-mathematics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "engineering-student",
+      "label": "Be an Engineering undergraduate affiliated with an Engineering major",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-mathematics-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minor-conditions",
+      "label": "Finish all degree requirements, be enrolled in a major that approves the minor, and complete the minor during continuous enrollment at Cornell",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-mathematics-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "certification",
+      "label": "Apply for certification of the minor once the coursework is done",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-mathematics-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

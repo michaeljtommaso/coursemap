@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { Search, X } from "lucide-react";
+import { ChevronDown, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCourseSearch } from "@/hooks/useCourseSearch";
 import type { CatalogIndexRecord } from "@/lib/schemas";
@@ -10,19 +10,22 @@ import { TryCourseRow, tryLineFor, useTryToggle, type TryActions, type TryLine }
 /**
  * TrySearch (spec 045 D10) — the Requirements page header's "Try a class…"
  * search: a result names everything the class would fill on the page, with
- * Try and + <enrollment term>; the classes being tried sit beside it as
- * chips (× untries). To keep the header one line, only the first chip shows
- * there; "+N" opens a small list of the others, each with ×, and "Clear all".
- * Replaces the per-group Try strips' search and the TriedLine.
+ * Try and + <enrollment term>; the classes being tried sit beside it. One
+ * tried class shows as a chip (× untries); from two, one "Trying N classes"
+ * button opens a list that says what tried classes are, then every one with
+ * ×, grouped by the program each was tried for when the plan holds several
+ * (`triedGroups`), and "Clear all". Replaces the per-group Try strips' search
+ * and the TriedLine.
  *
  * Results open in a dropdown under the input: Esc or a click outside closes
  * it, ↓/↑ move between the results' first buttons (Tab works too). Esc or a
- * click outside closes the "+N" list too.
+ * click outside closes the tried list too.
  *
  * DOM: root [data-try-search]; each result [data-try-course=<id>]; the chip
  * list [data-tried-line], each tried chip [data-tried-chip=<id>] (all of them,
- * the "+N" list's while hidden too), "+N" [data-tried-more], Clear all
- * [data-tried-clear-all] (in the "+N" list); each no-longer-offered line
+ * the tried list's while hidden too), "Trying N classes" [data-tried-more],
+ * the list's labelled groups [data-tried-group=<label>] ("Other classes" last), Clear all
+ * [data-tried-clear-all] (in the list); each no-longer-offered line
  * [data-tried-missing=<id>]; the cap text [data-try-cap].
  */
 export type TrySearchProps = {
@@ -42,9 +45,39 @@ export type TrySearchProps = {
   missingTried: readonly string[];
   /** 1024–1279px: an icon button that expands into the search in place. */
   compact?: boolean;
+  /** Spec 047: the tried list's groups, e.g. "For ORE" then "Your picks", in
+   *  order. Ids no group names go last, as "Other classes". One group: a flat list. */
+  triedGroups?: readonly { label: string; ids: readonly string[] }[];
 };
 
+export const TRIED_EXPLAINER =
+  "Tried classes count on this page as if you take them (in blue), but they aren't on your board yet.";
+
 const RESULT_LIMIT = 5;
+const NONE: readonly string[] = [];
+
+/** The tried list's groups: the caller's (only ids still tried, empty ones
+ *  dropped, in order, each id under the first group naming it), then any ids
+ *  no group names as "Other classes". No caller group left: one flat,
+ *  unlabelled list (one labelled group keeps its label: "For ORE" is the
+ *  point when a program's add put them there). */
+export function groupTried(
+  ids: readonly string[],
+  groups: readonly { label: string; ids: readonly string[] }[] | undefined
+): { label: string; ids: readonly string[] }[] {
+  const live = new Set(ids);
+  const seen = new Set<string>();
+  const out: { label: string; ids: readonly string[] }[] = [];
+  for (const g of groups ?? []) {
+    const kept = g.ids.filter((id) => live.has(id) && !seen.has(id));
+    kept.forEach((id) => seen.add(id));
+    if (kept.length > 0) out.push({ label: g.label, ids: kept });
+  }
+  if (out.length === 0) return [{ label: "", ids }];
+  const rest = ids.filter((id) => !seen.has(id));
+  if (rest.length > 0) out.push({ label: "Other classes", ids: rest });
+  return out;
+}
 const NOTHING_OPEN = "Doesn't fill anything still open here";
 
 /** Every open thing on the page as one list. A label two groups share (the
@@ -82,11 +115,12 @@ export function TrySearch({
   onClearTried,
   missingTried,
   compact = false,
+  triedGroups,
 }: TrySearchProps) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  /** The "+N" list of the other tried classes. */
+  /** The list of tried classes ("Trying N classes"). */
   const [moreOpen, setMoreOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -100,12 +134,12 @@ export function TrySearch({
   const showInput = !compact || expanded;
   const hasQuery = query.trim().length > 0;
   const dropdown = open && hasQuery && showInput;
-  // The header line shows the first tried class; "+N" lists the rest.
-  const moreIds = actions.triedIds.slice(1);
+  // One tried class is a chip; from two, "Trying N classes" lists them all.
+  const moreIds = actions.triedIds.length > 1 ? actions.triedIds : NONE;
   const moreShown = moreOpen && moreIds.length > 0;
-  // The last hidden one untried: the list closes (and stays closed for the
-  // next one tried).
+  // Down to one (or none): the list closes (and stays closed next time).
   if (moreOpen && moreIds.length === 0) setMoreOpen(false);
+  const listGroups = useMemo(() => groupTried(moreIds, triedGroups), [moreIds, triedGroups]);
   // Only the typed query's own results: while the search catches up (a
   // render at most), show none rather than another query's.
   const fresh = resultsQuery === query;
@@ -251,9 +285,9 @@ export function TrySearch({
         )}
         {triedIds.length > 0 && (
           // One line at 1440px (QA: two chips and Clear wrapped the header):
-          // the first chip, then "+N" opening the rest, each with ×, and Clear.
+          // one chip, or "Trying N classes" opening all of them and Clear.
           <ul data-tried-line aria-label="Classes you're trying" className="flex items-center gap-1">
-            {chip(triedIds[0])}
+            {moreIds.length === 0 && chip(triedIds[0])}
             {moreIds.length > 0 && (
               <li className="relative">
                 <button
@@ -262,22 +296,35 @@ export function TrySearch({
                   data-tried-more
                   aria-expanded={moreShown}
                   aria-controls="tried-more-list"
-                  aria-label={`${moreIds.length} more ${moreIds.length === 1 ? "class" : "classes"} you're trying`}
                   onClick={() => setMoreOpen((v) => !v)}
-                  className="num rounded border border-dashed border-drop px-1.5 py-0.5 t-meta font-semibold text-drop-text hover:bg-drop-tint"
+                  className="inline-flex items-center gap-1 whitespace-nowrap rounded border border-dashed border-drop bg-drop-tint py-0.5 pl-1.5 pr-1 t-meta font-semibold text-drop-text hover:bg-surface"
                 >
-                  +{moreIds.length}
+                  Trying <span className="num">{moreIds.length}</span> classes
+                  <ChevronDown className={cn("h-3 w-3 transition-transform", moreShown && "rotate-180")} aria-hidden />
                 </button>
                 {/* Always mounted (hidden while closed), so every tried chip
-                    stays in [data-tried-line]. */}
+                    stays in [data-tried-line]. The display class, not just
+                    the hidden attribute, hides it: Tailwind's `flex`
+                    outranks the browser's [hidden] rule. */}
                 <div
                   id="tried-more-list"
                   hidden={!moreShown}
-                  className="absolute left-0 top-full z-10 mt-1.5 flex w-max flex-col gap-1.5 rounded-lg border border-line bg-surface p-2 shadow-[var(--shadow-xl)]"
+                  className={cn(
+                    "absolute top-full z-10 mt-1.5 w-72 max-w-[calc(100vw-2rem)] flex-col gap-2 rounded-lg border border-line bg-surface p-3 shadow-[var(--shadow-xl)]",
+                    // The compact header sits at the right end: open leftward.
+                    compact ? "right-0" : "left-0",
+                    moreShown ? "flex" : "hidden"
+                  )}
                 >
-                  <ul aria-label="More classes you're trying" className="flex flex-col items-start gap-1">
-                    {moreIds.map(chip)}
-                  </ul>
+                  <p className="t-meta text-ink-2">{TRIED_EXPLAINER}</p>
+                  {listGroups.map((g) => (
+                    <div key={g.label || "rest"} data-tried-group={g.label || undefined} className="flex flex-col gap-1">
+                      {g.label && <p className="t-label">{g.label}</p>}
+                      <ul aria-label={g.label || "Classes you're trying"} className="flex flex-wrap items-start gap-1">
+                        {g.ids.map(chip)}
+                      </ul>
+                    </div>
+                  ))}
                   <button
                     type="button"
                     data-tried-clear-all

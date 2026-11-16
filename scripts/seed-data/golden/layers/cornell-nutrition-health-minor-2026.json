@@ -1,0 +1,149 @@
+{
+  "programId": "cornell-nutrition-health-minor-2026",
+  "description": "A fictional economics major finishes the nutrition minor with one intro course and three approved upper-level courses.",
+  "layerIds": [
+    "cornell-nutrition-health-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "NS-1150",
+    "NS-3600",
+    "NS-4500",
+    "NS-4510"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "NS-2600",
+      "rowId": "upper-level-ns",
+      "why": "The page names this course as one that does not count toward the minor."
+    },
+    {
+      "courseId": "NS-2600",
+      "rowId": "intro-nutrition",
+      "why": "It is not one of the two allowed introductory courses."
+    },
+    {
+      "courseId": "NS-4010",
+      "rowId": "upper-level-ns",
+      "why": "Special studies credit may not fill the elective credits."
+    },
+    {
+      "courseId": "NS-1150",
+      "rowId": "upper-level-ns",
+      "why": "The intro course is not on the upper-level lists."
+    },
+    {
+      "courseId": "NS-1220",
+      "rowId": "upper-level-ns",
+      "why": "The other intro course is not on the upper-level lists."
+    },
+    {
+      "courseId": "NS-3600",
+      "rowId": "intro-nutrition",
+      "why": "An upper-level elective cannot stand in for the intro course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "NS-1150",
+      "subject": "NS",
+      "number": "1150",
+      "title": "Nutrition, Health, and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NS-3600",
+      "subject": "NS",
+      "number": "3600",
+      "title": "Epidemiology",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "NS-4500",
+      "subject": "NS",
+      "number": "4500",
+      "title": "Public Health Nutrition",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NS-4510",
+      "subject": "NS",
+      "number": "4510",
+      "title": "Nutrition and Health Equity",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "NS-2600",
+      "subject": "NS",
+      "number": "2600",
+      "title": "Introduction to Global Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        }
+      ]
+    },
+    {
+      "id": "NS-4010",
+      "subject": "NS",
+      "number": "4010",
+      "title": "Empirical Research",
+      "credits": 0.5,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "NS-1220",
+      "subject": "NS",
+      "number": "1220",
+      "title": "Nutrition and the Life Cycle",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

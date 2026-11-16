@@ -1,0 +1,114 @@
+{
+  "programId": "cornell-public-policy-minor-2026",
+  "description": "A fictional Government major also finishes the policy minor, but only one course may be double counted.",
+  "layerIds": [
+    "cornell-government-ba-2026",
+    "cornell-public-policy-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-government-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GOVT-3032",
+    "GOVT-2309",
+    "GOVT-3061",
+    "GOVT-3087",
+    "GOVT-3131"
+  ],
+  "limit": {
+    "maxCourses": 1
+  },
+  "shared": [
+    "GOVT-3061",
+    "GOVT-3087",
+    "GOVT-3131"
+  ],
+  "heldBack": [
+    {
+      "courseId": "GOVT-3061",
+      "from": "cornell-public-policy-minor-2026",
+      "why": "Held back from the minor under the one-course limit."
+    },
+    {
+      "courseId": "GOVT-3087",
+      "from": "cornell-public-policy-minor-2026",
+      "why": "Held back from the minor under the one-course limit."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GOVT-3032",
+      "subject": "GOVT",
+      "number": "3032",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GOVT-2309",
+      "subject": "GOVT",
+      "number": "2309",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GOVT-3061",
+      "subject": "GOVT",
+      "number": "3061",
+      "title": "Climate Politics in the US",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-3087",
+      "subject": "GOVT",
+      "number": "3087",
+      "title": "International Human Rights Law and Advocacy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-3131",
+      "subject": "GOVT",
+      "number": "3131",
+      "title": "The Nature, Functions, and Limits of Law",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    }
+  ]
+}

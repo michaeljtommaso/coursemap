@@ -28,6 +28,11 @@
  * Tried classes (spec 028 D12) carry as they are: they name courses, not any
  * program's requirements, so they mean the same thing under the new program.
  *
+ * Additional programs (spec 047 D13: the second major and minors) carry too,
+ * minus the new primary program itself and any the caller's `keepProgram`
+ * refuses (PlanProvider drops a second major outside the new primary's
+ * college, D1).
+ *
  * Pure and deterministic: no React, no Firestore — PlanProvider applies the
  * result and persists it through the normal debounced save (to the NEW doc
  * only).
@@ -36,7 +41,14 @@
 import type { Placement } from "@/types/plan";
 import type { MarkValue } from "./distribution/types";
 import { parseRef } from "./questions/keys";
-import { MAX_COURSE_MARKS, MAX_TRIED_COURSES } from "@/lib/schemas";
+import {
+  MAX_ADDITIONAL_PROGRAMS,
+  MAX_COURSE_MARKS,
+  MAX_MINORS,
+  MAX_SECOND_MAJORS,
+  MAX_TRIED_COURSES,
+  type AdditionalProgram,
+} from "@/lib/schemas";
 import { insertPlacement, sanitizePlacements } from "./placementOps";
 import { columnKey, refOf, sanitizeShortTerms } from "./terms";
 import {
@@ -61,6 +73,8 @@ export type PrevPlanSnapshot = {
   /** Spec 042 D4 added short-term columns of the old plan (the k of each
    *  "short term before semester k"). */
   shortTerms?: number[];
+  /** Spec 047 D2 second major and minors of the old plan. */
+  additionalPrograms?: AdditionalProgram[];
 };
 
 export type PlanSeedResult = {
@@ -74,6 +88,9 @@ export type PlanSeedResult = {
   /** The new plan's short-term columns (spec 042 D12): carryShortTerms of the
    *  old plan's list and the seeded placements. */
   shortTerms: number[];
+  /** The old plan's extra programs that carry (spec 047 D13): without the
+   *  new primary and any `keepProgram` refused. */
+  additionalPrograms: AdditionalProgram[];
   /** Course ids the seeded placements reference (for snapshot carry-over). */
   courseIds: string[];
   /** Summary counts for the toast: kept = every carried placement, matched =
@@ -132,6 +149,11 @@ export type SeedOptions = {
   /** Should the old plan's mark with this answer key carry to the new plan?
    *  Defaults to defaultCarryMark. */
   carryMark?: (key: string) => boolean;
+  /** The NEW plan's primary program: never carried as an extra program. */
+  primaryProgramId?: string;
+  /** Should the old plan's extra program `p` carry (spec 047 D13)? Defaults
+   *  to yes. */
+  keepProgram?: (p: AdditionalProgram) => boolean;
 };
 
 /** Which carried placements fill a requirement of the new program — counted
@@ -185,11 +207,18 @@ export function seedPlanFromPrevious(
     if (carryMark(key)) courseMarks[key] = value;
   }
   const triedCourseIds = mergeSeedTried([], prev.triedCourseIds ?? []);
+  const keepProgram = options.keepProgram ?? (() => true);
+  const additionalPrograms = mergeSeedPrograms(
+    [],
+    (prev.additionalPrograms ?? []).filter((p) => keepProgram(p)),
+    options.primaryProgramId
+  );
   if (
     carried.length === 0 &&
     triedCourseIds.length === 0 &&
     Object.keys(courseMarks).length === 0 &&
-    (prev.shortTerms?.length ?? 0) === 0 // spec 042: added (even empty) short terms carry too
+    (prev.shortTerms?.length ?? 0) === 0 && // spec 042: added (even empty) short terms carry too
+    additionalPrograms.length === 0 // spec 047: so do extra programs
   ) {
     return null;
   }
@@ -219,6 +248,7 @@ export function seedPlanFromPrevious(
     courseMarks,
     triedCourseIds,
     shortTerms: carryShortTerms(prev.shortTerms, placements),
+    additionalPrograms,
     courseIds: [...new Set(placements.map((p) => p.courseId))],
     kept: carried.length,
     matched: countMatched(carried, prev, newTargetSlots),
@@ -264,6 +294,29 @@ export function mergeSeedTried(
   for (const id of [...(targetTried ?? []), ...carriedTried]) {
     if (out.length >= cap) break;
     if (!out.includes(id)) out.push(id);
+  }
+  return out;
+}
+
+/**
+ * The extra programs a seeded plan starts with (spec 047 D13): the target
+ * plan's own first, then the carried ones in order, never the primary
+ * (`primaryProgramId`), never a program twice, and within D2's caps (one
+ * second major, three minors; a carried one past a cap is left out). Pure.
+ */
+export function mergeSeedPrograms(
+  targetPrograms: readonly AdditionalProgram[] | undefined,
+  carriedPrograms: readonly AdditionalProgram[],
+  primaryProgramId?: string
+): AdditionalProgram[] {
+  const out: AdditionalProgram[] = [];
+  for (const p of [...(targetPrograms ?? []), ...carriedPrograms]) {
+    if (out.length >= MAX_ADDITIONAL_PROGRAMS) break;
+    if (p.programId === primaryProgramId) continue;
+    if (out.some((q) => q.programId === p.programId)) continue;
+    const ofKind = out.filter((q) => q.kind === p.kind).length;
+    if (ofKind >= (p.kind === "major" ? MAX_SECOND_MAJORS : MAX_MINORS)) continue;
+    out.push(p);
   }
   return out;
 }

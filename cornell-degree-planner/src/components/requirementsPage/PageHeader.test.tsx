@@ -16,13 +16,13 @@ const text = (html: string) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " "
 const progress = (over: Partial<RequirementProgress> = {}) =>
   ({ groups: [], satisfiedCount: 9, total: 31, engine: "distribution", ...over }) as unknown as RequirementProgress;
 
-const render = (p: RequirementProgress, triedCount = 0) =>
+const render = (p: RequirementProgress, extra: Partial<Parameters<typeof PageHeader>[0]> = {}) =>
   renderToStaticMarkup(
     <MemoryRouter>
       <PageHeader
         programName="Animal Science"
         progress={p}
-        triedCount={triedCount}
+        {...extra}
         onOpenFirstQuestion={() => {}}
         onAnswer={async () => {}}
         search={<div data-try-search />}
@@ -45,10 +45,18 @@ describe("PageHeader (spec 045 D10)", () => {
     expect(html).toContain("width:29%");
   });
 
-  it("the done line counts tried classes; the question count is a link", () => {
-    const t = text(render(progress({ openQuestionCount: 2 }), 3));
-    expect(t).toContain("9 of 31 done · trying 3 classes");
+  it("the done line is only what's done (tried classes are counted by the search); the question count is a link", () => {
+    const t = text(render(progress({ openQuestionCount: 2 })));
+    expect(t).toContain("9 of 31 done");
+    expect(t).not.toContain("trying");
     expect(t).toContain("2 questions");
+  });
+
+  it("several programs: the title names each by its short name (spec 047)", () => {
+    const t = text(render(progress(), { primaryShortName: "ANSC", extraProgramNames: ["Biology", "Business minor"] }));
+    expect(t).toContain("Requirements · ANSC + Biology + Business minor");
+    // One program: its full name.
+    expect(text(render(progress(), { primaryShortName: "ANSC" }))).toContain("Requirements · Animal Science");
   });
 
   it("no progress bar under a notice", () => {

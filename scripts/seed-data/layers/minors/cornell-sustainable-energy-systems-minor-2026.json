@@ -1,0 +1,287 @@
+{
+  "id": "cornell-sustainable-energy-systems-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Sustainable Energy Systems (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-sustainable-energy-systems-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 2
+    }
+  },
+  "rows": [
+    {
+      "id": "six-courses",
+      "label": "Six energy courses spread over four breadth categories, 18+ credits in all",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-energy-systems-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "One counting row so the six courses and the 18 credits are the same set. Each course sits in one category; cross-listed twins and courses in two categories are assigned either way. Per-category floors use the stricter reading: at least 2 credits in each, and 3 credits from at least two courses in the sources category. Three listed courses (CEE 5420, CEE 5970, EAS 4443) appear on the page without titles; they are kept as listed.",
+      "kind": "distribution",
+      "rule": {
+        "course": [
+          "CEE-4210",
+          "CHEME-6660",
+          "MAE-5010",
+          "AEP-5500",
+          "BEE-2510",
+          "ENGRD-2510",
+          "BEE-4880",
+          "CEE-3410",
+          "CEE-4640",
+          "CEE-5420",
+          "CEE-6200",
+          "CHEME-6661",
+          "CHEME-6662",
+          "CHEME-6663",
+          "CHEME-6664",
+          "CEE-6364",
+          "CHEME-6667",
+          "CEE-6667",
+          "CHEME-6670",
+          "CHEME-6671",
+          "CHEME-6679",
+          "CHEME-6681",
+          "CHEME-6830",
+          "EAS-4010",
+          "ECE-4130",
+          "AEP-4130",
+          "CHEME-4130",
+          "MAE-4580",
+          "ECE-4840",
+          "MAE-4590",
+          "ECE-4510",
+          "ECE-4520",
+          "ECE-5870",
+          "CHEME-5870",
+          "MAE-5459",
+          "BEE-5459",
+          "ECE-5880",
+          "BEE-5469",
+          "CHEME-5880",
+          "MAE-5469",
+          "MAE-4020",
+          "MAE-5430",
+          "SYSEN-5100",
+          "SYSEN-5200",
+          "CEE-5252",
+          "ECE-5130",
+          "MAE-5920",
+          "ORIE-5142",
+          "ANSC-4880",
+          "BEE-3710",
+          "BEE-4800",
+          "BEE-6740",
+          "BIOEE-4560",
+          "NTRES-4560",
+          "CEE-1165",
+          "EAS-2250",
+          "EAS-2680",
+          "EAS-3030",
+          "NTRES-3030",
+          "EAS-3050",
+          "EAS-3530",
+          "EAS-3880",
+          "EAS-4443",
+          "EAS-4570",
+          "PLSCI-2400",
+          "AEM-2770",
+          "AEM-4510",
+          "BEE-3299",
+          "BSOC-2061",
+          "BSOC-3181",
+          "CEE-3230",
+          "CEE-5970",
+          "CHEME-6676",
+          "ENGRG-3600",
+          "GDEV-3240",
+          "PUBPOL-3730",
+          "STS-3181",
+          "STS-3241",
+          "SYSEN-5170"
+        ]
+      },
+      "categories": [
+        {
+          "id": "analysis",
+          "label": "Energy systems analysis",
+          "rule": {
+            "course": [
+              "CEE-4210",
+              "CHEME-6660",
+              "MAE-5010"
+            ]
+          }
+        },
+        {
+          "id": "sources",
+          "label": "Energy sources and technologies",
+          "rule": {
+            "course": [
+              "AEP-5500",
+              "BEE-2510",
+              "ENGRD-2510",
+              "BEE-4880",
+              "CEE-3410",
+              "CEE-4640",
+              "CEE-5420",
+              "CEE-6200",
+              "CHEME-6661",
+              "CHEME-6662",
+              "CHEME-6663",
+              "CHEME-6664",
+              "CEE-6364",
+              "CHEME-6667",
+              "CEE-6667",
+              "CHEME-6670",
+              "CHEME-6671",
+              "CHEME-6679",
+              "CHEME-6681",
+              "CHEME-6830",
+              "EAS-4010",
+              "ECE-4130",
+              "AEP-4130",
+              "CHEME-4130",
+              "MAE-4580",
+              "ECE-4840",
+              "MAE-4590",
+              "ECE-4510",
+              "ECE-4520",
+              "ECE-5870",
+              "CHEME-5870",
+              "MAE-5459",
+              "BEE-5459",
+              "ECE-5880",
+              "BEE-5469",
+              "CHEME-5880",
+              "MAE-5469",
+              "MAE-4020",
+              "MAE-5430",
+              "SYSEN-5100",
+              "SYSEN-5200",
+              "CEE-5252",
+              "ECE-5130",
+              "MAE-5920",
+              "ORIE-5142"
+            ]
+          }
+        },
+        {
+          "id": "natural",
+          "label": "Natural systems affected by energy",
+          "rule": {
+            "course": [
+              "ANSC-4880",
+              "BEE-3710",
+              "BEE-4800",
+              "BEE-6740",
+              "BIOEE-4560",
+              "NTRES-4560",
+              "CEE-1165",
+              "EAS-2250",
+              "EAS-2680",
+              "EAS-3030",
+              "NTRES-3030",
+              "EAS-3050",
+              "EAS-3530",
+              "EAS-3880",
+              "EAS-4443",
+              "EAS-4570",
+              "PLSCI-2400"
+            ]
+          }
+        },
+        {
+          "id": "policy",
+          "label": "Policy, economics, business, history, ethics and risk",
+          "rule": {
+            "course": [
+              "AEM-2770",
+              "AEM-4510",
+              "BEE-2510",
+              "BEE-3299",
+              "BSOC-2061",
+              "BSOC-3181",
+              "CEE-3230",
+              "CEE-5970",
+              "CHEME-6667",
+              "CHEME-6676",
+              "EAS-4443",
+              "ENGRG-3600",
+              "GDEV-3240",
+              "PUBPOL-3730",
+              "STS-3181",
+              "STS-3241",
+              "SYSEN-5170"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 6,
+      "minDistinctCategories": 4,
+      "requiredCredits": 18,
+      "perCategory": {
+        "analysis": {
+          "min": 1,
+          "minCredits": 2
+        },
+        "sources": {
+          "min": 2,
+          "minCredits": 3
+        },
+        "natural": {
+          "min": 1,
+          "minCredits": 2
+        },
+        "policy": {
+          "min": 1,
+          "minCredits": 2
+        }
+      }
+    },
+    {
+      "id": "min-grade",
+      "label": "Confirm every minor course has a C- or better (S where only S-U is offered)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-energy-systems-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "major-overlap-rule",
+      "label": "Confirm no more than two minor courses are requirements every student in your major must take",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-energy-systems-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board caps ALL shared courses with the major at two (stricter than the page, which only limits courses the whole major must take; a course chosen as an elective in the major does not count against the limit). Confirm the real count with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approves",
+      "label": "Confirm your major approves participation in this minor",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-energy-systems-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-and-certification",
+      "label": "Finish all degree requirements, then apply for certification of the minor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-energy-systems-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

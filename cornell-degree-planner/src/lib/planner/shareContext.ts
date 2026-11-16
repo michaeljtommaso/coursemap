@@ -1,6 +1,7 @@
 import type { Layer, LayerFamily, MarkValue } from "./distribution/types";
-import type { ShareDoc } from "@/lib/schemas";
+import type { AdditionalProgram, ShareDoc } from "@/lib/schemas";
 import { selectLayers } from "./distribution/select";
+import { canonicalAdditionalPrograms, canonicalProgramId } from "./legacyPrograms";
 
 /**
  * shareContext.ts (spec 020 D6) — what a share link carries for scoring, and
@@ -18,6 +19,9 @@ import { selectLayers } from "./distribution/select";
  * entered later (cals-college-pre2025), so next to the share's enteringYear it
  * would reveal transfer status. shareCollegeRuleSet keeps the rule set only
  * when the entry term alone picks it.
+ *
+ * Spec 047 D13: a share also snapshots the plan's second major and minors
+ * (`additionalPrograms`), so the share view scores and names every program.
  */
 
 /** The scoring inputs a share carries (contract C). */
@@ -81,12 +85,37 @@ export function shareAnswerFields(input: {
   courseMarks?: Record<string, MarkValue> | null;
   collegeLayerId?: string | null;
   concentrationIds?: readonly string[] | null;
-}): Pick<ShareDoc, "courseMarks" | "collegeRuleSet" | "concentrationIds"> {
+  /** Spec 047 D13: the plan's extra programs, snapshotted (copied entry by
+   *  entry) without `primaryProgramId` (the share's own program). */
+  additionalPrograms?: readonly AdditionalProgram[] | null;
+  primaryProgramId?: string | null;
+}): Pick<ShareDoc, "courseMarks" | "collegeRuleSet" | "concentrationIds" | "additionalPrograms"> {
   const marks = input.courseMarks ?? {};
   const concentrationIds = [...new Set(input.concentrationIds ?? [])].slice(0, MAX_SHARED_CONCENTRATIONS);
+  const programs = (input.additionalPrograms ?? [])
+    .filter((p) => p.programId !== input.primaryProgramId)
+    .map(
+      (p): AdditionalProgram => ({
+        programId: p.programId,
+        kind: p.kind,
+        ...(p.concentrationIds && p.concentrationIds.length > 0 ? { concentrationIds: [...p.concentrationIds] } : {}),
+      })
+    );
   return {
     ...(Object.keys(marks).length > 0 ? { courseMarks: { ...marks } } : {}),
     ...(input.collegeLayerId ? { collegeRuleSet: input.collegeLayerId } : {}),
     ...(concentrationIds.length > 0 ? { concentrationIds } : {}),
+    ...(programs.length > 0 ? { additionalPrograms: programs } : {}),
   };
+}
+
+/**
+ * A share's extra programs (spec 047 D13) as the share view reads them:
+ * under their current ids (spec 019 D12), without a repeat or the share's
+ * own program; [] for a share written before spec 047. Pure.
+ */
+export function shareAdditionalPrograms(
+  share: Pick<ShareDoc, "programId" | "additionalPrograms">
+): AdditionalProgram[] {
+  return canonicalAdditionalPrograms(share.additionalPrograms ?? [], canonicalProgramId(share.programId));
 }

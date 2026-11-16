@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { PROGRAM_NAME, allCards, closeTopBarControls, topBarControls } from "./helpers";
+import { PROGRAM_NAME, allCards, closeTopBarControls, primarySegment, topBarControls } from "./helpers";
 
 /**
  * First Google sign-in from an anonymous session. Linking keeps the same uid,
@@ -57,6 +57,6 @@ test("signing in with Google for the first time shows the account, no reload", a
   await page.reload();
   await expect(allCards(page).first()).toBeVisible({ timeout: 45_000 });
   await expect(page.getByRole("button", { name: /I know my major/ })).toHaveCount(0);
-  await expect(page.locator("#program-select")).toHaveValue(/cornell-cs-bs/);
+  await expect(primarySegment(page)).toHaveAttribute("data-program-id", /cornell-cs-bs/);
   expect(await allCards(page).count()).toBe(cards);
 });

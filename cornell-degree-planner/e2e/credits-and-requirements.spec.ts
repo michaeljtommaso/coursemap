@@ -236,7 +236,7 @@ test("try flow: tried classes show on the page and in the rail, Place arms a col
   await expect(page.locator("[data-tried-delta], [data-tried-course]:not([data-try-course])").first()).toBeAttached({
     timeout: 15_000,
   });
-  await expect(page.locator("[data-requirements-done]")).toContainText("trying 3 classes");
+  await expect(page.locator("[data-try-search] [data-tried-more]")).toHaveText("Trying 3 classes");
   await expect(chips).toHaveCount(3);
 
   // Back on the planner, the rail reminds the student; three lines scroll inside two.

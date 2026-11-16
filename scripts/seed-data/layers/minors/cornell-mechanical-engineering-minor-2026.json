@@ -1,0 +1,290 @@
+{
+  "id": "cornell-mechanical-engineering-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Mechanical Engineering (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mechanical-engineering-minor-2026",
+  "rows": [
+    {
+      "id": "engrd-2020",
+      "label": "Statics and mechanics of solids (ENGRD 2020), a required course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mechanical-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "I read the two courses under the required heading as both required, the stricter reading. They must be Cornell courses; transfer credit may not be used, and exam credit is left out too.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ENGRD-2020"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "engrd-2210",
+      "label": "Thermodynamics (ENGRD 2210), a required course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mechanical-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Read as required, like ENGRD 2020. Must be a Cornell course.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ENGRD-2210"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "advanced-mae",
+      "label": "One advanced MAE course: numbered above 5000, 3+ credits",
+      "group": "MAE courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mechanical-engineering-minor/",
+        "anchor": "Rules for Selecting Courses"
+      },
+      "note": "Counts MAE courses numbered above 5000, which need no prerequisite. The page also allows a 3261-5000 course with a prerequisite of ENGRD 2020, MAE 2030, ENGRD 2210 or an MAE course; the board cannot see prerequisites, so confirm that with the prerequisite row. MAE 4980, 4900 and 4291 are excluded here.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MAE"
+            ]
+          },
+          {
+            "number": {
+              "min": 5001
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "MAE-4980",
+                "MAE-4900",
+                "MAE-4291"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "upper-mae",
+      "label": "One more MAE course numbered above 3000, 3+ credits",
+      "group": "MAE courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mechanical-engineering-minor/",
+        "anchor": "Rules for Selecting Courses"
+      },
+      "note": "Together with the advanced course this gives the two courses above the 3000 mark. MAE 4980 is excluded, and MAE 4900 and 4291 are kept out of this row (they may count only once and are allowed in the open row).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MAE"
+            ]
+          },
+          {
+            "number": {
+              "min": 3001
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "MAE-4980",
+                "MAE-4900",
+                "MAE-4291"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "more-mae",
+      "label": "Two further courses in the MAE subject numbered 2000 or higher, 3+ credits each",
+      "group": "MAE courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mechanical-engineering-minor/",
+        "anchor": "Rules for Selecting Courses"
+      },
+      "note": "Brings the total to six courses (at least 18 credits at 3 credits minimum each). MAE 4980 never counts; MAE 4900 and MAE 4291 together count for at most one course.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "MAE"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "MAE-4980"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "MAE-4900",
+              "MAE-4291"
+            ]
+          },
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "min-grade",
+      "label": "Confirm a grade of C- or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mechanical-engineering-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "note": "The board cannot see grades. A course below C- does not count.",
+      "kind": "confirm"
+    },
+    {
+      "id": "advanced-prereq",
+      "label": "Confirm your advanced course, if numbered 3261 to 5000, lists ENGRD 2020, MAE 2030, ENGRD 2210 or an MAE course as a prerequisite",
+      "group": "MAE courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mechanical-engineering-minor/",
+        "anchor": "Rules for Selecting Courses"
+      },
+      "note": "The board counts only MAE courses above 5000 for the advanced course. If you use a 3261-5000 MAE course instead, check its catalog prerequisites and confirm here; some, such as MAE 4180 and MAE 4730, do not qualify.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Get advice and pre-approval from the Mechanical Engineering undergraduate office, apply for the minor and later request certification",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mechanical-engineering-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "Applications are picked up at the department's office; certification is requested after the coursework is done.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approves",
+      "label": "Confirm your major approves taking this minor",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mechanical-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "Your major must permit the minor, and you cannot be a Mechanical Engineering major.",
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-complete",
+      "label": "Complete all requirements for your undergraduate degree, finishing the minor during your continuous enrollment at Cornell",
+      "group": "Degree",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mechanical-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "The board cannot see overall degree completion.",
+      "kind": "confirm"
+    }
+  ]
+}

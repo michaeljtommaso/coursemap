@@ -1,10 +1,14 @@
 import { describe, it, expect } from "vitest";
 import {
+  ANSWER_KEY_MAX,
   ANSWER_KEY_RE,
+  COURSE_ID_ALLOWANCE,
   answerKey,
+  countsForKey,
   isFactRef,
   isValidAnswerKey,
   markKey,
+  parseCountsForKey,
   parseRef,
   questionRef,
   questionScopes,
@@ -150,5 +154,50 @@ describe("questionScopes", () => {
   it("tolerates malformed input", () => {
     expect(questionScopes(undefined)).toEqual({});
     expect(questionScopes([{ id: "x", rows: [] } as unknown as Layer, null as unknown as Layer])).toEqual({});
+  });
+});
+
+describe("countsFor keys (spec 047 D8)", () => {
+  it("builds countsFor:<layerId>@<courseId> and parses it back", () => {
+    const key = countsForKey("math-ba", "ECON-3110");
+    expect(key).toBe("countsFor:math-ba@ECON-3110");
+    expect(parseCountsForKey(key)).toEqual({ layerId: "math-ba", courseId: "ECON-3110" });
+    // A concentration-style layer id round-trips too.
+    const conc = countsForKey("biological-sciences-ba--neurobiology", "BIONB-2220");
+    expect(parseCountsForKey(conc)).toEqual({ layerId: "biological-sciences-ba--neurobiology", courseId: "BIONB-2220" });
+  });
+
+  it("is a valid answer key, even at the longest layer and course ids", () => {
+    const key = countsForKey("a".repeat(101), "C".repeat(COURSE_ID_ALLOWANCE));
+    expect(key.length).toBeLessThanOrEqual(ANSWER_KEY_MAX);
+    expect(ANSWER_KEY_RE.test(key)).toBe(true);
+    expect(isValidAnswerKey(key)).toBe(true);
+    expect(AnswerKeySchema.safeParse(key).success).toBe(true);
+    expect(parseCountsForKey(key)).toEqual({ layerId: "a".repeat(101), courseId: "C".repeat(COURSE_ID_ALLOWANCE) });
+  });
+
+  it("is not a question ref (parseRef reads it as null)", () => {
+    expect(parseRef(countsForKey("math-ba", "ECON-3110"))).toBeNull();
+  });
+
+  it("rejects keys that are not countsFor keys", () => {
+    for (const bad of [
+      "countsFor:math-ba",
+      "countsFor:@ECON-3110",
+      "countsFor:math-ba@",
+      "countsFor:math-ba@ECON-3110@X",
+      "countsFor:Math-BA@ECON-3110",
+      "countsFor:math-ba@ECON.3110",
+      "countsFor:math/ba@ECON-3110",
+      "countsFor:math-ba@ECON:3110",
+      "usedAs:math-ba/fws@ECON-3110",
+      "countsfor:math-ba@ECON-3110",
+      `countsFor:math-ba@${"C".repeat(COURSE_ID_ALLOWANCE + 1)}`,
+      `countsFor:${"a".repeat(102)}@ECON-3110`,
+      `countsFor:${"a".repeat(101)}@${"C".repeat(ANSWER_KEY_MAX)}`,
+      "",
+    ]) {
+      expect(parseCountsForKey(bad), bad).toBeNull();
+    }
   });
 });

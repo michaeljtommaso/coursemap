@@ -366,3 +366,35 @@ describe("spec 028 — tried classes carry over (D12)", () => {
     expect(currentProgramContent(content).programId).toBe("cornell-information-science-bs-2026");
   });
 });
+
+describe("spec 047 — additional programs carry over (D13)", () => {
+  it("a plan copy keeps its programs, and a plan with only programs is worth copying", () => {
+    const g = plan({ id: "g1" });
+    g.content = { ...g.content, placements: [], additionalPrograms: [{ programId: "minor-cs", kind: "minor" }] };
+    expect(shouldCarry(g)).toBe(true);
+    const [copy] = planCopies([g], [], () => "new-1");
+    expect(copy.input.additionalPrograms).toEqual([{ programId: "minor-cs", kind: "minor" }]);
+  });
+
+  it("a stashed copy's programs come back current, shaped, and without the primary", () => {
+    const content = {
+      ...plan({ id: "g" }).content,
+      programId: "cornell-infosci-bs-2025",
+      additionalPrograms: [
+        { programId: "cornell-information-science-bs-2026", kind: "major" }, // the primary once read under its current id
+        { programId: "minor-cs", kind: "minor", concentrationIds: ["x"] }, // malformed
+        { programId: "minor-b", kind: "minor" },
+      ] as unknown as CarryPlan["content"]["additionalPrograms"],
+    };
+    const out = currentProgramContent(content);
+    expect(out.programId).toBe("cornell-information-science-bs-2026");
+    expect(out.additionalPrograms).toEqual([{ programId: "minor-b", kind: "minor" }]);
+  });
+
+  it("returns the same content when its programs are already clean, and drops a junk field", () => {
+    const clean = { ...plan({ id: "g" }).content, additionalPrograms: [{ programId: "minor-b", kind: "minor" as const }] };
+    expect(currentProgramContent(clean)).toBe(clean);
+    const junk = { ...plan({ id: "g" }).content, additionalPrograms: "junk" as unknown as [] };
+    expect(currentProgramContent(junk).additionalPrograms).toEqual([]);
+  });
+});

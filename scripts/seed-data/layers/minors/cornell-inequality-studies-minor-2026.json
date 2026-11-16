@@ -1,0 +1,307 @@
+{
+  "id": "cornell-inequality-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Inequality Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-inequality-studies-minor-2026",
+  "rows": [
+    {
+      "id": "core-soc-2208",
+      "label": "Core course: Social Inequality (SOC 2208)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/inequality-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "SOC-2208"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "overview-course",
+      "label": "One overview course from the approved overview list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/inequality-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Any one of the five listed overview courses. It is a separate course from the four electives.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-3700",
+          "GOVT-3251",
+          "PUBPOL-2250",
+          "PUBPOL-2370",
+          "SOC-2220"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "four-electives",
+      "label": "Four electives from the sample elective lists",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/inequality-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The full approved elective list lives on the program website; only the sample courses printed on the catalog page are checked here, so an approved elective not printed there needs the confirmation row below.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ASRC-1500",
+          "AMST-4051",
+          "BIONB-3215",
+          "FGSS-2010",
+          "GDEV-2710",
+          "GOVT-3071",
+          "ILRGL-2350",
+          "SOC-1101",
+          "STS-2061",
+          "AEM-1600",
+          "ANTHR-2424",
+          "BSOC-2051",
+          "NS-1150",
+          "PUBPOL-3280"
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0
+    },
+    {
+      "id": "three-departments",
+      "label": "Overview course and electives span at least three departments",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/inequality-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Checks departments by each course's own subject code only. Cornell lets a cross-listed course count under any of its cross-listings and treats all ILR courses as one department, so confirm the spread yourself if this shows short.",
+      "overlay": true,
+      "kind": "distribution",
+      "rule": {
+        "course": [
+          "GDEV-3700",
+          "GOVT-3251",
+          "PUBPOL-2250",
+          "PUBPOL-2370",
+          "SOC-2220",
+          "ASRC-1500",
+          "AMST-4051",
+          "BIONB-3215",
+          "FGSS-2010",
+          "GDEV-2710",
+          "GOVT-3071",
+          "ILRGL-2350",
+          "SOC-1101",
+          "STS-2061",
+          "AEM-1600",
+          "ANTHR-2424",
+          "BSOC-2051",
+          "NS-1150",
+          "PUBPOL-3280"
+        ]
+      },
+      "categories": [
+        {
+          "id": "soc",
+          "label": "SOC",
+          "rule": {
+            "subject": [
+              "SOC"
+            ]
+          }
+        },
+        {
+          "id": "gdev",
+          "label": "GDEV",
+          "rule": {
+            "subject": [
+              "GDEV"
+            ]
+          }
+        },
+        {
+          "id": "govt",
+          "label": "GOVT",
+          "rule": {
+            "subject": [
+              "GOVT"
+            ]
+          }
+        },
+        {
+          "id": "pubpol",
+          "label": "PUBPOL",
+          "rule": {
+            "subject": [
+              "PUBPOL"
+            ]
+          }
+        },
+        {
+          "id": "asrc",
+          "label": "ASRC",
+          "rule": {
+            "subject": [
+              "ASRC"
+            ]
+          }
+        },
+        {
+          "id": "amst",
+          "label": "AMST",
+          "rule": {
+            "subject": [
+              "AMST"
+            ]
+          }
+        },
+        {
+          "id": "bionb",
+          "label": "BIONB",
+          "rule": {
+            "subject": [
+              "BIONB"
+            ]
+          }
+        },
+        {
+          "id": "fgss",
+          "label": "FGSS",
+          "rule": {
+            "subject": [
+              "FGSS"
+            ]
+          }
+        },
+        {
+          "id": "ilrgl",
+          "label": "ILRGL",
+          "rule": {
+            "subject": [
+              "ILRGL"
+            ]
+          }
+        },
+        {
+          "id": "sts",
+          "label": "STS",
+          "rule": {
+            "subject": [
+              "STS"
+            ]
+          }
+        },
+        {
+          "id": "aem",
+          "label": "AEM",
+          "rule": {
+            "subject": [
+              "AEM"
+            ]
+          }
+        },
+        {
+          "id": "anthr",
+          "label": "ANTHR",
+          "rule": {
+            "subject": [
+              "ANTHR"
+            ]
+          }
+        },
+        {
+          "id": "bsoc",
+          "label": "BSOC",
+          "rule": {
+            "subject": [
+              "BSOC"
+            ]
+          }
+        },
+        {
+          "id": "ns",
+          "label": "NS",
+          "rule": {
+            "subject": [
+              "NS"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 5,
+      "minDistinctCategories": 3
+    },
+    {
+      "id": "confirm-departments",
+      "label": "Confirm the five overview and elective courses sit in at least three departments",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/inequality-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Cross-listed courses may count under any of their cross-listings; all ILR courses count as one department.",
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-other-electives",
+      "label": "Confirm any elective not printed on the sample lists is on the program's approved list",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/inequality-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The complete elective list is kept on the minor's own website, not on the catalog page.",
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-health-track",
+      "label": "Health Equity Track only: two of the four electives come from the health-equity electives",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/inequality-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The general version lets all four electives come from the approved list; the track version reserves two of them for the health-equity selection. The board cannot see which version you enrolled in.",
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-grade-c",
+      "label": "Every minor course is completed with a C or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/inequality-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-letter-grade",
+      "label": "Every minor course is taken for a letter grade",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/inequality-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-enroll",
+      "label": "Enroll in the minor through the program's website",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/inequality-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Completion is then recorded on your academic record.",
+      "kind": "confirm"
+    }
+  ]
+}

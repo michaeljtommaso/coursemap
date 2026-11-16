@@ -1,0 +1,278 @@
+{
+  "programId": "cornell-film-minor-2026",
+  "description": "A student takes the global cinema survey, a screenwriting course, a media lab and three film courses that only the department teaches.",
+  "layerIds": [
+    "cornell-film-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PMA-3550",
+    "PMA-3531",
+    "PMA-1410",
+    "PMA-3508",
+    "PMA-3580",
+    "PMA-4841"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PMA-2452",
+      "rowId": "film-electives",
+      "why": "A cross-listed Japanese film course counts only if department faculty teach it, and the question is unanswered."
+    },
+    {
+      "courseId": "PMA-3410",
+      "rowId": "film-electives",
+      "why": "The Mafia and movies course is also taught by another department, so it needs the faculty answer too."
+    },
+    {
+      "courseId": "PMA-1410",
+      "rowId": "film-electives",
+      "why": "A production lab is not one of the three extra film courses; lab credit only serves the lab requirement."
+    },
+    {
+      "courseId": "PMA-1610",
+      "rowId": "film-electives",
+      "why": "The technology lab is also excluded from the extra film courses."
+    },
+    {
+      "courseId": "PMA-1175",
+      "rowId": "film-electives",
+      "why": "A first-year writing seminar never counts toward the minor, even with film in its title."
+    },
+    {
+      "courseId": "PMA-3000",
+      "rowId": "film-electives",
+      "why": "Independent study does not count toward a department minor."
+    },
+    {
+      "courseId": "PMA-2610",
+      "rowId": "production-lab",
+      "why": "Only the media lab or the technology lab fills the lab requirement, not other lab-style courses."
+    },
+    {
+      "courseId": "PMA-3560",
+      "rowId": "global-cinema",
+      "why": "Only the global cinema survey fills this required seat, not another cinema course."
+    },
+    {
+      "courseId": "PMA-3580",
+      "rowId": "writing-or-production",
+      "why": "The page names four courses for this requirement and cinematography is not among them."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PMA-3550",
+      "subject": "PMA",
+      "number": "3550",
+      "title": "Global Cinema and Media",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "PMA-HTC"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3531",
+      "subject": "PMA",
+      "number": "3531",
+      "title": "Screenwriting",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "PMA-AU"
+        }
+      ]
+    },
+    {
+      "id": "PMA-1410",
+      "subject": "PMA",
+      "number": "1410",
+      "title": "Media Production Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PMA-3508",
+      "subject": "PMA",
+      "number": "3508",
+      "title": "Material Filmmaking (Experimental Film): 16mm Film, Photo, Animation",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3580",
+      "subject": "PMA",
+      "number": "3580",
+      "title": "Cinematography and Visual Storytelling",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "PMA-AU"
+        }
+      ]
+    },
+    {
+      "id": "PMA-4841",
+      "subject": "PMA",
+      "number": "4841",
+      "title": "States of Animation",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-2452",
+      "subject": "PMA",
+      "number": "2452",
+      "title": "Introduction to Japanese Film",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3410",
+      "subject": "PMA",
+      "number": "3410",
+      "title": "Screening Cosa Nostra: The Mafia and the Movies from Scarface to The Sopranos",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-1610",
+      "subject": "PMA",
+      "number": "1610",
+      "title": "Production Technology Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PMA-1175",
+      "subject": "PMA",
+      "number": "1175",
+      "title": "FWS: Hell is a Teenage Girl: Terror and Turmoil of Girlhood in Horror Films",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PMA-3000",
+      "subject": "PMA",
+      "number": "3000",
+      "title": "Independent Study",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "PMA-2610",
+      "subject": "PMA",
+      "number": "2610",
+      "title": "Production Crew Laboratory",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "PMA-3560",
+      "subject": "PMA",
+      "number": "3560",
+      "title": "American Cinema since 1968",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    }
+  ]
+}
