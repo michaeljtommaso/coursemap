@@ -255,6 +255,11 @@ export type ProgramDoc = z.infer<typeof ProgramSchema>;
 export const CatalogMetaSchema = z
   .object({
     aliases: z.record(z.string().max(40), z.string().max(40)),
+    // Roster cross-listings (member id → its family's representative id;
+    // scripts/seed-cross-listings.ts). Read only for crossListedSubjects, never
+    // to canonicalize ids. Optional, and a malformed map is dropped rather
+    // than failing the doc (aliases and the enrollment target still load).
+    crossListings: z.record(z.string().max(40), z.string().max(40)).optional().catch(undefined),
     globalElectiveGroups: z.array(ElectiveGroupSchema).max(60).default([]),
     seedVersion: z.number().int().optional(),
     syncedAt: z.unknown().optional(),

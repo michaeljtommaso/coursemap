@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  CatalogMetaSchema,
   CourseMarksSchema,
   FactAnswersSchema,
   LayerSchema,
@@ -390,5 +391,21 @@ describe("MinorIndexSchema (spec 047 D12)", () => {
     expect(MinorIndexEntrySchema.safeParse(entry({ catalogYear: 2026 })).success).toBe(false);
     expect(MinorIndexEntrySchema.safeParse(entry({ name: "" })).success).toBe(false);
     expect(MinorIndexSchema.safeParse({ entries: Array.from({ length: 301 }, () => entry()) }).success).toBe(false);
+  });
+});
+
+describe("CatalogMetaSchema crossListings (roster cross-listings)", () => {
+  const meta = (extra: Record<string, unknown> = {}) => ({ aliases: { "ENGRD-2110": "CS-2110" }, ...extra });
+
+  it("is optional and keeps a well-formed map", () => {
+    expect(CatalogMetaSchema.parse(meta()).crossListings).toBeUndefined();
+    expect(CatalogMetaSchema.parse(meta({ crossListings: { "HIST-3770": "AMST-3775" } })).crossListings).toEqual({ "HIST-3770": "AMST-3775" });
+  });
+
+  it("drops a malformed map without failing the doc (aliases still load)", () => {
+    const parsed = CatalogMetaSchema.parse(meta({ crossListings: { "HIST-3770": 42 }, enrollmentTarget: "SP27" }));
+    expect(parsed.crossListings).toBeUndefined();
+    expect(parsed.aliases).toEqual({ "ENGRD-2110": "CS-2110" });
+    expect(parsed.enrollmentTarget).toBe("SP27");
   });
 });
