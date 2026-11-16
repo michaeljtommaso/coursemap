@@ -213,6 +213,10 @@ describe("TrySearch (spec 045 D10)", () => {
     expect(more.getAttribute("aria-expanded")).toBe("false");
     const list = document.getElementById(more.getAttribute("aria-controls")!)!;
     expect(list.hidden).toBe(true);
+    // Hidden by class too: Tailwind's `flex` outranks [hidden] (it stayed
+    // open in the browser while jsdom saw it hidden).
+    expect(list.classList.contains("hidden")).toBe(true);
+    expect(list.classList.contains("flex")).toBe(false);
     expect($$("[data-tried-chip]", list).map((c) => c.dataset.triedChip)).toEqual(["PHIL-1440", "MUSIC-1101"]);
     expect(list.contains($("[data-tried-clear-all]"))).toBe(true);
     const shown = $$("[data-tried-chip]", line).filter((c) => !c.closest("[hidden]"));
@@ -221,6 +225,7 @@ describe("TrySearch (spec 045 D10)", () => {
     click(more);
     expect(more.getAttribute("aria-expanded")).toBe("true");
     expect(list.hidden).toBe(false);
+    expect(list.classList.contains("flex")).toBe(true);
     click($('button[aria-label="Stop trying PHIL 1440"]'));
     expect(actions.onUntry).toHaveBeenCalledWith("PHIL-1440");
 

@@ -269,11 +269,16 @@ export function TrySearch({
                   +{moreIds.length}
                 </button>
                 {/* Always mounted (hidden while closed), so every tried chip
-                    stays in [data-tried-line]. */}
+                    stays in [data-tried-line]. The display class, not just
+                    the hidden attribute, hides it: Tailwind's `flex`
+                    outranks the browser's [hidden] rule. */}
                 <div
                   id="tried-more-list"
                   hidden={!moreShown}
-                  className="absolute left-0 top-full z-10 mt-1.5 flex w-max flex-col gap-1.5 rounded-lg border border-line bg-surface p-2 shadow-[var(--shadow-xl)]"
+                  className={cn(
+                    "absolute left-0 top-full z-10 mt-1.5 w-max flex-col gap-1.5 rounded-lg border border-line bg-surface p-2 shadow-[var(--shadow-xl)]",
+                    moreShown ? "flex" : "hidden"
+                  )}
                 >
                   <ul aria-label="More classes you're trying" className="flex flex-col items-start gap-1">
                     {moreIds.map(chip)}
