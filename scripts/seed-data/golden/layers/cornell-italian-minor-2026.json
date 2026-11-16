@@ -1,0 +1,226 @@
+{
+  "programId": "cornell-italian-minor-2026",
+  "description": "A student who finishes Italian IV, the Italian cinema course and three upper-level Italian electives.",
+  "layerIds": [
+    "cornell-italian-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ITAL-2202",
+    "ITAL-2204",
+    "ITAL-3010",
+    "ITAL-3750",
+    "ITAL-3890"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ITAL-1113",
+      "rowId": "five-courses",
+      "why": "Numbered below the 2000 level, so it is outside the pool."
+    },
+    {
+      "courseId": "ITAL-4190",
+      "rowId": "five-courses",
+      "why": "Its credit value varies, so it cannot be fixed at three credits."
+    },
+    {
+      "courseId": "GOVT-1111",
+      "rowId": "five-courses",
+      "why": "Not an Italian-subject course, so the board cannot place it in this pool."
+    },
+    {
+      "courseId": "ITAL-2201",
+      "rowId": "five-courses",
+      "why": "Italian III is a language course below the required Italian IV level, not an Italian Studies class."
+    },
+    {
+      "courseId": "ITAL-2110",
+      "rowId": "five-courses",
+      "why": "A Rome intermediate composition course is language instruction below the required Italian IV level."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ITAL-2202",
+      "subject": "ITAL",
+      "number": "2202",
+      "title": "Italian IV",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-2204",
+      "subject": "ITAL",
+      "number": "2204",
+      "title": "The Cinematic Eye of Italy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-3010",
+      "subject": "ITAL",
+      "number": "3010",
+      "title": "Screening Cosa Nostra: The Mafia and the Movies from Scarface to The Sopranos",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-3750",
+      "subject": "ITAL",
+      "number": "3750",
+      "title": "Pinocchio: Adventures in Literature and Film",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-3890",
+      "subject": "ITAL",
+      "number": "3890",
+      "title": "Modern Italian Novel",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-1113",
+      "subject": "ITAL",
+      "number": "1113",
+      "title": "FWS: Writing Italy, Writing the Self: Jewish-Italian Lit and the Long 20th Century",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-4190",
+      "subject": "ITAL",
+      "number": "4190",
+      "title": "Special Topics in Italian Literature",
+      "credits": 2,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1111",
+      "subject": "GOVT",
+      "number": "1111",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-2201",
+      "subject": "ITAL",
+      "number": "2201",
+      "title": "Italian III",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ITAL-2110",
+      "subject": "ITAL",
+      "number": "2110",
+      "title": "Italian Intermediate Composition and Conversation I in Rome",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        }
+      ]
+    }
+  ]
+}

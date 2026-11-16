@@ -1,0 +1,196 @@
+{
+  "id": "cornell-history-capitalism-interdisciplinary-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "History of Capitalism (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-history-capitalism-interdisciplinary-minor-2026",
+  "rows": [
+    {
+      "id": "capitalism-core-course",
+      "label": "One core capitalism course (American Capitalism or Crises of Capitalism)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-capitalism-interdisciplinary-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "A request to count a non-approved course here needs approval, so it is not counted automatically. Taken at Cornell only: AP, transfer and study abroad are not eligible.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "HIST-1540",
+              "HIST-3081"
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "economics-business-course",
+      "label": "One economics or business course from the page's list",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-capitalism-interdisciplinary-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Taken at Cornell only: AP, transfer and study abroad are not eligible, so AP Economics credit does not count here.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-1110",
+              "ECON-1120",
+              "ECON-3030",
+              "ECON-3300",
+              "GOVT-3547",
+              "GOVT-3557",
+              "AEM-2241",
+              "HADM-2250"
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "required-course-substitution-confirm",
+      "label": "If you asked for a non-approved course to stand in for a required course, your request was approved",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-capitalism-interdisciplinary-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts only the listed courses in the two required seats above. If a non-approved course was accepted in place of one of them, confirm it here; the seat will stay open on the board.",
+      "kind": "confirm"
+    },
+    {
+      "id": "historical-courses-approved-list",
+      "label": "Three historical courses from the department's approved list",
+      "group": "Historical courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-capitalism-interdisciplinary-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The approved list lives on the History department website and is not printed on the catalog page, so the board asks you whether the program approved each course. A course counts only when you answer yes. First-year writing seminars, AP and transfer credit are excluded, and each course needs at least 3 credits; the 4-credit ceiling and study abroad are checked by you.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "answered": "approvedFor:cornell-history-capitalism-interdisciplinary-minor-2026/historical-courses-approved-list"
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 9
+    },
+    {
+      "id": "grades-letter-c",
+      "label": "Every minor course taken for a letter grade and passed with at least a C",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-capitalism-interdisciplinary-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "course-rules-confirm",
+      "label": "All five courses are 3 or 4 credits, none is a first-year writing seminar, none is study abroad, and the minor totals at least 15 credits",
+      "group": "Course rules",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-capitalism-interdisciplinary-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board enforces the 3-credit floor and the AP/transfer bar on the two named courses; the 4-credit ceiling, study abroad and writing-seminar rules are checked by you.",
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-capitalism-interdisciplinary-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "Select three courses from an approved list.",
+      "type": "approvedFor",
+      "row": "historical-courses-approved-list",
+      "courses": {
+        "allOf": [
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "approver": "director"
+    }
+  ]
+}

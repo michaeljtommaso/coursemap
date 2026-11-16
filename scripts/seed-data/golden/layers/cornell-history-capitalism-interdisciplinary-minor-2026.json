@@ -1,0 +1,197 @@
+{
+  "programId": "cornell-history-capitalism-interdisciplinary-minor-2026",
+  "description": "A student pairs a US capitalism history course with an introductory economics course.",
+  "layerIds": [
+    "cornell-history-capitalism-interdisciplinary-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "HIST-1540",
+    "ECON-1110",
+    "HIST-2031",
+    "HIST-2146",
+    "HIST-2155"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ECON-1110",
+      "rowId": "capitalism-core-course",
+      "why": "An economics course is not one of the two named capitalism history courses."
+    },
+    {
+      "courseId": "HIST-1540",
+      "rowId": "economics-business-course",
+      "why": "The American capitalism course belongs to the first requirement, not the economics and business list."
+    },
+    {
+      "courseId": "ECON-1120",
+      "rowId": "capitalism-core-course",
+      "why": "Only the two named history courses satisfy the core capitalism row."
+    },
+    {
+      "courseId": "HIST-2132",
+      "rowId": "historical-courses-approved-list",
+      "why": "A history course the student has not said the program approved does not count in the approved-list row."
+    }
+  ],
+  "answers": {
+    "marks": {
+      "approvedFor:cornell-history-capitalism-interdisciplinary-minor-2026/historical-courses-approved-list@HIST-2031": "yes",
+      "approvedFor:cornell-history-capitalism-interdisciplinary-minor-2026/historical-courses-approved-list@HIST-2146": "yes",
+      "approvedFor:cornell-history-capitalism-interdisciplinary-minor-2026/historical-courses-approved-list@HIST-2155": "yes"
+    }
+  },
+  "courses": [
+    {
+      "id": "HIST-1540",
+      "subject": "HIST",
+      "number": "1540",
+      "title": "American Capitalism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "LH-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2031",
+      "subject": "HIST",
+      "number": "2031",
+      "title": "Global History of Data",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HTR"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2146",
+      "subject": "HIST",
+      "number": "2146",
+      "title": "Health and Fitness Culture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2155",
+      "subject": "HIST",
+      "number": "2155",
+      "title": "The Invention of Religion",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1120",
+      "subject": "ECON",
+      "number": "1120",
+      "title": "Introductory Macroeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2132",
+      "subject": "HIST",
+      "number": "2132",
+      "title": "Law and Society in Early Modern and Modern China",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HAN"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "id": "cornell-italian-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Italian (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-italian-minor-2026",
+  "rows": [
+    {
+      "id": "five-courses",
+      "label": "Five Italian-track courses of 3+ credits each: Italian IV, ITAL 2900 or 2204, and three more ITAL courses at the 2202 level or above",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts only ITAL courses numbered 2202 (the required Italian IV) or above, fixed at 3 or more credits. Electives from other departments, and half courses (1.5 or 2 credits), are not counted here: confirm them in the rows below. At most two of the five may be transfer or exam credit.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ITAL"
+            ]
+          },
+          {
+            "number": {
+              "min": 2202
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "ITAL-2202"
+            ]
+          },
+          "label": "Italian IV",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "ITAL-2900",
+              "ITAL-2204"
+            ]
+          },
+          "label": "ITAL 2900 or ITAL 2204",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer",
+              "ap",
+              "ib",
+              "alevel",
+              "intl",
+              "placement"
+            ]
+          },
+          "label": "Taken at another institution or by exam credit",
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "other-department-electives",
+      "label": "If an elective comes from another department (Romance Studies, History, Government ...), confirm it counts as a course in Italian Studies",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page does not list the non-ITAL courses that count, so the board cannot place them: confirm with the Director of Undergraduate Studies.",
+      "kind": "confirm"
+    },
+    {
+      "id": "half-courses",
+      "label": "A 1.5- or 2-credit ITAL course is only half a course; two such courses must be combined to make one",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board leaves half courses and variable-credit ITAL courses out of the count; confirm any pair you rely on.",
+      "kind": "confirm"
+    },
+    {
+      "id": "course-in-italian",
+      "label": "At least one of the electives is taught in Italian (literature/culture)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot see the language of instruction.",
+      "kind": "confirm"
+    },
+    {
+      "id": "abroad-limit",
+      "label": "Cap of two of the five courses that may come from study abroad or another school",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board caps transfer and exam credit at two courses; courses taken abroad through Cornell are not visible to it, so confirm those count toward the same two.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "At most one of the five courses taken S/U; every other course completed with a B- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor by registering your intent with the Director of Undergraduate Studies",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/italian-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}
