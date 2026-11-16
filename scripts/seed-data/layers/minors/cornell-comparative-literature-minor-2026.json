@@ -1,0 +1,155 @@
+{
+  "id": "cornell-comparative-literature-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Comparative Literature (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-comparative-literature-minor-2026",
+  "rows": [
+    {
+      "id": "coml-courses",
+      "label": "Five courses at the 2000 level or above (3-4 credits each), at least four of them in Comparative Literature",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts the five courses: at least four in Comparative Literature, and the fifth in Comparative Literature or a foreign language and literature subject. The board cannot see whether the fifth works in its original language, so the language-course row asks you to confirm that (study-abroad courses are also confirmed by hand).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "COML",
+              "ARAB",
+              "ASIAN",
+              "BENGL",
+              "BURM",
+              "CHIN",
+              "CHLIT",
+              "CLASS",
+              "DUTCH",
+              "FINN",
+              "FREN",
+              "GERST",
+              "GREEK",
+              "HEBRW",
+              "HINDI",
+              "HUNGR",
+              "INDO",
+              "ITAL",
+              "JAPAN",
+              "JPLIT",
+              "KHMER",
+              "KOREA",
+              "LATIN",
+              "NEPAL",
+              "NES",
+              "PERSN",
+              "POLSH",
+              "PORT",
+              "PUNJB",
+              "ROMS",
+              "RUSSA",
+              "RUSSL",
+              "SANSK",
+              "SINHA",
+              "SNLIT",
+              "SPAN",
+              "SWAHL",
+              "SWED",
+              "TAMIL",
+              "TELU",
+              "THAI",
+              "TIBET",
+              "TURK",
+              "UKRAN",
+              "URDU",
+              "VIET",
+              "WOLOF",
+              "YIDSH",
+              "YORUB",
+              "ZULU"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "subject": [
+              "COML"
+            ]
+          },
+          "label": "At least four courses in Comparative Literature",
+          "minCourses": 4
+        }
+      ]
+    },
+    {
+      "id": "language-course",
+      "label": "Confirm the fifth course works with materials in a non-English original language, needs proficiency in it, and is not a lower-level language class",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Whether a course reads its materials in the original language cannot be seen on the board. It can come from Comparative Literature, a foreign language and literature department or a study-abroad program. Confirm with the director of undergraduate studies.",
+      "kind": "confirm"
+    },
+    {
+      "id": "study-abroad-limit",
+      "label": "At most one study-abroad course counts toward the minor",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Study-abroad courses cannot be identified from the catalog.",
+      "kind": "confirm"
+    },
+    {
+      "id": "minor-credits-15",
+      "label": "The five courses total at least 15 credits",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Four counted department courses are at least 12 credits; the fifth course, checked by hand, must bring the total to 15.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c",
+      "label": "Each course counted for the minor needs a grade of C or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "note": "Grades are not visible to the board.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the declaration paperwork to the minor director, then sign off on completion before the deadline in your last semester",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/comparative-literature-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "The form can be filed at any time; the certification meeting has a deadline.",
+      "kind": "confirm"
+    }
+  ]
+}

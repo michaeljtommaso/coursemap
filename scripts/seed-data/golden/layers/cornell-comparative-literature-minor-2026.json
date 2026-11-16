@@ -1,0 +1,219 @@
+{
+  "programId": "cornell-comparative-literature-minor-2026",
+  "description": "A fictional student completes four upper-level Comparative Literature courses and a fifth course at the same level toward the minor.",
+  "layerIds": [
+    "cornell-comparative-literature-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-anthropology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "COML-2000",
+    "COML-2030",
+    "COML-2050",
+    "COML-3001",
+    "FREN-2310"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "COML-1104",
+      "rowId": "coml-courses",
+      "why": "a first-year writing seminar in the department sits below the 2000 floor"
+    },
+    {
+      "courseId": "COML-1105",
+      "rowId": "coml-courses",
+      "why": "another 1000-level department seminar is below the 2000 floor"
+    },
+    {
+      "courseId": "ANTHR-1101",
+      "rowId": "coml-courses",
+      "why": "a first-year writing seminar is below the 2000 floor, so it cannot be the fifth course"
+    },
+    {
+      "courseId": "ANTHR-2010",
+      "rowId": "coml-courses",
+      "why": "an Anthropology course is neither Comparative Literature nor a foreign language and literature course, so it cannot be the fifth course"
+    }
+  ],
+  "courses": [
+    {
+      "id": "COML-2000",
+      "subject": "COML",
+      "number": "2000",
+      "title": "Introduction to Visual Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "COML-2030",
+      "subject": "COML",
+      "number": "2030",
+      "title": "Comparative Literature, Film, and Media",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "COML-2050",
+      "subject": "COML",
+      "number": "2050",
+      "title": "Introduction to Poetry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "COML-3001",
+      "subject": "COML",
+      "number": "3001",
+      "title": "Methods of Comparison",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "FREN-2310",
+      "subject": "FREN",
+      "number": "2310",
+      "title": "Introduction to French and Francophone Literature and Culture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "COML-1104",
+      "subject": "COML",
+      "number": "1104",
+      "title": "FWS: Reading Films",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "COML-1105",
+      "subject": "COML",
+      "number": "1105",
+      "title": "FWS: Books with Big Ideas",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-1101",
+      "subject": "ANTHR",
+      "number": "1101",
+      "title": "FWS: Culture, Society, and Power",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANTHR-2010",
+      "subject": "ANTHR",
+      "number": "2010",
+      "title": "Archaeology and the Middle East",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "ARKEO-RMNE"
+        }
+      ]
+    }
+  ]
+}
