@@ -10,7 +10,9 @@
 // The catalog (CourseLeaf) renders every program from one template: course
 // lists are <table class="sc_courselist"> whose rows are a course (codecol), an
 // "or" alternative (orclass), a section header (areaheader) or a comment line
-// (courselistcomment). Every block's `text` is exactly what page.txt shows for
+// (courselistcomment). A course row whose title cell links another course (a
+// note like "must include lab X") keeps that course on the row's block as
+// noteCourseIds, never in the list. Every block's `text` is exactly what page.txt shows for
 // it (the snapshot's own renderer), and the tool refuses to write when:
 //   - a block's text is not on page.txt (the two renderings disagree),
 //   - a course code linked anywhere in the scanned section is in no block,
@@ -79,6 +81,10 @@ export type Block = {
   path: string[];
   text: string;
   courseIds: string[];
+  /** Course/or rows only, present only when non-empty: courses linked in the
+   *  row's other cells (a title note such as "must include lab X"). They are
+   *  named on the row but are not members of its list. */
+  noteCourseIds?: string[];
   /** For table rows: the list it belongs to (course/or rows) or leads (header/comment rows). */
   list?: string;
   rowKind?: RowKind;
@@ -218,6 +224,8 @@ export function extractPage(html: string, opts: { programId: string; textSha256:
         indented: code ? leadsWithIndent(code) : false,
         credits: hours ? inlineText(hours) : "",
       };
+      // Courses linked in the row's other cells (title notes) are named by the row, not listed by it.
+      const notes = kind === "course" || kind === "or" ? cells.filter((c) => c !== code).flatMap((c) => linkedCodes(c)).filter((id, i, all) => !row.courseIds.includes(id) && all.indexOf(id) === i) : [];
       if (kind === "header" || kind === "comment") {
         if (cur) cur = null;
         lead.push(row);
@@ -239,7 +247,7 @@ export function extractPage(html: string, opts: { programId: string; textSha256:
       }
       cur.rows.push(row);
       for (const id of row.courseIds) if (!cur.courseIds.includes(id)) cur.courseIds.push(id);
-      blocks.push({ id: `T${++counters.T}`, kind: "row", path: pathNow(), text: line, courseIds: row.courseIds, list: cur.id, rowKind: kind });
+      blocks.push({ id: `T${++counters.T}`, kind: "row", path: pathNow(), text: line, courseIds: row.courseIds, ...(notes.length ? { noteCourseIds: notes } : {}), list: cur.id, rowKind: kind });
     }
   };
 
@@ -330,7 +338,7 @@ export function checkExtract(ex: PageExtract, pageText: string): ExtractProblem[
   for (const b of ex.blocks) {
     if (!page.includes(normalizeQuoteText(b.text))) problems.push({ code: "not-on-page", message: `${b.id} is not on page.txt: ${b.text.slice(0, 80)}` });
   }
-  const seen = new Set(ex.blocks.flatMap((b) => b.courseIds));
+  const seen = new Set(ex.blocks.flatMap((b) => [...b.courseIds, ...(b.noteCourseIds ?? [])]));
   for (const id of ex.linkedCourseIds) {
     if (!seen.has(id)) problems.push({ code: "unaccounted-code", message: `${id} is linked on the page but in no extracted block` });
   }
@@ -362,7 +370,7 @@ export function pageOnlyCourses(ex: Pick<PageExtract, "lists" | "blocks"> & { li
   for (const l of ex.lists) for (const r of l.rows) for (const id of r.courseIds) add(id, r.paired ? "" : r.credits);
   // Prose codes (a course-looking token in a sentence) are not courses: only the page's real course links count.
   const linked = new Set(ex.linkedCourseIds ?? []);
-  for (const b of ex.blocks) for (const id of b.courseIds) if (linked.has(id)) add(id, "");
+  for (const b of ex.blocks) for (const id of [...b.courseIds, ...(b.noteCourseIds ?? [])]) if (linked.has(id)) add(id, "");
   return [...out.values()];
 }
 

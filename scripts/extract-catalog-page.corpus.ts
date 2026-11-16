@@ -125,6 +125,29 @@ ${course("FICT 3000", "Required Theory", "3")}
   eq(x.lists[1].rows.map((r) => r.indented), [false, false], "a & pair is not an option row");
 });
 
+check("a course linked only in a list row's title note stays on that row's block, not in the list", () => {
+  const opt = (c: string, title: string) => `<tr><td class="codecol"><div class="blockindent">${code(c)}</div></td><td>${title}</td><td class="hourscol"></td></tr>`;
+  const page = `<html><body><main id="contentarea"><div id="curriculumtextcontainer"><h2>Minor Requirements</h2>
+<table class="sc_courselist"><tbody>
+<tr class="areaheader"><td colspan="2"><span class="courselistcomment areaheader">Waves</span></td><td class="hourscol">3-4</td></tr>
+<tr><td colspan="2"><span class="courselistcomment">Select one of the following:</span></td><td class="hourscol"></td></tr>
+${opt("FICT 2214", "Oscillations")}
+${opt("FICT 2218", `Waves and Heat (${code("FICT 2218")} must include lab ${code("FICT 2210")})`)}
+${course("FICT 1110", `Lab Methods (with ${code("FICT 2214")} or ${code("FICT 3999")})`, "1")}
+</tbody></table></div></main></body></html>`;
+  const t = extractPageText(page);
+  const x = extractPage(page, { programId: "x", textSha256: sha256(toLf(t)) });
+  eq(checkExtract(x, t), [], "no refusal");
+  eq(x.lists.map((l) => l.courseIds), [["FICT-2214", "FICT-2218"], ["FICT-1110"]], "notes never join a list");
+  const lab = x.blocks.find((b) => b.text.startsWith("FICT 2218"))!;
+  eq([lab.noteCourseIds, lab.list, lab.path], [["FICT-2210"], "L1", ["curriculumtextcontainer", "Minor Requirements"]], "the lab note: own code dropped, path kept");
+  eq(x.blocks.find((b) => b.text.startsWith("FICT 1110"))!.noteCourseIds, ["FICT-2214", "FICT-3999"]);
+  ok(!("noteCourseIds" in x.blocks.find((b) => b.text.startsWith("FICT 2214"))!), "a row without notes has no noteCourseIds key");
+  eq(pageOnlyCourses(x, new Set(["FICT-2214", "FICT-2218", "FICT-1110", "FICT-3999"])).map((c) => c.id), ["FICT-2210"], "a note-only course is page-only when the dump lacks it");
+  const dropped = { ...x, blocks: x.blocks.map(({ noteCourseIds: _n, ...b }) => b) };
+  ok(checkExtract(dropped, t).some((p) => p.code === "unaccounted-code" && p.message.includes("FICT-2210")), "a note course in no block still refuses");
+});
+
 check("a slash listing names one course under every subject", () => {
   const page = `<html><body><main id="contentarea"><div id="curriculumtextcontainer"><h2>Program Requirements</h2><p>Take PUBPOL/GDEV 3280 or FICT 1100.</p></div></main></body></html>`;
   const x = extractPage(page, { programId: "x", textSha256: "x" });
