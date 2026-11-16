@@ -37,6 +37,7 @@ import {
 } from "@/components/requirements/programSections";
 import { countsForKey } from "@/lib/planner/questions/keys";
 import { ProgramSectionHeader } from "./ProgramSectionHeader";
+import { useRevealProgram } from "@/components/programs/revealProgram";
 import { useMinorIndex } from "@/hooks/useAdditionalProgramData";
 import { notOpenWarnings } from "@/components/programs/programsModel";
 import { ConcentrationChooser } from "@/components/programs/ConcentrationChooser";
@@ -64,6 +65,7 @@ import {
   isConfirm,
   isOpen,
   locateRow,
+  triedCourseIdsOn,
   triedFillsIn,
   type PageGroup,
   type PageSection,
@@ -373,6 +375,58 @@ export function RequirementsPage() {
   // D2: the second major's concentration chooser.
   const { choice: secondConcentration, choose: chooseSecondConcentration } = useSecondMajorConcentration();
   const heldBackByPlacement = useMemo(() => (programMode ? resolveHeldBack(progress) : {}), [programMode, progress]);
+  // The tried classes counting toward each extra program's rows (most came
+  // in when it was added, D3, and may count toward the primary too): its
+  // section says so, and the header's tried list groups them under
+  // "For <program>" (a class two extra programs share goes under the first).
+  const triedFor = useMemo(() => {
+    const live = new Set(triedCourseIds);
+    const out = new Map<string, string[]>();
+    for (const s of model.sections) {
+      if (!s.program || (s.program.kind !== "secondMajor" && s.program.kind !== "minor")) continue;
+      const ids = new Set<string>();
+      for (const g of s.groups)
+        for (const it of g.items)
+          for (const id of triedCourseIdsOn(it, tried?.items[it.id])) if (live.has(id)) ids.add(id);
+      if (ids.size > 0) out.set(s.program.id, [...ids]);
+    }
+    return out;
+  }, [model.sections, tried, triedCourseIds]);
+  const triedGroups = useMemo(
+    () =>
+      extras
+        .filter((s) => triedFor.has(s.id))
+        .map((s) => ({ label: `For ${s.shortName || s.name}`, ids: triedFor.get(s.id)! })),
+    [extras, triedFor]
+  );
+  const clearTriedFor = useCallback(
+    (programId: string) => {
+      for (const id of triedFor.get(programId) ?? []) untryCourse(id);
+    },
+    [triedFor, untryCourse]
+  );
+  // The header names every program ("CS + ORE + Business minor"), and the
+  // done count's tooltip splits it per program.
+  const primarySection = progress.sections?.find((s) => s.kind === "primary") ?? null;
+  const doneBreakdown = programMode
+    ? model.sections
+        .flatMap((s) => (s.program && s.program.status === "ok" ? [s.program] : []))
+        .map((p) => `${p.shortName || p.name}: ${p.satisfiedCount} of ${p.total}`)
+        .join(" · ")
+    : undefined;
+
+  // Just added on the planner (useProgramFlows): open the page at that
+  // program's section, once.
+  const revealId = useRevealProgram((s) => s.programId);
+  useEffect(() => {
+    if (!revealId) return;
+    const s = model.sections.find((x) => x.program?.id === revealId);
+    if (!s || s.program?.status === "loading") return;
+    useRevealProgram.getState().clear();
+    requestAnimationFrame(() =>
+      document.getElementById(cardDomId(s.key))?.scrollIntoView?.({ behavior: "smooth", block: "start" })
+    );
+  }, [revealId, model.sections]);
 
   // ── Actions ──
   // Semesters only: "+ <term>" adds to the enrollment-term SEMESTER, never a
@@ -660,6 +714,11 @@ export function RequirementsPage() {
               domId={cardDomId(s.key)}
               open={!folded.has(s.key)}
               onToggle={() => toggleFold(s.key)}
+              tried={
+                triedFor.has(s.program.id)
+                  ? { count: triedFor.get(s.program.id)!.length, onClear: () => clearTriedFor(s.program!.id) }
+                  : null
+              }
               overlapLines={overlapBySection.lines.get(s.program.id) ?? []}
               forbiddenText={overlapBySection.forbidden.get(s.program.id) ?? null}
               concentration={
@@ -789,11 +848,12 @@ export function RequirementsPage() {
       <PageHeader
         programName={program?.name ?? null}
         progress={progress}
-        triedCount={triedCourseIds.length}
         onOpenFirstQuestion={openFirstQuestion}
         onAnswer={saveAnswer}
-        extraProgramCount={extras.length}
+        primaryShortName={primarySection?.shortName || null}
+        extraProgramNames={extras.map((s) => s.shortName || s.name)}
         allDone={allDone}
+        doneBreakdown={doneBreakdown}
         choices={choices}
         search={
           <TrySearch
@@ -807,6 +867,7 @@ export function RequirementsPage() {
             onClearTried={clearTried}
             missingTried={tried?.missing ?? []}
             compact={!wide}
+            triedGroups={triedGroups}
           />
         }
       />

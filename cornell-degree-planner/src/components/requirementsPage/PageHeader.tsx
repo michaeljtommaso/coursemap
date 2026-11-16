@@ -18,8 +18,8 @@ import { isCountsForKey, type CountsForChoice } from "@/components/requirements/
  * the catalog year, the college rule set (and the start answers that chose
  * it), the concentration, and "Your answers (N)".
  *
- * Spec 047 D6/D8: with extra programs the title reads "Requirements ·
- * Economics + 2 programs", "N of M done" counts every program (`allDone`),
+ * Spec 047 D6/D8: with extra programs the title names each by its short name,
+ * "Requirements · Economics + Mathematics + CS minor"; "N of M done" counts every program (`allDone`, its tooltip per program),
  * and "Your answers" also lists where shared courses count (`choices`).
  *
  * DOM: [data-catalog-year], [data-college-version], [data-edit-start],
@@ -29,30 +29,35 @@ import { isCountsForKey, type CountsForChoice } from "@/components/requirements/
  */
 
 const LINK = "text-ink-3 underline underline-offset-2 hover:text-ink";
+const NO_NAMES: readonly string[] = [];
 
 export function PageHeader({
   programName,
   progress,
-  triedCount,
   onOpenFirstQuestion,
   onAnswer,
   search,
-  extraProgramCount = 0,
+  primaryShortName = null,
+  extraProgramNames = NO_NAMES,
   allDone,
+  doneBreakdown,
   choices = [],
 }: {
   programName: string | null;
   progress: RequirementProgress;
-  triedCount: number;
   onOpenFirstQuestion: () => void;
   onAnswer: SaveAnswer;
   /** Spec 045 D10: the "Try a class" search (TrySearch), between the title
    *  and the progress. CONTRACT (phase 0): lane B places it. */
   search?: React.ReactNode;
-  /** Spec 047: how many second majors / minors the plan holds. */
-  extraProgramCount?: number;
+  /** Spec 047: the primary's short name ("CS"), used once the plan holds more. */
+  primaryShortName?: string | null;
+  /** Spec 047: the second major's and minors' short names, in order. */
+  extraProgramNames?: readonly string[];
   /** Spec 047 D6: done of total over every program (else the primary's). */
   allDone?: { satisfied: number; total: number };
+  /** "CS: 13 of 31 · ORE: 3 of 14": the done count's tooltip with several programs. */
+  doneBreakdown?: string;
   /** Spec 047 D8: the plan's "count it for X" choices. */
   choices?: CountsForChoice[];
 }) {
@@ -94,11 +99,17 @@ export function PageHeader({
     };
   }, [infoOpen]);
 
-  const others =
-    programName && extraProgramCount > 0
-      ? ` + ${extraProgramCount} ${extraProgramCount === 1 ? "program" : "programs"}`
-      : "";
-  const title = `Requirements${programName ? ` · ${programName}${others}` : ""}`;
+  // Several programs: every one by its short name ("CS + ORE + Business minor").
+  const names =
+    programName && extraProgramNames.length > 0
+      ? [primaryShortName || programName, ...extraProgramNames].join(" + ")
+      : programName;
+  const title = `Requirements${names ? ` · ${names}` : ""}`;
+  const doneLine = (
+    <p data-requirements-done className="t-body font-semibold text-ink">
+      <span className="num">{satisfied}</span> of <span className="num">{total}</span> done
+    </p>
+  );
   const pct = total > 0 ? Math.round((satisfied / total) * 100) : 0;
 
   return (
@@ -127,16 +138,9 @@ export function PageHeader({
             >
               <div className="h-full rounded-full bg-complete" style={{ width: `${pct}%` }} />
             </div>
-            <p data-requirements-done className="t-body font-semibold text-ink">
-              <span className="num">{satisfied}</span> of <span className="num">{total}</span>{" "}
-              done
-              {triedCount > 0 && (
-                <span className="font-medium text-drop-text">
-                  {" "}
-                  · trying <span className="num">{triedCount}</span> {triedCount === 1 ? "class" : "classes"}
-                </span>
-              )}
-            </p>
+            {/* Tried classes are counted beside the search ("Trying N
+                classes"), so this line is only what's done. */}
+            {doneBreakdown ? <Tooltip content={doneBreakdown}>{doneLine}</Tooltip> : doneLine}
           </div>
         )}
         {questionCount > 0 && (

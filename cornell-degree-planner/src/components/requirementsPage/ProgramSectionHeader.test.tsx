@@ -75,3 +75,49 @@ describe("ProgramSectionHeader: an Engineering pair's note (spec 047 D15)", () =
     expect(note()).toBeNull();
   });
 });
+
+describe("ProgramSectionHeader: tried classes for this program (spec 047 D3)", () => {
+  const renderTried = (tried: { count: number; onClear: () => void } | null, open = true) =>
+    act(() =>
+      root.render(
+        <ProgramSectionHeader
+          section={section("ore", "secondMajor")}
+          domId="h"
+          open={open}
+          onToggle={() => {}}
+          overlapLines={[]}
+          forbiddenText={null}
+          tried={tried}
+        >
+          <p>rows</p>
+        </ProgramSectionHeader>
+      )
+    );
+  const line = () => host.querySelector<HTMLElement>("[data-program-tried]");
+
+  it("says how many tried classes count toward it, in blue and not on the board, with Clear", () => {
+    let cleared = 0;
+    renderTried({ count: 8, onClear: () => cleared++ });
+    expect(line()!.textContent).toBe(
+      "8 tried classes count toward ore, in blue: as if you take them, but they aren't on your board yet.Clear them"
+    );
+    act(() => host.querySelector<HTMLButtonElement>("[data-program-tried-clear]")!.click());
+    expect(cleared).toBe(1);
+  });
+
+  it("no line with none tried, or while the section is folded", () => {
+    renderTried(null);
+    expect(line()).toBeNull();
+    renderTried({ count: 0, onClear: () => {} });
+    expect(line()).toBeNull();
+    renderTried({ count: 2, onClear: () => {} }, false);
+    expect(line()).toBeNull();
+  });
+
+  it("the header is pinned while its groups scroll, and outranks their titles", () => {
+    renderTried(null);
+    const h2 = host.querySelector("h2")!;
+    expect(h2.className).toContain("sticky");
+    expect(h2.querySelector(".t-headline")).not.toBeNull();
+  });
+});

@@ -40,7 +40,7 @@ vi.mock("@/hooks/useCourseSearch", () => ({
   },
 }));
 
-const { TrySearch } = await import("./TrySearch");
+const { TrySearch, TRIED_EXPLAINER, groupTried } = await import("./TrySearch");
 
 const GROUPS: GroupTargets[] = [
   {
@@ -209,7 +209,7 @@ describe("TrySearch (spec 045 D10)", () => {
     // Every tried chip stays in the line's DOM; only the first is on show.
     expect($$("[data-tried-chip]", line)).toHaveLength(3);
     const more = $<HTMLButtonElement>("[data-tried-more]")!;
-    expect(more.textContent).toBe("+2");
+    expect(more.textContent).toBe("Trying 3 classes");
     expect(more.getAttribute("aria-expanded")).toBe("false");
     const list = document.getElementById(more.getAttribute("aria-controls")!)!;
     expect(list.hidden).toBe(true);
@@ -217,10 +217,12 @@ describe("TrySearch (spec 045 D10)", () => {
     // open in the browser while jsdom saw it hidden).
     expect(list.classList.contains("hidden")).toBe(true);
     expect(list.classList.contains("flex")).toBe(false);
-    expect($$("[data-tried-chip]", list).map((c) => c.dataset.triedChip)).toEqual(["PHIL-1440", "MUSIC-1101"]);
+    expect($$("[data-tried-chip]", list).map((c) => c.dataset.triedChip)).toEqual(["HIST-1530", "PHIL-1440", "MUSIC-1101"]);
     expect(list.contains($("[data-tried-clear-all]"))).toBe(true);
+    expect(list.textContent).toContain(TRIED_EXPLAINER);
+    // Closed, no chip is on show: the button stands for all of them.
     const shown = $$("[data-tried-chip]", line).filter((c) => !c.closest("[hidden]"));
-    expect(shown.map((c) => c.dataset.triedChip)).toEqual(["HIST-1530"]);
+    expect(shown).toEqual([]);
 
     click(more);
     expect(more.getAttribute("aria-expanded")).toBe("true");
@@ -245,6 +247,28 @@ describe("TrySearch (spec 045 D10)", () => {
       document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
     });
     expect(list.hidden).toBe(true);
+  });
+
+  it("several programs: the list groups tried classes under 'For <program>', the rest under 'Other classes' (spec 047)", () => {
+    triedIds = ["HIST-1530", "PHIL-1440", "MUSIC-1101"];
+    actions = makeActions();
+    render({ triedGroups: [{ label: "For ORE", ids: ["PHIL-1440", "MUSIC-1101"] }] });
+    const groups = $$("[data-tried-group]");
+    expect(groups.map((g) => g.dataset.triedGroup)).toEqual(["For ORE", "Other classes"]);
+    expect($$("[data-tried-chip]", groups[0]).map((c) => c.dataset.triedChip)).toEqual(["PHIL-1440", "MUSIC-1101"]);
+    expect($$("[data-tried-chip]", groups[1]).map((c) => c.dataset.triedChip)).toEqual(["HIST-1530"]);
+  });
+
+  it("groupTried: keeps only live ids, drops empty groups, and goes flat only with no group left", () => {
+    // One program's add put them all there: the label is the explanation.
+    expect(groupTried(["A", "B"], [{ label: "For X", ids: ["A", "B", "GONE"] }])).toEqual([{ label: "For X", ids: ["A", "B"] }]);
+    expect(groupTried(["A", "B"], [{ label: "For X", ids: ["GONE"] }])).toEqual([{ label: "", ids: ["A", "B"] }]);
+    expect(groupTried(["A", "B", "C"], [{ label: "For X", ids: ["B"] }, { label: "For Y", ids: ["B", "C"] }])).toEqual([
+      { label: "For X", ids: ["B"] },
+      { label: "For Y", ids: ["C"] },
+      { label: "Other classes", ids: ["A"] },
+    ]);
+    expect(groupTried(["A"], undefined)).toEqual([{ label: "", ids: ["A"] }]);
   });
 
   it("a tried class no longer offered: '<code> is no longer offered · Remove'", () => {

@@ -13,6 +13,7 @@ import {
   programPhrase,
 } from "@/components/requirements/programSections";
 import { fillToast } from "./programsModel";
+import { useRevealProgram } from "./revealProgram";
 
 type Pending = {
   programId: string;
@@ -117,7 +118,9 @@ export function useProgramFlows(progress: ProgramFlowsProgress) {
       // A refusal is toasted by addProgram itself (PlanProvider owns "never
       // silent"); a second toast here would overwrite it.
       if (result !== "added") return result;
-      pending.current = { programId: p.programId, shortName: p.shortName, planId, seen: false, overlapBefore: overlap };
+      // The Requirements page opens at the new program's section.
+      useRevealProgram.getState().reveal(p.programId);
+      pending.current ={ programId: p.programId, shortName: p.shortName, planId, seen: false, overlapBefore: overlap };
       return result;
     },
     [addProgram, planId, overlap]

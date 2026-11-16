@@ -599,7 +599,7 @@ describe("RequirementsPage — several programs (spec 047)", () => {
   it("stacks one foldable section per program, names them in the title and counts every program", () => {
     state.progress = multi();
     render();
-    expect($("h1")!.textContent).toBe("Requirements · Economics (BA) + 2 programs");
+    expect($("h1")!.textContent).toBe("Requirements · Economics + Mathematics + CS minor");
     expect($$("[data-program-section]").map((el) => el.dataset.programSection)).toEqual([
       "cas-college",
       "economics",

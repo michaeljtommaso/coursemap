@@ -181,7 +181,7 @@ export function RequirementTable({
         id={cardDomId(ADVISOR_CARD_KEY)}
         data-advisor-card
         data-group-card={ADVISOR_CARD_KEY}
-        className="flex scroll-mt-4 flex-col overflow-hidden rounded-lg border border-dashed border-line-strong bg-surface"
+        className="flex scroll-mt-[var(--group-scroll-mt,1rem)] flex-col overflow-hidden rounded-lg border border-dashed border-line-strong bg-surface"
       >
         <h2 className="px-5 pt-3 t-headline">
           <button
@@ -228,7 +228,7 @@ export function RequirementTable({
       id={cardDomId(group.key)}
       data-group-card={group.key}
       data-requirement-group={group.key}
-      className="flex scroll-mt-4 flex-col overflow-hidden rounded-lg border border-line bg-surface"
+      className="flex scroll-mt-[var(--group-scroll-mt,1rem)] flex-col overflow-hidden rounded-lg border border-line bg-surface"
     >
       <div className="flex items-center gap-4 px-5 py-3">
         <h2 className="min-w-0 flex-1 truncate t-headline">{group.title}</h2>
