@@ -1,0 +1,195 @@
+{
+  "id": "cornell-latina-o-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Latina/o Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-latina-o-studies-minor-2026",
+  "rows": [
+    {
+      "id": "intro-course",
+      "label": "One introductory Latina/o Studies course",
+      "group": "Introductory course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts the introductory course under its LSP number or under a department it is cross-listed with (the same course and title).",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "LSP-1802",
+                  "LSP-2031",
+                  "LSP-2100",
+                  "LSP-2400",
+                  "LSP-2720"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "LSP"
+                    ],
+                    "crossListed": true
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "titleStartsWith": "Introduction to Latinos in U.S. History"
+                      },
+                      {
+                        "titleStartsWith": "Introduction to Latino-a-x Politics"
+                      },
+                      {
+                        "titleStartsWith": "Introduction to Latina-o-x Studies"
+                      },
+                      {
+                        "titleStartsWith": "Introduction to U.S. Latinx Literature"
+                      },
+                      {
+                        "titleStartsWith": "Introduction to Latina-o-x Performance"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "additional-courses",
+      "label": "Four more courses: other introductory courses or Latina/o Studies courses (including LSP cross-listings), at least two at 3000 or 4000 level",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts other introductory courses and courses coded LSP or cross-listed under LSP, under any of their numbers. Courses of 1 or 2 credits, variable-credit courses, writing seminars and LSP 4210 are held out (see the confirm rows). The program's electives with an LSP number (Spanish for Heritage Speakers, ARTH 3550 / LSP 3551, ARTH 3566 / LSP 3566) are matched by title and held to one; GOVT 3252 and PMA 4702 are not counted.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "LSP-1802",
+                  "LSP-2031",
+                  "LSP-2100",
+                  "LSP-2400",
+                  "LSP-2720"
+                ]
+              },
+              {
+                "subject": [
+                  "LSP"
+                ],
+                "crossListed": true
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS:"
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "LSP-4210"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 12,
+      "limits": [
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "titleStartsWith": "Spanish for Heritage Speakers"
+              },
+              {
+                "titleStartsWith": "Modern and Contemporary Latin American Art"
+              },
+              {
+                "titleStartsWith": "Art and Architecture of the Pre-Columbian Americas"
+              }
+            ]
+          },
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          },
+          "minCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "humanities-social-science",
+      "label": "Confirm your four extra courses cover both a Humanities course and a Social Science course",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot see a course's category; ask the program office.",
+      "kind": "confirm"
+    },
+    {
+      "id": "elective-checks",
+      "label": "Confirm any variable-credit course or LSP 4210 (director's approval) you plan to count, and that at most one of your courses is an LSP elective",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board does not count LSP 4210 or variable-credit courses; confirm with the program office if you plan to use one. The program keeps its list of electives on its own website; the board holds the listed ones with an LSP number to one, does not count GOVT 3252 or PMA 4702, and cannot see a course the program adds to the list later. Ask the program office whether a course is an elective.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-or-better",
+      "label": "Earn a C or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-for-minor",
+      "label": "Submit the minor application to the program office before senior year begins",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latina-o-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

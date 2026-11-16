@@ -14,6 +14,7 @@ import {
 } from "@/services/catalog";
 import { rankSearch } from "@/lib/catalog/rankSearch";
 import { recordToCourse } from "@/lib/catalog/recordToCourse";
+import { withCrossListings } from "@/lib/planner/matchAdapters";
 import type { CatalogIndexRecord } from "@/lib/schemas";
 import type { Course } from "@/types/db";
 
@@ -131,7 +132,9 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
     // degrade gracefully (aliases → {}, enrollmentTarget → null / all far).
     fetchCatalogMeta()
       .then((meta) => {
-        setAliases((meta.aliases as Record<string, string>) ?? {});
+        // Roster cross-listings ride on the alias map object (they add
+        // crossListedSubjects only; ids still canonicalize by aliases alone).
+        setAliases(withCrossListings((meta.aliases as Record<string, string>) ?? {}, meta.crossListings));
         const target = meta.enrollmentTarget;
         setEnrollmentTarget(typeof target === "string" ? target : null);
       })

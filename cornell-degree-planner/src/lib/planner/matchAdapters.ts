@@ -39,21 +39,41 @@ function splitCourseId(id: string): { subject: string; number: string } {
 }
 
 /**
+ * Roster cross-listings (catalog/meta `crossListings`: member id → its
+ * family's representative id; classes sharing a roster crseId, e.g. LSP-3770,
+ * HIST-3770, AMST-3775). They feed ONLY crossListedSubjects, never id
+ * canonicalization: the alias map alone decides which ids are the same course
+ * for lists, prerequisites, duplicates and stored marks. They ride on the alias
+ * map object they were loaded with (withCrossListings), so every memo keyed on
+ * that object recomputes when they arrive, and no call site changes.
+ */
+const crossListingsByAliases = new WeakMap<Record<string, string>, Record<string, string>>();
+
+/** A copy of `aliases` that carries `crossListings` (CatalogProvider). */
+export function withCrossListings(
+  aliases: Record<string, string>,
+  crossListings: Record<string, string> | undefined
+): Record<string, string> {
+  const out = { ...aliases };
+  if (crossListings && Object.keys(crossListings).length > 0) crossListingsByAliases.set(out, crossListings);
+  return out;
+}
+
+/**
  * Subjects a course is cross-listed under (spec 019, CALS cross-listing):
- * the subjects of every OTHER id that shares this course's canonical id in the
- * alias map (alias id → canonical id; `aliases[id] ?? id` canonicalizes).
- * ENGRD-2110 → ["CS"]; CS-2110 → ["ENGRD"]. Undefined when there are none.
+ * the subjects of every OTHER id in this course's family. Families come from
+ * the alias map (ids sharing a canonical id: ENGRD-2110 → ["CS"], CS-2110 →
+ * ["ENGRD"]) joined with the roster cross-listings it carries (HIST-3770 →
+ * ["AMST", "LSP"]). Undefined when there are none.
  */
 function crossListedSubjectsFor(
   id: string,
   subject: string,
-  byCanonical: Map<string, string[]> | null,
-  aliases: Record<string, string> | undefined
+  families: CrossListFamilies | null
 ): string[] | undefined {
-  if (!byCanonical || !aliases) return undefined;
-  const canonical = aliases[id] ?? id;
+  if (!families) return undefined;
   const subjects = new Set<string>();
-  for (const other of byCanonical.get(canonical) ?? []) {
+  for (const other of families.get(id) ?? []) {
     if (other === id) continue;
     const s = splitCourseId(other).subject;
     if (s && s !== subject) subjects.add(s);
@@ -61,25 +81,61 @@ function crossListedSubjectsFor(
   return subjects.size > 0 ? [...subjects].sort() : undefined;
 }
 
-/** canonical id → every id in its cross-listing family (canonical included). */
-function aliasFamilies(aliases: Record<string, string>): Map<string, string[]> {
-  const out = new Map<string, string[]>();
-  for (const [alias, canonical] of Object.entries(aliases)) {
-    const ids = out.get(canonical) ?? [canonical];
-    ids.push(alias);
-    out.set(canonical, ids);
+/** id → every id in its family (itself included), for every id in a family. */
+type CrossListFamilies = Map<string, string[]>;
+
+/** Families from member → representative maps (aliases and roster
+ *  cross-listings), joined where they share an id. Null when both are empty. */
+function crossListFamilies(aliases: Record<string, string> | undefined): CrossListFamilies | null {
+  if (!aliases) return null;
+  const cached = familiesCache.get(aliases);
+  if (cached !== undefined) return cached;
+  const built = buildCrossListFamilies(aliases);
+  familiesCache.set(aliases, built);
+  return built;
+}
+
+/** Families per alias map object: built once, not on every pool rebuild. */
+const familiesCache = new WeakMap<Record<string, string>, CrossListFamilies | null>();
+
+function buildCrossListFamilies(aliases: Record<string, string>): CrossListFamilies | null {
+  const maps = [aliases, aliases ? crossListingsByAliases.get(aliases) : undefined].filter(
+    (m): m is Record<string, string> => m != null && Object.keys(m).length > 0
+  );
+  if (maps.length === 0) return null;
+  const parent = new Map<string, string>();
+  const find = (x: string): string => {
+    if (!parent.has(x)) parent.set(x, x);
+    let r = x;
+    while (parent.get(r) !== r) r = parent.get(r)!;
+    parent.set(x, r);
+    return r;
+  };
+  for (const m of maps) for (const [member, rep] of Object.entries(m)) {
+    const a = find(member);
+    const b = find(rep);
+    if (a !== b) parent.set(a, b);
   }
+  const byRoot = new Map<string, string[]>();
+  for (const id of parent.keys()) {
+    const root = find(id);
+    const ids = byRoot.get(root);
+    if (ids) ids.push(id);
+    else byRoot.set(root, [id]);
+  }
+  const out: CrossListFamilies = new Map();
+  for (const ids of byRoot.values()) for (const id of ids) out.set(id, ids);
   return out;
 }
 
-/** id + subject → its cross-listed subjects, from an alias map (families
- *  precomputed once). The board pool and Find a class share it, so a
- *  `crossListed` rule sees the same subjects on both. */
+/** id + subject → its cross-listed subjects, from an alias map and the roster
+ *  cross-listings it carries (families precomputed once). The board pool and
+ *  Find a class share it, so a `crossListed` rule sees the same subjects on both. */
 export function crossListedSubjectsLookup(
   aliases: Record<string, string> | undefined
 ): (id: string, subject: string) => string[] | undefined {
-  const families = aliases && Object.keys(aliases).length > 0 ? aliasFamilies(aliases) : null;
-  return (id, subject) => crossListedSubjectsFor(id, subject, families, aliases);
+  const families = crossListFamilies(aliases);
+  return (id, subject) => crossListedSubjectsFor(id, subject, families);
 }
 
 /** Build a pool course from a real Course (placed pick or completed-template
@@ -232,12 +288,12 @@ export function buildMatchPool(input: {
   const { placements, placedCourses, creditProfile, aliases, details, enteringYear, catalogAttrs, courseMarks } = input;
   const out: DistCourse[] = [];
   const seen = new Set<string>();
-  const families = aliases && Object.keys(aliases).length > 0 ? aliasFamilies(aliases) : null;
+  const families = crossListFamilies(aliases);
 
   const push = (mc: DistCourse) => {
     if (seen.has(mc.id)) return;
     seen.add(mc.id);
-    const crossListedSubjects = crossListedSubjectsFor(mc.id, mc.subject, families, aliases);
+    const crossListedSubjects = crossListedSubjectsFor(mc.id, mc.subject, families);
     out.push(crossListedSubjects ? { ...mc, crossListedSubjects } : mc);
   };
 

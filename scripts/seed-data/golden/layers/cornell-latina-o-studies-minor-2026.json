@@ -1,0 +1,358 @@
+{
+  "programId": "cornell-latina-o-studies-minor-2026",
+  "description": "A student takes the US Latinos history introduction under its HIST number, a second introduction, one heritage Spanish elective, and two upper-level courses registered under their HIST and AMST cross-listings.",
+  "layerIds": [
+    "cornell-latina-o-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "HIST-1802",
+    "LSP-2100",
+    "LSP-1250",
+    "HIST-3770",
+    "AMST-3800"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "SPAN-2000",
+      "rowId": "additional-courses",
+      "why": "A second elective from the program's list: only one may count, and the plan already uses its one."
+    },
+    {
+      "courseId": "ARTH-3550",
+      "rowId": "additional-courses",
+      "why": "An elective taken under its art history number is still the program's elective, and the one allowed is used."
+    },
+    {
+      "courseId": "GOVT-3252",
+      "rowId": "additional-courses",
+      "why": "A listed elective with no Latina/o Studies number is not counted by the board."
+    },
+    {
+      "courseId": "HIST-2765",
+      "rowId": "intro-course",
+      "why": "A cross-listed Latina/o Studies course that is not one of the introductory courses cannot fill the introductory seat."
+    },
+    {
+      "courseId": "LSP-4210",
+      "rowId": "additional-courses",
+      "why": "Independent study needs director approval, so the board does not count it."
+    },
+    {
+      "courseId": "LSP-4000",
+      "rowId": "additional-courses",
+      "why": "A one-credit LSP course is too small to count."
+    },
+    {
+      "courseId": "LSP-1101",
+      "rowId": "additional-courses",
+      "why": "A one-credit LSP course is too small to count."
+    },
+    {
+      "courseId": "ENGL-2010",
+      "rowId": "additional-courses",
+      "why": "A course with no LSP subject or cross-listing is not Latina/o Studies."
+    }
+  ],
+  "courses": [
+    {
+      "id": "HIST-1802",
+      "subject": "HIST",
+      "number": "1802",
+      "title": "Introduction to Latinos in U.S. History",
+      "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "LATA",
+        "LSP",
+        "SHUM"
+      ],
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "LH-IL"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "LSP-2100",
+      "subject": "LSP",
+      "number": "2100",
+      "title": "Introduction to Latina-o-x Studies",
+      "credits": 3,
+      "crossListedSubjects": [
+        "AMST"
+      ],
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "LSP-1250",
+      "subject": "LSP",
+      "number": "1250",
+      "title": "Spanish for Heritage Speakers I",
+      "credits": 3,
+      "crossListedSubjects": [
+        "SPAN"
+      ],
+      "attrs": [
+        {
+          "value": "FL-AG"
+        }
+      ]
+    },
+    {
+      "id": "HIST-3770",
+      "subject": "HIST",
+      "number": "3770",
+      "title": "Latinos and the United States, 1492-1880",
+      "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "LSP"
+      ],
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "HIST-HPE"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-3800",
+      "subject": "AMST",
+      "number": "3800",
+      "title": "Migration: Histories, Controversies, and Perspectives",
+      "credits": 3,
+      "crossListedSubjects": [
+        "ILRGL",
+        "LSP",
+        "PUBPOL",
+        "SOC"
+      ],
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "AWI-IL"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "SPAN-2000",
+      "subject": "SPAN",
+      "number": "2000",
+      "title": "Spanish for Heritage Speakers",
+      "credits": 3,
+      "crossListedSubjects": [
+        "LSP"
+      ],
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3550",
+      "subject": "ARTH",
+      "number": "3550",
+      "title": "Modern and Contemporary Latin American Art",
+      "credits": 3,
+      "crossListedSubjects": [
+        "LATA",
+        "LSP"
+      ],
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-3252",
+      "subject": "GOVT",
+      "number": "3252",
+      "title": "Media, Race, and Political Power in the United States",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2765",
+      "subject": "HIST",
+      "number": "2765",
+      "title": "The North American West",
+      "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "LSP"
+      ],
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "LSP-4210",
+      "subject": "LSP",
+      "number": "4210",
+      "title": "Undergraduate Independent Study",
+      "credits": 2,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "LSP-4000",
+      "subject": "LSP",
+      "number": "4000",
+      "title": "Contemporary Issues in Latin - Latino America",
+      "credits": 1,
+      "crossListedSubjects": [
+        "LATA"
+      ],
+      "attrs": []
+    },
+    {
+      "id": "LSP-1101",
+      "subject": "LSP",
+      "number": "1101",
+      "title": "Research Strategies in Africana and Latino Studies",
+      "credits": 1,
+      "crossListedSubjects": [
+        "ASRC"
+      ],
+      "attrs": [
+        {
+          "value": "AFAREA"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2010",
+      "subject": "ENGL",
+      "number": "2010",
+      "title": "Literatures in English I: From Old English to the New World",
+      "credits": 3,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-PRE"
+        }
+      ]
+    }
+  ]
+}

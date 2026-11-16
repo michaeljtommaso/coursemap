@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildMatchPool, matchCredits, programSlotsToMatchInput } from "./matchAdapters";
+import { buildMatchPool, crossListedSubjectsLookup, matchCredits, programSlotsToMatchInput, withCrossListings } from "./matchAdapters";
 import { programToRequirements } from "./majorMatch";
 import type { Course, ProgramSlotWithData, ElectiveGroup } from "@/types/db";
 import type { CreditEntry } from "@/lib/schemas";
@@ -203,6 +203,43 @@ describe("buildMatchPool — DistCourse fields (spec 019)", () => {
     expect(byId["ENGRD-2100"]).toEqual(["ECE"]); // alias → the canonical's subject
     expect(byId["STSCI-2200"]).toEqual(["BTRY"]); // credit courses too
     expect(byId["MATH-1910"]).toBeUndefined(); // not cross-listed
+  });
+
+  it("roster cross-listings carried by the alias map add crossListedSubjects (spec 047, Latina/o Studies)", () => {
+    // LSP-3770 / HIST-3770 / AMST-3775 are one course (one roster crseId);
+    // ENGL-4577 joins LSP-4577 the same way. Representative = first id.
+    const aliases = withCrossListings(ALIASES, { "HIST-3770": "AMST-3775", "LSP-3770": "AMST-3775", "LSP-4577": "ENGL-4577" });
+    const pool = buildMatchPool({
+      placements: [P("a", "HIST-3770", 1, 0), P("b", "LSP-3770", 1, 1), P("c", "ENGL-4577", 1, 2), P("d", "CS-2110", 1, 3), P("e", "MATH-1910", 1, 4)],
+      placedCourses: {},
+      creditProfile: [],
+      aliases,
+    });
+    const byId = Object.fromEntries(pool.map((c) => [c.id, c.crossListedSubjects]));
+    expect(byId["HIST-3770"]).toEqual(["AMST", "LSP"]);
+    expect(byId["LSP-3770"]).toEqual(["AMST", "HIST"]);
+    expect(byId["ENGL-4577"]).toEqual(["LSP"]); // the representative sees its members
+    expect(byId["CS-2110"]).toEqual(["ENGRD"]); // the alias families still count
+    expect(byId["MATH-1910"]).toBeUndefined();
+  });
+
+  it("roster cross-listings never canonicalize: the alias map's contents are unchanged", () => {
+    const aliases = withCrossListings(ALIASES, { "HIST-3770": "AMST-3775" });
+    expect(aliases).toEqual(ALIASES);
+    expect(aliases["HIST-3770"]).toBeUndefined();
+    // A plain copy (or the original object) carries no cross-listings.
+    const lookupPlain = crossListedSubjectsLookup({ ...aliases });
+    const lookup = crossListedSubjectsLookup(aliases);
+    expect(lookupPlain("HIST-3770", "HIST")).toBeUndefined();
+    expect(lookup("HIST-3770", "HIST")).toEqual(["AMST"]);
+    expect(lookup("AMST-3775", "AMST")).toEqual(["HIST"]);
+  });
+
+  it("a family joined through an alias and a cross-listing takes every subject", () => {
+    // ENGRD-2110 → CS-2110 (alias) and CS-2110 / ORIE-2110 (made-up roster twin).
+    const lookup = crossListedSubjectsLookup(withCrossListings(ALIASES, { "ORIE-2110": "CS-2110" }));
+    expect(lookup("ENGRD-2110", "ENGRD")).toEqual(["CS", "ORIE"]);
+    expect(lookup("ORIE-2110", "ORIE")).toEqual(["CS", "ENGRD"]);
   });
 
   it("without aliases no course carries crossListedSubjects (the Engineering callers)", () => {

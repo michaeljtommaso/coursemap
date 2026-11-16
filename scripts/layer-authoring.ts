@@ -53,7 +53,7 @@ import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
 import { z } from "zod";
 import { LayerSchema } from "../cornell-degree-planner/src/lib/schemas";
-import { matchCredits } from "../cornell-degree-planner/src/lib/planner/matchAdapters";
+import { crossListedSubjectsLookup, matchCredits, withCrossListings } from "../cornell-degree-planner/src/lib/planner/matchAdapters";
 import { courseMatchesRule } from "../cornell-degree-planner/src/lib/planner/distribution/rules";
 import { questionRef } from "../cornell-degree-planner/src/lib/planner/questions/keys";
 import { questionText } from "../cornell-degree-planner/src/lib/planner/questions/registry";
@@ -542,9 +542,38 @@ export function catalogToDist(c: CatalogCourse): DistCourse {
 
 export type DistCatalog = { courses: DistCourse[]; byId: Map<string, DistCourse> };
 
-export function loadDistCatalog(dumpPath: string = DEFAULT_DUMP): DistCatalog {
+/** The committed cross-listing maps the app reads from catalog/meta: aliases
+ *  (seed-aliases.ts) and roster cross-listings (seed-cross-listings.ts). */
+export const ALIASES_FILE = resolve(__dirname, "seed-data", "aliases.json");
+export const CROSS_LISTINGS_FILE = resolve(__dirname, "seed-data", "cross-listings.json");
+
+/** The alias map carrying the roster cross-listings, exactly as CatalogProvider
+ *  builds it, from the committed seed files ({} when absent). */
+export function seededAliasMap(files: { aliases?: string; crossListings?: string } = {}): Record<string, string> {
+  const aliasesFile = files.aliases ?? ALIASES_FILE;
+  const crossFile = files.crossListings ?? CROSS_LISTINGS_FILE;
+  const aliases = existsSync(aliasesFile) ? (JSON.parse(readFileSync(aliasesFile, "utf-8")) as Record<string, string>) : {};
+  const cross = existsSync(crossFile) ? (JSON.parse(readFileSync(crossFile, "utf-8")) as { crossListings?: Record<string, string> }).crossListings : undefined;
+  return withCrossListings(aliases, cross);
+}
+
+/** Give each course the cross-listed subjects the app gives it on the board
+ *  (matchAdapters' crossListedSubjectsLookup over the seeded maps). */
+export function withCrossListedSubjects(courses: DistCourse[], aliasMap: Record<string, string>): DistCourse[] {
+  const lookup = crossListedSubjectsLookup(aliasMap);
+  return courses.map((c) => {
+    const subjects = lookup(c.id, c.subject);
+    return subjects ? { ...c, crossListedSubjects: subjects } : c;
+  });
+}
+
+/** The catalog dump as board courses. Each course carries the cross-listed
+ *  subjects the app derives from the committed alias and cross-listing maps
+ *  (`crossListings: false` leaves them off). */
+export function loadDistCatalog(dumpPath: string = DEFAULT_DUMP, opts: { crossListings?: boolean } = {}): DistCatalog {
   if (!existsSync(dumpPath)) throw new Error(`catalog dump not found: ${dumpPath}`);
-  const courses = loadCatalogDump(dumpPath).map(catalogToDist);
+  let courses = loadCatalogDump(dumpPath).map(catalogToDist);
+  if (opts.crossListings !== false) courses = withCrossListedSubjects(courses, seededAliasMap());
   return { courses, byId: new Map(courses.map((c) => [c.id, c])) };
 }
 
