@@ -214,7 +214,8 @@ export function ShareView({ shareId }: { shareId: string }) {
   const waivedCount = model.waivedRequirementIds.length;
 
   return (
-    <div className="flex h-screen flex-col bg-canvas text-ink">
+    // Never scrolls as a whole (see RequirementsPage): only its panes scroll.
+    <div className="relative flex h-screen flex-col overflow-clip bg-canvas text-ink">
       {/* Header */}
       <div className="border-b border-line bg-surface/90">
         <div className="flex items-center justify-between gap-4 px-4 py-3">

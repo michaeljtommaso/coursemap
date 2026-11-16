@@ -218,7 +218,8 @@ export function ClassesPage() {
   );
 
   return (
-    <div className="flex h-screen flex-col bg-canvas text-ink">
+    // Never scrolls as a whole (see RequirementsPage): only its panes scroll.
+    <div className="relative flex h-screen flex-col overflow-clip bg-canvas text-ink">
       {/* Header + nav */}
       <header className="flex shrink-0 items-center gap-4 border-b border-line bg-surface/70 px-5 py-3">
         <Link

@@ -781,7 +781,11 @@ export function RequirementsPage() {
   }
 
   return (
-    <div data-requirements-page className="flex h-screen flex-col bg-canvas text-ink">
+    // A fixed h-screen viewport that never scrolls as a whole: only the outline
+    // and the main column scroll. `relative` + `overflow-clip` keep anything
+    // absolutely placed with no positioned parent (sr-only labels deep in the
+    // scrolled content) from stretching the document past the window.
+    <div data-requirements-page className="relative flex h-screen flex-col overflow-clip bg-canvas text-ink">
       <PageHeader
         programName={program?.name ?? null}
         progress={progress}
