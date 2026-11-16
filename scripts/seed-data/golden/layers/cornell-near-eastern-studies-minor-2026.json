@@ -1,0 +1,220 @@
+{
+  "programId": "cornell-near-eastern-studies-minor-2026",
+  "description": "A student takes five Near Eastern Studies courses, three of them numbered 3000 or above, to finish the minor.",
+  "layerIds": [
+    "cornell-near-eastern-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-near-eastern-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "NES-2627",
+    "NES-2644",
+    "NES-3448",
+    "NES-3655",
+    "NES-3778"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ARAB-1201",
+      "rowId": "content-courses",
+      "why": "A language course is not one of the history, archaeology, literature or religion courses."
+    },
+    {
+      "courseId": "NES-2201",
+      "rowId": "five-courses",
+      "why": "An Urdu language course is not one of the listed minor languages, so the main row does not count it."
+    },
+    {
+      "courseId": "NES-3325",
+      "rowId": "five-courses",
+      "why": "An Urdu language course is not one of the listed minor languages, so the main row does not count it at any level."
+    },
+    {
+      "courseId": "NES-3325",
+      "rowId": "content-courses",
+      "why": "An advanced Urdu language course is not a history, archaeology, literature or religion course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "NES-2627",
+      "subject": "NES",
+      "number": "2627",
+      "title": "Introduction to Islam",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "HIST-HGS"
+        }
+      ]
+    },
+    {
+      "id": "NES-2644",
+      "subject": "NES",
+      "number": "2644",
+      "title": "Introduction to Judaism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "NES-3448",
+      "subject": "NES",
+      "number": "3448",
+      "title": "Islamic Mysticism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "NES-3655",
+      "subject": "NES",
+      "number": "3655",
+      "title": "Minorities of the Middle East",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "NES-3778",
+      "subject": "NES",
+      "number": "3778",
+      "title": "Pharaohs and Fables",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ARAB-1201",
+      "subject": "ARAB",
+      "number": "1201",
+      "title": "Elementary Arabic I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "NES-2201",
+      "subject": "NES",
+      "number": "2201",
+      "title": "Intermediate Urdu Reading and Writing I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "NES-3325",
+      "subject": "NES",
+      "number": "3325",
+      "title": "Literary Reading and Writing in Advanced Urdu",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    }
+  ]
+}

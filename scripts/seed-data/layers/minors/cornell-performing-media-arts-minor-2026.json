@@ -1,0 +1,400 @@
+{
+  "id": "cornell-performing-media-arts-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Performing and Media Arts (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-performing-media-arts-minor-2026",
+  "rows": [
+    {
+      "id": "min-grade",
+      "label": "Earn a C or better in every course used (S/U only if the course has no letter option)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor through the director of undergraduate studies, before week three of your last semester",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intro-pma-2100",
+      "label": "PMA 2100 introductory course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PMA-2100"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "global-course",
+      "label": "One global studies course: cinema and media, theatre and performance, or dance",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PMA-3550",
+              "PMA-3750",
+              "PMA-3226"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "rubric-courses",
+      "label": "Three further PMA courses of 3+ credits, one each in the Design, Creative Authorship and Embodied Performance areas",
+      "group": "Area courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page does not list which courses belong to each area, so the board counts only the number: undergraduate PMA-coded courses of 3+ credits, leaving out labs, independent and directed study, honors tutorials, internships, apprenticeship and first-year writing seminars. The three area reminder rows carry the real rule.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PMA"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "PMA-2100",
+                "PMA-3550",
+                "PMA-3750",
+                "PMA-3226"
+              ]
+            }
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "titleStartsWith": "Independent Study"
+                },
+                {
+                  "titleStartsWith": "Directed Study"
+                },
+                {
+                  "titleStartsWith": "Honors Research Tutorial"
+                },
+                {
+                  "titleStartsWith": "Creative Apprenticeship"
+                },
+                {
+                  "titleStartsWith": "Production Crew Laboratory"
+                },
+                {
+                  "titleStartsWith": "Stage Management Laboratory"
+                },
+                {
+                  "titleStartsWith": "FWS:"
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "area-design",
+      "label": "Make sure one of these courses is in the Design area",
+      "group": "Area courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "area-creative-authorship",
+      "label": "Make sure one of these courses is in the Creative Authorship area",
+      "group": "Area courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "area-embodied-performance",
+      "label": "Make sure one of these courses is in the Embodied Performance area",
+      "group": "Area courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "production-lab",
+      "label": "One production lab (media production or production technology)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Lab credit counts only for this requirement, so labs are held out of the area-course row.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PMA-1410",
+              "PMA-1610"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "total-credits",
+      "label": "At least 18 credits of PMA coursework in the minor",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Re-counts courses the rows above use: undergraduate PMA courses of 3+ credits (no independent or directed study, honors tutorials, internships or first-year writing seminars) plus one production lab. Cross-listed courses must be taught by PMA faculty (see reminder).",
+      "kind": "credits",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "PMA"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2000,
+                  "max": 4999
+                }
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "course": [
+                    "PMA-2100",
+                    "PMA-3550",
+                    "PMA-3750",
+                    "PMA-3226"
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "anyOf": [
+                    {
+                      "titleStartsWith": "Independent Study"
+                    },
+                    {
+                      "titleStartsWith": "Directed Study"
+                    },
+                    {
+                      "titleStartsWith": "Honors Research Tutorial"
+                    },
+                    {
+                      "titleStartsWith": "Creative Apprenticeship"
+                    },
+                    {
+                      "titleStartsWith": "Production Crew Laboratory"
+                    },
+                    {
+                      "titleStartsWith": "Stage Management Laboratory"
+                    },
+                    {
+                      "titleStartsWith": "FWS:"
+                    }
+                  ]
+                }
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "PMA-2100",
+                  "PMA-3550",
+                  "PMA-3750",
+                  "PMA-3226"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "PMA-1410",
+                  "PMA-1610"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 18,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "PMA-1410",
+              "PMA-1610"
+            ]
+          },
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "cross-list-faculty",
+      "label": "A cross-listed course counts only if PMA faculty teach or co-teach it",
+      "group": "Eligible courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "study-abroad",
+      "label": "Study abroad courses count only through Cornell-affiliated programs (such as Cornell in Rome)",
+      "group": "Eligible courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/performing-media-arts-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

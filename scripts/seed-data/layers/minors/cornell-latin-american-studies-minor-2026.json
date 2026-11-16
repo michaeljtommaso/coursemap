@@ -1,0 +1,125 @@
+{
+  "id": "cornell-latin-american-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Latin American Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-latin-american-studies-minor-2026",
+  "rows": [
+    {
+      "id": "language",
+      "label": "Spanish or Portuguese language proficiency at the intermediate level",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latin-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board recognizes the three named intermediate courses (credit earned by test also shows). A higher course, or a Cornell course taken as a language-across-the-curriculum add-on, is not read by the board: use the reminder row below.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "SPAN-2095",
+          "PORT-2010",
+          "PORT-2020"
+        ]
+      }
+    },
+    {
+      "id": "language-check",
+      "label": "Confirm your language proficiency: the intermediate course or a higher one (not a language-across-the-curriculum course), or tested out of Spanish",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latin-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "lata-electives",
+      "label": "Fifteen credits of Latin American and Caribbean Studies courses (LATA courses counted here)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latin-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts courses with the LATA code. Approved courses from other departments, Quechua and Caribbean courses come from the program website list and are not read by the board: use the reminder row below. These credits are in addition to the language requirement.",
+      "kind": "pool",
+      "rule": {
+        "subject": [
+          "LATA"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 15
+    },
+    {
+      "id": "other-approved-electives",
+      "label": "Confirm elective credits from other departments on the program list (Quechua, Caribbean), and that the 15 credits span two departments",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latin-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "advanced-course",
+      "label": "At least one LATA course at the 3000 or 4000 level (not graduate level) among the elective courses",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latin-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Re-counts a course the electives row already uses, so it never uses up an extra course. If your advanced course is from another department approved list, confirm it with the reminder below.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "LATA"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000,
+              "max": 4999
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "advanced-course-check",
+      "label": "Confirm one elective course is at the advanced level (3000 or 4000), whichever department it is in",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latin-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "study-abroad-evaluation",
+      "label": "Credits from study abroad in a Spanish or Portuguese language region need evaluation by the program manager before they count",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latin-american-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-for-minor",
+      "label": "Apply to the Latin American Studies minor through the program",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/latin-american-studies-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

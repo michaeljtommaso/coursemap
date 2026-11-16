@@ -1,0 +1,133 @@
+{
+  "id": "cornell-marine-biology-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Marine Biology (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-marine-biology-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 2
+    }
+  },
+  "rows": [
+    {
+      "id": "minor-courses",
+      "label": "15 credits from the foundation (A) and advanced (B) course lists, with at least one A course and four B courses",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/marine-biology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Stricter than the page on purpose. The page needs two B courses outside your major; the board cannot see which B courses your major counts, so it asks for four B courses and lets at most two courses count for both programs, which always leaves two B courses outside the major. The one-A-course floor comes from the page description of an introductory first class. If you have only two or three B courses outside your major, confirm with the row below.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOEE-1540",
+          "BIOEE-1560",
+          "BIOSM-1500",
+          "BIOSM-1610",
+          "BIOSM-1780",
+          "BIOAP-3300",
+          "BIOEE-4760",
+          "BIOEE-4761",
+          "BIOEE-4790",
+          "BIOMI-3500",
+          "BIOSM-2500",
+          "BIOSM-2800",
+          "BIOSM-3210",
+          "BIOSM-3290",
+          "BIOSM-3330",
+          "BIOSM-3450",
+          "BIOSM-3650",
+          "BIOSM-3750",
+          "BIOSM-4650",
+          "EAS-3540",
+          "NTRES-3110",
+          "NTRES-3111"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOEE-1540",
+              "BIOEE-1560",
+              "BIOSM-1500",
+              "BIOSM-1610",
+              "BIOSM-1780"
+            ]
+          },
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "BIOAP-3300",
+              "BIOEE-4760",
+              "BIOEE-4761",
+              "BIOEE-4790",
+              "BIOMI-3500",
+              "BIOSM-2500",
+              "BIOSM-2800",
+              "BIOSM-3210",
+              "BIOSM-3290",
+              "BIOSM-3330",
+              "BIOSM-3450",
+              "BIOSM-3650",
+              "BIOSM-3750",
+              "BIOSM-4650",
+              "EAS-3540",
+              "NTRES-3110",
+              "NTRES-3111"
+            ]
+          },
+          "minCourses": 4
+        }
+      ]
+    },
+    {
+      "id": "two-b-outside-major",
+      "label": "Keep at least two Group B courses out of your major's requirements",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/marine-biology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The overlap cap on the layer is the stricter board-visible version; this row is the exact rule, which names Group B specifically.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-or-better",
+      "label": "Earn a C or better in every course counted; S/U grades do not count",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/marine-biology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sea-semester",
+      "label": "SEA Semester courses may be accepted for the minor: confirm with the coordinator",
+      "group": "Other accepted courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/marine-biology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the certification form to declare the minor, and the signed completed form in your final semester",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/marine-biology-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

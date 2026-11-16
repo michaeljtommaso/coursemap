@@ -1,0 +1,255 @@
+{
+  "programId": "cornell-performing-media-arts-minor-2026",
+  "description": "A student takes the department intro, one global course, a lab, and three further three-credit studio courses.",
+  "layerIds": [
+    "cornell-performing-media-arts-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-performing-media-arts-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PMA-2100",
+    "PMA-3226",
+    "PMA-1410",
+    "PMA-2300",
+    "PMA-2221",
+    "PMA-3243"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PMA-1610",
+      "rowId": "rubric-courses",
+      "why": "A production lab only serves the lab requirement, never an area course."
+    },
+    {
+      "courseId": "PMA-3000",
+      "rowId": "rubric-courses",
+      "why": "Independent study never counts toward any department minor."
+    },
+    {
+      "courseId": "PMA-1100",
+      "rowId": "rubric-courses",
+      "why": "First-year writing seminars are excluded from the minor."
+    },
+    {
+      "courseId": "PMA-3750",
+      "rowId": "rubric-courses",
+      "why": "A global course is its own requirement and cannot double as an area course."
+    },
+    {
+      "courseId": "PMA-1611",
+      "rowId": "rubric-courses",
+      "why": "The rehearsal course falls below the three-credit floor for area courses."
+    },
+    {
+      "courseId": "PMA-1611",
+      "rowId": "production-lab",
+      "why": "Rehearsal and performance is not one of the two named labs."
+    },
+    {
+      "courseId": "PMA-2300",
+      "rowId": "production-lab",
+      "why": "A composition studio is not a production lab."
+    },
+    {
+      "courseId": "PMA-2300",
+      "rowId": "intro-pma-2100",
+      "why": "Only the department intro course fills the intro seat."
+    },
+    {
+      "courseId": "PMA-2100",
+      "rowId": "global-course",
+      "why": "The intro course is not one of the three global courses."
+    },
+    {
+      "courseId": "PMA-3999",
+      "rowId": "rubric-courses",
+      "why": "A directed study course is independent study, which the page says does not count toward any PMA minor."
+    },
+    {
+      "courseId": "PMA-3999",
+      "rowId": "total-credits",
+      "why": "A directed study course is independent study, whose credit does not count toward any PMA minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PMA-2100",
+      "subject": "PMA",
+      "number": "2100",
+      "title": "Introduction to Performing and Media Arts",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3226",
+      "subject": "PMA",
+      "number": "3226",
+      "title": "Global Dance and Decolonizing Movement",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "PMA-HTC"
+        }
+      ]
+    },
+    {
+      "id": "PMA-1410",
+      "subject": "PMA",
+      "number": "1410",
+      "title": "Media Production Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PMA-2300",
+      "subject": "PMA",
+      "number": "2300",
+      "title": "Dance Composition",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "PMA-AU"
+        }
+      ]
+    },
+    {
+      "id": "PMA-2221",
+      "subject": "PMA",
+      "number": "2221",
+      "title": "Contemporary Dance Technique",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3243",
+      "subject": "PMA",
+      "number": "3243",
+      "title": "Making Dance on Camera",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-1610",
+      "subject": "PMA",
+      "number": "1610",
+      "title": "Production Technology Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PMA-3000",
+      "subject": "PMA",
+      "number": "3000",
+      "title": "Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "PMA-1100",
+      "subject": "PMA",
+      "number": "1100",
+      "title": "FWS: Critical Approaches to Performing and Media Arts",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PMA-3750",
+      "subject": "PMA",
+      "number": "3750",
+      "title": "Global Theatre and Performance",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-1611",
+      "subject": "PMA",
+      "number": "1611",
+      "title": "Rehearsal and Performance",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "PMA-3999",
+      "subject": "PMA",
+      "number": "3999",
+      "title": "Directed Study",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

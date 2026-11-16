@@ -1,0 +1,187 @@
+{
+  "programId": "cornell-latin-american-studies-minor-2026",
+  "description": "Fictional student with intermediate Spanish plus four Latin American Studies courses totalling fifteen credits, only one of them upper-level.",
+  "layerIds": [
+    "cornell-latin-american-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "SPAN-2095",
+    "LATA-3290",
+    "LATA-1960",
+    "LATA-2307",
+    "LATA-2200"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "LATA-1960",
+      "rowId": "advanced-course",
+      "why": "a 1000-level course is below the advanced floor"
+    },
+    {
+      "courseId": "LATA-6000",
+      "rowId": "advanced-course",
+      "why": "a graduate-level course is above the 3000-4000 advanced range"
+    },
+    {
+      "courseId": "SPAN-1210",
+      "rowId": "language",
+      "why": "an elementary Spanish course is not the intermediate language course"
+    }
+  ],
+  "courses": [
+    {
+      "id": "SPAN-2095",
+      "subject": "SPAN",
+      "number": "2095",
+      "title": "Spanish Intermediate Composition and Conversation II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "LATA-3290",
+      "subject": "LATA",
+      "number": "3290",
+      "title": "Comparative Politics of Latin America",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "LATA-1960",
+      "subject": "LATA",
+      "number": "1960",
+      "title": "Modern Latin America",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HGS"
+        }
+      ]
+    },
+    {
+      "id": "LATA-2307",
+      "subject": "LATA",
+      "number": "2307",
+      "title": "Histories of the African Diaspora",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HGS"
+        }
+      ]
+    },
+    {
+      "id": "LATA-2200",
+      "subject": "LATA",
+      "number": "2200",
+      "title": "Perspectives on Latin America",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "LATA-6000",
+      "subject": "LATA",
+      "number": "6000",
+      "title": "Contemporary Issues in Latin-Latino America",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "SPAN-1210",
+      "subject": "SPAN",
+      "number": "1210",
+      "title": "Elementary Spanish I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    }
+  ]
+}

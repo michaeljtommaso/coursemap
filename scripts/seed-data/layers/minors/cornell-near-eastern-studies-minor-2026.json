@@ -1,0 +1,234 @@
+{
+  "id": "cornell-near-eastern-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Near Eastern Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-near-eastern-studies-minor-2026",
+  "rows": [
+    {
+      "id": "five-courses",
+      "label": "Five Near Eastern Studies courses, at least 15 credits, at least three at 3000 or above, with no more than two language courses",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts NES-subject courses below graduate level plus Arabic, Hebrew, Persian and Turkish language courses (at most two language courses); at least three of the counted courses must be numbered 3000 or above. Independent study, honors essays, graduate courses and Urdu language courses are held out, and courses listed in other departments are not counted; confirm those separately.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "NES"
+                ]
+              },
+              {
+                "number": {
+                  "max": 4899
+                }
+              },
+              {
+                "not": {
+                  "anyOf": [
+                    {
+                      "titleStartsWith": "Intermediate Urdu"
+                    },
+                    {
+                      "titleStartsWith": "Literary Reading and Writing in Advanced Urdu"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "ARAB",
+                  "HEBRW",
+                  "PERSN",
+                  "TURK"
+                ]
+              },
+              {
+                "number": {
+                  "max": 4899
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "subject": [
+                  "ARAB",
+                  "HEBRW",
+                  "PERSN",
+                  "TURK"
+                ]
+              },
+              {
+                "titleStartsWith": "Introduction to Quranic"
+              },
+              {
+                "titleStartsWith": "Elementary"
+              },
+              {
+                "titleStartsWith": "Intermediate"
+              },
+              {
+                "titleStartsWith": "Akkadian"
+              },
+              {
+                "titleStartsWith": "Biblical Hebrew"
+              },
+              {
+                "titleStartsWith": "Hieroglyphic"
+              },
+              {
+                "titleStartsWith": "Middle Egyptian"
+              }
+            ]
+          },
+          "maxCourses": 2
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At least three of the five courses at 3000 or above",
+          "minCourses": 3
+        }
+      ]
+    },
+    {
+      "id": "content-courses",
+      "label": "At least three non-language courses on Near Eastern history, archaeology, literature or religion",
+      "group": "Content",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board checks NES subject and non-language only (Urdu language courses are held out); the topic is confirmed separately.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "NES"
+            ]
+          },
+          {
+            "number": {
+              "max": 4899
+            }
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "subject": [
+                    "ARAB",
+                    "HEBRW",
+                    "PERSN",
+                    "TURK"
+                  ]
+                },
+                {
+                  "titleStartsWith": "Introduction to Quranic"
+                },
+                {
+                  "titleStartsWith": "Elementary"
+                },
+                {
+                  "titleStartsWith": "Intermediate"
+                },
+                {
+                  "titleStartsWith": "Akkadian"
+                },
+                {
+                  "titleStartsWith": "Biblical Hebrew"
+                },
+                {
+                  "titleStartsWith": "Hieroglyphic"
+                },
+                {
+                  "titleStartsWith": "Middle Egyptian"
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "titleStartsWith": "Intermediate Urdu"
+                },
+                {
+                  "titleStartsWith": "Literary Reading and Writing in Advanced Urdu"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "content-topic-confirm",
+      "label": "Confirm the three content courses are on history, archaeology, literature or religions (one discipline or one period is allowed)",
+      "group": "Content",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "language-confirm",
+      "label": "Confirm any language courses are two courses of the same language from the listed modern and ancient languages",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Ancient-language courses cannot all be told apart on the board, so the cap of two language courses is checked by title as well as subject.",
+      "kind": "confirm"
+    },
+    {
+      "id": "course-limits-confirm",
+      "label": "Confirm limits: at most one independent study, one cross-listed course from another department, and one approved course taken abroad or at another university",
+      "group": "Limits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board holds out independent study and other-department courses and does not count them; ask the director if you plan to use one.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Consult the Near Eastern Studies director of undergraduate studies about the minor and your advisor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/near-eastern-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

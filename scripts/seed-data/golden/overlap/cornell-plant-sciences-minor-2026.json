@@ -1,0 +1,134 @@
+{
+  "programId": "cornell-plant-sciences-minor-2026",
+  "description": "An agricultural sciences major whose own requirements already take the soil course and two core plant courses that the minor would also use.",
+  "layerIds": [
+    "cornell-agricultural-sciences-bs-2026",
+    "cornell-plant-sciences-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-1420",
+    "PLSCI-2410",
+    "PLSCI-2600",
+    "PLSCI-2025",
+    "PLSCI-2100"
+  ],
+  "limit": {
+    "maxCourses": 0
+  },
+  "shared": [
+    "PLSCI-1420",
+    "PLSCI-2410",
+    "PLSCI-2600"
+  ],
+  "heldBack": [
+    {
+      "courseId": "PLSCI-1420",
+      "from": "cornell-plant-sciences-minor-2026",
+      "why": "The minor allows no course in common with a major."
+    },
+    {
+      "courseId": "PLSCI-2410",
+      "from": "cornell-plant-sciences-minor-2026",
+      "why": "The minor allows no course in common with a major."
+    },
+    {
+      "courseId": "PLSCI-2600",
+      "from": "cornell-plant-sciences-minor-2026",
+      "why": "The minor allows no course in common with a major."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-1420",
+      "subject": "PLSCI",
+      "number": "1420",
+      "title": "Introduction to Plant Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2410",
+      "subject": "PLSCI",
+      "number": "2410",
+      "title": "Introductory Plant Diversity and Evolution",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2600",
+      "subject": "PLSCI",
+      "number": "2600",
+      "title": "Soil Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2025",
+      "subject": "PLSCI",
+      "number": "2025",
+      "title": "Plants and Microbes",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2100",
+      "subject": "PLSCI",
+      "number": "2100",
+      "title": "Medical Ethnobotany",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    }
+  ]
+}

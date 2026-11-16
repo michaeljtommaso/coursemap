@@ -1,0 +1,375 @@
+{
+  "id": "cornell-plant-sciences-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Plant Sciences (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-plant-sciences-minor-2026",
+  "sharing": {
+    "otherMajors": "none",
+    "minors": "none",
+    "forbiddenWith": [
+      "cornell-crop-management-minor",
+      "cornell-fungal-biology-minor",
+      "cornell-horticulture-minor",
+      "cornell-plant-breeding-minor",
+      "cornell-soil-science-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "plant-physiology-intro",
+      "label": "Required: the introductory plant physiology course (PLSCI 1420)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-1420"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "plant-diversity-evolution",
+      "label": "Required: plant diversity and evolution (PLSCI 2410)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-2410"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "elective-choice",
+      "label": "Elective: one course from the short list, or a lecture plus its lab pair",
+      "group": "Elective choice",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Either one single course from the list, or both halves of a paired lecture and lab entry (plant physiology lecture and lab, or the plant molecular biology lecture and lab). A pair counts only when both courses are taken.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "elective-single",
+          "label": "One course: plant genetics, ecology and evolution of plants, vascular plant systematics, soil science, or plant diseases",
+          "group": "Elective choice",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "PLSCI-2250",
+                  "PLSCI-2430",
+                  "PLSCI-2480",
+                  "PLSCI-2600",
+                  "PLSCI-3010"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "elective-physiology-pair",
+          "label": "Both plant physiology courses: lectures (PLSCI 3420) and laboratory (PLSCI 3421)",
+          "group": "Elective choice",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "PLSCI-3420",
+                  "PLSCI-3421"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "elective-molecular-pair",
+          "label": "Both plant molecular biology courses: lectures (PLSCI 3430) and laboratory (PLSCI 3431)",
+          "group": "Elective choice",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "PLSCI-3430",
+                  "PLSCI-3431"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "additional-electives",
+      "label": "Additional electives: at least 6 credits of structured plant sciences courses numbered 2000 or higher",
+      "group": "Additional electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Held out: the nine courses the page names, plus special topics, seminar (the senior seminar and the perennial crop breeding seminar), independent study, courses whose catalog title is only their own number (individual-study sections), research, teaching, mentoring, internship and portfolio courses (the page bars special-topic, seminar and no-regular-instruction courses). Graduate-only courses (6000 and up), exam credit and transfer credit are also held out; the confirm rows below cover the rest.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PLSCI"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 5999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "PLSCI-2010",
+                "PLSCI-2301",
+                "PLSCI-2302",
+                "PLSCI-2400",
+                "PLSCI-2490",
+                "PLSCI-2940",
+                "PLSCI-3400",
+                "PLSCI-3401",
+                "PLSCI-3402"
+              ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Special Topics"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Senior Seminar"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Perennial Crop Breeding Seminar"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "PLSCI "
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Individual Study"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Independent Undergraduate"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Undergraduate Teaching"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Undergraduate Peer"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Reflection on"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Plant Sciences Senior"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Introduction to Research Methods"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Master Composter"
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "structured-courses",
+      "label": "Every counted course is regular, structured instruction taken in person: no special-topic, seminar, independent study or online courses",
+      "group": "Course conditions",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-equivalents",
+      "label": "Transfer students only: any course used from elsewhere must be an approved equivalent",
+      "group": "Course conditions",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "The board holds all transfer and exam credit out of the rows above; tick this only after you have approval for an equivalent course and take it as met on your own.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Every course taken for a letter grade (no S/U or SX/UX) and finished with a C or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "eligibility",
+      "label": "Matriculated Cornell student and not a Plant Sciences major",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "completion-check",
+      "label": "Meet your minor advisor in your second-to-last semester and fill in the completion survey in your last semester",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+        "anchor": "Verifying Completion of Minor"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the declaration of intent form by the last day of classes of your final semester",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-sciences-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,380 @@
+{
+  "programId": "cornell-plant-sciences-minor-2026",
+  "description": "A student taking the two core plant courses, a genetics course as the choice, and two more plant science electives.",
+  "layerIds": [
+    "cornell-plant-sciences-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-1420",
+    "PLSCI-2410",
+    "PLSCI-2250",
+    "PLSCI-2025",
+    "PLSCI-2100"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PLSCI-1115",
+      "rowId": "plant-physiology-intro",
+      "why": "A different introductory plant course; the page names a single course for this slot."
+    },
+    {
+      "courseId": "PLSCI-1101",
+      "rowId": "plant-diversity-evolution",
+      "why": "A different introductory plant course; the page names a single course for this slot."
+    },
+    {
+      "courseId": "PLSCI-3440",
+      "rowId": "elective-choice",
+      "why": "A plant biology course the short elective list does not name."
+    },
+    {
+      "courseId": "PLSCI-2010",
+      "rowId": "additional-electives",
+      "why": "Named by the page as an excluded course."
+    },
+    {
+      "courseId": "PLSCI-2400",
+      "rowId": "additional-electives",
+      "why": "Named by the page as an excluded course."
+    },
+    {
+      "courseId": "PLSCI-2940",
+      "rowId": "additional-electives",
+      "why": "Named by the page as an excluded course."
+    },
+    {
+      "courseId": "PLSCI-3400",
+      "rowId": "additional-electives",
+      "why": "A plant exploration course the page excludes."
+    },
+    {
+      "courseId": "PLSCI-4950",
+      "rowId": "additional-electives",
+      "why": "A seminar course; the page bars seminars from every minor requirement."
+    },
+    {
+      "courseId": "PLSCI-4940",
+      "rowId": "additional-electives",
+      "why": "A special topics course; the page bars these from every minor requirement."
+    },
+    {
+      "courseId": "PLSCI-4970",
+      "rowId": "additional-electives",
+      "why": "Individual study has no regular instruction; the page bars such courses."
+    },
+    {
+      "courseId": "PLSCI-1900",
+      "rowId": "additional-electives",
+      "why": "Numbered below the 2000 level floor."
+    },
+    {
+      "courseId": "PLSCI-2253",
+      "rowId": "elective-choice",
+      "why": "A lecture-only section of plant genetics; the page lists the full genetics course, not this one."
+    },
+    {
+      "courseId": "PLSCI-4090",
+      "rowId": "additional-electives",
+      "why": "A seminar course; the page bars seminar courses from every minor requirement."
+    },
+    {
+      "courseId": "PLSCI-4960",
+      "rowId": "additional-electives",
+      "why": "An independent-study section with no regular instruction; the page bars such courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-1420",
+      "subject": "PLSCI",
+      "number": "1420",
+      "title": "Introduction to Plant Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2410",
+      "subject": "PLSCI",
+      "number": "2410",
+      "title": "Introductory Plant Diversity and Evolution",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2250",
+      "subject": "PLSCI",
+      "number": "2250",
+      "title": "Plant Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2025",
+      "subject": "PLSCI",
+      "number": "2025",
+      "title": "Plants and Microbes",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2100",
+      "subject": "PLSCI",
+      "number": "2100",
+      "title": "Medical Ethnobotany",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1115",
+      "subject": "PLSCI",
+      "number": "1115",
+      "title": "The Nature of Plants",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1101",
+      "subject": "PLSCI",
+      "number": "1101",
+      "title": "Plant Science and Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3440",
+      "subject": "PLSCI",
+      "number": "3440",
+      "title": "Evolutionary Plant Biology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2010",
+      "subject": "PLSCI",
+      "number": "2010",
+      "title": "Magical Mushrooms, Mischievous Molds",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2400",
+      "subject": "PLSCI",
+      "number": "2400",
+      "title": "Green World, Blue Planet",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2940",
+      "subject": "PLSCI",
+      "number": "2940",
+      "title": "Introduction to Agricultural Machinery",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "PLSCI-3400",
+      "subject": "PLSCI",
+      "number": "3400",
+      "title": "Far Beyond Ithaca (FBI): Plant Explorations",
+      "credits": 0.5,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4950",
+      "subject": "PLSCI",
+      "number": "4950",
+      "title": "Senior Seminar in Plant Sciences",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4940",
+      "subject": "PLSCI",
+      "number": "4940",
+      "title": "Special Topics in Plant Sciences",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "PLSCI-4970",
+      "subject": "PLSCI",
+      "number": "4970",
+      "title": "Individual Study in Plant Sciences",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1900",
+      "subject": "PLSCI",
+      "number": "1900",
+      "title": "Sustainable Agriculture: Food, Farming, and the Future",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2253",
+      "subject": "PLSCI",
+      "number": "2253",
+      "title": "Lectures in Plant Genetics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4090",
+      "subject": "PLSCI",
+      "number": "4090",
+      "title": "Perennial Crop Breeding Seminar",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4960",
+      "subject": "PLSCI",
+      "number": "4960",
+      "title": "PLSCI 4960",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": []
+    }
+  ]
+}

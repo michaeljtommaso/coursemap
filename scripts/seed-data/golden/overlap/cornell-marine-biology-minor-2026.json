@@ -1,0 +1,91 @@
+{
+  "programId": "cornell-marine-biology-minor-2026",
+  "description": "An environment and sustainability major also takes this minor, and the three courses both programs count exceed the minor's two-course overlap allowance.",
+  "layerIds": [
+    "cornell-environment-sustainability-bs-2026",
+    "cornell-marine-biology-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-environment-sustainability-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOSM-1610",
+    "BIOSM-3330",
+    "BIOSM-3750",
+    "BIOEE-4790",
+    "BIOAP-3300"
+  ],
+  "limit": {
+    "maxCourses": 2
+  },
+  "shared": [
+    "BIOSM-1610",
+    "BIOSM-3330",
+    "BIOSM-3750"
+  ],
+  "heldBack": [
+    {
+      "courseId": "BIOSM-3750",
+      "from": "cornell-marine-biology-minor-2026",
+      "why": "The minor allows two courses shared with a major; this is the third, so the minor gives it up."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOSM-1610",
+      "subject": "BIOSM",
+      "number": "1610",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BIOSM-3330",
+      "subject": "BIOSM",
+      "number": "3330",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BIOSM-3750",
+      "subject": "BIOSM",
+      "number": "3750",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BIOEE-4790",
+      "subject": "BIOEE",
+      "number": "4790",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "BIOAP-3300",
+      "subject": "BIOAP",
+      "number": "3300",
+      "title": "Fish Physiology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}
