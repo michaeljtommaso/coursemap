@@ -1,4 +1,8 @@
 {
+  "cornell-aerospace-engineering-minor-2026": {
+    "shortName": "Aerospace minor",
+    "offeredBy": "Engineering"
+  },
   "cornell-applied-mathematics-minor-2026": {
     "shortName": "Applied Math minor",
     "offeredBy": "Engineering"
@@ -53,6 +57,10 @@
     "offeredBy": "SC Johnson College",
     "notOpenTo": ["cornell-applied-economics-management-bs"]
   },
+  "cornell-film-minor-2026": {
+    "shortName": "Film minor",
+    "offeredBy": "Performing & Media Arts"
+  },
   "cornell-game-design-minor-2026": {
     "shortName": "Game Design minor",
     "offeredBy": "Engineering"
@@ -65,6 +73,15 @@
     "shortName": "History minor",
     "offeredBy": "Arts & Sciences"
   },
+  "cornell-human-development-minor-2026": {
+    "shortName": "Human Development minor",
+    "offeredBy": "Human Ecology",
+    "notOpenTo": ["cornell-psychology-ba"]
+  },
+  "cornell-inequality-studies-minor-2026": {
+    "shortName": "Inequality Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
   "cornell-information-science-minor-2026": {
     "shortName": "Info Science minor",
     "offeredBy": "Bowers CIS",
@@ -73,6 +90,19 @@
   "cornell-international-relations-minor-2026": {
     "shortName": "International Relations minor",
     "offeredBy": "Einaudi Center"
+  },
+  "cornell-law-society-minor-2026": {
+    "shortName": "Law & Society minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-linguistics-minor-2026": {
+    "shortName": "Linguistics minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-materials-science-engineering-minor-2026": {
+    "shortName": "MSE minor",
+    "offeredBy": "Engineering",
+    "notOpenTo": ["cornell-mse-bs"]
   },
   "cornell-mathematics-minor-2026": {
     "shortName": "Math minor",
@@ -88,6 +118,11 @@
     "shortName": "Music minor",
     "offeredBy": "Arts & Sciences"
   },
+  "cornell-nutrition-health-minor-2026": {
+    "shortName": "Nutrition & Health minor",
+    "offeredBy": "Nutritional Sciences",
+    "notOpenTo": ["cornell-nutritional-sciences-bs", "cornell-global-public-health-sciences-bs"]
+  },
   "cornell-operations-research-management-science-minor-2026": {
     "shortName": "ORMS minor",
     "offeredBy": "Engineering",
@@ -97,6 +132,11 @@
     "shortName": "Philosophy minor",
     "offeredBy": "Arts & Sciences",
     "notOpenTo": ["cornell-philosophy-ba"]
+  },
+  "cornell-policy-analysis-management-minor-2026": {
+    "shortName": "PAM minor",
+    "offeredBy": "Brooks School",
+    "notOpenTo": ["cornell-public-policy-ba"]
   },
   "cornell-psychology-minor-2026": {
     "shortName": "Psychology minor",
@@ -115,5 +155,9 @@
     "shortName": "Spanish minor",
     "offeredBy": "Arts & Sciences",
     "notOpenTo": ["cornell-spanish-ba"]
+  },
+  "cornell-sustainable-energy-systems-minor-2026": {
+    "shortName": "Sustainable Energy minor",
+    "offeredBy": "Engineering"
   }
 }
