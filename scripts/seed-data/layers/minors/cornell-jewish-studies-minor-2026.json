@@ -1,0 +1,167 @@
+{
+  "id": "cornell-jewish-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Jewish Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-jewish-studies-minor-2026",
+  "rows": [
+    {
+      "id": "intro-survey",
+      "label": "Introductory survey: JWST 2644",
+      "group": "Introductory survey",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-minor/",
+        "anchor": "Introductory Survey in Jewish Studies"
+      },
+      "note": "The board checks JWST 2644 only (JWST 2676 is not in the course catalog, so it is confirmed separately along with any director-approved equivalent).",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "JWST-2644"
+        ]
+      }
+    },
+    {
+      "id": "intro-equivalent",
+      "label": "If taking JWST 2676 or another equivalent intro survey instead, confirm it is JWST 2676 or that the director approved it",
+      "group": "Introductory survey",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-minor/",
+        "anchor": "Introductory Survey in Jewish Studies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "breadth-courses",
+      "label": "Two JWST courses numbered 2000 or above, besides the survey and the upper-level course",
+      "group": "Historical breadth",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-minor/",
+        "anchor": "Historical Breadth Requirement"
+      },
+      "note": "Counts JWST-coded courses only; courses cross-listed under another code are confirmed separately. A course counts toward one requirement only. Needs 6 credits across the two courses, so the minor's 18 credits are carried by the rows.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "JWST"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "breadth-periods",
+      "label": "Confirm one breadth course covers 3000 BCE to 600 CE and the other covers 600 CE to the present",
+      "group": "Historical breadth",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-minor/",
+        "anchor": "Historical Breadth Requirement"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "upper-level",
+      "label": "One JWST course numbered 3000 or above",
+      "group": "Upper level",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-minor/",
+        "anchor": "Upper-level course"
+      },
+      "note": "Counts JWST-coded courses only. This course is separate from the survey and the two breadth courses. Needs 3 credits.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "JWST"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 3
+    },
+    {
+      "id": "upper-level-topical",
+      "label": "If using a topical course taught in Hebrew or another language for the upper-level requirement, confirm it qualifies",
+      "group": "Upper level",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-minor/",
+        "anchor": "Upper-level course"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "additional-credits",
+      "label": "Additional Jewish Studies credits (JWST 2000 or above) to reach 18 credits in all",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The survey (3 credits), the breadth courses (6) and the upper-level course (3) give 12 of the 18 credits; this pool holds the other 6 from JWST courses numbered 2000 or above, a stricter reading than the page (courses under other codes are confirmed in the credits row below).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "JWST"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "total-credits",
+      "label": "Confirm the courses counted for the minor total at least 18 credits (the board counts 18 credits from JWST courses numbered 2000 or above)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every qualifying course for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Contact the program contact to declare the minor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/jewish-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

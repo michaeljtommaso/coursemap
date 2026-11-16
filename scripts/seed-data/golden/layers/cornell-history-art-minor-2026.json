@@ -1,0 +1,189 @@
+{
+  "programId": "cornell-history-art-minor-2026",
+  "description": "A fictional student finishes five art-history courses spread across the introductory and upper levels.",
+  "layerIds": [
+    "cornell-history-art-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-art-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ARTH-2200",
+    "ARTH-2400",
+    "ARTH-3315",
+    "ARTH-3400",
+    "ARTH-3650"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ARTH-1100",
+      "rowId": "arth-five-courses",
+      "why": "The gateway course sits below the 2000 level, so it is not one of the five."
+    },
+    {
+      "courseId": "VISST-2000",
+      "rowId": "arth-five-courses",
+      "why": "Only ARTH-coded courses are counted by the board."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ARTH-2200",
+      "subject": "ARTH",
+      "number": "2200",
+      "title": "Introduction to the Classical World in 24 Objects",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-2400",
+      "subject": "ARTH",
+      "number": "2400",
+      "title": "Introduction to Early Modern Art: Cosmopolitanism and Empire",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3315",
+      "subject": "ARTH",
+      "number": "3315",
+      "title": "Experiencing Islamic Art: The Johnson Museum’s Collection",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3400",
+      "subject": "ARTH",
+      "number": "3400",
+      "title": "Art, Identity, and the Human Body in Early Modern Europe",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3650",
+      "subject": "ARTH",
+      "number": "3650",
+      "title": "History and Theory of Digital Art",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-1100",
+      "subject": "ARTH",
+      "number": "1100",
+      "title": "Art Histories: An Introduction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "VISST-2000",
+      "subject": "VISST",
+      "number": "2000",
+      "title": "Introduction to Visual Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    }
+  ]
+}

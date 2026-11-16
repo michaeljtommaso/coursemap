@@ -1,0 +1,220 @@
+{
+  "programId": "cornell-jewish-studies-minor-2026",
+  "description": "A student finishes the Jewish studies minor: the intro course, two mid-level JWST courses, one advanced JWST course and two more JWST courses for 18 credits.",
+  "layerIds": [
+    "cornell-jewish-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "JWST-2644",
+    "JWST-2852",
+    "JWST-2488",
+    "JWST-3722",
+    "JWST-2697",
+    "JWST-2790"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "JWST-2488",
+      "rowId": "intro-survey",
+      "why": "Only the named introductory survey fills the survey seat, not another JWST course."
+    },
+    {
+      "courseId": "JWST-1101",
+      "rowId": "breadth-courses",
+      "why": "An elementary language course sits below the 2000 level the breadth requirement needs."
+    },
+    {
+      "courseId": "JWST-1101",
+      "rowId": "upper-level",
+      "why": "An elementary course is far under the 3000-level floor."
+    },
+    {
+      "courseId": "JWST-2852",
+      "rowId": "upper-level",
+      "why": "A 2000-level course does not meet the 3000-level floor."
+    },
+    {
+      "courseId": "HIST-2853",
+      "rowId": "breadth-courses",
+      "why": "The breadth rows only count courses coded JWST."
+    }
+  ],
+  "courses": [
+    {
+      "id": "JWST-2644",
+      "subject": "JWST",
+      "number": "2644",
+      "title": "Introduction to Judaism",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "JWST-2852",
+      "subject": "JWST",
+      "number": "2852",
+      "title": "Judaism and the Origins of Christianity",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HEU"
+        },
+        {
+          "value": "HIST-HPE"
+        }
+      ]
+    },
+    {
+      "id": "JWST-2488",
+      "subject": "JWST",
+      "number": "2488",
+      "title": "Modern Israel: History, Culture, Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "JWST-3722",
+      "subject": "JWST",
+      "number": "3722",
+      "title": "Zionism and other Jewish nationalisms",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "JWST-2697",
+      "subject": "JWST",
+      "number": "2697",
+      "title": "History of the Israeli-Palestinian Conflict",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "JWST-2790",
+      "subject": "JWST",
+      "number": "2790",
+      "title": "Jewish Films and Filmmakers: Hollywood and Beyond",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "JWST-1101",
+      "subject": "JWST",
+      "number": "1101",
+      "title": "Elementary Modern Hebrew I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2853",
+      "subject": "HIST",
+      "number": "2853",
+      "title": "The Law in Jewish History",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    }
+  ]
+}

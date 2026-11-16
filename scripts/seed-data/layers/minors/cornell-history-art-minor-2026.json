@@ -1,0 +1,142 @@
+{
+  "id": "cornell-history-art-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "History of Art (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-history-art-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 2
+    }
+  },
+  "rows": [
+    {
+      "id": "arth-five-courses",
+      "label": "Five ARTH courses at the 2000 or 3000 level (one at 2000, two at 3000), at least 15 credits",
+      "group": "History of Art courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "One pool so the caps can see all five courses: at least one 2000-level and two 3000-level courses, at least 15 credits. The page allows 3000-level or above; the board counts 2000-3999 only, the stricter reading. ARTH 1100 is not counted. The board also counts at most two transfer-credit courses (study abroad arrives as transfer credit), the stricter reading of the study abroad cap; shared-plus-abroad is confirmed separately.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ARTH"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 3999
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "ARTH"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2000,
+                  "max": 2999
+                }
+              }
+            ]
+          },
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "ARTH"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 3999
+                }
+              }
+            ]
+          },
+          "minCourses": 2
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer"
+            ]
+          },
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "dus-approval-other-courses",
+      "label": "Get Director of Undergraduate Studies approval for any counted course not coded or cross-listed with ARTH or VISST",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts only ARTH-coded courses; confirm any other course with the DUS.",
+      "kind": "confirm"
+    },
+    {
+      "id": "arth-1100-note",
+      "label": "ARTH 1100 is the only course below the 2000 level that may count; confirm with the department how it fits the five courses",
+      "group": "History of Art courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board does not count ARTH 1100 toward the five courses.",
+      "kind": "confirm"
+    },
+    {
+      "id": "study-abroad-limit",
+      "label": "No more than two minor courses may be double-counted toward your major or come from study abroad (check both together)",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board enforces the cap of two shared courses with a major, and counts at most two transfer-credit courses (study abroad arrives as transfer credit). The combined total of shared and study abroad courses is confirmed here.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-b-minus",
+      "label": "Earn a B- or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the minor application form from the History of Art department and plan the minor with its coordinator or DUS",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/history-art-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

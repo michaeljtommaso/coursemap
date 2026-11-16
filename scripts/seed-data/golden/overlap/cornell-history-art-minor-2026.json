@@ -1,0 +1,151 @@
+{
+  "programId": "cornell-history-art-minor-2026",
+  "description": "A fictional art-history major finishes the minor with five courses that the major also counts, and only two may be shared.",
+  "layerIds": [
+    "cornell-history-art-ba-2026",
+    "cornell-history-art-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-art-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ARTH-2200",
+    "ARTH-2400",
+    "ARTH-3315",
+    "ARTH-3400",
+    "ARTH-3650"
+  ],
+  "limit": {
+    "maxCourses": 2
+  },
+  "shared": [
+    "ARTH-2200",
+    "ARTH-2400",
+    "ARTH-3315",
+    "ARTH-3400",
+    "ARTH-3650"
+  ],
+  "heldBack": [
+    {
+      "courseId": "ARTH-3315",
+      "from": "cornell-history-art-minor-2026",
+      "why": "Held back from the minor so the pair shares no more than two courses."
+    },
+    {
+      "courseId": "ARTH-3400",
+      "from": "cornell-history-art-minor-2026",
+      "why": "Held back from the minor so the pair shares no more than two courses."
+    },
+    {
+      "courseId": "ARTH-3650",
+      "from": "cornell-history-art-minor-2026",
+      "why": "Held back from the minor so the pair shares no more than two courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ARTH-2200",
+      "subject": "ARTH",
+      "number": "2200",
+      "title": "Introduction to the Classical World in 24 Objects",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-2400",
+      "subject": "ARTH",
+      "number": "2400",
+      "title": "Introduction to Early Modern Art: Cosmopolitanism and Empire",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3315",
+      "subject": "ARTH",
+      "number": "3315",
+      "title": "Experiencing Islamic Art: The Johnson Museum’s Collection",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3400",
+      "subject": "ARTH",
+      "number": "3400",
+      "title": "Art, Identity, and the Human Body in Early Modern Europe",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3650",
+      "subject": "ARTH",
+      "number": "3650",
+      "title": "History and Theory of Digital Art",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    }
+  ]
+}
