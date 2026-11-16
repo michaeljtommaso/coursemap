@@ -1,0 +1,130 @@
+{
+  "programId": "cornell-sustainable-energy-systems-minor-2026",
+  "description": "A student takes six three-credit energy courses spanning systems analysis, energy technology, earth science and economics.",
+  "layerIds": [
+    "cornell-sustainable-energy-systems-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-environmental-engineering-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CEE-4210",
+    "ENGRD-2510",
+    "ECE-4510",
+    "MAE-4020",
+    "EAS-2680",
+    "CEE-3230"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CEE-3040",
+      "rowId": "six-courses",
+      "why": "Not among the courses the minor lists in any category, so it adds nothing."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CEE-4210",
+      "subject": "CEE",
+      "number": "4210",
+      "title": "Renewable Energy Systems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENGRD-2510",
+      "subject": "ENGRD",
+      "number": "2510",
+      "title": "Engineering Processes for Environmental Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ECE-4510",
+      "subject": "ECE",
+      "number": "4510",
+      "title": "Electric Power Systems I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "MAE-4020",
+      "subject": "MAE",
+      "number": "4020",
+      "title": "Wind Power",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-2680",
+      "subject": "EAS",
+      "number": "2680",
+      "title": "Climate and Global Warming",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CEE-3230",
+      "subject": "CEE",
+      "number": "3230",
+      "title": "Engineering Economics and Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CEE-3040",
+      "subject": "CEE",
+      "number": "3040",
+      "title": "Uncertainty Analysis in Engineering",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    }
+  ]
+}

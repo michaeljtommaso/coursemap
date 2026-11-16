@@ -1,0 +1,85 @@
+{
+  "id": "cornell-law-society-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Law & Society (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-law-society-minor-2026",
+  "rows": [
+    {
+      "id": "register-minor",
+      "label": "Register for the minor with the program's online application, ideally before the second semester of junior year",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/law-society-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "Late sign-up is possible only at the directors' discretion and with a completion plan already worked out. The board cannot see registration.",
+      "kind": "confirm"
+    },
+    {
+      "id": "five-approved-courses",
+      "label": "Five courses from the program's Approved Course List, 15 credits at least, each worth 3 or 4 credits",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/law-society-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The Approved Course List is not on the catalog page, so the board cannot tell which courses qualify. Check the program's list and confirm all five yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "category-spread",
+      "label": "The five courses span at least three of the five categories, with at most two per category and at most two per department",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/law-society-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "All ILR courses count as a single department, and a cross-listed course may count as any department it is listed in. The categories come from the off-page course list, so confirm this yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-b-minus",
+      "label": "Take each minor course for a letter grade and earn B- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/law-society-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "substitution-petition",
+      "label": "Any substitute course needs the directors' permission, petitioned before your last semester (one transfer course at most)",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/law-society-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Only needed if you substitute. Outside credit counts toward the minor only through this petition.",
+      "kind": "confirm"
+    },
+    {
+      "id": "two-events",
+      "label": "Attend two approved events and file an event report for each by the end of that semester",
+      "group": "Events",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/law-society-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "graduation-certification",
+      "label": "Submit the Certification for Graduation Form once all five courses are done or begun",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/law-society-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Required for the minor to show on your transcript. Events not yet attended can be listed as to be determined.",
+      "kind": "confirm"
+    }
+  ]
+}

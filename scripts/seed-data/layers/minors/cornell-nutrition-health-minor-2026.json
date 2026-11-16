@@ -1,0 +1,123 @@
+{
+  "id": "cornell-nutrition-health-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Nutrition and Health (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-nutrition-health-minor-2026",
+  "rows": [
+    {
+      "id": "intro-nutrition",
+      "label": "One introductory nutrition course (NS 1150 or NS 1220)",
+      "group": "Required course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutrition-health-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Transfer credit is held out of this row because a transfer stand-in for the intro course is allowed only by petition from external transfers; the petition is a separate confirm row, so an external transfer student may see this row short.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "NS-1150",
+              "NS-1220"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "upper-level-ns",
+      "label": "At least 9 credits from the listed upper-level NS courses",
+      "group": "Upper-level NS courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutrition-health-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "All six topic lists count together. Transfer credit is held out. Special studies courses and NS 2600 are not on the lists, so they never count.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "NS-3060",
+              "NS-4450",
+              "NS-4480",
+              "NS-4570",
+              "NS-3600",
+              "NS-4500",
+              "NS-4510",
+              "NS-2470",
+              "NS-3450",
+              "NS-3150",
+              "NS-3410",
+              "NS-4140",
+              "NS-4200",
+              "NS-4210",
+              "NS-4330",
+              "NS-4410",
+              "NS-4420",
+              "NS-5510",
+              "NS-3200",
+              "NS-3310",
+              "NS-3320",
+              "NS-4300",
+              "NS-2450",
+              "NS-4250"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9
+    },
+    {
+      "id": "letter-grade",
+      "label": "Every course for the minor taken for a letter grade (no S/U or SX/UX)",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutrition-health-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "note": "The board cannot see grade mode; confirm each course was graded.",
+      "kind": "confirm"
+    },
+    {
+      "id": "eligibility-confirm",
+      "label": "Confirm you are not in a DNS major or the Biological Sciences Human Nutrition concentration, which are excluded from this minor",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutrition-health-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "Nutritional Sciences and Global and Public Health Sciences are barred in the minor picker; the other excluded programs are confirmed here.",
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-intro-petition",
+      "label": "External transfer students only: a transfer course may stand in for the intro course by petition",
+      "group": "Required course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/nutrition-health-minor/",
+        "anchor": "Important notes:"
+      },
+      "note": "The board cannot see petition approvals. Internal transfers and continuing students cannot substitute.",
+      "kind": "confirm"
+    }
+  ]
+}

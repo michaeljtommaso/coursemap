@@ -76,7 +76,7 @@
   "cornell-human-development-minor-2026": {
     "shortName": "Human Development minor",
     "offeredBy": "Human Ecology",
-    "notOpenTo": ["cornell-psychology-ba"]
+    "notOpenTo": ["cornell-psychology-ba", "cornell-human-development"]
   },
   "cornell-inequality-studies-minor-2026": {
     "shortName": "Inequality Studies minor",
@@ -136,7 +136,7 @@
   "cornell-policy-analysis-management-minor-2026": {
     "shortName": "PAM minor",
     "offeredBy": "Brooks School",
-    "notOpenTo": ["cornell-public-policy-ba"]
+    "notOpenTo": ["cornell-public-policy-ba", "cornell-policy-analysis-management", "cornell-health-care-policy"]
   },
   "cornell-psychology-minor-2026": {
     "shortName": "Psychology minor",
