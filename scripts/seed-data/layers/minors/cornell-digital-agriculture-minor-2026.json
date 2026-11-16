@@ -210,6 +210,21 @@
                   "allOf": [
                     {
                       "course": [
+                        "INFO-2921"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-american-studies-ba",
+                        "cornell-history-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
                         "FDSC-2000",
                         "PLSCI-2110",
                         "PLSCI-2200",
@@ -571,20 +586,6 @@
                     {
                       "program": [
                         "cornell-global-public-health-sciences-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "INFO-2921"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-history-ba"
                       ]
                     }
                   ]
