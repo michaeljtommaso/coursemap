@@ -3,7 +3,7 @@ import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { LayerSchema } from "@/lib/schemas";
+import { LayerSchema, ProgramSchema } from "@/lib/schemas";
 import { solve } from "./distribution";
 import type { DistCourse, Layer, Row, StudentContext } from "./distribution/types";
 import {
@@ -15,6 +15,11 @@ import {
   type HeldEntry,
 } from "./distribution/overlap";
 import { countedFromResult, holdCost, overlapPrograms, programOfLayer, progressScore } from "./multiProgram";
+import { normalizeProgramSlots } from "@/lib/normalize/normalizeProgram";
+import type { Course, ProgramSlotWithData } from "@/types/db";
+import type { Placement } from "@/types/plan";
+import { computeRequirementProgress } from "./requirementProgress";
+import { deriveSlotCategory } from "./slotCategory";
 
 /**
  * Spec 047 D7: every promoted overlap fixture
@@ -22,7 +27,9 @@ import { countedFromResult, holdCost, overlapPrograms, programOfLayer, progressS
  * arithmetic by scripts/check-overlap-fixture.ts) run through the engine's
  * re-solve loop, wired as computeDistributionProgress wires it: the fixture's
  * major (from scripts/seed-data/layers/**) as the primary, its minor as the
- * extra program, its plan as the board. The engine must hold back what the
+ * extra program, its plan as the board (an Engineering major, which is a slot
+ * template rather than a layer: through computeRequirementProgress itself,
+ * where only the minor gives a course up). The engine must hold back what the
  * fixture says, or an equally valid alternative: as many courses, each one
  * the fixture lists as shared, held from the minor, and the pair within the
  * fixture's limit afterwards.
@@ -71,6 +78,77 @@ const fixtures = jsonFilesUnder(join(SEED, "golden", "overlap")).map(
   (f) => JSON.parse(readFileSync(f, "utf8")) as OverlapFixture
 );
 
+// ── An Engineering major (a slot template, not a layer) ──────────────────────
+// The fixture's major is an Engineering program in seed-data (programs-2025/<id>.json
+// or programs.json): the plan runs through computeRequirementProgress with the
+// minor as its extra program, the app's real Engineering + minor path. Each
+// slot without a category gets the one backfill-slot-categories writes live.
+
+type ProgramDocRaw = Record<string, unknown> & { id: string; slots: Record<string, unknown>[] };
+
+function loadTemplateProgram(programId: string): ProgramDocRaw | null {
+  const own = join(SEED, "programs-2025", `${programId}.json`);
+  if (existsSync(own)) return JSON.parse(readFileSync(own, "utf8")) as ProgramDocRaw;
+  const all = JSON.parse(readFileSync(join(SEED, "programs.json"), "utf8")) as ProgramDocRaw[];
+  return all.find((p) => p.id === programId) ?? null;
+}
+
+function templateSlots(doc: ProgramDocRaw, byId: Map<string, DistCourse>): ProgramSlotWithData[] {
+  const groups = new Map(((doc.electiveGroups as Record<string, unknown>[] | undefined) ?? []).map((g) => [g.id as string, g]));
+  const slots = doc.slots.map((s) => {
+    const out: Record<string, unknown> = { ...s };
+    if (out.category == null) {
+      const group = typeof s.electiveGroupId === "string" ? groups.get(s.electiveGroupId) : undefined;
+      out.category = deriveSlotCategory(s as Parameters<typeof deriveSlotCategory>[0], group as Parameters<typeof deriveSlotCategory>[1]);
+    }
+    const c = s.kind === "course" && typeof s.courseId === "string" ? byId.get(s.courseId) : undefined;
+    if (c) Object.assign(out, { courseTitle: c.title, creditsMin: c.credits, creditsMax: c.credits, courseSubject: c.subject, courseNumber: c.number });
+    return out;
+  });
+  return normalizeProgramSlots(ProgramSchema.parse({ ...doc, slots }));
+}
+
+function runWithTemplate(doc: ProgramDocRaw, fx: OverlapFixture) {
+  const minor = layersById.get(fx.layerIds[1]);
+  expect(minor, `${fx.layerIds[1]} is a promoted layer`).toBeDefined();
+  const byId = new Map(fx.courses.map((c) => [c.id, c]));
+  expect(fx.plan.every((id) => byId.has(id))).toBe(true);
+  const placedCourses = Object.fromEntries(
+    fx.courses.map((c) => [
+      c.id,
+      { id: c.id, subject: c.subject, number: c.number, title: c.title, credits_min: c.credits, credits_max: c.credits, attrs: c.attrs ?? [] } as unknown as Course,
+    ])
+  );
+  const placements: Placement[] = fx.plan.map((courseId, i) => ({ id: `p${i}-${courseId}`, courseId, sem: 1 + Math.floor((i * 8) / fx.plan.length), order: i }));
+  const minorId = minor!.programId!;
+  const progress = computeRequirementProgress({
+    templateSlots: templateSlots(doc, byId),
+    placements,
+    placedCourses,
+    creditProfile: [],
+    waivedRequirementIds: [],
+    canonical: (id) => id,
+    entryTerm: fx.ctx.entryTerm ?? null,
+    programId: doc.id,
+    primaryName: { name: String(doc.name), shortName: String(doc.shortName) },
+    extraPrograms: [
+      { programId: minorId, kind: "minor", name: minor!.name, shortName: minor!.name, layers: [minor!], ...(minor!.sharing ? { sharing: minor!.sharing } : {}), status: "ok" },
+    ],
+  });
+  const pair = progress.overlap?.find((p) => p.a === doc.id && p.b === minorId);
+  expect(pair, "the app reports the pair").toBeDefined();
+  const shared = pair!.sharedCourseIds.map((courseId) => ({ courseId, credits: byId.get(courseId)?.credits ?? 0 }));
+  expect(overLimit(fx.limit, shared)).toBe(false);
+  // The Engineering major is never re-solved: every hold-back is from the minor.
+  const held = [...new Set(pair!.heldBack.map((h) => `${h.heldFrom}|${h.courseId}`))];
+  expect(held).toHaveLength(fx.heldBack.length);
+  for (const key of held) {
+    const [from, courseId] = key.split("|");
+    expect(fx.shared).toContain(courseId);
+    expect(from).toBe(minorId);
+  }
+}
+
 describe("overlap fixtures through the D7 loop", () => {
   it("has fixtures to run", () => {
     expect(fixtures.length).toBeGreaterThan(0);
@@ -78,6 +156,8 @@ describe("overlap fixtures through the D7 loop", () => {
 
   it.each(fixtures.map((fx) => [fx.programId, fx] as const))("%s", (_id, fx) => {
     const [majorId, minorId] = fx.layerIds;
+    const template = layersById.has(majorId) ? null : loadTemplateProgram(majorId);
+    if (template) return runWithTemplate(template, fx);
     const major = layersById.get(majorId);
     const minor = layersById.get(minorId);
     expect(major, `${majorId} is a promoted layer`).toBeDefined();

@@ -36,7 +36,7 @@ export const meta = {
 // writes the sentence ledger):
 //   { layerId: "cornell-data-science-minor-2026", kind: "minor", family: "other",
 //     url: "https://catalog.cornell.edu/programs/data-science-minor/",
-//     overlapMajor: "cornell-economics-ba-2026",   // optional: the promoted major for the overlap fixture
+//     overlapMajor: "cornell-economics-ba-2026",   // optional: the overlap fixture's major (a promoted layer, or an Engineering program id such as cornell-me-bs-2026)
 //     ctxMajor: "cornell-economics-ba-2026" }      // optional: the major in the minor's own golden ctx
 //   1. one Sonnet author, checklist first, writes merged.src.json (framing "single-author")
 //      with its sentence ledger; expand-draft + check-draft (<= 6 rounds); check-coverage.
@@ -83,7 +83,7 @@ for (const r of RUNS) {
   if (r.single && r.kind === 'college') throw new Error(`${r.layerId}: college layers keep the blind pair`)
   // Majors the overlap fixture / golden ctx use must be PROMOTED, so never in this batch.
   for (const k of ['overlapMajor', 'ctxMajor']) {
-    if (r[k] != null && (r.kind !== 'minor' || !ID_RE.test(r[k]))) throw new Error(`${r.layerId}: ${k} is a promoted major's layer id, on a minor run only`)
+    if (r[k] != null && (r.kind !== 'minor' || !ID_RE.test(r[k]))) throw new Error(`${r.layerId}: ${k} is a promoted major's layer id (or, for overlapMajor, an Engineering program id), on a minor run only`)
     if (r[k] != null && IDS.has(r[k])) throw new Error(`${r.layerId}: ${k} ${r[k]} is in the same batch; promote it first`)
   }
   if (!r.url) throw new Error(`no url for ${r.layerId}`)
@@ -294,7 +294,7 @@ const GOLDEN_SCHEMA = {
     notes: { type: 'array', items: { type: 'string' } },
     overlapRequired: { type: 'boolean', description: 'minors: the layer sets sharing.otherMajors, so an overlap fixture is needed' },
     overlapOk: { type: 'boolean', description: 'minors: check-overlap-fixture exited 0 (true when no fixture is required)' },
-    overlapMajor: { type: 'string', description: 'minors: the major layer id the overlap fixture uses' },
+    overlapMajor: { type: 'string', description: 'minors: the major the overlap fixture uses (a layer id, or an Engineering program id)' },
     heldBack: { type: 'array', items: { type: 'string' }, description: 'minors: "<courseId> from <layerId>"' },
     overlapProblems: { type: 'array', items: { type: 'string' } },
   },
@@ -306,7 +306,7 @@ function overlapStep(r) {
   const P = prov(r)
   const S = fromScripts(r)
   return `SECOND FIXTURE (overlap, minors): write ${P}/golden-overlap.json, which proves the minor's overlap limit holds back a course. Shape (see the header of scripts/check-overlap-fixture.ts): { programId: "${r.layerId}", description (one plain sentence of your own, published), layerIds: ["<major layer id>", "${r.layerId}"], ctx: { programId: "<that major>", entryTerm: "FA26", transfer: "none" }, plan: [course ids], limit: { maxCourses?, maxCredits? }, shared: [course ids], heldBack: [{ courseId, from: "<layer id>", why (your own words) }] }.
-- The major: ${r.overlapMajor ? `use ${r.overlapMajor} (scripts/seed-data/layers/**/${r.overlapMajor}.json)` : 'pick a promoted major layer from scripts/seed-data/layers/cas or cals whose rows count many of this minor\'s courses and which the minor is open to (not excluded by its "eligibility" ledger entries)'}. Read its layer file for its row rules; never edit it.
+- The major: ${r.overlapMajor ? `use ${r.overlapMajor} (a promoted layer, scripts/seed-data/layers/**/${r.overlapMajor}.json, or an Engineering major's slot template in scripts/seed-data/programs.json or programs-2025/${r.overlapMajor}.json)` : 'pick a promoted major layer from scripts/seed-data/layers/cas or cals whose rows count many of this minor\'s courses and which the minor is open to (not excluded by its "eligibility" ledger entries); when the limit\'s `with` names an Engineering major (e.g. cornell-me-bs), or the minor\'s courses are Engineering electives, use that Engineering program id (e.g. cornell-me-bs-2026; its slot template is in scripts/seed-data/programs.json or programs-2025/)'}. Read its file for its rules; never edit it. With an Engineering major, every heldBack is \`from\` the minor (the app never re-solves an Engineering major) and the fixture names as many courses as the report says the app's own loop holds back.
 - First read merged.json's layer.sharing. If it has NO \`otherMajors\` (the page sets no limit toward majors), the minor has nothing to hold back: do NOT invent a limit, write no overlap fixture, and return overlapRequired false and overlapOk true. Otherwise return overlapRequired true and go on (when the limit has \`with\`, the major must match one of those prefixes).
 - limit: the stricter of the major's sharing.minors (scoped by \`with\`) and the minor's sharing.otherMajors; "none" is { "maxCourses": 0 }.
 - plan: real catalog courses that complete the minor on its own AND that both programs count, more than the limit allows (consuming or credits rows count; overlay rows never do). shared: exactly the courses both count. heldBack: the course(s) the limit holds back and from which program (the minor's id or the major's), enough that the pair is within the limit afterwards.

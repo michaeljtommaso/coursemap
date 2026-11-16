@@ -12,12 +12,12 @@
 
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
-import { join } from "path";
+import { dirname, join } from "path";
 import type { GoldenFixture } from "../cornell-degree-planner/src/lib/planner/distribution/goldenPlan";
 import { buildGoldenReport, serializeFixture } from "./check-golden-layer";
 import { extractPage, loadVerifiedExtract } from "./extract-catalog-page";
 import { checkCoverage } from "./check-coverage";
-import { buildOverlapReport, serializeOverlapFixture, type OverlapFixture } from "./check-overlap-fixture";
+import { buildOverlapReport, buildTemplateOverlapReport, loadTemplateProgram, serializeOverlapFixture, type OverlapFixture } from "./check-overlap-fixture";
 import { checkPromotion, layerFileText, promote } from "./promote-layer";
 import { buildReview, loadReviewInputs } from "./review-sheet";
 import { layerSha256, rowUnits, type DistCourse, type Layer, type LayerDiff, type Row, type SnapshotMeta } from "./layer-authoring";
@@ -522,6 +522,54 @@ check("minor without a limit toward majors: no overlap fixture needed; one that 
   writeFileSync(join(base, "golden-overlap.json"), serializeOverlapFixture(OVERLAP_FX));
   assertTrue("a stray fixture is checked", minorRefusals(base, seed).length > 0, "accepted");
 });
+// An invented Engineering major: a slot template in the seed's programs.json, not a layer.
+const ENG_DOC = {
+  id: "invented-eng-bs-2026",
+  name: "Invented Engineering, B.S.",
+  shortName: "InvEng",
+  college: "College of Engineering",
+  catalogYear: 2026,
+  electiveGroups: [],
+  slots: [{ id: "inv-core", programId: "invented-eng-bs-2026", kind: "course", courseId: "FICT-1000", pattern: null, patternTitle: null, electiveGroupId: null, suggestedSemester: 1, slotRow: 0 }],
+  edges: [],
+};
+const ENG_OVERLAP_FX: OverlapFixture = {
+  ...OVERLAP_FX,
+  description: "An invented engineering major and minor that may share nothing.",
+  layerIds: [ENG_DOC.id, MINOR.id],
+  ctx: { programId: ENG_DOC.id, entryTerm: "FA26", transfer: "none" },
+};
+/** minorProvenance with the overlap fixture against the template (written into the seed's programs.json). */
+function engMinorProvenance(seed: Seed, fx: OverlapFixture = ENG_OVERLAP_FX): string {
+  const seedDir = dirname(seed.layersDir);
+  mkdirSync(seedDir, { recursive: true });
+  writeFileSync(join(seedDir, "programs.json"), JSON.stringify([ENG_DOC], null, 2));
+  const base = minorProvenance(seed);
+  const template = loadTemplateProgram(ENG_DOC.id, seedDir)!;
+  writeFileSync(join(base, "golden-overlap.json"), serializeOverlapFixture(fx));
+  writeFileSync(join(base, "overlap-report.json"), JSON.stringify(buildTemplateOverlapReport(template, MINOR, fx)));
+  return base;
+}
+const engRefusals = (base: string, seed: Seed) =>
+  checkPromotion({ program: MINOR.id, family: "other", base, catalog: CATALOG, seedDir: dirname(seed.layersDir), ...seed }).refusals;
+
+check("minor with an Engineering major (template) in its overlap fixture: promoted; a changed template or a hold-back from it is refused", () => {
+  const seed = seedDirs();
+  const base = engMinorProvenance(seed);
+  assertEqual("refusals", engRefusals(base, seed), []);
+  const code = promote({ program: MINOR.id, family: "other", base, catalog: CATALOG, seedDir: dirname(seed.layersDir), ...seed }, (s) => quiet.out.push(s), (s) => quiet.err.push(s));
+  assertEqual("exit 0", code, 0);
+  assertEqual("overlap fixture", readFileSync(join(seed.goldenDir, "..", "overlap", `${MINOR.id}.json`), "utf-8"), serializeOverlapFixture(ENG_OVERLAP_FX));
+  writeFileSync(join(dirname(seed.layersDir), "programs.json"), JSON.stringify([{ ...ENG_DOC, name: "Invented Engineering, B.S., edited" }], null, 2));
+  assertTrue("template changed since the report", hasRefusal(engRefusals(base, seed), "than its slot template in seed-data"), JSON.stringify(engRefusals(base, seed)));
+  const seed2 = seedDirs();
+  const fromMajor = engMinorProvenance(seed2, { ...ENG_OVERLAP_FX, heldBack: [{ ...ENG_OVERLAP_FX.heldBack[0], from: ENG_DOC.id }] });
+  assertTrue("held back from the template", hasRefusal(engRefusals(fromMajor, seed2), "never re-solves an Engineering major"), JSON.stringify(engRefusals(fromMajor, seed2)));
+  const seed3 = seedDirs();
+  const unknown = engMinorProvenance(seed3, { ...ENG_OVERLAP_FX, layerIds: ["invented-nowhere-bs-2026", MINOR.id] });
+  assertTrue("neither a layer nor a template", hasRefusal(engRefusals(unknown, seed3), "neither promoted in seed-data nor an Engineering major"), JSON.stringify(engRefusals(unknown, seed3)));
+});
+
 check("row-id reuse: a re-promotion that gives an old row id a new meaning is refused; family other is for minors only", () => {
   const seed = seedDirs();
   mkdirSync(join(seed.layersDir, "cals"), { recursive: true });
