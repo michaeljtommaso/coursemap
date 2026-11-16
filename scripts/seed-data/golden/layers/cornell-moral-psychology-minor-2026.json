@@ -1,0 +1,132 @@
+{
+  "programId": "cornell-moral-psychology-minor-2026",
+  "description": "A student takes one intro ethics-and-mind course, one hands-on community course, and three further approved electives.",
+  "layerIds": [
+    "cornell-moral-psychology-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-psychology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PHIL-2415",
+    "PSYCH-4940",
+    "ASRC-3434",
+    "ECON-4660",
+    "HD-4250"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PSYCH-1101",
+      "rowId": "core-course",
+      "why": "An unrelated intro course is not one of the three named core options."
+    },
+    {
+      "courseId": "PHIL-1110",
+      "rowId": "community-engaged",
+      "why": "A philosophy intro is not one of the two named community-engaged courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PHIL-2415",
+      "subject": "PHIL",
+      "number": "2415",
+      "title": "Introduction to Moral Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-4940",
+      "subject": "PSYCH",
+      "number": "4940",
+      "title": "Moral Psychology in Action",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-3434",
+      "subject": "ASRC",
+      "number": "3434",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ECON-4660",
+      "subject": "ECON",
+      "number": "4660",
+      "title": "Behavioral Economics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "HD-4250",
+      "subject": "HD",
+      "number": "4250",
+      "title": "Translational Research on Decision Making",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PSYCH-1101",
+      "subject": "PSYCH",
+      "number": "1101",
+      "title": "Introduction to Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHIL-1110",
+      "subject": "PHIL",
+      "number": "1110",
+      "title": "FWS: Philosophy in Practice",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    }
+  ]
+}

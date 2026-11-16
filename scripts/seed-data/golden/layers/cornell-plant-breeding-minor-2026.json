@@ -1,0 +1,135 @@
+{
+  "programId": "cornell-plant-breeding-minor-2026",
+  "description": "A biology major completes the plant breeding minor with its two core genetics courses plus two electives that reach eight credits.",
+  "layerIds": [
+    "cornell-plant-breeding-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-2250",
+    "PLSCI-4030",
+    "PLSCI-3010",
+    "PLSCI-4070",
+    "PLSCI-4080"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PLSCI-3430",
+      "rowId": "elective-courses",
+      "why": "The lecture is listed only as one item paired with its lab, so it does not count toward the electives on its own."
+    },
+    {
+      "courseId": "PLSCI-3431",
+      "rowId": "elective-courses",
+      "why": "The lab is listed only as one item paired with its lecture, so it does not count toward the electives on its own."
+    },
+    {
+      "courseId": "PLSCI-4030",
+      "rowId": "elective-courses",
+      "why": "A required course, not one on the elective list."
+    },
+    {
+      "courseId": "PLSCI-2250",
+      "rowId": "elective-courses",
+      "why": "A required course, not one on the elective list."
+    },
+    {
+      "courseId": "PLSCI-3010",
+      "rowId": "required-courses",
+      "why": "An elective-list course, not one of the two required courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-2250",
+      "subject": "PLSCI",
+      "number": "2250",
+      "title": "Plant Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4030",
+      "subject": "PLSCI",
+      "number": "4030",
+      "title": "Genetic Improvement of Crop Plants",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3010",
+      "subject": "PLSCI",
+      "number": "3010",
+      "title": "Biology and Management of Plant Diseases",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4070",
+      "subject": "PLSCI",
+      "number": "4070",
+      "title": "Nutritional Quality Improvement of Food Crops",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4080",
+      "subject": "PLSCI",
+      "number": "4080",
+      "title": "Methods of Plant Breeding Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PLSCI-3430",
+      "subject": "PLSCI",
+      "number": "3430",
+      "title": "Molecular Biology and Genetic Engineering of Plants",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PLSCI-3431",
+      "subject": "PLSCI",
+      "number": "3431",
+      "title": "Laboratory in Molecular Biology and Genetic Engineering of Plants",
+      "credits": 2,
+      "attrs": []
+    }
+  ]
+}

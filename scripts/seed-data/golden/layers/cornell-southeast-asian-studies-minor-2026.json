@@ -1,0 +1,250 @@
+{
+  "programId": "cornell-southeast-asian-studies-minor-2026",
+  "description": "A student completes five Southeast Asia focused Asian Studies courses totaling 18 credits, with several at the 3000 level or higher.",
+  "layerIds": [
+    "cornell-southeast-asian-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ASIAN-2208",
+    "ASIAN-3350",
+    "ASIAN-3396",
+    "ASIAN-3397",
+    "ASIAN-4452"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASIAN-2285",
+      "rowId": "minor-courses",
+      "why": "The general Asian art introduction is held out even though it carries the Southeast Asia area tag."
+    },
+    {
+      "courseId": "ASIAN-7703",
+      "rowId": "minor-courses",
+      "why": "Variable-credit directed research needs department approval and is not counted by the board."
+    },
+    {
+      "courseId": "ASIAN-1111",
+      "rowId": "minor-courses",
+      "why": "A first-year writing seminar sits below the 2200 floor for non-language courses."
+    },
+    {
+      "courseId": "THAI-1100",
+      "rowId": "minor-courses",
+      "why": "A one-credit language course falls below the three-credit minimum for language study."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ASIAN-2208",
+      "subject": "ASIAN",
+      "number": "2208",
+      "title": "Introduction to Southeast Asia",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-GE"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-3350",
+      "subject": "ASIAN",
+      "number": "3350",
+      "title": "The Arts of Southeast Asia",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-3396",
+      "subject": "ASIAN",
+      "number": "3396",
+      "title": "Transnational Local: Southeast Asian History from the Eighteenth Century",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-3397",
+      "subject": "ASIAN",
+      "number": "3397",
+      "title": "Monsoon Kingdoms: Pre-Modern Southeast Asian History",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HAN"
+        },
+        {
+          "value": "HIST-HPE"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-4452",
+      "subject": "ASIAN",
+      "number": "4452",
+      "title": "Critical Filipino and Filipino American Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-2285",
+      "subject": "ASIAN",
+      "number": "2285",
+      "title": "Introduction to Asian Art: Material Worlds",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-7703",
+      "subject": "ASIAN",
+      "number": "7703",
+      "title": "Directed Research",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SEAREA"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-1111",
+      "subject": "ASIAN",
+      "number": "1111",
+      "title": "FWS: Literature, Culture, Religion",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "THAI-1100",
+      "subject": "THAI",
+      "number": "1100",
+      "title": "Elements of Thai Language and Culture",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
+}

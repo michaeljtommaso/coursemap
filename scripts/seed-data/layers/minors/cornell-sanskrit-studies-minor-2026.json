@@ -1,0 +1,119 @@
+{
+  "id": "cornell-sanskrit-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Sanskrit Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-sanskrit-studies-minor-2026",
+  "rows": [
+    {
+      "id": "sanskrit-courses",
+      "label": "Five Sanskrit or related courses (18+ credits) from the department list or SANSK 2251, including a language-proficiency course and a 3000-level-or-higher course",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sanskrit-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Proficiency means SANSK 2251 or a higher SANSK course (only listed courses count here); one of the five must be such a course. At most 8 transfer credits count. Only courses on the department list (plus SANSK 2251) are counted here; other courses need advisor approval.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "ASIAN-2248",
+              "ASIAN-2250",
+              "ASIAN-3341",
+              "ASIAN-3344",
+              "ASIAN-3366",
+              "ASIAN-4020",
+              "ASIAN-4023",
+              "ASIAN-4446",
+              "SANSK-1131",
+              "SANSK-1132",
+              "SANSK-2252",
+              "SANSK-3301",
+              "SANSK-3302",
+              "SNLIT-6601",
+              "SNLIT-6602"
+            ]
+          },
+          {
+            "course": [
+              "SANSK-2251"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 18,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "SANSK"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2251
+                }
+              }
+            ]
+          },
+          "label": "Language proficiency course (SANSK 2251 or higher)",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At least one course at the 3000 level or above",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer"
+            ]
+          },
+          "label": "Transfer credit cap",
+          "maxCredits": 8
+        }
+      ]
+    },
+    {
+      "id": "advisor-approved-courses",
+      "label": "Check with the minor advisor on any course outside the department list you hope to count",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sanskrit-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades-letter-bminus",
+      "label": "Take every counted course for a letter grade (no S/U) and earn B- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sanskrit-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor with the Asian Studies department, no later than the first semester of your final year",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sanskrit-studies-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

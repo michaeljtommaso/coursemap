@@ -1,0 +1,298 @@
+{
+  "programId": "cornell-physics-minor-2026",
+  "description": "A chemistry major finishes the physics minor with one mechanics-and-relativity course, one electromagnetism course, one waves course, an intermediate lab and an upper-level elective.",
+  "layerIds": [
+    "cornell-physics-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-chemistry-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PHYS-1110",
+    "PHYS-1116",
+    "PHYS-2213",
+    "PHYS-2214",
+    "PHYS-3310",
+    "PHYS-3316",
+    "PHYS-3317"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PHYS-2207",
+      "rowId": "electromagnetism",
+      "why": "A mechanics course, not on the electromagnetism list."
+    },
+    {
+      "courseId": "PHYS-2208",
+      "rowId": "mechanics",
+      "why": "An electromagnetism course, not on the mechanics list."
+    },
+    {
+      "courseId": "PHYS-2216",
+      "rowId": "mechanics",
+      "why": "The relativity course does not serve as the mechanics course."
+    },
+    {
+      "courseId": "PHYS-1112",
+      "rowId": "relativity",
+      "why": "Only PHYS 1116 or 2216 satisfy the relativity requirement."
+    },
+    {
+      "courseId": "PHYS-2217",
+      "rowId": "waves",
+      "why": "An electricity course, not a waves option."
+    },
+    {
+      "courseId": "PHYS-2214",
+      "rowId": "intermediate-lab",
+      "why": "A waves lecture course is not on the intermediate lab list."
+    },
+    {
+      "courseId": "PHYS-2210",
+      "rowId": "extra-physics",
+      "why": "Below the 3000 level."
+    },
+    {
+      "courseId": "PHYS-2214",
+      "rowId": "extra-physics",
+      "why": "Below the 3000 level."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PHYS-1110",
+      "subject": "PHYS",
+      "number": "1110",
+      "title": "Introduction to Experimental Physics",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1116",
+      "subject": "PHYS",
+      "number": "1116",
+      "title": "Physics I: Mechanics and Special Relativity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2213",
+      "subject": "PHYS",
+      "number": "2213",
+      "title": "Physics II: Electromagnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2214",
+      "subject": "PHYS",
+      "number": "2214",
+      "title": "Physics III: Oscillations, Waves, and Quantum Physics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3310",
+      "subject": "PHYS",
+      "number": "3310",
+      "title": "Intermediate Experimental Physics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3316",
+      "subject": "PHYS",
+      "number": "3316",
+      "title": "Basics of Quantum Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-3317",
+      "subject": "PHYS",
+      "number": "3317",
+      "title": "Applications of Quantum Mechanics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2207",
+      "subject": "PHYS",
+      "number": "2207",
+      "title": "Fundamentals of Physics I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2208",
+      "subject": "PHYS",
+      "number": "2208",
+      "title": "Fundamentals of Physics II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2216",
+      "subject": "PHYS",
+      "number": "2216",
+      "title": "Introduction to Special Relativity",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2217",
+      "subject": "PHYS",
+      "number": "2217",
+      "title": "Physics II: Electricity and Magnetism",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-2210",
+      "subject": "PHYS",
+      "number": "2210",
+      "title": "Exploring Experimental Physics",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
+}

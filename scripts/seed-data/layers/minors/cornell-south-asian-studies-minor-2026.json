@@ -1,0 +1,280 @@
+{
+  "id": "cornell-south-asian-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "South Asian Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-south-asian-studies-minor-2026",
+  "rows": [
+    {
+      "id": "minor-courses",
+      "label": "Five or more courses, 18+ credits: South Asia ASIAN courses at 2200+, up to two language courses, one non-language course at 3000+",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/south-asian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Matched by the ASIAN subject (cross-listings too) plus the roster South Asia area tag, 2200 or above, language held out. Language: HINDI, SANSK, TAMIL, BENGL, URDU, NEPAL, SINHA, PUNJB, KANAD at 1100+, 3+ credits, non-variable (stricter). Transfer and exam credit capped together at 8 credits (stricter).",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "ASIAN"
+                ],
+                "crossListed": true
+              },
+              {
+                "tag": [
+                  "SAAREA"
+                ]
+              },
+              {
+                "not": {
+                  "anyOf": [
+                    {
+                      "subject": [
+                        "HINDI",
+                        "SANSK",
+                        "TAMIL",
+                        "BENGL",
+                        "URDU",
+                        "NEPAL",
+                        "SINHA",
+                        "PUNJB",
+                        "KANAD"
+                      ]
+                    },
+                    {
+                      "tag": [
+                        "SALANG"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "number": {
+                  "min": 2200
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "HINDI",
+                  "SANSK",
+                  "TAMIL",
+                  "BENGL",
+                  "URDU",
+                  "NEPAL",
+                  "SINHA",
+                  "PUNJB",
+                  "KANAD"
+                ]
+              },
+              {
+                "number": {
+                  "min": 1100
+                }
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "variableCredit": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 18,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "HINDI",
+                  "SANSK",
+                  "TAMIL",
+                  "BENGL",
+                  "URDU",
+                  "NEPAL",
+                  "SINHA",
+                  "PUNJB",
+                  "KANAD"
+                ]
+              },
+              {
+                "number": {
+                  "min": 1100
+                }
+              }
+            ]
+          },
+          "label": "At most two language courses",
+          "maxCourses": 2
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "HINDI",
+                  "SANSK",
+                  "TAMIL",
+                  "BENGL",
+                  "URDU",
+                  "NEPAL",
+                  "SINHA",
+                  "PUNJB",
+                  "KANAD"
+                ]
+              },
+              {
+                "number": {
+                  "min": 1100
+                }
+              }
+            ]
+          },
+          "label": "At most 6 language credits",
+          "maxCredits": 6
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "ASIAN"
+                ],
+                "crossListed": true
+              },
+              {
+                "tag": [
+                  "SAAREA"
+                ]
+              },
+              {
+                "not": {
+                  "anyOf": [
+                    {
+                      "subject": [
+                        "HINDI",
+                        "SANSK",
+                        "TAMIL",
+                        "BENGL",
+                        "URDU",
+                        "NEPAL",
+                        "SINHA",
+                        "PUNJB",
+                        "KANAD"
+                      ]
+                    },
+                    {
+                      "tag": [
+                        "SALANG"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "number": {
+                  "min": 3000
+                }
+              }
+            ]
+          },
+          "label": "At least one non-language course at 3000 or above",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer",
+              "ap",
+              "ib",
+              "alevel",
+              "intl",
+              "placement"
+            ]
+          },
+          "label": "At most 8 transfer credits",
+          "maxCredits": 8
+        }
+      ]
+    },
+    {
+      "id": "approved-other-courses",
+      "label": "Count other courses with South Asian content (ones the roster tag misses) only with Asian Studies approval",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/south-asian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board only counts courses it can match; anything else needs the department's approval, which you confirm.",
+      "kind": "confirm"
+    },
+    {
+      "id": "jumpstart-limit",
+      "label": "Count no more than one language jumpstart course",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/south-asian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot tell which language courses are jumpstart courses, so you confirm this limit.",
+      "kind": "confirm"
+    },
+    {
+      "id": "nflc-limit",
+      "label": "Nilgiris program: count at most three of its courses (four for graduating seniors with a new interest); non-seniors apply before leaving",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/south-asian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Off-campus program courses are not visible to the board beyond transfer credit, so you confirm this limit.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every counted course for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/south-asian-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn B- or better in each counted course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/south-asian-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor with the Asian Studies department, no later than the first semester of your graduating year",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/south-asian-studies-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

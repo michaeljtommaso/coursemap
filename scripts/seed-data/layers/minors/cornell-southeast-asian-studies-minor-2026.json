@@ -1,0 +1,253 @@
+{
+  "id": "cornell-southeast-asian-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Southeast Asian Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-southeast-asian-studies-minor-2026",
+  "rows": [
+    {
+      "id": "minor-courses",
+      "label": "Five or more qualifying courses worth at least 18 credits: Southeast Asia-focused ASIAN courses, at most one intro, and capped language study",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/southeast-asian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Matched as ASIAN (cross-listings included) with the roster Southeast Asia area tag, 2200 or above; directed/research (variable-credit) courses and the general Asian art intro are held out. Language: Burmese, Indonesian, Khmer, Tagalog, Thai, Vietnamese at 1100+, 3+ credits, max two courses and 6 credits. Transfer and exam credit together capped at 8 credits (stricter reading).",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "ASIAN"
+                ],
+                "crossListed": true
+              },
+              {
+                "tag": [
+                  "SEAREA"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2200
+                }
+              },
+              {
+                "not": {
+                  "variableCredit": true
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "Introduction to Asian Art"
+                }
+              }
+            ]
+          },
+          {
+            "course": [
+              "ASIAN-2208"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "BURM",
+                  "INDO",
+                  "KHMER",
+                  "TAG",
+                  "THAI",
+                  "VIET"
+                ]
+              },
+              {
+                "number": {
+                  "min": 1100
+                }
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "variableCredit": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 18,
+      "limits": [
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "ASIAN-2208"
+                ]
+              },
+              {
+                "titleStartsWith": "Introduction to Southeast Asia"
+              }
+            ]
+          },
+          "label": "At most one introductory course",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "BURM",
+                  "INDO",
+                  "KHMER",
+                  "TAG",
+                  "THAI",
+                  "VIET"
+                ]
+              },
+              {
+                "number": {
+                  "min": 1100
+                }
+              }
+            ]
+          },
+          "label": "At most two language courses",
+          "maxCourses": 2
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "BURM",
+                  "INDO",
+                  "KHMER",
+                  "TAG",
+                  "THAI",
+                  "VIET"
+                ]
+              },
+              {
+                "number": {
+                  "min": 1100
+                }
+              }
+            ]
+          },
+          "label": "At most 6 language credits",
+          "maxCredits": 6
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "ASIAN"
+                ],
+                "crossListed": true
+              },
+              {
+                "tag": [
+                  "SEAREA"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000
+                }
+              },
+              {
+                "not": {
+                  "variableCredit": true
+                }
+              },
+              {
+                "not": {
+                  "titleStartsWith": "Introduction to Asian Art"
+                }
+              }
+            ]
+          },
+          "label": "At least one non-language course at 3000 or above",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer",
+              "ap",
+              "ib",
+              "alevel",
+              "intl",
+              "placement"
+            ]
+          },
+          "label": "At most 8 transfer credits",
+          "maxCredits": 8
+        }
+      ]
+    },
+    {
+      "id": "approved-other-courses",
+      "label": "Count courses outside the matched list (other Southeast Asian content, area courses the roster tag misses) only with Asian Studies approval",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/southeast-asian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board only counts courses it can match; anything else needs the department's approval, which you confirm. Directed study and research courses are held out of the board's count and also need this approval.",
+      "kind": "confirm"
+    },
+    {
+      "id": "jumpstart-limit",
+      "label": "Count no more than one language jumpstart course",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/southeast-asian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot tell which language courses are jumpstart courses, so you confirm this limit.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every counted course for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/southeast-asian-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn B- or better in each counted course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/southeast-asian-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor with the Asian Studies department, no later than the first semester of your graduating year",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/southeast-asian-studies-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

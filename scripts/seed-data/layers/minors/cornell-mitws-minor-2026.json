@@ -1,0 +1,201 @@
+{
+  "id": "cornell-mitws-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Minority, Indigenous, and Third World Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-mitws-minor-2026",
+  "rows": [
+    {
+      "id": "minor-courses",
+      "label": "Five approved three- or four-credit courses, 15 credits at least",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mitws-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts English and cross-listed courses, plus one outside course at 2000 level or above, only once the student marks them department-approved (stricter: the board cannot tell which courses fit). Writing seminars, variable-credit, under-3-credit and exam-credit courses are held out. One 1000-level course at most; one transfer, independent study or outside course at most. The 4-credit ceiling is not checked.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "subject": [
+                  "ENGL"
+                ],
+                "crossListed": true
+              },
+              {
+                "number": {
+                  "min": 2000
+                }
+              }
+            ]
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS:"
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "anyOf": [
+                    {
+                      "creditKind": [
+                        "transfer"
+                      ]
+                    },
+                    {
+                      "titleStartsWith": "Independent Study"
+                    },
+                    {
+                      "not": {
+                        "subject": [
+                          "ENGL"
+                        ],
+                        "crossListed": true
+                      }
+                    }
+                  ]
+                },
+                {
+                  "number": {
+                    "max": 1999
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "answered": "approvedFor:cornell-mitws-minor-2026/minor-courses"
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "max": 1999
+            }
+          },
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "creditKind": [
+                  "transfer"
+                ]
+              },
+              {
+                "titleStartsWith": "Independent Study"
+              },
+              {
+                "not": {
+                  "subject": [
+                    "ENGL"
+                  ],
+                  "crossListed": true
+                }
+              }
+            ]
+          },
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "course-fit",
+      "label": "Check each course engages with minority, Indigenous or national literatures, and that the department accepts it for MITWS",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mitws-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "The board cannot judge a course's topic or eligibility; ask the department. Also check every course is three or four credits and a full semester.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Every course taken for a letter grade (no S/U) and passed with a C or better",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mitws-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the department's minor declaration form by the end of week seven of your last semester",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mitws-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "An Intent to Minor form is encouraged as early as possible.",
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/mitws-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "A maximum of one course at the 2000-level or higher from transfer, study abroad, independent study, or another Cornell department on subjects related to literary study, even if focused on literatures not originally in English, may qualify if approved by the department.",
+      "type": "approvedFor",
+      "row": "minor-courses",
+      "courses": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "subject": [
+                  "ENGL"
+                ],
+                "crossListed": true
+              },
+              {
+                "number": {
+                  "min": 2000
+                }
+              }
+            ]
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS:"
+            }
+          }
+        ]
+      },
+      "approver": "dus"
+    }
+  ]
+}

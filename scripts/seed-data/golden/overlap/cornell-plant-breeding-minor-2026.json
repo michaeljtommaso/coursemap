@@ -1,0 +1,112 @@
+{
+  "programId": "cornell-plant-breeding-minor-2026",
+  "description": "A biology and society major counts a couple of the minor's courses, but the minor accepts none that the major also uses.",
+  "layerIds": [
+    "cornell-biology-society-bs-2026",
+    "cornell-plant-breeding-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biology-society-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-2250",
+    "PLSCI-4030",
+    "PLSCI-3010",
+    "PLSCI-4070",
+    "PLSCI-4080"
+  ],
+  "limit": {
+    "maxCourses": 0
+  },
+  "shared": [
+    "PLSCI-2250",
+    "PLSCI-3010"
+  ],
+  "heldBack": [
+    {
+      "courseId": "PLSCI-2250",
+      "from": "cornell-plant-breeding-minor-2026",
+      "why": "The minor allows no course shared with a major, so this shared course stops counting for the minor."
+    },
+    {
+      "courseId": "PLSCI-3010",
+      "from": "cornell-plant-breeding-minor-2026",
+      "why": "The minor allows no course shared with a major, so this shared course stops counting for the minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-2250",
+      "subject": "PLSCI",
+      "number": "2250",
+      "title": "Plant Genetics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4030",
+      "subject": "PLSCI",
+      "number": "4030",
+      "title": "Genetic Improvement of Crop Plants",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3010",
+      "subject": "PLSCI",
+      "number": "3010",
+      "title": "Biology and Management of Plant Diseases",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4070",
+      "subject": "PLSCI",
+      "number": "4070",
+      "title": "Nutritional Quality Improvement of Food Crops",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4080",
+      "subject": "PLSCI",
+      "number": "4080",
+      "title": "Methods of Plant Breeding Laboratory",
+      "credits": 2,
+      "attrs": []
+    }
+  ]
+}

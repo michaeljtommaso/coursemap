@@ -1,0 +1,180 @@
+{
+  "id": "cornell-org-human-resource-management-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Organizations and Human Resource Management (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-org-human-resource-management-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCredits": 3
+    },
+    "minors": "none"
+  },
+  "rows": [
+    {
+      "id": "foundation",
+      "label": "Foundation course: Managing Talent (ILRHR 2600)",
+      "group": "Required course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/org-human-resource-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ILRHR-2600"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "electives",
+      "label": "Twelve elective credits in ILRHR or ILROB (plus ILRID 1700), letter-graded at Cornell",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/org-human-resource-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "ILRID 1700 is the one named non-ILRHR/ILROB course that counts. Internship, honors thesis, directed and independent study are held out by title; a confirm row backs this. Transfer and exam credit are held out entirely (stricter than the page's 3-credit pre-matriculation allowance).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "subject": [
+                  "ILRHR",
+                  "ILROB"
+                ]
+              },
+              {
+                "course": [
+                  "ILRID-1700"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "ILRHR-2600"
+              ]
+            }
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "titleStartsWith": "Independent Study"
+                },
+                {
+                  "titleStartsWith": "Directed Stud"
+                },
+                {
+                  "titleStartsWith": "Honors"
+                },
+                {
+                  "titleStartsWith": "Internship"
+                },
+                {
+                  "titleStartsWith": "Thesis"
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 12
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every course for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/org-human-resource-management-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-and-study-abroad",
+      "label": "Pre-matriculation transfer: at most 3 credits, equivalent to an ILRHR/ILROB course; no later transfer or study abroad; no petitions",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/org-human-resource-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "study-abroad-foundation",
+      "label": "If ILRHR 2600 is blocked by repeat-credit rules, a study abroad stand-in gives no credit, so 15 other ILRHR/ILROB credits are still needed",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/org-human-resource-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-experiential-credit",
+      "label": "Experiential ILR credit (internship, thesis, directed or independent study) never counts",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/org-human-resource-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "overlap-three-credits",
+      "label": "At most 3 credits may also count toward any other major or minor requirements (all programs combined)",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/org-human-resource-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-credits",
+      "label": "Reach at least 15 credits (3 foundation plus 12 elective)",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/org-human-resource-management-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

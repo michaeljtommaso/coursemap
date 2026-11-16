@@ -1,0 +1,192 @@
+{
+  "id": "cornell-science-communication-public-engagement-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Science Communication and Public Engagement (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-science-communication-public-engagement-minor-2026",
+  "rows": [
+    {
+      "id": "core-comm-2850",
+      "label": "Core course: environment, science and health communication",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-communication-public-engagement-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-2850"
+        ]
+      }
+    },
+    {
+      "id": "community-engaged-credits",
+      "label": "Six credits of community-engaged learning courses",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-communication-public-engagement-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Variable-credit internship and research courses are counted at the credits the board records for them. Communication majors and minors may not use COMM courses here.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ALS-4960",
+              "ALS-4990",
+              "BME-4440",
+              "COMM-3760",
+              "EDUC-3510",
+              "ENTOM-3350",
+              "PHYS-4500",
+              "PSYCH-4500",
+              "STS-4451"
+            ]
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "COMM"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-communication-bs",
+                    "cornell-communications-minor"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "applied-communication-credits",
+      "label": "Six credits of applied communication courses",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-communication-public-engagement-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Communication majors and minors may not use COMM courses here.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AEM-2700",
+              "ASTRO-2202",
+              "BIOG-3500",
+              "BIOSM-3500",
+              "COMM-2450",
+              "COMM-2760",
+              "COMM-3010",
+              "COMM-3020",
+              "COMM-3070",
+              "COMM-3200",
+              "COMM-4660",
+              "ILRGL-3300"
+            ]
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "COMM"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-communication-bs",
+                    "cornell-communications-minor"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "methods-ethics-literacy-credits",
+      "label": "Three credits of scientific methods, ethics or science literacy",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-communication-public-engagement-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Communication majors and minors may not use COMM courses here.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ALS-1200",
+              "BSOC-2061",
+              "COMM-2820",
+              "COMM-3210",
+              "COMM-4300",
+              "COMM-4350",
+              "PHIL-2455",
+              "STS-1201",
+              "STS-2051",
+              "STS-4041"
+            ]
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "COMM"
+                  ]
+                },
+                {
+                  "program": [
+                    "cornell-communication-bs",
+                    "cornell-communications-minor"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "science-engineering-credits",
+      "label": "Confirm 8 separate science or engineering credits in your major or other minor",
+      "group": "Outside the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-communication-public-engagement-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot tell which courses are science or engineering. These credits must come from courses that are not on the minor's core or elective lists; they may be taken before or alongside the minor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "communication-outside-dept",
+      "label": "Confirm: Communication majors and minors use non-COMM courses for everything but the core course",
+      "group": "Outside the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/science-communication-public-engagement-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The three elective rows above already refuse COMM courses when the plan holds the Communication major or minor; this reminder covers any case the board cannot see.",
+      "kind": "confirm"
+    }
+  ]
+}

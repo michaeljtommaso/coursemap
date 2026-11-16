@@ -1,0 +1,216 @@
+{
+  "programId": "cornell-mitws-minor-2026",
+  "description": "A student finishes the minor with five English-department literature courses on ethnic and Indigenous writing, each approved by the department.",
+  "layerIds": [
+    "cornell-mitws-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-american-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ENGL-2600",
+    "ENGL-2620",
+    "ENGL-2650",
+    "ENGL-2901",
+    "ENGL-2783"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ENGL-1105",
+      "rowId": "minor-courses",
+      "why": "A first-year writing seminar cannot be applied to the minor."
+    },
+    {
+      "courseId": "ENGL-2705",
+      "rowId": "minor-courses",
+      "why": "Only two credits, below the three-credit floor."
+    },
+    {
+      "courseId": "ENGL-2603",
+      "rowId": "minor-courses",
+      "why": "One credit only, too small to be one of the five courses."
+    },
+    {
+      "courseId": "ENGL-2010",
+      "rowId": "minor-courses",
+      "why": "Variable credit, so the board cannot treat it as a fixed three or four credit course."
+    }
+  ],
+  "answers": {
+    "marks": {
+      "approvedFor:cornell-mitws-minor-2026/minor-courses@ENGL-2600": "yes",
+      "approvedFor:cornell-mitws-minor-2026/minor-courses@ENGL-2620": "yes",
+      "approvedFor:cornell-mitws-minor-2026/minor-courses@ENGL-2650": "yes",
+      "approvedFor:cornell-mitws-minor-2026/minor-courses@ENGL-2783": "yes",
+      "approvedFor:cornell-mitws-minor-2026/minor-courses@ENGL-2901": "yes"
+    }
+  },
+  "courses": [
+    {
+      "id": "ENGL-2600",
+      "subject": "ENGL",
+      "number": "2600",
+      "title": "Introduction to Native American Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2620",
+      "subject": "ENGL",
+      "number": "2620",
+      "title": "Introduction to Asian American Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2650",
+      "subject": "ENGL",
+      "number": "2650",
+      "title": "Introduction to African American Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2901",
+      "subject": "ENGL",
+      "number": "2901",
+      "title": "Contemporary Canadian Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2783",
+      "subject": "ENGL",
+      "number": "2783",
+      "title": "Writing Bodies and Minds: Disability and Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-1105",
+      "subject": "ENGL",
+      "number": "1105",
+      "title": "FWS: Writing and Sexual Politics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2705",
+      "subject": "ENGL",
+      "number": "2705",
+      "title": "The Idea of Hospitality I: From Ancient Times to the Present",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "ENGL-2603",
+      "subject": "ENGL",
+      "number": "2603",
+      "title": "The Novels of Toni Morrison",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ENGL-2010",
+      "subject": "ENGL",
+      "number": "2010",
+      "title": "Literatures in English I: From Old English to the New World",
+      "credits": 3,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-PRE"
+        }
+      ]
+    }
+  ]
+}

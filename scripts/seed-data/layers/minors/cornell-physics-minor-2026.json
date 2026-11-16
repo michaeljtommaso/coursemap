@@ -1,0 +1,256 @@
+{
+  "id": "cornell-physics-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Physics (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-physics-minor-2026",
+  "rows": [
+    {
+      "id": "intro-lab",
+      "label": "Introductory experimental physics lab (PHYS 1110)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-1110"
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "quantum",
+      "label": "Quantum mechanics basics (PHYS 3316)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-3316"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "mechanics",
+      "label": "One calculus-based introductory mechanics course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-1112",
+          "PHYS-1116",
+          "PHYS-2207"
+        ]
+      }
+    },
+    {
+      "id": "relativity",
+      "label": "One special relativity course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Overlay row so that PHYS 1116 can be the mechanics course and the relativity course at once, as the page allows. No other course is shared between rows.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-1116",
+          "PHYS-2216"
+        ]
+      }
+    },
+    {
+      "id": "electromagnetism",
+      "label": "One calculus-based introductory electromagnetism course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-2208",
+          "PHYS-2213",
+          "PHYS-2217"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "waves",
+      "label": "Waves course (PHYS 2218 only together with the PHYS 2210 lab)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "waves-2214",
+          "label": "PHYS 2214",
+          "group": "Required courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/physics-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "PHYS-2214"
+            ]
+          }
+        },
+        {
+          "id": "waves-2218-with-lab",
+          "label": "PHYS 2218 plus its lab PHYS 2210",
+          "group": "Required courses",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/physics-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "PHYS-2218",
+              "PHYS-2210"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "intermediate-lab",
+      "label": "One intermediate physics lab course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHYS-3310",
+          "PHYS-3360",
+          "PHYS-4410",
+          "AEP-3640",
+          "ECE-2100",
+          "BEE-4500",
+          "ASTRO-4410"
+        ]
+      }
+    },
+    {
+      "id": "extra-physics",
+      "label": "One more physics course at the 3000 level or above, at least 3 credits",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Limited to PHYS-coded courses (stricter than the page, which says physics course). Variable-credit courses (independent study, research) are held out because they can be taken under 3 credits.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PHYS"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "intro-lab-concurrent",
+      "label": "Take PHYS 1110 at the same time as one of the intro mechanics or electromagnetism courses it names",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-only",
+      "label": "Take every course for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-minus",
+      "label": "Earn C- or better in every counted course, apart from the two introductory physics courses",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-b-minus-intro",
+      "label": "Earn B- or better in two of the introductory physics courses",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-credits",
+      "label": "Reach the 15-credit minimum for the minor",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Apply to the minor with the department's form by the deadline (Dec 1 for December graduates, May 1 for May graduates)",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/physics-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

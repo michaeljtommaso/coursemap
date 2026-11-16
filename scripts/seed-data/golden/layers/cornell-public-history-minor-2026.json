@@ -1,0 +1,63 @@
+{
+  "programId": "cornell-public-history-minor-2026",
+  "description": "One of the two named introductory public history courses completes the only requirement the board can verify.",
+  "layerIds": [
+    "cornell-public-history-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "HIST-2792"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "HIST-1200",
+      "rowId": "core-course",
+      "why": "A history course outside the two named core options does not fill the core seat."
+    }
+  ],
+  "courses": [
+    {
+      "id": "HIST-2792",
+      "subject": "HIST",
+      "number": "2792",
+      "title": "Monuments, Museums, and Memory: An Introduction to Public History",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "HIST-1200",
+      "subject": "HIST",
+      "number": "1200",
+      "title": "FWS: Writing History",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    }
+  ]
+}

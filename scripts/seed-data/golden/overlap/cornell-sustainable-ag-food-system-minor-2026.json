@@ -1,0 +1,140 @@
+{
+  "programId": "cornell-sustainable-ag-food-system-minor-2026",
+  "description": "An agricultural sciences major whose own requirements already use three of the minor's courses, which the no-sharing rule must hold back.",
+  "layerIds": [
+    "cornell-agricultural-sciences-bs-2026",
+    "cornell-sustainable-ag-food-system-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "AEM-4880",
+    "PLSCI-1900",
+    "ANSC-3600",
+    "PLSCI-3210",
+    "FDSC-2000"
+  ],
+  "limit": {
+    "maxCourses": 0
+  },
+  "shared": [
+    "PLSCI-1900",
+    "ANSC-3600",
+    "FDSC-2000"
+  ],
+  "heldBack": [
+    {
+      "courseId": "PLSCI-1900",
+      "from": "cornell-sustainable-ag-food-system-minor-2026",
+      "why": "The minor may not reuse a course the major needs."
+    },
+    {
+      "courseId": "ANSC-3600",
+      "from": "cornell-sustainable-ag-food-system-minor-2026",
+      "why": "Same rule, counted by the major."
+    },
+    {
+      "courseId": "FDSC-2000",
+      "from": "cornell-sustainable-ag-food-system-minor-2026",
+      "why": "Same rule, counted by the major."
+    }
+  ],
+  "courses": [
+    {
+      "id": "AEM-4880",
+      "subject": "AEM",
+      "number": "4880",
+      "title": "Global Food, Energy, and Water Nexus – Engage the US, China, and India for Sustainable Future",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1900",
+      "subject": "PLSCI",
+      "number": "1900",
+      "title": "Sustainable Agriculture: Food, Farming, and the Future",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3600",
+      "subject": "ANSC",
+      "number": "3600",
+      "title": "Beef Cattle Production",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3210",
+      "subject": "PLSCI",
+      "number": "3210",
+      "title": "Soil and Crop Management for Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-2000",
+      "subject": "FDSC",
+      "number": "2000",
+      "title": "Introduction to Physiochemical and Biological Aspects of Foods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    }
+  ]
+}

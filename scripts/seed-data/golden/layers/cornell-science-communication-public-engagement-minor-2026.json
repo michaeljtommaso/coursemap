@@ -1,0 +1,158 @@
+{
+  "programId": "cornell-science-communication-public-engagement-minor-2026",
+  "description": "A Communication major finishes the minor using the core course plus non-COMM picks for each of the three groups.",
+  "layerIds": [
+    "cornell-science-communication-public-engagement-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-communication-bs",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "COMM-2850",
+    "EDUC-3510",
+    "STS-4451",
+    "AEM-2700",
+    "ASTRO-2202",
+    "STS-1201"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "COMM-3760",
+      "rowId": "community-engaged-credits",
+      "why": "A Communication major may not use a COMM course in the engaged-learning group."
+    },
+    {
+      "courseId": "COMM-3020",
+      "rowId": "applied-communication-credits",
+      "why": "A Communication major may not use a COMM course in the applied communication group."
+    },
+    {
+      "courseId": "COMM-3210",
+      "rowId": "methods-ethics-literacy-credits",
+      "why": "A Communication major may not use a COMM course in the methods and ethics group."
+    }
+  ],
+  "courses": [
+    {
+      "id": "COMM-2850",
+      "subject": "COMM",
+      "number": "2850",
+      "title": "Communication, Environment, Science, and Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "EDUC-3510",
+      "subject": "EDUC",
+      "number": "3510",
+      "title": "Engaged Learning through Extension, Outreach, and Instruction",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "STS-4451",
+      "subject": "STS",
+      "number": "4451",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AEM-2700",
+      "subject": "AEM",
+      "number": "2700",
+      "title": "Management Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ORL-AG"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-2202",
+      "subject": "ASTRO",
+      "number": "2202",
+      "title": "A Spacecraft Tour of the Solar System: Science, Policy and Exploration",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "STS-1201",
+      "subject": "STS",
+      "number": "1201",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "COMM-3760",
+      "subject": "COMM",
+      "number": "3760",
+      "title": "Planning Communication Campaigns",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "COMM-3020",
+      "subject": "COMM",
+      "number": "3020",
+      "title": "Science Writing for the Media",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "COMM-3210",
+      "subject": "COMM",
+      "number": "3210",
+      "title": "Communication and the Environment",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

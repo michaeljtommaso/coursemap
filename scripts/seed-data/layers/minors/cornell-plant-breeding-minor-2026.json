@@ -1,0 +1,184 @@
+{
+  "id": "cornell-plant-breeding-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Plant Breeding (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-plant-breeding-minor-2026",
+  "sharing": {
+    "otherMajors": "none",
+    "minors": "none",
+    "forbiddenWith": [
+      "cornell-plant-sciences-minor",
+      "cornell-crop-management-minor",
+      "cornell-fungal-biology-minor",
+      "cornell-horticulture-minor",
+      "cornell-soil-science-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "required-courses",
+      "label": "Plant Genetics and Genetic Improvement of Crop Plants",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-breeding-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Exam credit is held out; transfer credit may count only as an approved equivalent (see the course-conditions row).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-2250",
+              "PLSCI-4030"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 7
+    },
+    {
+      "id": "elective-courses",
+      "label": "At least 8 credits of approved plant breeding electives",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-breeding-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The molecular biology lecture and its lab (PLSCI 3430 with 3431) are listed as a pair; counting each alone would be more generous than the page, so both are held out and the pair is a confirm row (elective-pair). Exam credit is held out.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-3010",
+              "PLSCI-4070",
+              "PLSCI-4080",
+              "PLSCI-4540",
+              "PLSCI-4620"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 8
+    },
+    {
+      "id": "elective-pair",
+      "label": "If you use the molecular biology course with its lab (PLSCI 3430 and 3431) as electives, count both together toward the 8 credits",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-breeding-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Held out of the elective row because the page lists the two as one paired item.",
+      "kind": "confirm"
+    },
+    {
+      "id": "total-credits",
+      "label": "At least 15 credits for the minor in all",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-breeding-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The required courses (7) and electives (8) already add up to this; a confirm row only.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Every course taken for a letter grade (no S/U) and finished with a C or better",
+      "group": "Grades and course type",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-breeding-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "course-conditions",
+      "label": "Courses taken in person (not online), regular instruction only; no special-topic or seminar courses; transfer credit only through an approved equivalent",
+      "group": "Grades and course type",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-breeding-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "matriculated",
+      "label": "You must be a matriculated Cornell student and not a Plant Sciences major",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-breeding-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "one-sips-minor",
+      "label": "Complete no more than one minor offered by the School of Integrative Plant Science",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-breeding-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "unique-credits",
+      "label": "Credits counted for the minor are unique: none also used for a major requirement",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-breeding-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the Declaration of Intent form by the last day of classes of your final semester",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-breeding-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "verify-completion",
+      "label": "Meet your minor advisor in your second-to-last semester and fill out the last-semester survey so your completion can be confirmed",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/plant-breeding-minor/",
+        "anchor": "Verifying Completion of Minor"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

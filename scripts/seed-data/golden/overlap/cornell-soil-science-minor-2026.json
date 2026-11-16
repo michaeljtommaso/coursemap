@@ -1,0 +1,113 @@
+{
+  "programId": "cornell-soil-science-minor-2026",
+  "description": "An agricultural sciences major also takes the soil minor, and since the minor allows no course to count twice, the two courses both programs want go to the major.",
+  "layerIds": [
+    "cornell-agricultural-sciences-bs-2026",
+    "cornell-soil-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-2600",
+    "PLSCI-2200",
+    "PLSCI-3210",
+    "PLSCI-3650",
+    "PLSCI-4720"
+  ],
+  "limit": {
+    "maxCourses": 0
+  },
+  "shared": [
+    "PLSCI-2200",
+    "PLSCI-2600"
+  ],
+  "heldBack": [
+    {
+      "courseId": "PLSCI-2600",
+      "from": "cornell-soil-science-minor-2026",
+      "why": "The minor forbids any course counting for both it and a major, and the major needs this one."
+    },
+    {
+      "courseId": "PLSCI-2200",
+      "from": "cornell-soil-science-minor-2026",
+      "why": "Same limit: the major uses it for its data literacy requirement, so the minor gives it up."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-2600",
+      "subject": "PLSCI",
+      "number": "2600",
+      "title": "Soil Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2200",
+      "subject": "PLSCI",
+      "number": "2200",
+      "title": "Introduction to Mapping and Spatial Analysis with GIS",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3210",
+      "subject": "PLSCI",
+      "number": "3210",
+      "title": "Soil and Crop Management for Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3650",
+      "subject": "PLSCI",
+      "number": "3650",
+      "title": "Environmental Chemistry: Soil, Air, and Water",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "PSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4720",
+      "subject": "PLSCI",
+      "number": "4720",
+      "title": "Nutrient and Carbon Cycling and Management in Ecosystems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        }
+      ]
+    }
+  ]
+}

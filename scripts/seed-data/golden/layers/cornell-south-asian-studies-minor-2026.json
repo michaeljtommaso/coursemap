@@ -1,0 +1,226 @@
+{
+  "programId": "cornell-south-asian-studies-minor-2026",
+  "description": "A student takes five Asian Studies courses on India and the wider region, eighteen credits in all, one at the 3000 level.",
+  "layerIds": [
+    "cornell-south-asian-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ASIAN-2274",
+    "ASIAN-2285",
+    "ASIAN-2275",
+    "ASIAN-2294",
+    "ASIAN-3397"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASIAN-1104",
+      "rowId": "minor-courses",
+      "why": "A first-year writing seminar sits below the 2000-level floor for non-language courses."
+    },
+    {
+      "courseId": "ASIAN-2262",
+      "rowId": "minor-courses",
+      "why": "A course on China has no South Asia content, so it is not in this minor's subject area."
+    },
+    {
+      "courseId": "BENGL-1100",
+      "rowId": "minor-courses",
+      "why": "A one-credit language course is under the three-credit minimum for language study."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ASIAN-2274",
+      "subject": "ASIAN",
+      "number": "2274",
+      "title": "Mughal India and the Early Modern World, c. 1500-1800",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HPE"
+        },
+        {
+          "value": "HIST-HTR"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-2285",
+      "subject": "ASIAN",
+      "number": "2285",
+      "title": "Introduction to Asian Art: Material Worlds",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-2275",
+      "subject": "ASIAN",
+      "number": "2275",
+      "title": "History of Modern India",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-2294",
+      "subject": "ASIAN",
+      "number": "2294",
+      "title": "Of Saints, Poets, and Revolutionaries: Medieval and Modern Iran and Central Asia",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-3397",
+      "subject": "ASIAN",
+      "number": "3397",
+      "title": "Monsoon Kingdoms: Pre-Modern Southeast Asian History",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HAN"
+        },
+        {
+          "value": "HIST-HPE"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-1104",
+      "subject": "ASIAN",
+      "number": "1104",
+      "title": "FWS: Songs of Love and War: South Asian Lyrics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-2262",
+      "subject": "ASIAN",
+      "number": "2262",
+      "title": "Medicine and Healing in China",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HAN"
+        },
+        {
+          "value": "HIST-HPE"
+        }
+      ]
+    },
+    {
+      "id": "BENGL-1100",
+      "subject": "BENGL",
+      "number": "1100",
+      "title": "Elements of Bangla-Bengali Language and Culture",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
+}

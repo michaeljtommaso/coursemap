@@ -1,0 +1,190 @@
+{
+  "id": "cornell-soil-science-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Soil Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-soil-science-minor-2026",
+  "sharing": {
+    "otherMajors": "none",
+    "minors": "none",
+    "forbiddenWith": [
+      "cornell-plant-sciences-minor",
+      "cornell-crop-management-minor",
+      "cornell-fungal-biology-minor",
+      "cornell-horticulture-minor",
+      "cornell-plant-breeding-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "soil-science-core",
+      "label": "Soil Science (PLSCI 2600)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/soil-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Exam credit is held out because the page requires in-person Cornell classes.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-2600"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "gis-core",
+      "label": "Mapping and Spatial Analysis with GIS (PLSCI 2200)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/soil-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Exam credit is held out because the page requires in-person Cornell classes.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-2200"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "soil-additional",
+      "label": "At least 8 more credits of soil science courses from the approved list",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/soil-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Soil Ecology is held out of this pool because it counts only when taken together with its lab (see the soil-ecology-lab row); stricter reading. Exam credit is held out. The 15-credit minimum is the 7 required credits plus these 8.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-3210",
+              "PLSCI-3630",
+              "PLSCI-3650",
+              "PLSCI-4660",
+              "PLSCI-4720"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "PLSCI-4660"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 8
+    },
+    {
+      "id": "soil-ecology-lab",
+      "label": "If you use Soil Ecology (PLSCI 4660) for the additional courses, you must take it together with its lab",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/soil-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Soil Ecology is held out of the soil-additional pool; tick this only when you took it with the lab and want it to count toward the 8 credits.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Every course taken for a letter grade (no S/U or SX/UX) and finished with a C or better",
+      "group": "Grades and course type",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/soil-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "course-conditions",
+      "label": "Courses taken in person (not online) with regular instruction; no special-topic or seminar courses; transfer credit only through an approved equivalent",
+      "group": "Grades and course type",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/soil-science-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "matriculated",
+      "label": "You must be a matriculated Cornell student and not a Plant Sciences major",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/soil-science-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "one-sips-minor",
+      "label": "You may complete only one of the six School of Integrative Plant Science minors",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/soil-science-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the Declaration of Intent by your last day of classes; meet your minor advisor the semester before and return the survey",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/soil-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "Your requirements are the catalog version in force when you submit the form.",
+      "kind": "confirm"
+    }
+  ]
+}

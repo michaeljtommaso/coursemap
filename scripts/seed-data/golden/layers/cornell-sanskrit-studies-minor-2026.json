@@ -1,0 +1,139 @@
+{
+  "programId": "cornell-sanskrit-studies-minor-2026",
+  "description": "An Asian studies student completes the Sanskrit minor with two elementary courses, an intermediate course, an advanced course and one Buddhism course.",
+  "layerIds": [
+    "cornell-sanskrit-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-asian-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "SANSK-1131",
+    "SANSK-1132",
+    "SANSK-2251",
+    "SANSK-3301",
+    "ASIAN-3341"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASIAN-2211",
+      "rowId": "sanskrit-courses",
+      "why": "An Asian studies course missing from the department list (advisor approval only), so the board does not count it."
+    }
+  ],
+  "courses": [
+    {
+      "id": "SANSK-1131",
+      "subject": "SANSK",
+      "number": "1131",
+      "title": "Elementary Sanskrit I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "SANSK-1132",
+      "subject": "SANSK",
+      "number": "1132",
+      "title": "Elementary Sanskrit II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "SANSK-2251",
+      "subject": "SANSK",
+      "number": "2251",
+      "title": "Intermediate Sanskrit I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "SANSK-3301",
+      "subject": "SANSK",
+      "number": "3301",
+      "title": "Advanced Sanskrit I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-3341",
+      "subject": "ASIAN",
+      "number": "3341",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ASIAN-2211",
+      "subject": "ASIAN",
+      "number": "2211",
+      "title": "Introduction to Japan",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-GE"
+        }
+      ]
+    }
+  ]
+}

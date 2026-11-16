@@ -1,0 +1,158 @@
+{
+  "programId": "cornell-org-human-resource-management-minor-2026",
+  "description": "A student takes the talent-management foundation plus four more courses from the two ILR departments' lists.",
+  "layerIds": [
+    "cornell-org-human-resource-management-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-animal-science-bs-2026--dairy-management",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ILRHR-2600",
+    "ILRHR-3650",
+    "ILRHR-4620",
+    "ILRHR-4641",
+    "ILROB-3240"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ILRID-1510",
+      "rowId": "electives",
+      "why": "Only ILRHR, ILROB and the single named ILRID course are allowed; this ILRID course is not."
+    },
+    {
+      "courseId": "ILRID-1525",
+      "rowId": "electives",
+      "why": "Another ILRID course; only the one named exception counts."
+    },
+    {
+      "courseId": "ILRHR-2600",
+      "rowId": "electives",
+      "why": "The foundation course cannot double as an elective."
+    },
+    {
+      "courseId": "ILRHR-7990",
+      "rowId": "electives",
+      "why": "Directed study credit is explicitly barred from the minor."
+    },
+    {
+      "courseId": "ILRID-4950",
+      "rowId": "electives",
+      "why": "Honors program credit is not an elective and is outside the allowed prefixes."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ILRHR-2600",
+      "subject": "ILRHR",
+      "number": "2600",
+      "title": "Managing Talent",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ILRHR-3650",
+      "subject": "ILRHR",
+      "number": "3650",
+      "title": "Organizational Consulting and Change",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ILRHR-4620",
+      "subject": "ILRHR",
+      "number": "4620",
+      "title": "Staffing Organizations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AWI-IL"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ILRHR-4641",
+      "subject": "ILRHR",
+      "number": "4641",
+      "title": "Human Resource Strategy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ILROB-3240",
+      "subject": "ILROB",
+      "number": "3240",
+      "title": "Understanding and Improving Decision Making",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AWI-IL"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ILRID-1510",
+      "subject": "ILRID",
+      "number": "1510",
+      "title": "Introduction to Industrial and Labor Relations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "ILRID-1525",
+      "subject": "ILRID",
+      "number": "1525",
+      "title": "Psychology of Work: Theories and Applications",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ILRHR-7990",
+      "subject": "ILRHR",
+      "number": "7990",
+      "title": "Directed Studies",
+      "credits": 1,
+      "creditsMax": 9,
+      "attrs": []
+    },
+    {
+      "id": "ILRID-4950",
+      "subject": "ILRID",
+      "number": "4950",
+      "title": "Honors Program",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}

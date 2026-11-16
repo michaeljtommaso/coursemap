@@ -1,0 +1,104 @@
+{
+  "id": "cornell-moral-psychology-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Moral Psychology (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-moral-psychology-minor-2026",
+  "rows": [
+    {
+      "id": "core-course",
+      "label": "One core course: moral psychology, good and evil, or business ethics",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/moral-psychology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PHIL-2415",
+          "PSYCH-3135",
+          "AEM-3205"
+        ]
+      }
+    },
+    {
+      "id": "community-engaged",
+      "label": "One community-engaged course (moral psychology in action, or the grocery practicum)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/moral-psychology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PSYCH-4940",
+          "AEM-3385"
+        ]
+      }
+    },
+    {
+      "id": "additional-courses",
+      "label": "Three more courses from the approved course list (shown here: the four example courses the page names)",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/moral-psychology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The approved course list lives on the program website, not on the catalog page, so only the four example courses count automatically (a stricter reading: other approved courses show as unmet until the student confirms them). All four are 3000-level or above, so the two-at-3000+ rule holds.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ASRC-3434",
+          "ECON-4660",
+          "HD-4250",
+          "PSYCH-4420"
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "approved-list-courses",
+      "label": "Confirm any other courses you count come from the program's approved course list, chosen with your advisor, with at least two at the 3000-4000 level",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/moral-psychology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-credits",
+      "label": "Confirm the minor totals at least 15 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/moral-psychology-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the minor application form (ideally by the start of the second semester of junior year)",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/moral-psychology-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "certification-form",
+      "label": "Once you have 15 credits, submit the Certification for Graduation form to the program manager so the minor reaches your transcript",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/moral-psychology-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "id": "cornell-public-history-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Public History (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-public-history-minor-2026",
+  "rows": [
+    {
+      "id": "core-course",
+      "label": "Core course: one of HIST 2792 or HIST 2482",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-history-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Must be taken at Cornell; AP, transfer and first-year writing seminar credit is not eligible.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "HIST-2792",
+              "HIST-2482"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "electives-approved-list",
+      "label": "Confirm four elective courses from the approved Public History list",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-history-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The approved elective list is not printed on the catalog page, so the board cannot check these courses. Check the list kept by the Public History Initiative.",
+      "kind": "confirm"
+    },
+    {
+      "id": "history-two",
+      "label": "Confirm at least two of your five courses are approved history courses (core courses may count)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-history-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The approved history list is not printed on the page, so this cannot be checked automatically.",
+      "kind": "confirm"
+    },
+    {
+      "id": "total-credits",
+      "label": "Confirm the five courses total at least 15 credits",
+      "group": "Total",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-history-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grades",
+      "label": "Confirm every course was taken for a letter grade (unless only offered S/U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-history-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "eligible-courses",
+      "label": "Confirm no course is a writing seminar, AP, transfer or study abroad credit; off-list courses need committee approval",
+      "group": "Eligibility of courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-history-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Courses off the list may count only with the minor committee's approval of a petition.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Confirm you filed the minor declaration application",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-history-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

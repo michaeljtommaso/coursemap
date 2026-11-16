@@ -1,0 +1,173 @@
+{
+  "id": "cornell-sustainable-ag-food-system-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Sustainable Agricultural and Food Systems (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-sustainable-ag-food-system-minor-2026",
+  "sharing": {
+    "otherMajors": "none"
+  },
+  "rows": [
+    {
+      "id": "capstone",
+      "label": "Capstone: the global food, energy and water nexus course (any one of its four cross-listed codes)",
+      "group": "Capstone",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-ag-food-system-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The four codes are one cross-listed course, so the whole list counts as one course.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-4880",
+          "FDSC-4880",
+          "AEM-4880",
+          "CHEME-4880"
+        ]
+      }
+    },
+    {
+      "id": "foundation",
+      "label": "Foundation: one introductory course from the foundation list",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-ag-food-system-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ANSC-2120",
+          "FDSC-1500",
+          "PLSCI-1900",
+          "NTRES-1101",
+          "BIOEE-1610"
+        ]
+      }
+    },
+    {
+      "id": "food-production",
+      "label": "Food production: three courses from the production list, with an area in each of animal, plant and food science and one at 3000 level or above",
+      "group": "Food production",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-ag-food-system-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Stricter than the page: the three areas are read as ANSC, PLSCI and FDSC courses inside this pool (the page names no codes), and the pool holds 9 credits so the minor reaches 15 with a 3-credit capstone and foundation course. One pool course must be 3000+; with the capstone that gives two upper-level courses. See the confirm row.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ANSC-1101",
+          "ANSC-2000",
+          "ANSC-3300",
+          "ANSC-3600",
+          "ANSC-4120",
+          "AEM-3385",
+          "BEE-3299",
+          "BIOEE-4690",
+          "ENTOM-2030",
+          "FDSC-2000",
+          "FDSC-3960",
+          "FDSC-4230",
+          "PLSCI-1101",
+          "PLSCI-1300",
+          "PLSCI-2600",
+          "PLSCI-3210",
+          "PLSCI-3800",
+          "PLSCI-4140",
+          "VIEN-2204",
+          "GDEV-2300",
+          "GDEV-3260",
+          "PLSCI-2110",
+          "PLSCI-3025",
+          "PLSCI-3030"
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 9,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "At least one course at 3000 level or above",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "subject": [
+              "ANSC"
+            ]
+          },
+          "label": "Animal science area (ANSC course)",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "subject": [
+              "PLSCI"
+            ]
+          },
+          "label": "Plant sciences area (PLSCI course)",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "subject": [
+              "FDSC"
+            ]
+          },
+          "label": "Food science area (FDSC course)",
+          "minCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "areas-and-level-check",
+      "label": "Confirm one course in each of animal science, plant sciences and food science, and two courses at 3000 level or above (capstone included)",
+      "group": "Areas and level",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-ag-food-system-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page does not say which courses belong to which area; the board only checks the strict reading in the food production row.",
+      "kind": "confirm"
+    },
+    {
+      "id": "credits-and-grades-check",
+      "label": "Confirm the minor totals at least 15 credits and that 10 or more letter-graded credits earned C- or higher",
+      "group": "Credits and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-ag-food-system-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "advisor-approved-courses",
+      "label": "A course not on these lists counts only with your minor advisor's approval; confirm it before relying on it",
+      "group": "Approved substitutes",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-ag-food-system-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Unlisted courses are not counted by the board.",
+      "kind": "confirm"
+    },
+    {
+      "id": "no-major-overlap-check",
+      "label": "Confirm none of your minor courses also fulfills a requirement of your major",
+      "group": "Overlap with the major",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-ag-food-system-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Also set as the sharing limit toward majors (none).",
+      "kind": "confirm"
+    }
+  ]
+}

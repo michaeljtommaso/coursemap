@@ -1,0 +1,102 @@
+{
+  "programId": "cornell-org-human-resource-management-minor-2026",
+  "description": "A mechanical engineering student's open electives and this minor both take two ILR courses, so the three-credit overlap cap holds one back from the minor.",
+  "layerIds": [
+    "cornell-me-bs-2026",
+    "cornell-org-human-resource-management-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-me-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ILRHR-2600",
+    "ILRHR-3650",
+    "ILRHR-4620",
+    "ILRHR-4641",
+    "ILROB-3240"
+  ],
+  "limit": {
+    "maxCredits": 3
+  },
+  "shared": [
+    "ILRHR-2600",
+    "ILRHR-3650"
+  ],
+  "heldBack": [
+    {
+      "courseId": "ILRHR-3650",
+      "from": "cornell-org-human-resource-management-minor-2026",
+      "why": "The pair may share only three credits, so the second shared course stops counting for the minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ILRHR-2600",
+      "subject": "ILRHR",
+      "number": "2600",
+      "title": "Managing Talent",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ILRHR-3650",
+      "subject": "ILRHR",
+      "number": "3650",
+      "title": "Organizational Consulting and Change",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ILRHR-4620",
+      "subject": "ILRHR",
+      "number": "4620",
+      "title": "Staffing Organizations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AWI-IL"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ILRHR-4641",
+      "subject": "ILRHR",
+      "number": "4641",
+      "title": "Human Resource Strategy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ILROB-3240",
+      "subject": "ILROB",
+      "number": "3240",
+      "title": "Understanding and Improving Decision Making",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AWI-IL"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    }
+  ]
+}
