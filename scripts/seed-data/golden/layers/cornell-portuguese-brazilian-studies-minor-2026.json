@@ -1,0 +1,163 @@
+{
+  "programId": "cornell-portuguese-brazilian-studies-minor-2026",
+  "description": "A fictional student takes the Brazil core course plus four Portuguese language and literature courses, one of them advanced.",
+  "layerIds": [
+    "cornell-portuguese-brazilian-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PORT-2800",
+    "PORT-2020",
+    "PORT-3100",
+    "PORT-4320",
+    "PORT-6325"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PORT-2010",
+      "rowId": "other-courses",
+      "why": "Portuguese numbered below 2020 is not applicable to the minor."
+    },
+    {
+      "courseId": "PORT-1220",
+      "rowId": "other-courses",
+      "why": "Elementary Portuguese sits below the 2020 level."
+    },
+    {
+      "courseId": "PORT-1502",
+      "rowId": "other-courses",
+      "why": "One-credit course below the 2020 level and under the 3-credit minimum."
+    },
+    {
+      "courseId": "PORT-2020",
+      "rowId": "advanced-course",
+      "why": "The advanced slot needs a course numbered 3000 or higher."
+    },
+    {
+      "courseId": "PORT-2010",
+      "rowId": "advanced-course",
+      "why": "Below the 3000 level."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PORT-2800",
+      "subject": "PORT",
+      "number": "2800",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PORT-2020",
+      "subject": "PORT",
+      "number": "2020",
+      "title": "Intermediate Portuguese for Spanish Speakers II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "PORT-3100",
+      "subject": "PORT",
+      "number": "3100",
+      "title": "Advanced Portuguese I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "PORT-4320",
+      "subject": "PORT",
+      "number": "4320",
+      "title": "Anthropophagic Brazil",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "PORT-6325",
+      "subject": "PORT",
+      "number": "6325",
+      "title": "Anthropophagic Brazil",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PORT-2010",
+      "subject": "PORT",
+      "number": "2010",
+      "title": "Intermediate Portuguese for Spanish Speakers I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "PORT-1220",
+      "subject": "PORT",
+      "number": "1220",
+      "title": "Elementary Portuguese II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "LALANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "PORT-1502",
+      "subject": "PORT",
+      "number": "1502",
+      "title": "Conversational Skills for Portuguese in Global Contexts",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
+}

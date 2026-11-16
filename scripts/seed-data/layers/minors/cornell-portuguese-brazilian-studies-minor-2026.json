@@ -1,0 +1,238 @@
+{
+  "id": "cornell-portuguese-brazilian-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Portuguese and Brazilian Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-portuguese-brazilian-studies-minor-2026",
+  "rows": [
+    {
+      "id": "core-port-2800",
+      "label": "Core course: Perspectives on Brazil",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/portuguese-brazilian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Transfer credit is held out so the two-course study abroad cap cannot be exceeded (stricter).",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PORT-2800"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "advanced-course",
+      "label": "One advanced Portuguese course (3000 level or above)",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/portuguese-brazilian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Only PORT 3000+ counts here; an approved non-PORT course at that level is not accepted for this row (stricter). Courses must carry at least 3 credits. Transfer credit is held out (stricter, study abroad cap).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PORT"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "other-courses",
+      "label": "Three more courses: PORT 2020 or above, or approved Latin America / Lusophone courses",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/portuguese-brazilian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Portuguese courses numbered 2020 and up, 3 credits or more each. Other courses (never Portuguese language courses below 2020) count only when the student answers yes to the approval question. At most two courses may be transfer credit (study abroad cap, stricter than the page, which names only Brazil or Portugal programs).",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "PORT"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2020
+                }
+              },
+              {
+                "minCredits": 3
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "number": {
+                  "min": 1000
+                }
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "PORT"
+                      ],
+                      "crossListed": true
+                    },
+                    {
+                      "number": {
+                        "max": 2019
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "answered": "approvedFor:cornell-portuguese-brazilian-studies-minor-2026/other-courses"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "creditKind": [
+              "transfer"
+            ]
+          },
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "language-competence",
+      "label": "Show Portuguese competence: finish PORT 2020 or an equivalent",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/portuguese-brazilian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "approved-topic-courses",
+      "label": "Any non-Portuguese course counted must be on Latin America or have a Brazilian, Portuguese or Lusophone African component, approved by the Director",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/portuguese-brazilian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "study-abroad-cap",
+      "label": "At most two courses may come from overseas study in Brazil or Portugal",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/portuguese-brazilian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Each course counted needs a B- or better",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/portuguese-brazilian-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Tell the undergraduate studies director you want to enroll in the minor",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/portuguese-brazilian-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/portuguese-brazilian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "Courses on Latin America or other topics with a Brazilian, Portuguese, or Lusophone African component may be counted toward the credit requirement upon consultation with the Director of Undergraduate Studies.",
+      "type": "approvedFor",
+      "row": "other-courses",
+      "courses": {
+        "allOf": [
+          {
+            "number": {
+              "min": 1000
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "PORT"
+                  ],
+                  "crossListed": true
+                },
+                {
+                  "number": {
+                    "max": 2019
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "approver": "dus"
+    }
+  ]
+}
