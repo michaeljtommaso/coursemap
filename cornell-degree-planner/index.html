@@ -53,9 +53,11 @@
     </script>
   </head>
   <body>
-    <div id="root">
-      <!-- What a crawler (or a visitor before the app loads) reads. React
-           replaces this the moment the app mounts (createRoot clears #root). -->
+    <div id="root"></div>
+    <!-- What a crawler that doesn't run JavaScript reads. In <noscript>, not in
+         #root: text inside #root painted for a moment before the app's own
+         loading skeleton replaced it. -->
+    <noscript>
       <main style="max-width: 640px; margin: 15vh auto 0; padding: 0 24px; font-family: system-ui, sans-serif; color: #0f172a; line-height: 1.55">
         <h1 style="font-size: 28px; margin: 0 0 12px">CU Coursemap: a degree planner for Cornell students</h1>
         <p>
@@ -70,9 +72,9 @@
           <li>See which majors and minors the classes you like point to</li>
         </ul>
         <p>Free to use, no sign-up needed. An independent student project, not an official Cornell University site.</p>
-        <p><a href="/">Open CU Coursemap</a></p>
+        <p>CU Coursemap needs JavaScript to run. Turn it on and reload the page.</p>
       </main>
-    </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
