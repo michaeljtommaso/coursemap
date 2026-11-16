@@ -1,0 +1,180 @@
+{
+  "id": "cornell-visual-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Visual Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-visual-studies-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 2
+    }
+  },
+  "rows": [
+    {
+      "id": "core-course",
+      "label": "Core course: Visual Studies introduction (VISST 2000)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/visual-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VISST-2000"
+        ]
+      }
+    },
+    {
+      "id": "practice-course",
+      "label": "Confirm you have taken one hands-on practice course",
+      "group": "Practice course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/visual-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page gives no list of practice courses, so the board cannot match one; confirm it yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "history-of-art-course",
+      "label": "One upper-level (3000+) course in History of Art and Visual Studies (ARTH or VISST)",
+      "group": "Upper-level courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/visual-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts ARTH and VISST courses numbered 3000 or above, 3 credits or more. At most one Theory/Practice-titled course here (the page allows two in all, and the practice course may be one); confirm others below.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ARTH",
+              "VISST"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "titleStartsWith": "Theory/Practice"
+          },
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "other-upper-courses",
+      "label": "Two more upper-level (3000+) courses",
+      "group": "Upper-level courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/visual-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page does not say which departments the other two courses may come from; the board counts only ARTH and VISST courses numbered 3000 or above (3 credits or more), a stricter reading. If you use courses from other departments, waive this row after confirming below.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ARTH",
+              "VISST"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "titleStartsWith": "Theory/Practice"
+          },
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "other-courses-check",
+      "label": "Confirm any upper-level course from another department was accepted for the minor",
+      "group": "Upper-level courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/visual-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "theory-practice-cap",
+      "label": "Confirm no more than two Theory/Practice courses are counted toward the minor",
+      "group": "Upper-level courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/visual-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Confirm the counted courses total at least 15 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/visual-studies-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The upper-level rows above already require 3 credits per course.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every course for a letter grade",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/visual-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-b-minus",
+      "label": "Earn a B- or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/visual-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Talk with your adviser and contact the History of Art coordinator to declare the minor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/visual-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

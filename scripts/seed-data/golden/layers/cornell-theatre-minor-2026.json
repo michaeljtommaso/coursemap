@@ -1,0 +1,260 @@
+{
+  "programId": "cornell-theatre-minor-2026",
+  "description": "An anthropology major finishes the theatre minor with the global course, introductory acting, a production technology lab and three stage-craft electives in acting, writing and directing.",
+  "layerIds": [
+    "cornell-theatre-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-anthropology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PMA-3750",
+    "PMA-2800",
+    "PMA-1610",
+    "PMA-3800",
+    "PMA-3805",
+    "PMA-3880"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PMA-1610",
+      "rowId": "theatre-electives",
+      "why": "A production lab only serves the lab slot, never an elective."
+    },
+    {
+      "courseId": "PMA-1410",
+      "rowId": "theatre-electives",
+      "why": "The media lab is a lab and stays out of the elective row."
+    },
+    {
+      "courseId": "PMA-2800",
+      "rowId": "theatre-electives",
+      "why": "The introductory acting course already fills its own required slot."
+    },
+    {
+      "courseId": "PMA-3750",
+      "rowId": "theatre-electives",
+      "why": "The global course is a required slot and is excluded from the electives."
+    },
+    {
+      "courseId": "PMA-3000",
+      "rowId": "theatre-electives",
+      "why": "Independent study does not count toward a performing arts minor."
+    },
+    {
+      "courseId": "PMA-1100",
+      "rowId": "theatre-electives",
+      "why": "A first-year writing seminar does not count toward the minor."
+    },
+    {
+      "courseId": "PMA-6866",
+      "rowId": "theatre-electives",
+      "why": "A graduate-numbered course is outside the undergraduate elective range."
+    },
+    {
+      "courseId": "PMA-2560",
+      "rowId": "theatre-electives",
+      "why": "A film course is not focused on theatre."
+    },
+    {
+      "courseId": "PMA-2611",
+      "rowId": "production-lab",
+      "why": "Only the media production lab or the production technology lab fills the lab slot."
+    },
+    {
+      "courseId": "PMA-2221",
+      "rowId": "acting-or-design",
+      "why": "A dance technique course is neither acting nor design."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PMA-3750",
+      "subject": "PMA",
+      "number": "3750",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PMA-2800",
+      "subject": "PMA",
+      "number": "2800",
+      "title": "Introduction to Acting",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "PMA-EP"
+        }
+      ]
+    },
+    {
+      "id": "PMA-1610",
+      "subject": "PMA",
+      "number": "1610",
+      "title": "Production Technology Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PMA-3800",
+      "subject": "PMA",
+      "number": "3800",
+      "title": "Acting II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "PMA-EP"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3805",
+      "subject": "PMA",
+      "number": "3805",
+      "title": "Playwriting I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3880",
+      "subject": "PMA",
+      "number": "3880",
+      "title": "Fundamentals of Directing I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "PMA-AU"
+        }
+      ]
+    },
+    {
+      "id": "PMA-1410",
+      "subject": "PMA",
+      "number": "1410",
+      "title": "Media Production Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PMA-3000",
+      "subject": "PMA",
+      "number": "3000",
+      "title": "Independent Study",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "PMA-1100",
+      "subject": "PMA",
+      "number": "1100",
+      "title": "FWS: Critical Approaches to Performing and Media Arts",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PMA-6866",
+      "subject": "PMA",
+      "number": "6866",
+      "title": "Practicum in Performance Criticism and Dramaturgy",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "PMA-2560",
+      "subject": "PMA",
+      "number": "2560",
+      "title": "American Cinema",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "PMA-HTC"
+        }
+      ]
+    },
+    {
+      "id": "PMA-2611",
+      "subject": "PMA",
+      "number": "2611",
+      "title": "Stage Management Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PMA-2221",
+      "subject": "PMA",
+      "number": "2221",
+      "title": "Contemporary Dance Technique",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    }
+  ]
+}

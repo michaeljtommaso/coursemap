@@ -1,0 +1,97 @@
+{
+  "programId": "cornell-viking-studies-minor-2026",
+  "description": "A student takes four Norse-era courses and a saga or history capstone, totalling well over the credit floor.",
+  "layerIds": [
+    "cornell-viking-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "HIST-1660",
+    "HIST-2082",
+    "ENGL-3110",
+    "ENGL-3120",
+    "ENGL-3080"
+  ],
+  "mustNotCount": [],
+  "courses": [
+    {
+      "id": "HIST-1660",
+      "subject": "HIST",
+      "number": "1660",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "HIST-2082",
+      "subject": "HIST",
+      "number": "2082",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ENGL-3110",
+      "subject": "ENGL",
+      "number": "3110",
+      "title": "Old English",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-PRE"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3120",
+      "subject": "ENGL",
+      "number": "3120",
+      "title": "Beowulf",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3080",
+      "subject": "ENGL",
+      "number": "3080",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

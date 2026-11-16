@@ -1,0 +1,119 @@
+{
+  "programId": "cornell-translational-research-minor-2026",
+  "description": "A public health major and the minor both count the global health intro and the Washington course, which is more than the three shared credits allowed.",
+  "layerIds": [
+    "cornell-global-public-health-sciences-bs-2026",
+    "cornell-translational-research-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-global-public-health-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "HE-2300",
+    "HE-3400",
+    "NS-2600",
+    "HD-2400",
+    "NS-4997",
+    "HE-4400"
+  ],
+  "limit": {
+    "maxCredits": 3
+  },
+  "shared": [
+    "NS-2600",
+    "NS-4997"
+  ],
+  "heldBack": [
+    {
+      "courseId": "NS-4997",
+      "from": "cornell-translational-research-minor-2026",
+      "why": "Keeping both would put more than three credits in two programs, so the Washington course stops counting for the minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "HE-2300",
+      "subject": "HE",
+      "number": "2300",
+      "title": "Introduction to Translational Research",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "HE-3400",
+      "subject": "HE",
+      "number": "3400",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "NS-2600",
+      "subject": "NS",
+      "number": "2600",
+      "title": "Introduction to Global Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        }
+      ]
+    },
+    {
+      "id": "HD-2400",
+      "subject": "HD",
+      "number": "2400",
+      "title": "Introduction to Community Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        }
+      ]
+    },
+    {
+      "id": "NS-4997",
+      "subject": "NS",
+      "number": "4997",
+      "title": "Experiential Learning in Global and Public Health in Washington, DC",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "HE-4400",
+      "subject": "HE",
+      "number": "4400",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 1,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

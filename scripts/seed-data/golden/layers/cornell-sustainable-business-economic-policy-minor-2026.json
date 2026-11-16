@@ -1,0 +1,211 @@
+{
+  "programId": "cornell-sustainable-business-economic-policy-minor-2026",
+  "description": "A student in environmental policy completes the minor with intro micro, a mapping course, two core economics courses and two resource electives.",
+  "layerIds": [
+    "cornell-sustainable-business-economic-policy-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-environment-sustainability-bs-2026--environmental-policy-and-governance",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ECON-1110",
+    "PLSCI-2200",
+    "AEM-2600",
+    "AEM-2500",
+    "AEM-4500",
+    "AEM-4510"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "AEM-1500",
+      "rowId": "core-environmental-resource-economics",
+      "why": "The introductory course is named as not accepted in place of the intermediate one."
+    },
+    {
+      "courseId": "ECON-3030",
+      "rowId": "core-managerial-economics",
+      "why": "Only certain majors may swap this course in, and this student is not one of them."
+    },
+    {
+      "courseId": "MATH-1110",
+      "rowId": "foundation-data-analysis",
+      "why": "Calculus is not on the approved data and statistics list."
+    },
+    {
+      "courseId": "ECON-1120",
+      "rowId": "foundation-microeconomics",
+      "why": "Macroeconomics is not the required microeconomics course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2200",
+      "subject": "PLSCI",
+      "number": "2200",
+      "title": "Introduction to Mapping and Spatial Analysis with GIS",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2600",
+      "subject": "AEM",
+      "number": "2600",
+      "title": "Managerial Economics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2500",
+      "subject": "AEM",
+      "number": "2500",
+      "title": "Environmental and Resource Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4500",
+      "subject": "AEM",
+      "number": "4500",
+      "title": "Resource Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4510",
+      "subject": "AEM",
+      "number": "4510",
+      "title": "Environmental Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-1500",
+      "subject": "AEM",
+      "number": "1500",
+      "title": "An Introduction to the Economics of Environmental and Natural Resources",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3030",
+      "subject": "ECON",
+      "number": "3030",
+      "title": "Intermediate Microeconomic Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-1110",
+      "subject": "MATH",
+      "number": "1110",
+      "title": "Calculus I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1120",
+      "subject": "ECON",
+      "number": "1120",
+      "title": "Introductory Macroeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    }
+  ]
+}

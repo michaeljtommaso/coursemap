@@ -1,0 +1,157 @@
+{
+  "programId": "cornell-visual-studies-minor-2026",
+  "description": "A fictional student takes the intro course plus three advanced art-history or visual-studies courses.",
+  "layerIds": [
+    "cornell-visual-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-art-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "VISST-2000",
+    "ARTH-3315",
+    "ARTH-3400",
+    "ARTH-3910"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ARTH-2200",
+      "rowId": "history-of-art-course",
+      "why": "Numbered below 3000, so it is not an upper-level course."
+    },
+    {
+      "courseId": "ARTH-2200",
+      "rowId": "other-upper-courses",
+      "why": "Numbered below 3000, so it is not an upper-level course."
+    },
+    {
+      "courseId": "ARTH-4991",
+      "rowId": "history-of-art-course",
+      "why": "Worth one credit, below the three-credit floor the row uses."
+    },
+    {
+      "courseId": "ARTH-4991",
+      "rowId": "other-upper-courses",
+      "why": "Worth one credit, below the three-credit floor the row uses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "VISST-2000",
+      "subject": "VISST",
+      "number": "2000",
+      "title": "Introduction to Visual Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3315",
+      "subject": "ARTH",
+      "number": "3315",
+      "title": "Experiencing Islamic Art: The Johnson Museum’s Collection",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3400",
+      "subject": "ARTH",
+      "number": "3400",
+      "title": "Art, Identity, and the Human Body in Early Modern Europe",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3910",
+      "subject": "ARTH",
+      "number": "3910",
+      "title": "Visual Cultures of the Global Cold War",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-2200",
+      "subject": "ARTH",
+      "number": "2200",
+      "title": "Introduction to the Classical World in 24 Objects",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-4991",
+      "subject": "ARTH",
+      "number": "4991",
+      "title": "Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}

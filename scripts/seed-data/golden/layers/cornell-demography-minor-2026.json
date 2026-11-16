@@ -1,0 +1,173 @@
+{
+  "programId": "cornell-demography-minor-2026",
+  "description": "A student takes one population intro, one statistics course, one overview course and two further population electives.",
+  "layerIds": [
+    "cornell-demography-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-sociology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GDEV-2010",
+    "AEM-2100",
+    "GDEV-3240",
+    "PUBPOL-3011",
+    "SOC-2250"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GDEV-2130",
+      "rowId": "intro-course",
+      "why": "An overview-only course does not fill the introductory seat."
+    },
+    {
+      "courseId": "PUBPOL-3120",
+      "rowId": "statistics-course",
+      "why": "A research-methods course is not on the statistics list."
+    },
+    {
+      "courseId": "SOC-3380",
+      "rowId": "overview-course",
+      "why": "An additional-population course is not on the overview or introductory lists."
+    },
+    {
+      "courseId": "GDEV-2010",
+      "rowId": "additional-population",
+      "why": "The introductory course is not on the additional list."
+    },
+    {
+      "courseId": "AEM-2100",
+      "rowId": "additional-population",
+      "why": "A statistics course is not on the additional list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GDEV-2010",
+      "subject": "GDEV",
+      "number": "2010",
+      "title": "Population and Social Change",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2100",
+      "subject": "AEM",
+      "number": "2100",
+      "title": "Introductory Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3240",
+      "subject": "GDEV",
+      "number": "3240",
+      "title": "Environmental Sociology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3011",
+      "subject": "PUBPOL",
+      "number": "3011",
+      "title": "Food Systems and Environmental Policy",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "SOC-2250",
+      "subject": "SOC",
+      "number": "2250",
+      "title": "Schooling and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2130",
+      "subject": "GDEV",
+      "number": "2130",
+      "title": "Introduction to Social Science Research Methods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3120",
+      "subject": "PUBPOL",
+      "number": "3120",
+      "title": "Research Design and Methods of Social Research",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "SOC-3380",
+      "subject": "SOC",
+      "number": "3380",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

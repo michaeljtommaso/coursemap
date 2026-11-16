@@ -1,0 +1,123 @@
+{
+  "programId": "cornell-visual-studies-minor-2026",
+  "description": "A fictional art-history major also finishes the minor, and the pair may share only two courses.",
+  "layerIds": [
+    "cornell-history-art-ba-2026",
+    "cornell-visual-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-art-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "VISST-2000",
+    "ARTH-3315",
+    "ARTH-3400",
+    "ARTH-3910"
+  ],
+  "limit": {
+    "maxCourses": 2
+  },
+  "shared": [
+    "VISST-2000",
+    "ARTH-3315",
+    "ARTH-3400",
+    "ARTH-3910"
+  ],
+  "heldBack": [
+    {
+      "courseId": "ARTH-3400",
+      "from": "cornell-visual-studies-minor-2026",
+      "why": "Held back from the minor so the pair shares no more than two courses."
+    },
+    {
+      "courseId": "ARTH-3910",
+      "from": "cornell-visual-studies-minor-2026",
+      "why": "Held back from the minor so the pair shares no more than two courses."
+    }
+  ],
+  "courses": [
+    {
+      "id": "VISST-2000",
+      "subject": "VISST",
+      "number": "2000",
+      "title": "Introduction to Visual Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3315",
+      "subject": "ARTH",
+      "number": "3315",
+      "title": "Experiencing Islamic Art: The Johnson Museum’s Collection",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3400",
+      "subject": "ARTH",
+      "number": "3400",
+      "title": "Art, Identity, and the Human Body in Early Modern Europe",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3910",
+      "subject": "ARTH",
+      "number": "3910",
+      "title": "Visual Cultures of the Global Cold War",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    }
+  ]
+}

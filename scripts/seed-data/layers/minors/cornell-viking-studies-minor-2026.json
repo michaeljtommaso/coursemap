@@ -1,0 +1,93 @@
+{
+  "id": "cornell-viking-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Viking Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-viking-studies-minor-2026",
+  "rows": [
+    {
+      "id": "approved-courses",
+      "label": "Four approved Viking Studies courses (at least 12 credits)",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viking-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board knows only the courses the page prints as a sample (including the capstone list); other approved courses from the minor website need the confirm row below. The capstone course is counted separately from these four.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "HIST-1660",
+          "HIST-2082",
+          "ENGL-3110",
+          "ENGL-3120",
+          "ENGL-3080",
+          "HIST-3200",
+          "LING-3315",
+          "LING-3316"
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 12
+    },
+    {
+      "id": "approved-courses-website",
+      "label": "Confirm any approved course not shown on the board against the minor website list",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viking-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "capstone",
+      "label": "One capstone course (Icelandic Family Sagas or The Viking Age)",
+      "group": "Capstone",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viking-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Only the two capstone options with no condition are checked here. The Old Norse options depend on which courses made up the four, so they are confirmed separately.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENGL-3080",
+          "HIST-3200"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "capstone-old-norse",
+      "label": "Confirm an Old Norse capstone: Old Norse I needs no Old Norse course among the four, Old Norse II needs Old Norse I alone",
+      "group": "Capstone",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viking-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-minus",
+      "label": "Confirm every course counted for the minor has a grade of C- or better",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viking-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "exit-statement",
+      "label": "Confirm you will submit the 300-word exit statement before the end of your final semester",
+      "group": "Exit statement",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viking-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

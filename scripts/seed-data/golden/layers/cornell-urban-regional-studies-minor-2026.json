@@ -1,0 +1,127 @@
+{
+  "programId": "cornell-urban-regional-studies-minor-2026",
+  "description": "A student outside planning takes three of the intro CRP courses plus three upper-level CRP electives.",
+  "layerIds": [
+    "cornell-urban-regional-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CRP-1103",
+    "CRP-1104",
+    "CRP-2100",
+    "CRP-3100",
+    "CRP-3170",
+    "CRP-3610"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CRP-1200",
+      "rowId": "core-courses",
+      "why": "An introductory CRP course that is not one of the four named core options."
+    },
+    {
+      "courseId": "CRP-1200",
+      "rowId": "crp-electives",
+      "why": "Numbered below 3000, so it cannot serve as an elective."
+    },
+    {
+      "courseId": "ECON-3030",
+      "rowId": "crp-electives",
+      "why": "Upper-level but not a CRP course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CRP-1103",
+      "subject": "CRP",
+      "number": "1103",
+      "title": "Observing the City: Introduction to Field-Based Analysis",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CRP-1104",
+      "subject": "CRP",
+      "number": "1104",
+      "title": "Introduction to Global Urban Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SSC-AAP"
+        }
+      ]
+    },
+    {
+      "id": "CRP-2100",
+      "subject": "CRP",
+      "number": "2100",
+      "title": "Neighborhood Change in the City: Quantitative Methods",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CRP-3100",
+      "subject": "CRP",
+      "number": "3100",
+      "title": "Urban Form and the Global City",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CRP-3170",
+      "subject": "CRP",
+      "number": "3170",
+      "title": "Economic Development: Goals, Strategies and Tools",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CRP-3610",
+      "subject": "CRP",
+      "number": "3610",
+      "title": "The Shaping of Urban America",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CRP-1200",
+      "subject": "CRP",
+      "number": "1200",
+      "title": "Introduction to Statistics for Urban Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3030",
+      "subject": "ECON",
+      "number": "3030",
+      "title": "Intermediate Microeconomic Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    }
+  ]
+}

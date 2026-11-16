@@ -1,0 +1,435 @@
+{
+  "id": "cornell-translational-research-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Translational Research (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-translational-research-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCredits": 3
+    },
+    "minors": "none"
+  },
+  "rows": [
+    {
+      "id": "core-he-2300",
+      "label": "Take the introductory translational research course (no substitutes)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Cornell allows no substitution for the core courses, and transfer or exam credit is not counted here.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "HE-2300"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "core-he-3400",
+      "label": "Take the community-engaged research methods course (no substitutes)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Cornell allows no substitution for the core courses, and transfer or exam credit is not counted here.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "HE-3400"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "electives",
+      "label": "Six credits of elective courses from the approved list",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts credits, so a 1- or 2-credit course adds only its own credits. Transfer and exam credit are held out because Cornell judges transfer credit case by case.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "DEA-2020",
+              "DEA-2025",
+              "DEA-2203",
+              "DEA-2700",
+              "DEA-3308",
+              "DEA-3510",
+              "DEA-3530",
+              "DEA-4025",
+              "FSAD-4025",
+              "DEA-4500",
+              "DEA-4590",
+              "DEA-4800",
+              "FSAD-4800",
+              "FSAD-3200",
+              "FSAD-3990",
+              "NS-2450",
+              "NS-2600",
+              "NS-3060",
+              "NS-4450",
+              "NS-4500",
+              "NS-4510",
+              "NS-4570",
+              "NS-4998",
+              "HD-2180",
+              "HD-2400",
+              "HD-2510",
+              "HD-2650",
+              "HD-3150",
+              "HD-3190",
+              "HD-3250",
+              "HD-3290",
+              "HD-3300",
+              "HD-3310",
+              "HD-3490",
+              "HD-3530",
+              "HD-4240",
+              "HD-4310",
+              "HD-4530",
+              "HD-4540",
+              "HD-4560",
+              "HD-4670",
+              "HD-4720",
+              "HD-4850",
+              "HD-4940",
+              "HE-2222",
+              "HE-4060",
+              "COMM-2760",
+              "COMM-3189",
+              "COMM-3760",
+              "COMM-4201",
+              "COMM-4760",
+              "COMM-4860",
+              "PUBPOL-2050",
+              "PUBPOL-2120",
+              "PUBPOL-2250",
+              "PUBPOL-2350",
+              "PUBPOL-3180",
+              "PUBPOL-3280",
+              "GDEV-3280",
+              "PUBPOL-3320",
+              "PUBPOL-3330",
+              "GDEV-3030"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "field-experience",
+      "label": "Complete one field experience (2 credits) through one of the listed routes",
+      "group": "Field experience",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Routes that share the internship pair (preparation plus reflection) are one option here; the board cannot tell which sponsoring program you used, so see the program and forms check. Supervised research is not counted by the board.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "internship-pair",
+          "label": "Internship preparation course and internship reflection course",
+          "group": "Field experience",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "HE-2400",
+                  "HE-3301"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "washington-course",
+          "label": "Washington, DC global and public health experiential course",
+          "group": "Field experience",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "NS-4997"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "geriatric-pair",
+          "label": "Both geriatric and palliative immersion courses",
+          "group": "Field experience",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "HD-4600",
+                  "HD-4610"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "pryde-course",
+          "label": "The nearest-neighbor course for the scholars program",
+          "group": "Field experience",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "HD-4860"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "field-experience-check",
+      "label": "Confirm your field experience went through a listed program or an approved internship or research, with the approval and completion forms filed",
+      "group": "Field experience",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot see program enrolment or the forms.",
+      "kind": "confirm"
+    },
+    {
+      "id": "supervised-research-check",
+      "label": "If your field experience is supervised research (a course numbered 4010), confirm it with the minor office; the board does not count it",
+      "group": "Field experience",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "An open number match across all subjects would count courses that lack the required approval, so none is encoded.",
+      "kind": "confirm"
+    },
+    {
+      "id": "capstone",
+      "label": "Take the translational research capstone",
+      "group": "Capstone",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "HE-4400"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "capstone-timing-check",
+      "label": "Confirm the capstone comes only after the field experience is finished and the completion form is received, and after at least one core course",
+      "group": "Capstone",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Order of courses and form receipt are not visible to the board.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades-check",
+      "label": "Earn C- or better in every counted course; an S is fine only for a course offered S-U only, and S credits may total no more than 3 toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intent-form",
+      "label": "After finishing a core course, file the intention-to-minor form, by add/drop of your last semester",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "graduate-form",
+      "label": "In your graduating semester, file the application to graduate with the minor (due March 15 for May, October 15 for December)",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "You may ask to use the earlier requirements version if you filed the intention form.",
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-check",
+      "label": "Transfer credit is judged case by case; the board counts none, so confirm any transfer course with the minor office",
+      "group": "Transfer",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "overlap-check",
+      "label": "At most 3 credits in total may count both for this minor and for any other major or minor",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/translational-research-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board holds back overlap with a major to 3 credits and with another minor to none, which is stricter than the combined 3-credit total.",
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,255 @@
+{
+  "id": "cornell-demography-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Demography (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-demography-minor-2026",
+  "rows": [
+    {
+      "id": "intro-course",
+      "label": "One introductory demography course",
+      "group": "Five courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/demography-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Courses from exam credit (AP, IB and the like) are left out, since every minor course needs a letter grade of B- or better.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "GDEV-2010",
+              "PUBPOL-2030",
+              "PUBPOL-3280",
+              "PUBPOL-3620"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "statistics-course",
+      "label": "One statistics course",
+      "group": "Five courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/demography-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Exam credit is left out (the minor needs a graded B- or better). Take the course for at least 3 credits; the 4-credit options count too.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AEM-2100",
+              "ILRST-2100",
+              "PSYCH-2500",
+              "PUBPOL-2100",
+              "PUBPOL-2101",
+              "SOC-3010"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "overview-course",
+      "label": "One demographic overview course (an introductory-list course also works)",
+      "group": "Five courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/demography-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Takes any course from the overview list or from the introductory list. It must be a different course from the one used for the introductory requirement. The page's footnote on this area points back at the overview list itself; it is read as adding nothing beyond the two lists, and it does not widen the additional-courses area.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "GDEV-2010",
+                  "PUBPOL-2030",
+                  "PUBPOL-3280",
+                  "PUBPOL-3620"
+                ]
+              },
+              {
+                "course": [
+                  "AMST-3800",
+                  "CRP-5250",
+                  "GDEV-2130",
+                  "GDEV-3140",
+                  "GDEV-3240",
+                  "GDEV-4080",
+                  "PUBPOL-2250",
+                  "PUBPOL-2370",
+                  "PUBPOL-3120",
+                  "PUBPOL-3180",
+                  "PUBPOL-3230",
+                  "PUBPOL-3250",
+                  "PUBPOL-3360",
+                  "PUBPOL-3710",
+                  "PUBPOL-3810",
+                  "SOC-2310",
+                  "SOC-2390",
+                  "SOC-3030",
+                  "SOC-4120",
+                  "SOC-4370"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "additional-population",
+      "label": "Two additional population courses (6 credits)",
+      "group": "Five courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/demography-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Two courses worth 6 credits together. The one-credit seminars on the list can count only alongside a larger course that brings the pair to 6 credits. A course used in another area of this minor cannot be counted here.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AMST-2710",
+              "COMM-3250",
+              "COMM-4760",
+              "CRP-3430",
+              "CRP-3840",
+              "CRP-3900",
+              "CRP-4080",
+              "CRP-4680",
+              "ECON-3440",
+              "ECON-3480",
+              "ECON-3710",
+              "ECON-3711",
+              "GDEV-2130",
+              "GDEV-3060",
+              "GDEV-3390",
+              "GDEV-3700",
+              "GDEV-4080",
+              "GDEV-4770",
+              "PUBPOL-2050",
+              "PUBPOL-2208",
+              "PUBPOL-3011",
+              "PUBPOL-3050",
+              "PUBPOL-3120",
+              "PUBPOL-3151",
+              "PUBPOL-3230",
+              "PUBPOL-3231",
+              "PUBPOL-3320",
+              "PUBPOL-3480",
+              "PUBPOL-3550",
+              "PUBPOL-3580",
+              "PUBPOL-3600",
+              "PUBPOL-3734",
+              "PUBPOL-3840",
+              "PUBPOL-3780",
+              "PUBPOL-4160",
+              "SOC-2250",
+              "SOC-3380",
+              "SOC-3650",
+              "SOC-3580"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "cross-listed-versions",
+      "label": "A course counts under any of its cross-listed codes: check yours if it is not shown",
+      "group": "Which courses count",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/demography-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board matches the codes the page lists. A cross-listed version under a code the page leaves out still counts for the minor, so you may need to mark it yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn B- or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/demography-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "note": "The board does not see grades. This also applies to any transfer course you count.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor through the Brooks School intention-to-minor form",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/demography-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-to-graduate",
+      "label": "Apply to graduate with the minor once you enroll in your final required course",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/demography-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

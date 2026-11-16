@@ -1,0 +1,152 @@
+{
+  "id": "cornell-viticulture-enology-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Viticulture and Enology (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-viticulture-enology-minor-2026",
+  "rows": [
+    {
+      "id": "core-vien-1104",
+      "label": "Core course: Introduction to Wines and Vines",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-1104"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-vien-2204",
+      "label": "Core course: principles of growing grapes and making wine",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-2204"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-vien-2205",
+      "label": "Core course: the grape and wine making laboratory",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "VIEN-2205"
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "additional-options",
+      "label": "At least 6 more credits from the approved list of VIEN courses",
+      "group": "Additional courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "A course counts once in the minor, so the core lab cannot also supply these credits. With the 8 core credits this gives the 14-credit minimum.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "VIEN-2205",
+          "VIEN-2310",
+          "VIEN-2340",
+          "VIEN-2360",
+          "VIEN-2400",
+          "VIEN-4310",
+          "VIEN-4340",
+          "VIEN-4360",
+          "VIEN-4400",
+          "VIEN-4500",
+          "VIEN-4510",
+          "VIEN-4650",
+          "VIEN-4700",
+          "VIEN-4710"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "grades",
+      "label": "Every course counted must be finished with a C or better",
+      "group": "Grades and declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "note": "The board cannot see grades; check each course yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-gpa",
+      "label": "Before declaring: cumulative GPA of at least 2.5",
+      "group": "Grades and declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-minor/",
+        "anchor": "Prerequisites"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-biology",
+      "label": "Before declaring: one college-level general biology course",
+      "group": "Grades and declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-minor/",
+        "anchor": "Prerequisites"
+      },
+      "note": "The page lists accepted courses in the BIOG, BIOEE and PLSCI series; see the catalog. It is a gate for declaring, not a course of the minor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-chemistry",
+      "label": "Before declaring: one college-level general chemistry course",
+      "group": "Grades and declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-minor/",
+        "anchor": "Prerequisites"
+      },
+      "note": "The page accepts one of two named general chemistry courses; see the catalog. It is a gate for declaring, not a course of the minor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-vien-1104",
+      "label": "Before declaring: Introduction to Wines and Vines already finished",
+      "group": "Grades and declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-minor/",
+        "anchor": "Prerequisites"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor by contacting the program's undergraduate coordinator",
+      "group": "Grades and declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/viticulture-enology-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

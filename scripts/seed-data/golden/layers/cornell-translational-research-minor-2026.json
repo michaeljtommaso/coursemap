@@ -1,0 +1,197 @@
+{
+  "programId": "cornell-translational-research-minor-2026",
+  "description": "A student takes both core courses, two approved electives, the internship pair and the capstone.",
+  "layerIds": [
+    "cornell-translational-research-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-global-public-health-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "HE-2300",
+    "HE-3400",
+    "HD-2400",
+    "HD-2180",
+    "HE-2400",
+    "HE-3301",
+    "HE-4400"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "HE-2300",
+      "rowId": "core-he-3400",
+      "why": "No substitute is allowed for the methods core course."
+    },
+    {
+      "courseId": "HE-3400",
+      "rowId": "core-he-2300",
+      "why": "No substitute is allowed for the introductory core course."
+    },
+    {
+      "courseId": "HD-3320",
+      "rowId": "electives",
+      "why": "Not on the approved elective list."
+    },
+    {
+      "courseId": "NS-4060",
+      "rowId": "field-experience/washington-course",
+      "why": "Only the Washington experiential course fills that route."
+    },
+    {
+      "courseId": "HD-4610",
+      "rowId": "field-experience/internship-pair",
+      "why": "Belongs to the geriatric route, not the internship pair."
+    }
+  ],
+  "courses": [
+    {
+      "id": "HE-2300",
+      "subject": "HE",
+      "number": "2300",
+      "title": "Introduction to Translational Research",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "HE-3400",
+      "subject": "HE",
+      "number": "3400",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "HD-2400",
+      "subject": "HD",
+      "number": "2400",
+      "title": "Introduction to Community Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        }
+      ]
+    },
+    {
+      "id": "HD-2180",
+      "subject": "HD",
+      "number": "2180",
+      "title": "Human Development: Adulthood and Aging",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "KCM-HE"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "HE-2400",
+      "subject": "HE",
+      "number": "2400",
+      "title": "Internship Preparation",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "HE-3301",
+      "subject": "HE",
+      "number": "3301",
+      "title": "Internship Reflection",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "HE-4400",
+      "subject": "HE",
+      "number": "4400",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 1,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "HD-3320",
+      "subject": "HD",
+      "number": "3320",
+      "title": "Gender and Psychopathology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "NS-4060",
+      "subject": "NS",
+      "number": "4060",
+      "title": "Experiential Learning in Global and Public Health Sciences",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "EEE-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "HD-4610",
+      "subject": "HD",
+      "number": "4610",
+      "title": "Community and Residential Services in Geriatric and Palliative Care",
+      "credits": 1.5,
+      "attrs": []
+    }
+  ]
+}

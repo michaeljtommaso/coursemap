@@ -1,0 +1,144 @@
+{
+  "programId": "cornell-sustainable-business-economic-policy-minor-2026",
+  "description": "An economics student takes this minor, and shared courses beyond six credits are held back from the minor.",
+  "layerIds": [
+    "cornell-economics-ba-2026",
+    "cornell-sustainable-business-economic-policy-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ECON-1110",
+    "ECON-3130",
+    "AEM-2600",
+    "AEM-2500",
+    "AEM-4500",
+    "AEM-4510"
+  ],
+  "limit": {
+    "maxCredits": 6
+  },
+  "shared": [
+    "ECON-1110",
+    "ECON-3130"
+  ],
+  "heldBack": [
+    {
+      "courseId": "ECON-3130",
+      "from": "cornell-sustainable-business-economic-policy-minor-2026",
+      "why": "The shared credits exceed the six allowed, so the minor gives up one course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2600",
+      "subject": "AEM",
+      "number": "2600",
+      "title": "Managerial Economics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2500",
+      "subject": "AEM",
+      "number": "2500",
+      "title": "Environmental and Resource Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4500",
+      "subject": "AEM",
+      "number": "4500",
+      "title": "Resource Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4510",
+      "subject": "AEM",
+      "number": "4510",
+      "title": "Environmental Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

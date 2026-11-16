@@ -1,0 +1,90 @@
+{
+  "programId": "cornell-viticulture-enology-minor-2026",
+  "description": "A student completes the three foundation wine courses plus a flavor chemistry course and a microbiology course to reach the credit total.",
+  "layerIds": [
+    "cornell-viticulture-enology-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "VIEN-1104",
+    "VIEN-2204",
+    "VIEN-2205",
+    "VIEN-4400",
+    "VIEN-4650"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "VIEN-1104",
+      "rowId": "additional-options",
+      "why": "The introductory core course is not on the additional options list."
+    },
+    {
+      "courseId": "VIEN-2204",
+      "rowId": "additional-options",
+      "why": "The core principles course is not on the additional options list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "VIEN-1104",
+      "subject": "VIEN",
+      "number": "1104",
+      "title": "Introduction to Wines and Vines",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        }
+      ]
+    },
+    {
+      "id": "VIEN-2204",
+      "subject": "VIEN",
+      "number": "2204",
+      "title": "Principles and Practices of Growing Grapes and Making Wines",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "VIEN-2205",
+      "subject": "VIEN",
+      "number": "2205",
+      "title": "Growing Grapes and Making Wines Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "VIEN-4400",
+      "subject": "VIEN",
+      "number": "4400",
+      "title": "Wine and Grape Flavor Chemistry",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "VIEN-4650",
+      "subject": "VIEN",
+      "number": "4650",
+      "title": "Wine Microbiology",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

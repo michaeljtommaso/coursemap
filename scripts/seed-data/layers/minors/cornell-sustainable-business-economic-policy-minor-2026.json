@@ -1,0 +1,389 @@
+{
+  "id": "cornell-sustainable-business-economic-policy-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Sustainable Business and Economic Policy (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-sustainable-business-economic-policy-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCredits": 6
+    },
+    "minors": {
+      "maxCredits": 6
+    }
+  },
+  "rows": [
+    {
+      "id": "foundation-microeconomics",
+      "label": "Foundation: introductory microeconomics (ECON 1110)",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Foundation Courses"
+      },
+      "note": "Take it before the core courses. The page does not bar exam or transfer credit for this course, so credit Cornell grants as ECON 1110 counts here.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1110"
+        ]
+      }
+    },
+    {
+      "id": "foundation-data-analysis",
+      "label": "Foundation: one data analysis, econometrics or statistics course from the approved list",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Foundation Courses"
+      },
+      "note": "Needs 3 credits at least; every course on the list carries 3 or 4. Take it before the core courses. Exam or transfer credit that Cornell grants as one of these courses counts, since the page does not bar it.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2770",
+          "AEM-2830",
+          "AEM-2840",
+          "AEM-2850",
+          "AEM-3100",
+          "AEM-4110",
+          "AEM-6850",
+          "ECON-3120",
+          "ECON-3140",
+          "ILRST-2110",
+          "HADM-3740",
+          "PLSCI-2200",
+          "PLSCI-4200",
+          "STSCI-4060",
+          "AEM-2100",
+          "CEE-3040",
+          "CRP-1200",
+          "ECON-3110",
+          "ECON-3130",
+          "ENGRD-2700",
+          "ILRST-2100",
+          "ILRST-3080",
+          "ILRST-3110",
+          "MATH-4710",
+          "MATH-4720",
+          "PUBPOL-2100",
+          "PUBPOL-2101",
+          "PSYCH-2500",
+          "SOC-3010",
+          "STSCI-2100",
+          "STSCI-2150",
+          "STSCI-2200",
+          "STSCI-3080",
+          "STSCI-3110"
+        ]
+      }
+    },
+    {
+      "id": "core-managerial-economics",
+      "label": "Core: managerial economics (AEM 2600)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Core Requirements"
+      },
+      "note": "Economics and Public Policy majors have a different path, see the confirm row for that. It is not encoded, so those students see this row open until they confirm.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2600"
+        ]
+      }
+    },
+    {
+      "id": "core-environmental-resource-economics",
+      "label": "Core: environmental and resource economics (AEM 2500)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Core Requirements"
+      },
+      "note": "The introductory AEM 1500 is not accepted in its place and is not part of this rule.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2500"
+        ]
+      }
+    },
+    {
+      "id": "core-resource-electives",
+      "label": "Core: two courses (6 credits) from the environmental and resource economics list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Core Requirements"
+      },
+      "note": "Two courses AND 6 credits are both required. The two NBA courses carry 1 and 1.5 credits, so they only help alongside a larger course; the board reads that strictly.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2555",
+          "AEM-3115",
+          "AEM-4090",
+          "AEM-4490",
+          "AEM-4500",
+          "AEM-4510",
+          "AEM-4580",
+          "AEM-4585",
+          "AEM-4880",
+          "HADM-4315",
+          "HADM-4500",
+          "NBA-6030",
+          "NBA-6380"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "credits-cornell",
+      "label": "At least 9 of the minor's credits earned at Cornell (these can double as your SC Johnson credits)",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "One course can count toward the Cornell credits and the SC Johnson credits at once. Exam and transfer credit are left out of this count. This row re-counts courses from the minor's lists on your plan; the requirement rows above decide which courses the minor actually uses.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-1110",
+              "AEM-2770",
+              "AEM-2830",
+              "AEM-2840",
+              "AEM-2850",
+              "AEM-3100",
+              "AEM-4110",
+              "AEM-6850",
+              "ECON-3120",
+              "ECON-3140",
+              "ILRST-2110",
+              "HADM-3740",
+              "PLSCI-2200",
+              "PLSCI-4200",
+              "STSCI-4060",
+              "AEM-2100",
+              "CEE-3040",
+              "CRP-1200",
+              "ECON-3110",
+              "ECON-3130",
+              "ENGRD-2700",
+              "ILRST-2100",
+              "ILRST-3080",
+              "ILRST-3110",
+              "MATH-4710",
+              "MATH-4720",
+              "PUBPOL-2100",
+              "PUBPOL-2101",
+              "PSYCH-2500",
+              "SOC-3010",
+              "STSCI-2100",
+              "STSCI-2150",
+              "STSCI-2200",
+              "STSCI-3080",
+              "STSCI-3110",
+              "AEM-2600",
+              "AEM-2500",
+              "AEM-2555",
+              "AEM-3115",
+              "AEM-4090",
+              "AEM-4490",
+              "AEM-4500",
+              "AEM-4510",
+              "AEM-4580",
+              "AEM-4585",
+              "AEM-4880",
+              "HADM-4315",
+              "HADM-4500",
+              "NBA-6030",
+              "NBA-6380"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCredits": 9
+    },
+    {
+      "id": "credits-sc-johnson",
+      "label": "At least 9 of the minor's credits from SC Johnson courses (AEM, HADM, NBA, NCC); these can be the same courses that count as Cornell credits",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "One course can count here and toward the Cornell credits at once. AEM 2600, AEM 2500 and every course in the resource economics list are SC Johnson courses, so finishing the core reaches 9.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-1110",
+              "AEM-2770",
+              "AEM-2830",
+              "AEM-2840",
+              "AEM-2850",
+              "AEM-3100",
+              "AEM-4110",
+              "AEM-6850",
+              "ECON-3120",
+              "ECON-3140",
+              "ILRST-2110",
+              "HADM-3740",
+              "PLSCI-2200",
+              "PLSCI-4200",
+              "STSCI-4060",
+              "AEM-2100",
+              "CEE-3040",
+              "CRP-1200",
+              "ECON-3110",
+              "ECON-3130",
+              "ENGRD-2700",
+              "ILRST-2100",
+              "ILRST-3080",
+              "ILRST-3110",
+              "MATH-4710",
+              "MATH-4720",
+              "PUBPOL-2100",
+              "PUBPOL-2101",
+              "PSYCH-2500",
+              "SOC-3010",
+              "STSCI-2100",
+              "STSCI-2150",
+              "STSCI-2200",
+              "STSCI-3080",
+              "STSCI-3110",
+              "AEM-2600",
+              "AEM-2500",
+              "AEM-2555",
+              "AEM-3115",
+              "AEM-4090",
+              "AEM-4490",
+              "AEM-4500",
+              "AEM-4510",
+              "AEM-4580",
+              "AEM-4585",
+              "AEM-4880",
+              "HADM-4315",
+              "HADM-4500",
+              "NBA-6030",
+              "NBA-6380"
+            ]
+          },
+          {
+            "subject": [
+              "AEM",
+              "HADM",
+              "NBA",
+              "NCC"
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 9
+    },
+    {
+      "id": "residency-check",
+      "label": "Check that at least 9 of the 18 minor credits were earned at Cornell and 9 are SC Johnson credits, with the same course counting for both",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Backs up the two credit rows above, which count every course from the minor's lists on your plan and could read generously if you hold extra ones.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-total-credits",
+      "label": "Check the minor totals at least 18 credits: 6 foundation credits plus 12 core credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "foundation-before-core",
+      "label": "Finish both foundation courses before you take the core courses",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "econ-pubpol-alternative",
+      "label": "Economics and Public Policy majors: ECON 3030 or PUBPOL 2000 may stand in for AEM 2600, but you then need one extra course from the resource economics list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Core Requirements"
+      },
+      "note": "Not encoded on the board (the stricter reading: only AEM 2600 counts above). Confirm the swap with the minor's advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Academic Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (no pass/fail option)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Academic Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "signup-eligibility",
+      "label": "Sign up by your sixth semester, and check your major is allowed (not Dyson, the E&S sustainable business concentration, or a major sharing 2+ core courses)",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Eligibility"
+      },
+      "note": "Barred majors are recorded in the minor index; the overlap rule for unnamed majors is also approximated by the credit cap on overlap with a major.",
+      "kind": "confirm"
+    },
+    {
+      "id": "unique-credits",
+      "label": "Keep at least 12 of the minor's credits outside your major's core requirements; some majors need an extra course to reach that",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/sustainable-business-economic-policy-minor/",
+        "anchor": "Academic Policies"
+      },
+      "note": "The real rule covers only the major's core. The sharing limit encodes the stricter 6 credits of overlap with any major or other minor.",
+      "kind": "confirm"
+    }
+  ]
+}

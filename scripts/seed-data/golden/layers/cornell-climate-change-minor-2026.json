@@ -1,0 +1,192 @@
+{
+  "programId": "cornell-climate-change-minor-2026",
+  "description": "A student takes the seminar plus one course in each theme and two bigger extras, reaching six courses and eighteen credits.",
+  "layerIds": [
+    "cornell-climate-change-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BEE-2000",
+    "EAS-3050",
+    "EAS-3030",
+    "BEE-3710",
+    "BEE-4730",
+    "NTRES-3311"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ECON-1110",
+      "rowId": "climate-credits",
+      "why": "An introductory economics course is on none of the climate lists."
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "cat-humans",
+      "why": "Not a listed humans-and-climate course."
+    },
+    {
+      "courseId": "PHYS-1112",
+      "rowId": "cat-physical-science",
+      "why": "General physics is not a listed physical-science climate course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BEE-2000",
+      "subject": "BEE",
+      "number": "2000",
+      "title": "Perspectives on the Climate Change Challenge",
+      "credits": 1.5,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3050",
+      "subject": "EAS",
+      "number": "3050",
+      "title": "Climate Dynamics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "EAS-3030",
+      "subject": "EAS",
+      "number": "3030",
+      "title": "Introduction to Biogeochemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BEE-3710",
+      "subject": "BEE",
+      "number": "3710",
+      "title": "Physical Hydrology for Ecosystems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "BEE-4730",
+      "subject": "BEE",
+      "number": "4730",
+      "title": "Watershed Engineering",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "NTRES-3311",
+      "subject": "NTRES",
+      "number": "3311",
+      "title": "Environmental Governance",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PHYS-1112",
+      "subject": "PHYS",
+      "number": "1112",
+      "title": "Physics I: Mechanics and Heat",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    }
+  ]
+}

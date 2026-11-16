@@ -1,0 +1,361 @@
+{
+  "id": "cornell-climate-change-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Climate Change (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-climate-change-minor-2026",
+  "rows": [
+    {
+      "id": "climate-credits",
+      "label": "18 credits of climate change courses from the four lists, with the seminar included",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/climate-change-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts the seminar plus courses from all four category lists. Needs the seminar and one course from each of the first three categories, at most one 1000-level course, and 12 credits at 3000 or above. Exam credit and transfer credit are held out; see the confirm rows.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "BEE-2000"
+                ]
+              },
+              {
+                "course": [
+                  "EAS-4800",
+                  "EAS-2680",
+                  "EAS-3030",
+                  "EAS-3050",
+                  "EAS-4860",
+                  "PLSCI-3650",
+                  "BEE-3710",
+                  "BEE-4730",
+                  "NTRES-3240",
+                  "BIOEE-1610",
+                  "BIOEE-4780",
+                  "NTRES-3220",
+                  "EAS-3340",
+                  "EAS-3555",
+                  "PLSCI-4290",
+                  "AEM-2555",
+                  "AEM-4090",
+                  "NTRES-3311",
+                  "AMST-2581",
+                  "ANTHR-2482",
+                  "ANTHR-2729",
+                  "CLASS-3750",
+                  "ENGL-3795",
+                  "HIST-4262",
+                  "NTRES-3330",
+                  "ENGRI-1165",
+                  "CRP-5545",
+                  "CEE-4210",
+                  "CEE-4640",
+                  "EAS-1101",
+                  "ANSC-4880"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 6,
+      "requiredCredits": 18,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BEE-2000"
+            ]
+          },
+          "label": "The climate seminar",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "EAS-4800",
+              "EAS-2680",
+              "EAS-3030",
+              "EAS-3050",
+              "EAS-4860",
+              "PLSCI-3650"
+            ]
+          },
+          "label": "One physical science course",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "BEE-3710",
+              "BEE-4730",
+              "NTRES-3240",
+              "BIOEE-1610",
+              "BIOEE-4780",
+              "NTRES-3220",
+              "EAS-3340",
+              "EAS-3555",
+              "PLSCI-4290"
+            ]
+          },
+          "label": "One ecosystems or water course",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "AEM-2555",
+              "AEM-4090",
+              "NTRES-3311",
+              "AMST-2581",
+              "ANTHR-2482",
+              "ANTHR-2729",
+              "CLASS-3750",
+              "ENGL-3795",
+              "HIST-4262",
+              "NTRES-3330",
+              "ENGRI-1165",
+              "CRP-5545"
+            ]
+          },
+          "label": "One humans and climate course",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "number": {
+              "max": 1999
+            }
+          },
+          "label": "At most one 1000-level course",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 3000
+            }
+          },
+          "label": "12 credits at 3000 level or above",
+          "minCredits": 12
+        }
+      ]
+    },
+    {
+      "id": "bee-2000",
+      "label": "Climate change seminar (BEE 2000)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/climate-change-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Progress view of the seminar already counted in the main credits row.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "BEE-2000"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "cat-physical-science",
+      "label": "One physical science course (category 1)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/climate-change-minor/",
+        "anchor": "Category 1: Physical Science Behind Climate Change"
+      },
+      "note": "Progress view of the category requirement; the main credits row enforces it too.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "EAS-4800",
+              "EAS-2680",
+              "EAS-3030",
+              "EAS-3050",
+              "EAS-4860",
+              "PLSCI-3650"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cat-ecosystems-water",
+      "label": "One ecosystems or water resources course (category 2)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/climate-change-minor/",
+        "anchor": "Category 2: Ecosystems, Water Resources and Climate Change"
+      },
+      "note": "Progress view of the category requirement; the main credits row enforces it too.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "BEE-3710",
+              "BEE-4730",
+              "NTRES-3240",
+              "BIOEE-1610",
+              "BIOEE-4780",
+              "NTRES-3220",
+              "EAS-3340",
+              "EAS-3555",
+              "PLSCI-4290"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cat-humans",
+      "label": "One humans and climate change course (category 3)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/climate-change-minor/",
+        "anchor": "Category 3: Humans and Climate Change"
+      },
+      "note": "Progress view of the category requirement; the main credits row enforces it too.",
+      "overlay": true,
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AEM-2555",
+              "AEM-4090",
+              "NTRES-3311",
+              "AMST-2581",
+              "ANTHR-2482",
+              "ANTHR-2729",
+              "CLASS-3750",
+              "ENGL-3795",
+              "HIST-4262",
+              "NTRES-3330",
+              "ENGRI-1165",
+              "CRP-5545"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "grade-standard",
+      "label": "Grade floor: C- or better if letter graded, S if Satisfactory/Unsatisfactory, in every counted course",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/climate-change-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-and-approved-courses",
+      "label": "Transfer courses and courses off the lists count only with program approval",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/climate-change-minor/",
+        "anchor": "Note"
+      },
+      "note": "Exam credit never counts. Transfer credit is held out of the checks above, so confirm any approved transfer course with the program. A new course needs the program's approval, and unstructured credits are capped at 3.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approval-and-degree",
+      "label": "Your major approves the minor and you finish every degree requirement",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/climate-change-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the certification form and unofficial transcript to the program administrator",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/climate-change-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

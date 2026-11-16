@@ -1,0 +1,298 @@
+{
+  "id": "cornell-theatre-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Theatre (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-theatre-minor-2026",
+  "rows": [
+    {
+      "id": "global-theatre",
+      "label": "Global theatre and performance course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/theatre-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PMA-3750"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "acting-or-design",
+      "label": "Introductory acting, or any PMA design course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/theatre-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Design courses are recognized by the PMA design roster tag, so a design course the roster leaves untagged is not seen; the reminder row covers it. Courses under 3 credits are held out.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "PMA-2800"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "PMA"
+                    ]
+                  },
+                  {
+                    "tag": [
+                      "PMA-DE"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "production-lab",
+      "label": "One production lab (media production or production technology)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/theatre-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Lab credit counts only here, so labs are kept out of the theatre elective row.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PMA-1410",
+              "PMA-1610"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "theatre-electives",
+      "label": "Three further theatre-focused PMA courses of 3+ credits (no labs)",
+      "group": "Theatre electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/theatre-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts PMA 2000-4999 courses whose catalog title is plainly acting, directing, playwriting, theatre design or technology, dramaturgy or theatre history; the reminder row covers any others. Labs, independent and directed study, writing seminars, graduate numbers and the required global course are left out.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PMA"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "PMA-3750",
+                "PMA-2800"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "anyOf": [
+              {
+                "titleStartsWith": "Theatrical Makeup"
+              },
+              {
+                "titleStartsWith": "Ancient Greek Drama"
+              },
+              {
+                "titleStartsWith": "Costume Construction"
+              },
+              {
+                "titleStartsWith": "Scenic Design"
+              },
+              {
+                "titleStartsWith": "Costume Design Studio"
+              },
+              {
+                "titleStartsWith": "Sound Design"
+              },
+              {
+                "titleStartsWith": "American Theatre Stage"
+              },
+              {
+                "titleStartsWith": "Spoken Word, Hip-Hop Theater"
+              },
+              {
+                "titleStartsWith": "Acting II"
+              },
+              {
+                "titleStartsWith": "Playwriting"
+              },
+              {
+                "titleStartsWith": "Fundamentals of Directing"
+              },
+              {
+                "titleStartsWith": "Advanced Scene Study"
+              },
+              {
+                "titleStartsWith": "Advanced Studies in Acting"
+              },
+              {
+                "titleStartsWith": "Practicum in Performance Criticism"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "theatre-focus-other",
+      "label": "Other PMA courses focused on theatre count too: check yours with the department",
+      "group": "Theatre electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/theatre-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board recognizes theatre courses by title only. A theatre-focused PMA course it misses (for example a Shakespeare, musical-theatre or performance-studies course) is yours to count; check with the department that it counts as theatre-focused. Courses with a topic or variable credit under 3 are not counted by the board.",
+      "kind": "confirm"
+    },
+    {
+      "id": "credit-size",
+      "label": "Reach at least 18 credits; every course 3+ credits except the lab",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/theatre-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The rows already hold non-lab courses to 3 credits; a 4-credit global course, a 3-credit or larger second course, three 3-credit electives and a 2-credit lab reach 18.",
+      "kind": "confirm"
+    },
+    {
+      "id": "pma-faculty",
+      "label": "Cross-listed courses must be taught or co-taught by PMA faculty to count",
+      "group": "Which courses count",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/theatre-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-unaffiliated-abroad",
+      "label": "Do not count study-abroad courses from programs not directly affiliated with Cornell",
+      "group": "Which courses count",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/theatre-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-fws-or-independent-study",
+      "label": "First-year writing seminars and independent study do not count",
+      "group": "Which courses count",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/theatre-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c",
+      "label": "Earn a C or better in each course (an S only where the course has no letter grade)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/theatre-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor with the Director of Undergraduate Studies before the third week of your last semester",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/theatre-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "id": "cornell-urban-regional-studies-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Urban and Regional Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-urban-regional-studies-minor-2026",
+  "rows": [
+    {
+      "id": "core-courses",
+      "label": "Core: 9 credits from the four introductory CRP courses",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/urban-regional-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Choose from Observing the City, Global Urban Studies, and the two methods courses (quantitative and qualitative); the credits total nine, which is three of these four courses.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "CRP-1103",
+          "CRP-1104",
+          "CRP-2100",
+          "CRP-2200"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9
+    },
+    {
+      "id": "crp-electives",
+      "label": "Electives: 9 credits of CRP courses at the 3000 level or above",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/urban-regional-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Any CRP course numbered 3000 or higher counts. Three courses are required here so the minor reaches six CRP courses in all (three core plus three electives).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "CRP"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 9
+    },
+    {
+      "id": "grade-c-or-better",
+      "label": "Check by hand: a C or better in every course counted toward the minor",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/urban-regional-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "note": "The board does not see grades.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Check by hand: file the intent to minor form and the graduation application for the minor",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/urban-regional-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "Forms go to the City and Regional Planning office; the graduation form is due at least a month before graduation.",
+      "kind": "confirm"
+    },
+    {
+      "id": "six-crp-courses",
+      "label": "Check by hand: at least six courses in City and Regional Planning in all",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/urban-regional-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The core and elective rows already add up to six courses of 3 credits; confirm the count if any course carries unusual credits.",
+      "kind": "confirm"
+    }
+  ]
+}
