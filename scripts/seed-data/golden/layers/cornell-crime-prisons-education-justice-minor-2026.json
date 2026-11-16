@@ -1,6 +1,6 @@
 {
   "programId": "cornell-crime-prisons-education-justice-minor-2026",
-  "description": "A student completes the minor with one criminal justice foundation course and one education-and-incarceration reflection course.",
+  "description": "A student completes the minor with a foundation course, a reflection course and three other approved interdisciplinary courses from different departments; the three others count only because the student answers that they were accepted.",
   "layerIds": [
     "cornell-crime-prisons-education-justice-minor-2026"
   ],
@@ -11,7 +11,10 @@
   },
   "plan": [
     "GOVT-3121",
-    "EDUC-3142"
+    "EDUC-3142",
+    "AMST-3808",
+    "HIST-2815",
+    "AAS-3885"
   ],
   "mustNotCount": [
     {
@@ -28,8 +31,20 @@
       "courseId": "GOVT-3121",
       "rowId": "core-reflection",
       "why": "The foundation course is not one of the reflection options."
+    },
+    {
+      "courseId": "GOVT-3121",
+      "rowId": "other-courses",
+      "why": "A named core course is excluded from the other-courses pool, so it never counts twice, even if answered as approved."
     }
   ],
+  "answers": {
+    "marks": {
+      "approvedFor:cornell-crime-prisons-education-justice-minor-2026/other-courses@AAS-3885": "yes",
+      "approvedFor:cornell-crime-prisons-education-justice-minor-2026/other-courses@AMST-3808": "yes",
+      "approvedFor:cornell-crime-prisons-education-justice-minor-2026/other-courses@HIST-2815": "yes"
+    }
+  },
   "courses": [
     {
       "id": "GOVT-3121",
@@ -48,6 +63,93 @@
       "credits": 0,
       "attrs": [],
       "pageOnly": true
+    },
+    {
+      "id": "AMST-3808",
+      "subject": "AMST",
+      "number": "3808",
+      "title": "Mass Incarceration and Social Inequality in America",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "HA-HE"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "KCM-HE"
+        }
+      ]
+    },
+    {
+      "id": "HIST-2815",
+      "subject": "HIST",
+      "number": "2815",
+      "title": "Imprisonment in Europe and America from the Middle Ages to the Present",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "AAS-3885",
+      "subject": "AAS",
+      "number": "3885",
+      "title": "Race and War in History: Workers, Soldiers, Prisoners, Activists",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "AWI-IL"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "LH-IL"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
     },
     {
       "id": "GOVT-3131",

@@ -88,14 +88,78 @@
       "kind": "confirm"
     },
     {
-      "id": "five-courses",
-      "label": "Confirm you have five qualifying interdisciplinary courses in all, from the program's course list, not all in one department",
+      "id": "other-courses",
+      "label": "Three more qualifying interdisciplinary courses, beyond the two core courses",
       "group": "Courses",
       "source": {
         "url": "https://catalog.cornell.edu/programs/crime-prisons-education-justice-minor/",
         "anchor": "Minor Requirements"
       },
-      "note": "The page does not print the qualifying course list (it sits on the program website), so the board cannot count the remaining courses. Confirm the five include the two core courses above.",
+      "note": "The qualifying course list is kept on the program website, not on the catalog page, so the board cannot see it. A course counts here only when you answer that the program (its faculty director) accepts it as a qualifying course. The named core courses (GOVT 3121, 3141, 3152, 3142, EDUC 3142, PMA 4681) never count here, so the five are the two core courses plus three others; this reading follows the 15-credit minimum for five courses.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "course": [
+                "GOVT-3121",
+                "GOVT-3141",
+                "EDUC-3142",
+                "PMA-4681"
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "GOVT"
+                  ]
+                },
+                {
+                  "number": {
+                    "min": 3152,
+                    "max": 3152
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "GOVT"
+                  ]
+                },
+                {
+                  "number": {
+                    "min": 3142,
+                    "max": 3142
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "answered": "approvedFor:cornell-crime-prisons-education-justice-minor-2026/other-courses"
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "five-departments",
+      "label": "Confirm the five courses are not all from the same department",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crime-prisons-education-justice-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page says the minor is interdisciplinary, so all five may not come from one department.",
       "kind": "confirm"
     },
     {
@@ -138,6 +202,23 @@
         "anchor": "Minor Declaration Information"
       },
       "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crime-prisons-education-justice-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "Complete 5 qualifying, interdisciplinary courses.",
+      "type": "approvedFor",
+      "row": "other-courses",
+      "courses": {
+        "number": {
+          "min": 1000
+        }
+      },
+      "approver": "director"
     }
   ]
 }

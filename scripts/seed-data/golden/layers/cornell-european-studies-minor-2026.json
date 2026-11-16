@@ -1,6 +1,6 @@
 {
   "programId": "cornell-european-studies-minor-2026",
-  "description": "A student takes one broad Europe survey course, which is the only requirement the board can check.",
+  "description": "A student takes the core survey Inside Europe plus three Europe-related electives in named disciplines (art history, comparative literature, English), each answered as approved.",
   "layerIds": [
     "cornell-european-studies-minor-2026"
   ],
@@ -10,9 +10,19 @@
     "transfer": "none"
   },
   "plan": [
-    "GOVT-2553"
+    "GOVT-2553",
+    "ARTH-3400",
+    "COML-2721",
+    "ENGL-3230"
   ],
   "mustNotCount": [],
+  "answers": {
+    "marks": {
+      "approvedFor:cornell-european-studies-minor-2026/elective-courses@ARTH-3400": "yes",
+      "approvedFor:cornell-european-studies-minor-2026/elective-courses@COML-2721": "yes",
+      "approvedFor:cornell-european-studies-minor-2026/elective-courses@ENGL-3230": "yes"
+    }
+  },
   "courses": [
     {
       "id": "GOVT-2553",
@@ -32,6 +42,66 @@
         },
         {
           "value": "GOVT-CP"
+        }
+      ]
+    },
+    {
+      "id": "ARTH-3400",
+      "subject": "ARTH",
+      "number": "3400",
+      "title": "Art, Identity, and the Human Body in Early Modern Europe",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "COML-2721",
+      "subject": "COML",
+      "number": "2721",
+      "title": "The Holocaust in Europe:A Victim-Centered History",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "HIST-HEU"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3230",
+      "subject": "ENGL",
+      "number": "3230",
+      "title": "Renaissance Poetry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ALC-AS"
         }
       ]
     }

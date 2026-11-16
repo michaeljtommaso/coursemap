@@ -40,15 +40,49 @@
       }
     },
     {
-      "id": "electives-approved-list",
-      "label": "Confirm four elective courses from the approved Public History list",
+      "id": "electives",
+      "label": "Four elective courses from the minor's approved list",
       "group": "Electives",
       "source": {
         "url": "https://catalog.cornell.edu/programs/public-history-minor/",
         "anchor": "Minor Requirements"
       },
-      "note": "The approved elective list is not printed on the catalog page, so the board cannot check these courses. Check the list kept by the Public History Initiative.",
-      "kind": "confirm"
+      "note": "The approved elective list is kept by the Public History Initiative, not on the catalog page, so the board cannot see it. A course counts here only when you answer that the minor's committee or director approved it (the answer is the approval, not a check against the list). The core course does not count as an elective here. First-year writing seminars, AP, transfer and other exam credit are excluded.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "course": [
+                "HIST-2792",
+                "HIST-2482"
+              ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "answered": "approvedFor:cornell-public-history-minor-2026/electives"
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 0
     },
     {
       "id": "history-two",
@@ -58,7 +92,7 @@
         "url": "https://catalog.cornell.edu/programs/public-history-minor/",
         "anchor": "Minor Requirements"
       },
-      "note": "The approved history list is not printed on the page, so this cannot be checked automatically.",
+      "note": "The approved history list is not printed on the page, so this cannot be checked automatically. Core courses may count toward the two.",
       "kind": "confirm"
     },
     {
@@ -101,6 +135,23 @@
         "anchor": "Minor Declaration Information"
       },
       "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/public-history-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "Students may petition the Public History minor committee to have a course that does not appear on the list count towards the minor.",
+      "type": "approvedFor",
+      "row": "electives",
+      "courses": {
+        "not": {
+          "titleStartsWith": "FWS"
+        }
+      },
+      "approver": "director"
     }
   ]
 }

@@ -46,15 +46,46 @@
       "kind": "confirm"
     },
     {
-      "id": "electives-confirm",
-      "label": "Complete three Europe-focused elective courses in the listed disciplines",
+      "id": "elective-courses",
+      "label": "Three elective courses on Europe-related topics, in the disciplines the program names",
       "group": "Electives",
       "source": {
         "url": "https://catalog.cornell.edu/programs/european-studies-minor/",
         "anchor": "Minor Requirements"
       },
-      "note": "The page names disciplines but no courses; whether a course is Europe-related is a topic the board cannot see, so any course rule would be more generous than the page. Left as a confirm row; check each elective against the program's current list.",
-      "kind": "confirm"
+      "note": "Whether a course is about Europe is not something the board can see, and the program keeps the current course list on its website. A course counts only when you answer that it is an approved Europe-related elective, and only if it is in one of the named disciplines (the page says 'including', so a course in another discipline may also be accepted; ask the program and it will not count here). The core course above is used up first and cannot also be an elective.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "HIST",
+              "GOVT",
+              "SOC",
+              "ANTHR",
+              "COML",
+              "ENGL",
+              "ARCH",
+              "ARTH",
+              "CLASS",
+              "MUSIC",
+              "PHIL",
+              "ILRGL",
+              "ILRHR",
+              "ILRID",
+              "ILRLE",
+              "ILROB",
+              "ILRST",
+              "STS"
+            ]
+          },
+          {
+            "answered": "approvedFor:cornell-european-studies-minor-2026/elective-courses"
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
     },
     {
       "id": "course-total-confirm",
@@ -65,6 +96,40 @@
         "anchor": "Minor Requirements"
       },
       "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/european-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "These electives are courses on more narrowly defined Europe-related topics, in disciplines including: History, Government, Sociology, Anthropology, Comparative Literature, English, Architecture, History of Art and Visual Studies, Classics, Music, Philosophy, Industrial and Labor Relations, Science and Technology Studies.",
+      "type": "approvedFor",
+      "row": "elective-courses",
+      "courses": {
+        "subject": [
+          "HIST",
+          "GOVT",
+          "SOC",
+          "ANTHR",
+          "COML",
+          "ENGL",
+          "ARCH",
+          "ARTH",
+          "CLASS",
+          "MUSIC",
+          "PHIL",
+          "ILRGL",
+          "ILRHR",
+          "ILRID",
+          "ILRLE",
+          "ILROB",
+          "ILRST",
+          "STS"
+        ]
+      },
+      "approver": "director"
     }
   ]
 }

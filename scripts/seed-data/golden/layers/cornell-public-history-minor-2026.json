@@ -1,6 +1,6 @@
 {
   "programId": "cornell-public-history-minor-2026",
-  "description": "One of the two named introductory public history courses completes the only requirement the board can verify.",
+  "description": "One named core course plus four approved electives (two in history) complete the minor; each elective counts only because the student answers that it was approved.",
   "layerIds": [
     "cornell-public-history-minor-2026"
   ],
@@ -10,15 +10,32 @@
     "transfer": "none"
   },
   "plan": [
-    "HIST-2792"
+    "HIST-2792",
+    "HIST-4243",
+    "HIST-4422",
+    "ANTHR-3490",
+    "AMST-2012"
   ],
   "mustNotCount": [
     {
       "courseId": "HIST-1200",
       "rowId": "core-course",
       "why": "A history course outside the two named core options does not fill the core seat."
+    },
+    {
+      "courseId": "HIST-1200",
+      "rowId": "electives",
+      "why": "A first-year writing seminar never counts, even if answered as approved."
     }
   ],
+  "answers": {
+    "marks": {
+      "approvedFor:cornell-public-history-minor-2026/electives@AMST-2012": "yes",
+      "approvedFor:cornell-public-history-minor-2026/electives@ANTHR-3490": "yes",
+      "approvedFor:cornell-public-history-minor-2026/electives@HIST-4243": "yes",
+      "approvedFor:cornell-public-history-minor-2026/electives@HIST-4422": "yes"
+    }
+  },
   "courses": [
     {
       "id": "HIST-2792",
@@ -44,6 +61,72 @@
         },
         {
           "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "HIST-4243",
+      "subject": "HIST",
+      "number": "4243",
+      "title": "Public History in Place: Interpreting the Environment",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "HIST-4422",
+      "subject": "HIST",
+      "number": "4422",
+      "title": "Oral History: Theory, Practice, and Method",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-3490",
+      "subject": "ANTHR",
+      "number": "3490",
+      "title": "Museum Studies: Histories, Problems, and Practices",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2012",
+      "subject": "AMST",
+      "number": "2012",
+      "title": "September 11 and the Politics of Memory",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
         }
       ]
     },
