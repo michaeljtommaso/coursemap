@@ -67,7 +67,7 @@
         "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
         "anchor": "Media Studies (Three Courses)"
       },
-      "note": "The page prints only a sample; the full list is on the minor's website (see the reminder row). Two of the three must come from outside your major's department. The board holds the stricter side of that: when your major is the department of a sampled course, at most one such course counts. First-year writing seminars are not on the sample and never count.",
+      "note": "The page prints only a sample; the full list is on the minor's website (see the reminder row). Two of the three must come from outside your major's department, so the board counts at most one sampled course taught by (or cross-listed with) your major's department. First-year writing seminars are not on the sample and never count.",
       "kind": "pool",
       "rule": {
         "allOf": [
@@ -95,130 +95,172 @@
       "limits": [
         {
           "rule": {
-            "allOf": [
+            "anyOf": [
               {
-                "subject": [
-                  "AMST"
+                "allOf": [
+                  {
+                    "course": [
+                      "PMA-2660"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-american-studies-ba",
+                      "cornell-english-ba",
+                      "cornell-fgss-ba"
+                    ]
+                  }
                 ]
               },
               {
-                "program": [
-                  "cornell-american-studies-ba"
+                "allOf": [
+                  {
+                    "course": [
+                      "CLASS-2641"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-archaeology-ba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "ARKEO-2812"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-classics-ba",
+                      "cornell-linguistics-ba",
+                      "cornell-near-eastern-studies-ba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "ARKEO-2812",
+                      "CLASS-2641",
+                      "INFO-4260"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-science-technology-studies-ba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "AMST"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-american-studies-ba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "ARKEO"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-archaeology-ba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "CLASS"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-classics-ba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "COML"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-comparative-literature-ba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "ENGL"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-english-ba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "INFO"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-information-science-ba",
+                      "cornell-information-science-bs",
+                      "cornell-isst-bs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "PMA"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-performing-media-arts-ba"
+                    ]
+                  }
                 ]
               }
             ]
           },
-          "label": "At most one from the department of your major",
-          "maxCourses": 1
-        },
-        {
-          "rule": {
-            "allOf": [
-              {
-                "subject": [
-                  "ARKEO"
-                ]
-              },
-              {
-                "program": [
-                  "cornell-archaeology-ba"
-                ]
-              }
-            ]
-          },
-          "label": "At most one from the department of your major",
-          "maxCourses": 1
-        },
-        {
-          "rule": {
-            "allOf": [
-              {
-                "subject": [
-                  "CLASS"
-                ]
-              },
-              {
-                "program": [
-                  "cornell-classics-ba"
-                ]
-              }
-            ]
-          },
-          "label": "At most one from the department of your major",
-          "maxCourses": 1
-        },
-        {
-          "rule": {
-            "allOf": [
-              {
-                "subject": [
-                  "COML"
-                ]
-              },
-              {
-                "program": [
-                  "cornell-comparative-literature-ba"
-                ]
-              }
-            ]
-          },
-          "label": "At most one from the department of your major",
-          "maxCourses": 1
-        },
-        {
-          "rule": {
-            "allOf": [
-              {
-                "subject": [
-                  "ENGL"
-                ]
-              },
-              {
-                "program": [
-                  "cornell-english-ba"
-                ]
-              }
-            ]
-          },
-          "label": "At most one from the department of your major",
-          "maxCourses": 1
-        },
-        {
-          "rule": {
-            "allOf": [
-              {
-                "subject": [
-                  "INFO"
-                ]
-              },
-              {
-                "program": [
-                  "cornell-information-science-ba",
-                  "cornell-information-science-bs",
-                  "cornell-isst-bs"
-                ]
-              }
-            ]
-          },
-          "label": "At most one from the department of your major",
-          "maxCourses": 1
-        },
-        {
-          "rule": {
-            "allOf": [
-              {
-                "subject": [
-                  "PMA"
-                ]
-              },
-              {
-                "program": [
-                  "cornell-performing-media-arts-ba"
-                ]
-              }
-            ]
-          },
-          "label": "At most one from the department of your major",
+          "label": "At most one from your major's department",
           "maxCourses": 1
         }
       ]
@@ -242,7 +284,7 @@
         "url": "https://catalog.cornell.edu/programs/media-studies-minor/",
         "anchor": "Media Studies (Three Courses)"
       },
-      "note": "The board already allows at most one sampled course from a department whose major you have; check courses it cannot place (cross-listed or website-only courses).",
+      "note": "The board already caps sampled courses from your major's department at one; check website-only courses it cannot place.",
       "kind": "confirm"
     },
     {

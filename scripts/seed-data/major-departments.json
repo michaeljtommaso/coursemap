@@ -1,0 +1,131 @@
+{
+  "about": "Department facts the majors' own requirements cannot show, read by outside-major-holdout.ts. 'departments': subjects one Cornell department teaches under; a major whose department subjects include one of them gets them all (department mode). 'majors': per program-id prefix, extra department subjects for a major the app offers (department mode only), or, with notInApp, the own subjects of a major the app does not offer yet (used by every mode, so a student whose plan names that prefix is held to the rule once the major is added). Entries only ever add subjects: a false red, never a false green.",
+  "departments": [
+    {
+      "name": "Psychology",
+      "subjects": [
+        "PSYCH",
+        "HD"
+      ],
+      "why": "Human Development and Psychology majors are both run by the Department of Psychology (the Human Development BS catalog page names it)."
+    },
+    {
+      "name": "Asian Studies",
+      "subjects": [
+        "ASIAN",
+        "CAPS",
+        "BENGL",
+        "BURM",
+        "CHIN",
+        "HINDI",
+        "INDO",
+        "JAPAN",
+        "KHMER",
+        "KOREA",
+        "NEPAL",
+        "PUNJB",
+        "SANSK",
+        "SINHA",
+        "TAG",
+        "TAMIL",
+        "THAI",
+        "TIBET",
+        "URDU",
+        "VIET"
+      ],
+      "why": "The Department of Asian Studies runs the Asian Studies and China and Asia-Pacific Studies majors and teaches the Asian languages."
+    }
+  ],
+  "majors": {
+    "cornell-eas-bs": {
+      "department": [
+        "EAS"
+      ],
+      "why": "The Engineering EAS template names its department courses only through elective lists, so no core seat shows the subject."
+    },
+    "cornell-isst-bs": {
+      "department": [
+        "INFO",
+        "CS"
+      ],
+      "why": "The ISST core is split between Information Science and Computer Science courses; both subjects are held (strict reading)."
+    },
+    "cornell-cognitive-science-ba": {
+      "department": [
+        "COGST",
+        "PSYCH"
+      ],
+      "why": "Cognitive Science is a program without a department of its own; its core courses are cross-listed with Psychology, so PSYCH is held too (strict reading)."
+    },
+    "cornell-human-development-bs": {
+      "notInApp": true,
+      "subjects": [
+        "HD"
+      ],
+      "why": "Human Development BS (Department of Psychology)."
+    },
+    "cornell-design-environmental-analysis-bs": {
+      "notInApp": true,
+      "subjects": [
+        "DEA"
+      ],
+      "why": "Design and Environmental Analysis BS."
+    },
+    "cornell-art-bfa": {
+      "notInApp": true,
+      "subjects": [
+        "ART"
+      ],
+      "why": "Art BFA (Department of Art)."
+    },
+    "cornell-architecture-barch": {
+      "notInApp": true,
+      "subjects": [
+        "ARCH"
+      ],
+      "why": "Architecture BArch."
+    },
+    "cornell-hotel-management-bs": {
+      "notInApp": true,
+      "subjects": [
+        "HADM"
+      ],
+      "why": "Hotel Management BS (Nolan School)."
+    },
+    "cornell-public-policy-bs": {
+      "notInApp": true,
+      "subjects": [
+        "PUBPOL"
+      ],
+      "why": "Public Policy BS (Brooks School)."
+    },
+    "cornell-health-care-policy-major-bs": {
+      "notInApp": true,
+      "subjects": [
+        "PUBPOL"
+      ],
+      "why": "Health Care Policy BS (Brooks School)."
+    },
+    "cornell-health-care-policy-bs": {
+      "notInApp": true,
+      "subjects": [
+        "PUBPOL"
+      ],
+      "why": "Earlier guess at the Health Care Policy prefix, kept so no layer that named it loses it."
+    },
+    "cornell-policy-analysis-management-bs": {
+      "notInApp": true,
+      "subjects": [
+        "PUBPOL"
+      ],
+      "why": "Earlier Policy Analysis and Management prefix, kept so no layer that named it loses it."
+    },
+    "cornell-systems-engineering-bs": {
+      "notInApp": true,
+      "subjects": [
+        "SYSEN"
+      ],
+      "why": "Systems Engineering prefix an earlier layer named; kept so it is never released."
+    }
+  }
+}

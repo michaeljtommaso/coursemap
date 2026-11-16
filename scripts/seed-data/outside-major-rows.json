@@ -1,0 +1,75 @@
+{
+  "about": "Minor rows whose rule depends on the student's major, derived by outside-major-holdout.ts from the majors themselves. Re-run `npx tsx outside-major-holdout.ts --all --check` after a major is added or re-authored (and --write, expand-draft, the ledger and promote for each row it flags). mode: major = courses the major counts plus its own subjects; department = every course of the major's department subjects and their cross-listings; courses = the holdOut courses, for majors whose own requirements name any of the requires courses. output: absent = a hold-out inside the row's rule; limit = a limits entry on the row (maxCourses over the major's courses, or minCourses over the courses outside it).",
+  "rows": [
+    {
+      "program": "cornell-digital-agriculture-minor-2026",
+      "row": "electives",
+      "mode": "major"
+    },
+    {
+      "program": "cornell-game-design-minor-2026",
+      "row": "additional-courses",
+      "mode": "department",
+      "dump": "catalog-backup-2026-11-15T09-46-16-788Z.json"
+    },
+    {
+      "program": "cornell-media-studies-minor-2026",
+      "row": "media-studies-courses",
+      "mode": "department",
+      "output": {
+        "limit": {
+          "maxCourses": 1,
+          "label": "At most one from your major's department"
+        }
+      },
+      "dump": "catalog-backup-2026-11-15T09-46-16-788Z.json"
+    },
+    {
+      "program": "cornell-healthy-futures-minor-2026",
+      "row": "electives",
+      "mode": "major",
+      "twins": true,
+      "output": {
+        "limit": {
+          "minCourses": 1,
+          "label": "At least one elective from outside your major"
+        }
+      },
+      "dump": "catalog-backup-2026-11-15T09-46-16-788Z.json"
+    },
+    {
+      "program": "cornell-data-science-minor-2026",
+      "row": "core-computing",
+      "mode": "courses",
+      "requires": [
+        "AEM-2830",
+        "AEM-2831",
+        "AEM-2840",
+        "AEM-2850",
+        "CEE-3101",
+        "CEE-3102",
+        "CS-1109",
+        "CS-1110",
+        "CS-1112",
+        "CS-1132",
+        "CS-1133",
+        "EAS-2900",
+        "ENMGT-3101",
+        "ENMGT-3102",
+        "HADM-3710",
+        "INFO-1100",
+        "INFO-1300",
+        "VISST-1100"
+      ],
+      "holdOut": [
+        "AEM-2830",
+        "AEM-2840",
+        "AEM-2850",
+        "CS-1110",
+        "CS-1112",
+        "HADM-3710"
+      ],
+      "dump": "catalog-backup-2026-11-15T09-46-16-788Z.json"
+    }
+  ]
+}

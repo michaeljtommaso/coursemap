@@ -207,7 +207,7 @@
         "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
         "anchor": "Electives"
       },
-      "note": "At least one elective must lie outside your own major; the board checks this for Public Policy, Nutritional Sciences, Global Public Health and Applied Economics and Management majors (their own subject does not count) and a confirm row covers every other major. Exam and transfer credit left out.",
+      "note": "At least one elective must lie outside your own major: the board treats a course your major's own requirements could count, or one in your major's own subject (or cross-listed with such a course), as inside it. Exam and transfer credit left out.",
       "kind": "pool",
       "rule": {
         "allOf": [
@@ -279,71 +279,319 @@
       "limits": [
         {
           "rule": {
-            "anyOf": [
-              {
-                "not": {
-                  "program": [
-                    "cornell-public-policy-ba",
-                    "cornell-policy-analysis-management-bs",
-                    "cornell-health-care-policy-bs",
-                    "cornell-nutritional-sciences-bs",
-                    "cornell-global-public-health-sciences-bs",
-                    "cornell-applied-economics-management-bs"
+            "not": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "PUBPOL-4370"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-agricultural-sciences-bs",
+                        "cornell-economics-ba"
+                      ]
+                    }
                   ]
-                }
-              },
-              {
-                "allOf": [
-                  {
-                    "program": [
-                      "cornell-public-policy-ba",
-                      "cornell-policy-analysis-management-bs",
-                      "cornell-health-care-policy-bs"
-                    ]
-                  },
-                  {
-                    "not": {
-                      "subject": [
-                        "PUBPOL"
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "PUBPOL-3230"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-american-studies-ba"
                       ]
                     }
-                  }
-                ]
-              },
-              {
-                "allOf": [
-                  {
-                    "program": [
-                      "cornell-nutritional-sciences-bs",
-                      "cornell-global-public-health-sciences-bs"
-                    ]
-                  },
-                  {
-                    "not": {
-                      "subject": [
-                        "NS"
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "HADM-3470",
+                        "HADM-4130",
+                        "HADM-4145",
+                        "HADM-4315",
+                        "PUBPOL-4370"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-applied-economics-management-bs"
                       ]
                     }
-                  }
-                ]
-              },
-              {
-                "allOf": [
-                  {
-                    "program": [
-                      "cornell-applied-economics-management-bs"
-                    ]
-                  },
-                  {
-                    "not": {
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "NS-2600",
+                        "PUBPOL-2350",
+                        "PUBPOL-3180",
+                        "PUBPOL-3280",
+                        "PUBPOL-4370"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-biology-society-ba",
+                        "cornell-biology-society-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "PUBPOL-5500"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-biometry-statistics-bs",
+                        "cornell-hotel-management-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "DEA-1110",
+                        "DEA-1112",
+                        "DEA-1500"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-cognitive-science-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "DEA-1500",
+                        "PUBPOL-3730",
+                        "PUBPOL-4370"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-environment-sustainability-ba",
+                        "cornell-environment-sustainability-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "PUBPOL-3280",
+                        "PUBPOL-4370"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-food-science-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "PUBPOL-3280"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-global-development-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "DEA-2700",
+                        "PUBPOL-2350",
+                        "PUBPOL-3180",
+                        "PUBPOL-3230",
+                        "PUBPOL-3280",
+                        "PUBPOL-3650",
+                        "PUBPOL-4370"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-global-public-health-sciences-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "HADM-6033"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-health-care-policy-bs",
+                        "cornell-health-care-policy-major-bs",
+                        "cornell-policy-analysis-management-bs",
+                        "cornell-public-policy-ba",
+                        "cornell-public-policy-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "PUBPOL-2301"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-information-science-ba",
+                        "cornell-information-science-bs",
+                        "cornell-isst-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "DEA-1500"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-psychology-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "PUBPOL-3180",
+                        "PUBPOL-3230"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-sociology-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
                       "subject": [
                         "AEM"
                       ]
+                    },
+                    {
+                      "program": [
+                        "cornell-agricultural-sciences-bs",
+                        "cornell-applied-economics-management-bs",
+                        "cornell-environment-sustainability-ba",
+                        "cornell-environment-sustainability-bs",
+                        "cornell-food-science-bs"
+                      ]
                     }
-                  }
-                ]
-              }
-            ]
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "DEA"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-design-environmental-analysis-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "HADM"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-biometry-statistics-bs",
+                        "cornell-hotel-management-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "NS"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-biological-sciences-ba",
+                        "cornell-biological-sciences-bs",
+                        "cornell-food-science-bs",
+                        "cornell-global-public-health-sciences-bs",
+                        "cornell-nutritional-sciences-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "PUBPOL"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-health-care-policy-bs",
+                        "cornell-health-care-policy-major-bs",
+                        "cornell-policy-analysis-management-bs",
+                        "cornell-public-policy-ba",
+                        "cornell-public-policy-bs"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
           },
           "label": "At least one elective from outside your major",
           "minCourses": 1
@@ -369,7 +617,7 @@
         "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
         "anchor": "Electives"
       },
-      "note": "The board checks this only for a few majors that own courses on the elective lists.",
+      "note": "The board checks this for every major it offers and for a few it does not offer yet; confirm it for any other major.",
       "kind": "confirm"
     },
     {

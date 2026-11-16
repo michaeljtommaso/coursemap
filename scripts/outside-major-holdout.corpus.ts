@@ -5,19 +5,34 @@
 //
 // Run: npx tsx outside-major-holdout.corpus.ts   (from the scripts/ folder)
 
+import { mkdtempSync, writeFileSync } from "fs";
+import { tmpdir } from "os";
+import { join } from "path";
 import { courseMatchesRule } from "../cornell-degree-planner/src/lib/planner/distribution/rules";
 import { loadTemplateProgram } from "./check-overlap-fixture";
 import type { CourseRule, DistCourse, Layer } from "./layer-authoring";
 import {
   anchored,
+  applyToRow,
   branches,
+  departmentSubjects,
   deriveHoldOut,
   holdOutRule,
   isHoldOut,
+  listMajors,
+  loadDepartmentTable,
+  loadRowSpecs,
+  majorDepartmentHoldOut,
   majorHoldOut,
+  majorNamesAny,
+  makeTwins,
+  mentionsProgram,
+  pageTitles,
   positivePart,
   programPrefix,
+  specProblems,
   withHoldOut,
+  type DepartmentTable,
   type MajorSource,
 } from "./outside-major-holdout";
 
@@ -134,10 +149,10 @@ const minor: Layer = {
 check("deriveHoldOut: the rule holds out exactly the major's courses, for that major only", () => {
   const byId = new Map(candidates.map((c) => [c.id, c]));
   const self: MajorSource = { prefix: "cornell-testminor-minor", programId: minor.id, kind: "layer", layers: [major] };
-  const res = deriveHoldOut(minor, "electives", byId, new Map(), [testMajor, self]);
+  const res = deriveHoldOut(minor, { row: "electives", mode: "major" }, byId, new Map(), [testMajor, self]);
   assertEqual("candidates", res.candidates.length, candidates.length);
   assertEqual("the minor itself holds nothing", Object.keys(res.perMajor), ["cornell-testmajor-bs"]);
-  const rule = withHoldOut((minor.rows[0] as unknown as { rule: CourseRule }).rule, res.rule);
+  const rule = withHoldOut((minor.rows[0] as unknown as { rule: CourseRule }).rule, holdOutRule(new Map(Object.entries(res.perMajor))));
   const counted = (pid: string) => candidates.filter((c) => courseMatchesRule(c, rule, { programId: pid })).map((c) => c.id);
   assertEqual("test major", counted("cornell-testmajor-bs-2026"), ["QQQ-3000", "QQQ-4500"]);
   assertEqual("another major", counted("cornell-other-ba-2026").length, candidates.length);
@@ -160,6 +175,118 @@ check("holdOutRule: over 40 branches nests chunks; positivePart/withHoldOut roun
   assertEqual("free for another", courseMatchesRule(course("AAA-1044"), full, { programId: "cornell-m00-ba-2026" }), true);
   assertEqual("no hold-out leaves the rule bare", withHoldOut(full, null), pos);
   assertEqual("a plain not is not a hold-out", isHoldOut({ not: { course: ["A-1000"] } }), false);
+});
+
+// ─── Department mode, twins, courses mode, limit output, the table ──────────
+
+const table: DepartmentTable = {
+  departments: [{ name: "Zoology", subjects: ["ZOO", "ZOH"] }],
+  majors: {
+    "cornell-testmajor-bs": { department: ["EXT"] },
+    "cornell-offline-bs": { notInApp: true, subjects: ["OFF"] },
+  },
+};
+
+check("departmentSubjects: counted-whole subjects, the main subject, then the table", () => {
+  // ZYX is counted whole (subject leaf); ZOO, RRR, VAR, DDD, CCC are named once each: all tie for main.
+  assertEqual("no table", departmentSubjects(testMajor, new Map()), ["CCC", "DDD", "RRR", "VAR", "ZOO", "ZYX"]);
+  const narrow: MajorSource = {
+    prefix: "cornell-narrow-ba",
+    programId: "cornell-narrow-ba-2026",
+    kind: "layer",
+    layers: [{ ...major, id: "cornell-narrow-ba-2026", programId: "cornell-narrow-ba-2026", rows: [row("a", "seat", { rule: { course: ["ZOO-1000"] } }), row("b", "pool", { rule: { course: ["ZOO-2000", "QQQ-2000"] }, requiredCourses: 1, requiredCredits: 0 })] } as unknown as Layer],
+  };
+  assertEqual("plurality", departmentSubjects(narrow, new Map()), ["ZOO"]);
+  assertEqual("department group widens", departmentSubjects(narrow, new Map(), table), ["ZOH", "ZOO"]);
+  assertEqual("major entry adds", departmentSubjects(testMajor, new Map(), table).includes("EXT"), true);
+  const me = loadTemplateProgram("cornell-me-bs-2026");
+  if (!me) return fail("template", "cornell-me-bs-2026 is not in seed-data");
+  const meDept = departmentSubjects({ prefix: "cornell-me-bs", programId: me.id, kind: "template", template: me }, new Map());
+  assertEqual("ME template: MAE from its core seats", meDept.includes("MAE"), true);
+  assertEqual("ME template: common curriculum is not the department", ["MATH", "PHYS", "CHEM", "CS", "ENGRD"].some((s) => meDept.includes(s)), false);
+});
+
+check("makeTwins: roster families, page-title pairs for page-only courses, placeholder titles ignored", () => {
+  const fam = new Map([["111", ["ZOO-3100", "QQQ-3100"]], ["222", ["AAA-1000"]]]);
+  const cands = [course("QQQ-3100"), { ...course("PGE-2000"), title: "Shared Title" }, { ...course("ZOO-2000"), title: "Shared Title" }, { ...course("PLC-1000"), title: "(listed on the catalog page; not in the catalog dump)" }, { ...course("PLD-1000"), title: "(listed on the catalog page; not in the catalog dump)" }];
+  const tw = makeTwins(fam, cands, new Map([["PLC-1000", "Page Title"], ["PLD-1000", "Page Title"]]));
+  assertEqual("family", tw.of("QQQ-3100"), ["ZOO-3100"]);
+  assertEqual("a family of one is no twin", tw.of("AAA-1000"), []);
+  assertEqual("title pair", tw.of("PGE-2000"), ["ZOO-2000"]);
+  assertEqual("page title", tw.of("PLC-1000"), ["PLD-1000"]);
+  assertEqual("placeholder titles alone never pair", makeTwins(new Map(), cands).of("PLC-1000"), []);
+  assertEqual("page titles from list lines", [...pageTitles([{ rows: [{ line: "ZOO 1000 | Animals | 3", courseIds: ["ZOO-1000"] }, { line: "ZOO 3306 | 4", courseIds: ["ZOO-3306"] }] }])], [["ZOO-1000", "Animals"]]);
+});
+
+check("department mode: department subjects and their cross-listings held, the major's other courses not", () => {
+  const fam = new Map([["1", ["ZOO-3100", "QQQ-3100"]]]);
+  const cands = [course("ZOO-4000"), course("ZOH-2000"), course("QQQ-3100"), course("RRR-1000"), course("QQQ-3000")];
+  const narrow: MajorSource = { prefix: "cornell-narrow-ba", programId: "cornell-narrow-ba-2026", kind: "layer", layers: [{ ...major, rows: [row("a", "seat", { rule: { course: ["ZOO-1000"] } })] } as unknown as Layer] };
+  const h = majorDepartmentHoldOut(narrow, cands, new Map(), makeTwins(fam, cands), table);
+  assertEqual("subjects", h.subjects, ["ZOH", "ZOO"]);
+  assertEqual("cross-listed course", h.courses, ["QQQ-3100"]);
+  const off = listMajors(undefined, undefined, table).find((m) => m.prefix === "cornell-offline-bs");
+  assertEqual("a notInApp major is listed with its subjects", off && off.kind === "offline" ? off.subjects : null, ["OFF"]);
+  assertEqual("no table, no offline majors", listMajors().some((m) => m.kind === "offline"), false);
+});
+
+check("major mode with twins: a cross-listing of a held or home-subject course is held", () => {
+  const fam = new Map([["1", ["ZOO-3100", "QQQ-3100"]], ["2", ["DDD-2000", "QQQ-2000"]]]);
+  const cands = [course("QQQ-3100"), course("QQQ-2000"), course("DDD-2000"), course("QQQ-3000")];
+  const plain = majorHoldOut(testMajor, cands, new Map());
+  const twinned = majorHoldOut(testMajor, cands, new Map(), makeTwins(fam, cands));
+  assertEqual("without twins", plain.courses, ["DDD-2000"]);
+  assertEqual("with twins", twinned.courses, ["DDD-2000", "QQQ-2000", "QQQ-3100"]);
+});
+
+check("courses mode: holdOut courses held only for majors whose requirements name a requires course", () => {
+  const cands = [course("RRR-1000"), course("QQQ-3000"), course("CCC-3000")];
+  const byId = new Map(cands.map((c) => [c.id, c]));
+  const other: MajorSource = { prefix: "cornell-other-ba", programId: "cornell-other-ba-2026", kind: "layer", layers: [{ ...major, rows: [row("x", "pool", { rule: { subject: ["RRR"] }, requiredCourses: 1, requiredCredits: 0 })] } as unknown as Layer] };
+  assertEqual("names it", majorNamesAny(testMajor, [course("RRR-1000")], byId), true);
+  assertEqual("a subject leaf is not naming", majorNamesAny(other, [course("RRR-1000")], byId), false);
+  const m2: Layer = { ...minor, rows: [row("core", "seat", { rule: { course: cands.map((c) => c.id) } })] } as unknown as Layer;
+  const res = deriveHoldOut(m2, { row: "core", mode: "courses", requires: ["RRR-1000"], holdOut: ["RRR-1000", "CCC-3000"] }, byId, new Map(), [testMajor, other]);
+  assertEqual("held for the naming major only", res.perMajor, { "cornell-testmajor-bs": { courses: ["CCC-3000", "RRR-1000"], subjects: [] } });
+  const me = loadTemplateProgram("cornell-me-bs-2026");
+  if (me) assertEqual("a template seat pattern names CS 1110", majorNamesAny({ prefix: "cornell-me-bs", programId: me.id, kind: "template", template: me }, [course("CS-1110")], new Map()), true);
+});
+
+check("applyToRow: limit output replaces program-naming limits only; max over inside, min over outside", () => {
+  const per = new Map<string, { courses: string[]; subjects: string[] }>([["cornell-testmajor-bs", { courses: ["QQQ-3000"], subjects: ["ZOO"] }]]);
+  const src = { id: "r", rule: { allOf: [{ course: ["QQQ-3000", "ZOO-4000", "RRR-1000"] }, { not: { anyOf: [{ allOf: [{ course: ["X-1"] }, { program: ["p"] }] }] } }] } as CourseRule, limits: [{ rule: { course: ["RRR-1000"] } as CourseRule, maxCourses: 1 }, { rule: { allOf: [{ subject: ["ZOO"] }, { program: ["old"] }] } as CourseRule, maxCourses: 1 }] };
+  const maxed = applyToRow(src, { output: { limit: { maxCourses: 1, label: "L" } } }, per);
+  assertEqual("rule loses its hold-out", maxed.rule, { course: ["QQQ-3000", "ZOO-4000", "RRR-1000"] });
+  assertEqual("kept the plain limit, replaced the program one", maxed.limits!.map((l) => l.maxCourses), [1, 1]);
+  const inside = maxed.limits![1].rule;
+  const pid = { programId: "cornell-testmajor-bs-2026" };
+  assertEqual("inside for the major", ["QQQ-3000", "ZOO-4000", "RRR-1000"].map((id) => courseMatchesRule(course(id), inside, pid)), [true, true, false]);
+  assertEqual("nothing inside for another major", courseMatchesRule(course("ZOO-4000"), inside, { programId: "cornell-other-ba-2026" }), false);
+  const minned = applyToRow(src, { output: { limit: { minCourses: 1 } } }, per);
+  const outside = minned.limits![1].rule;
+  assertEqual("min limit counts outside courses", [courseMatchesRule(course("RRR-1000"), outside, pid), courseMatchesRule(course("ZOO-4000"), outside, pid)], [true, false]);
+  assertEqual("min limit is a hold-out", isHoldOut(outside), true);
+  assertEqual("hold-out output is idempotent", applyToRow(applyToRow(src, {}, per), {}, per), applyToRow(src, {}, per));
+  assertEqual("no majors: no managed limit", applyToRow(src, { output: { limit: { maxCourses: 1 } } }, new Map()).limits!.length, 1);
+  assertEqual("mentionsProgram", [mentionsProgram({ not: { allOf: [{ program: ["x"] }] } }), mentionsProgram({ course: ["A-1"] })], [true, false]);
+});
+
+check("specs and the table: bad specs and over-long prefixes are refused", () => {
+  assertEqual("courses mode needs its lists", specProblems({ program: "p", row: "r", mode: "courses" }).length, 1);
+  assertEqual("limit needs one bound", specProblems({ program: "p", row: "r", mode: "major", output: { limit: { maxCourses: 1, minCourses: 1 } } }).length, 1);
+  assertEqual("a good spec", specProblems({ program: "p", row: "r", mode: "department", output: { limit: { maxCourses: 1 } } }), []);
+  const tmp = join(mkdtempSync(join(tmpdir(), "omh-")), "t.json");
+  writeFileSync(tmp, JSON.stringify({ departments: [], majors: { ["cornell-" + "x".repeat(40)]: { notInApp: true, subjects: ["X"] } } }));
+  let refused = false;
+  try {
+    loadDepartmentTable(tmp);
+  } catch {
+    refused = true;
+  }
+  assertEqual("long prefix", refused, true);
+  for (const s of loadRowSpecs()) assertEqual(`committed spec ${s.program}/${s.row}`, specProblems(s), []);
+  const committed = loadDepartmentTable();
+  assertEqual("committed table loads", committed.departments.length > 0, true);
 });
 
 check("programPrefix drops only a trailing catalog year", () => {

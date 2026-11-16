@@ -64,7 +64,7 @@
         "url": "https://catalog.cornell.edu/programs/data-science-minor/",
         "anchor": "To Complete the Minor"
       },
-      "note": "Must be a Cornell course taken for a letter grade; exam and transfer credit do not count. CS 1110 and CS 1112 do not count here for majors whose own requirements include them.",
+      "note": "Must be a Cornell course taken for a letter grade; exam and transfer credit do not count. The introductory programming courses here (CS 1110, CS 1112, AEM 2830, AEM 2840, AEM 2850, HADM 3710) do not count for majors whose own requirements name an introductory programming course.",
       "kind": "seat",
       "rule": {
         "allOf": [
@@ -99,37 +99,52 @@
           },
           {
             "not": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "course": [
-                    "CS-1110",
-                    "CS-1112"
-                  ]
-                },
-                {
-                  "program": [
-                    "cornell-cognitive-science-ba",
-                    "cornell-computer-science-ba",
-                    "cornell-information-science-ba",
-                    "cornell-mathematics-ba",
-                    "cornell-statistics-data-science-ba",
-                    "cornell-biological-engineering-bs",
-                    "cornell-biometry-statistics-bs",
-                    "cornell-environmental-engineering-bs",
-                    "cornell-information-science-bs",
-                    "cornell-be-bs",
-                    "cornell-bme-bs",
-                    "cornell-ce-bs",
-                    "cornell-cheme-bs",
-                    "cornell-cs-bs",
-                    "cornell-eas-bs",
-                    "cornell-ece-bs",
-                    "cornell-enve-bs",
-                    "cornell-ep-bs",
-                    "cornell-isst-bs",
-                    "cornell-me-bs",
-                    "cornell-mse-bs",
-                    "cornell-ore-bs"
+                  "allOf": [
+                    {
+                      "course": [
+                        "AEM-2830",
+                        "AEM-2840",
+                        "AEM-2850",
+                        "CS-1110",
+                        "CS-1112",
+                        "HADM-3710"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-animal-science-bs",
+                        "cornell-applied-economics-management-bs",
+                        "cornell-atmospheric-science-bs",
+                        "cornell-be-bs",
+                        "cornell-biological-engineering-bs",
+                        "cornell-biological-sciences-ba",
+                        "cornell-biological-sciences-bs",
+                        "cornell-biometry-statistics-bs",
+                        "cornell-bme-bs",
+                        "cornell-ce-bs",
+                        "cornell-cheme-bs",
+                        "cornell-cognitive-science-ba",
+                        "cornell-computer-science-ba",
+                        "cornell-cs-bs",
+                        "cornell-eas-bs",
+                        "cornell-ece-bs",
+                        "cornell-enve-bs",
+                        "cornell-environment-sustainability-ba",
+                        "cornell-environment-sustainability-bs",
+                        "cornell-environmental-engineering-bs",
+                        "cornell-ep-bs",
+                        "cornell-information-science-ba",
+                        "cornell-information-science-bs",
+                        "cornell-isst-bs",
+                        "cornell-mathematics-ba",
+                        "cornell-me-bs",
+                        "cornell-mse-bs",
+                        "cornell-ore-bs",
+                        "cornell-statistics-data-science-ba"
+                      ]
+                    }
                   ]
                 }
               ]
@@ -407,7 +422,7 @@
         "url": "https://catalog.cornell.edu/programs/data-science-minor/",
         "anchor": "Important Information about Major/Minor Overlaps"
       },
-      "note": "The core computing row refuses CS 1110 and CS 1112 for majors whose own requirements list them, which is stricter than the page; check with the minor's advisor which advanced course to take.",
+      "note": "The board applies this for every major it offers, reading an intro programming course in the major's own requirements (even as an option) as requiring it; check with the minor if your major's case differs.",
       "kind": "confirm"
     },
     {

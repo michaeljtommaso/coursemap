@@ -149,6 +149,15 @@ three courses"), sign-up deadlines and "enrollment in a major that approves
 the minor" are confirm rows. A rule that depends on the student's major ("if
 your major requires CS 1110, take a more advanced course") is a `program`
 leaf when the page names the majors, else a narrower rule plus a confirm row.
+When the page names no majors ("outside your major", "not from your major's
+department", "if your major requires an intro programming course"), never
+hand-list majors: register the row in `seed-data/outside-major-rows.json` and
+let `outside-major-holdout.ts --program <id> --row <row> --write` derive the
+`program` branches from every major the app offers (mode `major`,
+`department` or `courses`; a hold-out in the rule, or a `limits` entry for "N
+of the M courses"). Keep the confirm row with the exact rule. Department facts
+the majors cannot show go in `seed-data/major-departments.json`. After a major
+changes, `outside-major-holdout.ts --all --check` lists the rows to re-derive.
 
 **"Not open to X majors" is not a row.** It goes in the minor's entry in
 `scripts/seed-data/minor-index.json` (`notOpenTo`, program-id prefixes): the

@@ -81,7 +81,7 @@
         "url": "https://catalog.cornell.edu/programs/game-design-minor/",
         "anchor": "Minor Requirements"
       },
-      "note": "Courses from the department of your major are held out for the majors the board can identify; see the confirm row for the rest.",
+      "note": "Courses taught under your major's department subjects, and their cross-listings, are held out for every major the board offers; see the confirm row for anything it cannot place.",
       "kind": "pool",
       "rule": {
         "allOf": [
@@ -279,299 +279,581 @@
           },
           {
             "not": {
-              "allOf": [
+              "anyOf": [
                 {
-                  "subject": [
-                    "CS"
+                  "allOf": [
+                    {
+                      "course": [
+                        "MUSIC-1332",
+                        "MUSIC-2370",
+                        "MUSIC-2380",
+                        "MUSIC-3322"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-africana-studies-ba"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-computer-science-ba",
-                    "cornell-cs-bs",
-                    "cornell-isst-bs"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "subject": [
-                    "INFO"
-                  ]
-                },
-                {
-                  "program": [
-                    "cornell-information-science-ba",
-                    "cornell-information-science-bs",
-                    "cornell-isst-bs"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "subject": [
-                    "MUSIC"
+                  "allOf": [
+                    {
+                      "course": [
+                        "ART-3874",
+                        "MUSIC-1312",
+                        "MUSIC-1332",
+                        "MUSIC-2232",
+                        "MUSIC-2250",
+                        "MUSIC-2370",
+                        "MUSIC-2372",
+                        "MUSIC-3322",
+                        "VISST-2000"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-american-studies-ba"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-music-ba"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "subject": [
-                    "PMA"
-                  ]
-                },
-                {
-                  "program": [
-                    "cornell-performing-media-arts-ba"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "subject": [
-                    "PSYCH"
+                  "allOf": [
+                    {
+                      "course": [
+                        "ART-3874",
+                        "INFO-3561",
+                        "MUSIC-3318"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-anthropology-ba"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-psychology-ba",
-                    "cornell-cognitive-science-ba"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "subject": [
-                    "ARTH"
+                  "allOf": [
+                    {
+                      "course": [
+                        "PMA-2701"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-art-bfa"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-history-art-ba"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "subject": [
-                    "ASIAN"
-                  ]
-                },
-                {
-                  "program": [
-                    "cornell-asian-studies-ba",
-                    "cornell-china-asia-pacific-studies-ba"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "subject": [
-                    "HD"
+                  "allOf": [
+                    {
+                      "course": [
+                        "MUSIC-2330",
+                        "MUSIC-2341"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-asian-studies-ba",
+                        "cornell-china-asia-pacific-studies-ba"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-human-development-bs"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "subject": [
-                    "DEA"
+                  "allOf": [
+                    {
+                      "course": [
+                        "MUSIC-1465"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-biological-engineering-bs"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-design-environmental-analysis-bs"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "subject": [
-                    "SYSEN"
-                  ]
-                },
-                {
-                  "program": [
-                    "cornell-systems-engineering-bs"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "subject": [
-                    "ART"
+                  "allOf": [
+                    {
+                      "course": [
+                        "CS-4740",
+                        "INFO-3140",
+                        "MUSIC-1212",
+                        "MUSIC-1465"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-cognitive-science-ba"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-art-bfa"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "course": [
-                    "ART-2701",
-                    "MUSIC-3431"
-                  ]
-                },
-                {
-                  "program": [
-                    "cornell-performing-media-arts-ba"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "course": [
-                    "PMA-3680"
+                  "allOf": [
+                    {
+                      "course": [
+                        "INFO-2450",
+                        "INFO-3200",
+                        "INFO-3450",
+                        "INFO-3561",
+                        "INFO-4301",
+                        "INFO-4400"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-communication-bs"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-music-ba"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "course": [
-                    "INFO-3660"
-                  ]
-                },
-                {
-                  "program": [
-                    "cornell-history-art-ba"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "course": [
-                    "ARTH-3650",
-                    "PSYCH-3140"
+                  "allOf": [
+                    {
+                      "course": [
+                        "MUSIC-2703",
+                        "MUSIC-3327",
+                        "PSYCH-4150",
+                        "VISST-2000"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-comparative-literature-ba"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-information-science-ba",
-                    "cornell-information-science-bs",
-                    "cornell-isst-bs"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "course": [
-                    "INFO-3140",
-                    "HD-1130"
+                  "allOf": [
+                    {
+                      "course": [
+                        "MUSIC-1465",
+                        "PSYCH-1102"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-computer-science-ba",
+                        "cornell-cs-bs"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-psychology-ba",
-                    "cornell-cognitive-science-ba"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "course": [
-                    "PSYCH-1131"
+                  "allOf": [
+                    {
+                      "course": [
+                        "MUSIC-2250",
+                        "MUSIC-2703"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-english-ba"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-human-development-bs"
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            "not": {
-              "allOf": [
-                {
-                  "course": [
-                    "PMA-2701"
+                  "allOf": [
+                    {
+                      "course": [
+                        "CS-2110",
+                        "CS-2112",
+                        "INFO-2450",
+                        "INFO-3200",
+                        "INFO-3450",
+                        "INFO-3561",
+                        "INFO-4301",
+                        "INFO-4400",
+                        "MUSIC-1465"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-environmental-engineering-bs"
+                      ]
+                    }
                   ]
                 },
                 {
-                  "program": [
-                    "cornell-art-bfa"
+                  "allOf": [
+                    {
+                      "course": [
+                        "MUSIC-2232",
+                        "MUSIC-2372",
+                        "MUSIC-3316",
+                        "MUSIC-3318",
+                        "MUSIC-3322"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-fgss-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "MUSIC-2703"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-german-studies-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "ART-3874",
+                        "INFO-3660",
+                        "VISST-2000"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-history-art-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "INFO-3140",
+                        "MUSIC-1465"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-human-development-bs",
+                        "cornell-psychology-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "ARTH-3650",
+                        "PSYCH-3140"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-information-science-ba",
+                        "cornell-information-science-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "ARTH-3650",
+                        "MUSIC-1465",
+                        "PSYCH-1102",
+                        "PSYCH-3140"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-isst-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "CS-4740",
+                        "PSYCH-1102",
+                        "PSYCH-2150"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-linguistics-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "PMA-3680"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-music-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "ART-2701",
+                        "ART-3104",
+                        "ART-3105",
+                        "ART-3804",
+                        "MUSIC-2250",
+                        "MUSIC-2380",
+                        "MUSIC-2703",
+                        "MUSIC-3318",
+                        "MUSIC-3431"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-performing-media-arts-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "PSYCH-1102"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-philosophy-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "MUSIC-3322"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-religious-studies-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "ARTH-3650",
+                        "INFO-3561",
+                        "INFO-3660",
+                        "INFO-4240"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-science-technology-studies-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "PSYCH-2580"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-sociology-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "ART"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-art-bfa"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "ARTH"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-history-art-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "ASIAN"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-asian-studies-ba",
+                        "cornell-china-asia-pacific-studies-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "CS"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-computer-science-ba",
+                        "cornell-cs-bs",
+                        "cornell-isst-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "DEA"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-design-environmental-analysis-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "HD"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-cognitive-science-ba",
+                        "cornell-human-development-bs",
+                        "cornell-psychology-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "INFO"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-information-science-ba",
+                        "cornell-information-science-bs",
+                        "cornell-isst-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "MUSIC"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-music-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "PMA"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-performing-media-arts-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "PSYCH"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-cognitive-science-ba",
+                        "cornell-human-development-bs",
+                        "cornell-psychology-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "SYSEN"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-systems-engineering-bs"
+                      ]
+                    }
                   ]
                 }
               ]
@@ -590,7 +872,7 @@
         "url": "https://catalog.cornell.edu/programs/game-design-minor/",
         "anchor": "Minor Requirements"
       },
-      "note": "The board only knows the departments of majors it holds layers for (and cross-listings it can see); check the rest yourself.",
+      "note": "The board reads each major's department from its own requirements (plus a short table of departments that teach under several codes); check courses it cannot place, such as cross-listings it does not know.",
       "kind": "confirm"
     },
     {
