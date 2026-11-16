@@ -35,11 +35,6 @@
       "why": "A one-credit ensemble course falls under the three-credit floor each roster course needs."
     },
     {
-      "courseId": "GOVT-1111",
-      "rowId": "amst-roster-courses",
-      "why": "A course with no American Studies subject or cross-listing is not on the roster without DUS approval."
-    },
-    {
       "courseId": "AMST-3775",
       "rowId": "amst-seminar-4000",
       "why": "A 3000-level course is below the 4000-level seminar floor."
@@ -68,6 +63,11 @@
       "courseId": "AMST-4051",
       "rowId": "amst-seminar-4000",
       "why": "A lecture-only 4000-level course in the catalog has no seminar section, so it does not fill the seminar seat."
+    },
+    {
+      "courseId": "GOVT-1313",
+      "rowId": "amst-roster-courses",
+      "why": "A government course with no American Studies subject or cross-listing is not on the roster without DUS approval."
     }
   ],
   "courses": [
@@ -104,6 +104,9 @@
       "number": "1115",
       "title": "Introduction to American Government and Politics",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -122,6 +125,10 @@
       "number": "1985",
       "title": "American History from 1500 to 1800",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASRC",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -143,6 +150,10 @@
       "number": "2070",
       "title": "Social Problems in the United States",
       "credits": 3,
+      "crossListedSubjects": [
+        "PUBPOL",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -179,6 +190,10 @@
       "number": "2208",
       "title": "Social Inequality",
       "credits": 4,
+      "crossListedSubjects": [
+        "PUBPOL",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "AFAREA"
@@ -209,6 +224,10 @@
       "number": "2365",
       "title": "Race, Racism, and Public Policy",
       "credits": 4,
+      "crossListedSubjects": [
+        "PUBPOL",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -236,6 +255,9 @@
       "number": "2665",
       "title": "The American Revolutionary Era",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -257,6 +279,9 @@
       "number": "2801",
       "title": "Social Movements",
       "credits": 3,
+      "crossListedSubjects": [
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -272,6 +297,9 @@
       "number": "3430",
       "title": "History of the U.S. Civil War and Reconstruction",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -296,6 +324,10 @@
       "number": "3445",
       "title": "Inequality in U.S. Higher Education",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON",
+        "ILRLE"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -323,6 +355,10 @@
       "number": "3775",
       "title": "Latinos and the United States, 1492-1880",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST",
+        "LSP"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -350,6 +386,9 @@
       "number": "4011",
       "title": "Diversity, Racism, Democracy",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "SCD-AS"
@@ -362,6 +401,10 @@
       "number": "2001",
       "title": "The First American University",
       "credits": 1,
+      "crossListedSubjects": [
+        "ENGL",
+        "HIST"
+      ],
       "attrs": []
     },
     {
@@ -370,27 +413,12 @@
       "number": "3617",
       "title": "Cornell Hip-Hop Collective",
       "credits": 1,
+      "crossListedSubjects": [
+        "MUSIC"
+      ],
       "attrs": [
         {
           "value": "MUSIC-PL"
-        }
-      ]
-    },
-    {
-      "id": "GOVT-1111",
-      "subject": "GOVT",
-      "number": "1111",
-      "title": "Introduction to American Government and Politics",
-      "credits": 4,
-      "attrs": [
-        {
-          "value": "SBA-AG"
-        },
-        {
-          "value": "SSC-AS"
-        },
-        {
-          "value": "GOVT-AM"
         }
       ]
     },
@@ -400,6 +428,11 @@
       "number": "5710",
       "title": "US Education System: Courts, Data, Law and Politics",
       "credits": 4,
+      "crossListedSubjects": [
+        "EDUC",
+        "GDEV",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "AFAREA"
@@ -445,9 +478,39 @@
       "number": "4051",
       "title": "Death Penalty in America",
       "credits": 3,
+      "crossListedSubjects": [
+        "LAW"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1313",
+      "subject": "GOVT",
+      "number": "1313",
+      "title": "Introduction to Comparative Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
         },
         {
           "value": "SSC-AS"

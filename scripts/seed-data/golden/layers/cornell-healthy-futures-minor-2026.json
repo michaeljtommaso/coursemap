@@ -47,6 +47,9 @@
       "number": "3055",
       "title": "Hospitality, Health and Design Industry Immersion Seminar",
       "credits": 1,
+      "crossListedSubjects": [
+        "HADM"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -152,6 +155,10 @@
       "number": "1500",
       "title": "Introduction to Environmental Psychology",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "D-AG"

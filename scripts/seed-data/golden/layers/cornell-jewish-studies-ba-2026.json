@@ -45,6 +45,21 @@
       "courseId": "HEBRW-1101",
       "rowId": "major-electives",
       "why": "An ordinary Hebrew language course is limited to two and only when not used for the college language requirement, so it is not auto-counted as an elective."
+    },
+    {
+      "courseId": "JWST-1101",
+      "rowId": "major-electives",
+      "why": "The Jewish Studies code of the first-semester Hebrew language course is still a language course: at most two count and only when not used for the college language requirement, so it is not auto-counted."
+    },
+    {
+      "courseId": "JWST-3102",
+      "rowId": "major-electives",
+      "why": "The last course of the six-semester Hebrew language sequence, under its Jewish Studies code, is a language course and is not auto-counted."
+    },
+    {
+      "courseId": "GERST-2005",
+      "rowId": "major-electives",
+      "why": "Intermediate Yiddish, listed under German Studies and cross-listed with Jewish Studies, is a language course and is not auto-counted."
     }
   ],
   "courses": [
@@ -54,6 +69,10 @@
       "number": "2644",
       "title": "Introduction to Judaism",
       "credits": 3,
+      "crossListedSubjects": [
+        "NES",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -123,6 +142,11 @@
       "number": "2790",
       "title": "Jewish Films and Filmmakers: Hollywood and Beyond",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "PMA",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -162,6 +186,11 @@
       "number": "3888",
       "title": "Jews, Christians, and Others in Late Antiquity",
       "credits": 3,
+      "crossListedSubjects": [
+        "MEDVL",
+        "NES",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -252,6 +281,9 @@
       "number": "1111",
       "title": "Introduction to American Government and Politics",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -270,12 +302,88 @@
       "number": "1101",
       "title": "Elementary Modern Hebrew I",
       "credits": 4,
+      "crossListedSubjects": [
+        "JWST"
+      ],
       "attrs": [
         {
           "value": "FL-AG"
         },
         {
           "value": "OCL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "JWST-1101",
+      "subject": "JWST",
+      "number": "1101",
+      "title": "Elementary Modern Hebrew I",
+      "credits": 4,
+      "crossListedSubjects": [
+        "HEBRW"
+      ],
+      "attrs": [
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "JWST-3102",
+      "subject": "JWST",
+      "number": "3102",
+      "title": "Advanced Modern Hebrew II",
+      "credits": 4,
+      "crossListedSubjects": [
+        "HEBRW"
+      ],
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "GERST-2005",
+      "subject": "GERST",
+      "number": "2005",
+      "title": "Intermediate Yiddish",
+      "credits": 4,
+      "crossListedSubjects": [
+        "JWST",
+        "YIDSH"
+      ],
+      "attrs": [
+        {
+          "value": "FLOPI-AS"
         },
         {
           "value": "CU-ITL"

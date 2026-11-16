@@ -23,16 +23,6 @@
   ],
   "mustNotCount": [
     {
-      "courseId": "NES-2204",
-      "rowId": "relst-ten-courses",
-      "why": "A cross-listed course under another subject code is not counted automatically toward the ten religion courses."
-    },
-    {
-      "courseId": "ASIAN-4020",
-      "rowId": "relst-two-upper",
-      "why": "The advanced-level pair is checked on religion-coded courses only; a different subject code does not fill it."
-    },
-    {
       "courseId": "RELST-3448",
       "rowId": "relst-two-upper",
       "why": "A 3000-level course is below the advanced-level floor."
@@ -41,6 +31,16 @@
       "courseId": "RELST-2154",
       "rowId": "relst-two-upper",
       "why": "A 2000-level course is below the advanced-level floor."
+    },
+    {
+      "courseId": "NES-2488",
+      "rowId": "relst-ten-courses",
+      "why": "A Near Eastern Studies course with no Religious Studies subject or cross-listing is not counted automatically toward the ten religion courses."
+    },
+    {
+      "courseId": "ASIAN-4024",
+      "rowId": "relst-two-upper",
+      "why": "A 4000-level Asian Studies course with no Religious Studies subject or cross-listing does not fill the advanced-level pair."
     }
   ],
   "courses": [
@@ -50,6 +50,9 @@
       "number": "2060",
       "title": "Introduction to Africana Religions",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASRC"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -71,6 +74,11 @@
       "number": "2204",
       "title": "Introduction to Quranic Arabic",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARAB",
+        "ASRC",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "AFAREA"
@@ -98,6 +106,9 @@
       "number": "2299",
       "title": "Buddhism",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -128,6 +139,10 @@
       "number": "2644",
       "title": "Introduction to Judaism",
       "credits": 3,
+      "crossListedSubjects": [
+        "JWST",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -155,6 +170,10 @@
       "number": "2852",
       "title": "Judaism and the Origins of Christianity",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST",
+        "JWST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -176,6 +195,9 @@
       "number": "3319",
       "title": "From Meditation to Mat, Cave to Cartoon: Yoga as Philosophy, Practice, and Public Performance",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -188,6 +210,9 @@
       "number": "3420",
       "title": "Myth, Ritual, and Symbol",
       "credits": 3,
+      "crossListedSubjects": [
+        "ANTHR"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -221,6 +246,9 @@
       "number": "3695",
       "title": "History of Christianity",
       "credits": 3,
+      "crossListedSubjects": [
+        "NES"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -242,6 +270,9 @@
       "number": "4020",
       "title": "Buddhist Moderns: Visions of Human Flourishing",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -260,6 +291,9 @@
       "number": "4023",
       "title": "Buddhism and Politics in South and Southeast Asia",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN"
+      ],
       "attrs": [
         {
           "value": "SAAREA"
@@ -279,56 +313,17 @@
       ]
     },
     {
-      "id": "NES-2204",
-      "subject": "NES",
-      "number": "2204",
-      "title": "Introduction to Quranic Arabic",
-      "credits": 3,
-      "attrs": [
-        {
-          "value": "AFAREA"
-        },
-        {
-          "value": "AFLANG"
-        },
-        {
-          "value": "FL-AG"
-        },
-        {
-          "value": "HA-AG"
-        },
-        {
-          "value": "HST-AS"
-        },
-        {
-          "value": "CU-ITL"
-        }
-      ]
-    },
-    {
-      "id": "ASIAN-4020",
-      "subject": "ASIAN",
-      "number": "4020",
-      "title": "Buddhist Moderns: Visions of Human Flourishing",
-      "credits": 3,
-      "attrs": [
-        {
-          "value": "CA-AG"
-        },
-        {
-          "value": "LA-AG"
-        },
-        {
-          "value": "ALC-AS"
-        }
-      ]
-    },
-    {
       "id": "RELST-3448",
       "subject": "RELST",
       "number": "3448",
       "title": "Islamic Mysticism",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST",
+        "MEDVL",
+        "NES",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -356,6 +351,10 @@
       "number": "2154",
       "title": "Sex and Power in Jewish History",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST",
+        "JWST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -371,6 +370,57 @@
         },
         {
           "value": "HIST-HEU"
+        }
+      ]
+    },
+    {
+      "id": "NES-2488",
+      "subject": "NES",
+      "number": "2488",
+      "title": "Modern Israel: History, Culture, Society",
+      "credits": 3,
+      "crossListedSubjects": [
+        "JWST"
+      ],
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-4024",
+      "subject": "ASIAN",
+      "number": "4024",
+      "title": "Science, Medicine, and Media Technologies in East Asia",
+      "credits": 3,
+      "crossListedSubjects": [
+        "BSOC",
+        "HIST",
+        "SHUM",
+        "STS"
+      ],
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
         }
       ]
     }

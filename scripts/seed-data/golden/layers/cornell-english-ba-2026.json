@@ -63,11 +63,6 @@
       "why": "The second honors tutorial may not fill the concentration cluster."
     },
     {
-      "courseId": "COML-4511",
-      "rowId": "seminars",
-      "why": "The seminar requirement is for Cornell courses in the English subject only."
-    },
-    {
       "courseId": "ENGL-3470",
       "rowId": "seminars",
       "why": "A seminar must be at the 4000 level."
@@ -76,6 +71,11 @@
       "courseId": "ENGL-4950",
       "rowId": "seminars",
       "why": "Independent study has no seminar section in the catalog, so it does not fill a seminar slot."
+    },
+    {
+      "courseId": "COML-4353",
+      "rowId": "seminars",
+      "why": "A comparative literature seminar with no English subject or cross-listing is not an ENGL seminar."
     }
   ],
   "courses": [
@@ -85,6 +85,9 @@
       "number": "3190",
       "title": "Chaucer",
       "credits": 3,
+      "crossListedSubjects": [
+        "MEDVL"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -109,6 +112,9 @@
       "number": "2270",
       "title": "Shakespeare",
       "credits": 3,
+      "crossListedSubjects": [
+        "PMA"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -163,6 +169,11 @@
       "number": "2650",
       "title": "Introduction to African American Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ASRC",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "AFAREA"
@@ -349,15 +360,6 @@
       ]
     },
     {
-      "id": "COML-4511",
-      "subject": "COML",
-      "number": "4511",
-      "title": "(listed on the catalog page; not in the catalog dump)",
-      "credits": 4,
-      "attrs": [],
-      "pageOnly": true
-    },
-    {
       "id": "ENGL-4950",
       "subject": "ENGL",
       "number": "4950",
@@ -367,6 +369,27 @@
       "attrs": [
         {
           "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "COML-4353",
+      "subject": "COML",
+      "number": "4353",
+      "title": "Race and Critical Theory",
+      "credits": 3,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
         }
       ]
     }

@@ -74,7 +74,7 @@
         "url": "https://catalog.cornell.edu/programs/jewish-studies-ba/",
         "anchor": "Program Requirements"
       },
-      "note": "Counts JWST courses (including cross-listings) and the one content-in-Hebrew course the page names. Other Jewish-language courses are handled by the language confirm row.",
+      "note": "Counts JWST courses (including cross-listings) and the one content-in-Hebrew course the page names. The six-semester Hebrew language sequence (Elementary, Intermediate and Advanced Modern Hebrew) and the Yiddish language sequence are left out under every code they are listed with: the language confirm row covers them, since at most two count and only if they are not used for the college language requirement.",
       "kind": "pool",
       "rule": {
         "allOf": [
@@ -100,6 +100,27 @@
                 "JWST-4769",
                 "JWST-4998",
                 "JWST-4999"
+              ]
+            }
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "titleStartsWith": "Elementary Modern Hebrew"
+                },
+                {
+                  "titleStartsWith": "Intermediate Modern Hebrew"
+                },
+                {
+                  "titleStartsWith": "Advanced Modern Hebrew"
+                },
+                {
+                  "titleStartsWith": "Elementary Yiddish"
+                },
+                {
+                  "titleStartsWith": "Intermediate Yiddish"
+                }
               ]
             }
           }
