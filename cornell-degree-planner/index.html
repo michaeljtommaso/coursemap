@@ -10,10 +10,69 @@
          build time; the post-deploy check greps the served HTML for it to prove
          which project a deploy hit. -->
     <meta name="fb-project" content="%VITE_FB_PROJECT_ID%" />
-    <title>Coursemap — My roadmap</title>
+    <title>CU Coursemap — Cornell degree planner and course roadmap</title>
+    <!-- Search and link previews. The site also answers at the Firebase
+         default domains; canonical points every copy at cucoursemap.app. -->
+    <meta
+      name="description"
+      content="Plan your Cornell degree semester by semester. CU Coursemap lays out your classes, prerequisites and major, minor and college requirements on one board. Free, no sign-up."
+    />
+    <link rel="canonical" href="https://cucoursemap.app/" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CU Coursemap" />
+    <meta property="og:title" content="CU Coursemap — Cornell degree planner" />
+    <meta
+      property="og:description"
+      content="Plan every semester at Cornell on one board: classes, prerequisites, and your major, minor and college requirements."
+    />
+    <meta property="og:url" content="https://cucoursemap.app/" />
+    <meta property="og:image" content="https://cucoursemap.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="CU Coursemap, a Cornell degree planner" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CU Coursemap — Cornell degree planner" />
+    <meta
+      name="twitter:description"
+      content="Plan every semester at Cornell on one board: classes, prerequisites, and your major, minor and college requirements."
+    />
+    <meta name="twitter:image" content="https://cucoursemap.app/og-image.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "CU Coursemap",
+        "alternateName": ["CU Course Map", "Coursemap", "cucoursemap"],
+        "url": "https://cucoursemap.app/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web",
+        "description": "A degree planner for Cornell University students: lay out every semester, check prerequisites, and track major, minor and college requirements.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- What a crawler (or a visitor before the app loads) reads. React
+           replaces this the moment the app mounts (createRoot clears #root). -->
+      <main style="max-width: 640px; margin: 15vh auto 0; padding: 0 24px; font-family: system-ui, sans-serif; color: #0f172a; line-height: 1.55">
+        <h1 style="font-size: 28px; margin: 0 0 12px">CU Coursemap: a degree planner for Cornell students</h1>
+        <p>
+          Plan every semester at Cornell on one board. Search the full Cornell course catalog, drag classes into
+          semesters, see the prerequisites each class needs and the later classes it unlocks, and watch your
+          progress toward your major, minors and college requirements as you plan.
+        </p>
+        <ul>
+          <li>Majors in Engineering, Arts &amp; Sciences and CALS, with double majors and up to three minors</li>
+          <li>AP, IB and transfer credit counted toward your requirements</li>
+          <li>Class times, instructors and professor ratings for the coming semester</li>
+          <li>See which majors and minors the classes you like point to</li>
+        </ul>
+        <p>Free to use, no sign-up needed. An independent student project, not an official Cornell University site.</p>
+        <p><a href="/">Open CU Coursemap</a></p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
