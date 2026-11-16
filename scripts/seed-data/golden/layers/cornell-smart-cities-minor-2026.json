@@ -1,0 +1,153 @@
+{
+  "programId": "cornell-smart-cities-minor-2026",
+  "description": "A fictional environmental engineering student takes two data and sensing core courses plus four focus-area courses in transportation, energy, water and economics.",
+  "layerIds": [
+    "cornell-smart-cities-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-environmental-engineering-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CEE-4665",
+    "CEE-4795",
+    "CEE-3610",
+    "CEE-4210",
+    "CEE-4200",
+    "CEE-3230"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CEE-3230",
+      "rowId": "core-two",
+      "why": "An engineering economics course sits only on the focus-area side, not the core list."
+    },
+    {
+      "courseId": "CEE-3610",
+      "rowId": "core-two",
+      "why": "A transportation course is a focus-area option, not a core one."
+    },
+    {
+      "courseId": "CEE-4800",
+      "rowId": "focus-four",
+      "why": "A core-list course is not counted again toward the four focus-area courses."
+    },
+    {
+      "courseId": "ORIE-2380",
+      "rowId": "focus-four",
+      "why": "A core-list course is not counted toward the focus-area courses."
+    },
+    {
+      "courseId": "CEE-3040",
+      "rowId": "focus-four",
+      "why": "A civil engineering course that is on none of the printed lists."
+    },
+    {
+      "courseId": "CEE-3040",
+      "rowId": "core-two",
+      "why": "A civil engineering course that is on none of the printed lists."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CEE-4665",
+      "subject": "CEE",
+      "number": "4665",
+      "title": "Modeling and Optimization for Smart Infrastructure Systems",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CEE-4795",
+      "subject": "CEE",
+      "number": "4795",
+      "title": "Sensors for the Built and Natural Environments",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CEE-3610",
+      "subject": "CEE",
+      "number": "3610",
+      "title": "Introduction to Transportation Engineering",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CEE-4210",
+      "subject": "CEE",
+      "number": "4210",
+      "title": "Renewable Energy Systems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CEE-4200",
+      "subject": "CEE",
+      "number": "4200",
+      "title": "Managing Water Resources in a Changing World",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CEE-3230",
+      "subject": "CEE",
+      "number": "3230",
+      "title": "Engineering Economics and Management",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CEE-4800",
+      "subject": "CEE",
+      "number": "4800",
+      "title": "Engineering Smart Cities",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ORIE-2380",
+      "subject": "ORIE",
+      "number": "2380",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "CEE-3040",
+      "subject": "CEE",
+      "number": "3040",
+      "title": "Uncertainty Analysis in Engineering",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    }
+  ]
+}

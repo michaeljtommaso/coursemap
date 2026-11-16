@@ -1,0 +1,198 @@
+{
+  "programId": "cornell-engineering-communications-minor-2026",
+  "description": "A student meets the communication minor with two core courses, two professionalism courses, two upper-level communication electives, and one statistics course.",
+  "layerIds": [
+    "cornell-engineering-communications-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-me-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ENGRC-3350",
+    "HADM-3670",
+    "ENGRC-3700",
+    "ENGRG-3900",
+    "COMM-3200",
+    "COMM-4450",
+    "ENGRD-2700"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ENGRG-3910",
+      "rowId": "professionalism",
+      "why": "Listed but needs Leadership Certificate admission the board cannot confirm, so it is held out."
+    },
+    {
+      "courseId": "NBA-5070",
+      "rowId": "communication-electives",
+      "why": "Graduate-level course; the minor bars 5000-level work."
+    },
+    {
+      "courseId": "COMM-2450",
+      "rowId": "communication-electives",
+      "why": "Counts as an elective only in certain intensive offerings, which the board cannot see."
+    },
+    {
+      "courseId": "MSE-4030",
+      "rowId": "communication-electives",
+      "why": "Counts only in writing- or communication-intensive semesters."
+    },
+    {
+      "courseId": "ILRST-6100",
+      "rowId": "statistics",
+      "why": "Graduate-level statistics course is barred."
+    },
+    {
+      "courseId": "ENGRC-3111",
+      "rowId": "statistics",
+      "why": "A communication course, not on the statistics list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ENGRC-3350",
+      "subject": "ENGRC",
+      "number": "3350",
+      "title": "Organizational Communications for Engineers",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CE-EN"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "HADM-3670",
+      "subject": "HADM",
+      "number": "3670",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ENGRC-3700",
+      "subject": "ENGRC",
+      "number": "3700",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ENGRG-3900",
+      "subject": "ENGRG",
+      "number": "3900",
+      "title": "Foundations of Engineering Leadership",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "COMM-3200",
+      "subject": "COMM",
+      "number": "3200",
+      "title": "Technology, Behavior and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-4450",
+      "subject": "COMM",
+      "number": "4450",
+      "title": "Computer-Mediated Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENGRD-2700",
+      "subject": "ENGRD",
+      "number": "2700",
+      "title": "Eng Probability and Statistics: Modeling and Data Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENGRG-3910",
+      "subject": "ENGRG",
+      "number": "3910",
+      "title": "Applied Engineering Leadership",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "NBA-5070",
+      "subject": "NBA",
+      "number": "5070",
+      "title": "Entrepreneurship for Scientists and Engineers",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "COMM-2450",
+      "subject": "COMM",
+      "number": "2450",
+      "title": "Communication and Technology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "MSE-4030",
+      "subject": "MSE",
+      "number": "4030",
+      "title": "Senior Materials Laboratory I",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ILRST-6100",
+      "subject": "ILRST",
+      "number": "6100",
+      "title": "Statistical Methods I",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "ENGRC-3111",
+      "subject": "ENGRC",
+      "number": "3111",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 1,
+      "attrs": [],
+      "pageOnly": true
+    }
+  ]
+}

@@ -1,0 +1,227 @@
+{
+  "id": "cornell-biological-engineering-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Biological Engineering (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-biological-engineering-minor-2026",
+  "sharing": {
+    "forbiddenWith": [
+      "cornell-biomedical-engineering-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "foundation",
+      "label": "One biology foundation course (biochemistry, developmental or cell biology, or bacterial genetics)",
+      "group": "Biology foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Biological Foundation"
+      },
+      "note": "The page lets a student take one or two foundation courses. The first fills this row; a second one has no row of its own and counts toward the six-course total (see six-courses). The two-part biochemistry sequence counts only when both halves are taken. Cornell courses only.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "foundation-single",
+          "label": "One single-course foundation option",
+          "group": "Biology foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+            "anchor": "Biological Foundation"
+          },
+          "kind": "seat",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "BIOMG-3300",
+                  "BIOMG-3350",
+                  "BIOMG-3850",
+                  "BIOMG-4320",
+                  "BIOMI-4850"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "foundation-pair",
+          "label": "Both halves of the two-part biochemistry sequence",
+          "group": "Biology foundation",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+            "anchor": "Biological Foundation"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "BIOMG-3310",
+                  "BIOMG-3320"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "bee-core",
+      "label": "One biological engineering core course",
+      "group": "Engineering core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Biological Engineering Core"
+      },
+      "note": "One or two core courses are allowed; the first fills this row and a second counts toward the six-course total. Two of the core courses may alternatively be used as focus area electives. Cornell courses only.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "BEE-2600",
+              "BEE-3310",
+              "BEE-3400",
+              "BEE-3500",
+              "BEE-3600"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "focus-electives",
+      "label": "Three focus area electives from the department's focus area lists",
+      "group": "Focus area electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Biological Engineering Focus Area Electives"
+      },
+      "note": "The focus area course lists are not printed on this page, so the board cannot check them. A course in several focus areas counts once.",
+      "kind": "confirm"
+    },
+    {
+      "id": "six-courses",
+      "label": "Six or more courses in total, of which three (worth 9 credits together) are BEE-taught",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The three rows above give five courses; the sixth comes from a second foundation or core course or a fourth elective. The BEE-taught share cannot be read from the foundation and elective choices, so confirm it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-credits",
+      "label": "Reach at least 18 credits across the minor's courses",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-minus",
+      "label": "Earn C- or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minor-gpa",
+      "label": "Keep a 2.0 GPA or higher across the minor's courses",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "not-both-with-bme",
+      "label": "Do not pursue this minor together with the Biomedical Engineering minor",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "The board also bars the pairing outright.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approves",
+      "label": "Be enrolled in an engineering major that approves taking this minor",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "note": "Biological Engineering majors cannot take this minor; the minor picker already blocks them.",
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-and-timing",
+      "label": "Finish all degree requirements, with the minor completed during continuous undergraduate enrollment at Cornell",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Meet the department's undergraduate coordinator when you decide on the minor to get a faculty advisor, and apply for certification once coursework is done",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/biological-engineering-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

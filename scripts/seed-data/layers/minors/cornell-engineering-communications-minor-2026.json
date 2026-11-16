@@ -1,0 +1,342 @@
+{
+  "id": "cornell-engineering-communications-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Engineering Communications (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-engineering-communications-minor-2026",
+  "sharing": {
+    "forbiddenWith": [
+      "cornell-science-communication-public-engagement-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "ec-core-a",
+      "label": "Communication core: one of the two engineering communications courses",
+      "group": "Communication core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENGRC-3350",
+          "ENGRC-3500"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "ec-core-b",
+      "label": "Communication core: one more course from the second short list",
+      "group": "Communication core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "COMM-2450",
+          "COMM-2850",
+          "HADM-3670",
+          "ENGRG-4900"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "professionalism",
+      "label": "Professionalism courses totaling at least 5 credits",
+      "group": "Professionalism",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "ENGRG 3910 is held out because it needs admission to the Leadership Certificate Program, which the board cannot see; see the confirm item. Courses count at the credits the student took them for.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ENGRD-2720",
+              "ENGRC-3023",
+              "ENGRC-3025",
+              "ENGRC-3026",
+              "ENGRC-3027",
+              "ENGRC-3340",
+              "ENGRC-3341",
+              "ENGRC-3700",
+              "ENGRG-3600",
+              "ENGRG-3900",
+              "ENGRG-3910",
+              "ENGRG-4990"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "ENGRG-3910"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 5
+    },
+    {
+      "id": "communication-electives",
+      "label": "Communication electives totaling at least 6 credits",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Reads the 'other courses at Cornell' table as part of the elective pool (its footnote and the COMM 2850 remark point to the elective count). Held out: NBA 5070 (graduate level, which the page bars) and the courses the page counts only in writing-intensive or communication-intensive offerings (BEE 4530, BEE 4730, CHEME 4320, COMM 2450, MAE 4272, MSE 4030, MSE 4050); see the confirm item. A course counts once, so COMM 2850 cannot fill both the second core slot and an elective.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "ENGRC-3111",
+                  "ENGRC-3120",
+                  "ENGRC-3152",
+                  "ENGRC-3610",
+                  "ENGRC-3640",
+                  "ENGRC-4152"
+                ]
+              },
+              {
+                "course": [
+                  "AEM-2500",
+                  "AEM-3245",
+                  "AEM-3249",
+                  "BEE-4530",
+                  "BEE-4730",
+                  "BEE-4590",
+                  "BME-4440",
+                  "CHEME-4320",
+                  "COMM-2450",
+                  "COMM-2850",
+                  "COMM-3200",
+                  "COMM-4450",
+                  "ENGL-2880",
+                  "ENVS-2000",
+                  "ILROB-2230",
+                  "INFO-2950",
+                  "INFO-4200",
+                  "INFO-4240",
+                  "INFO-4270",
+                  "INFO-4310",
+                  "INFO-4430",
+                  "INFO-4561",
+                  "MAE-4272",
+                  "MSE-3010",
+                  "MSE-4030",
+                  "MSE-4050",
+                  "NBA-5070",
+                  "NTRES-3330",
+                  "PHIL-3340",
+                  "PSYCH-3420",
+                  "STS-4451"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "NBA-5070",
+                "BEE-4530",
+                "BEE-4730",
+                "CHEME-4320",
+                "COMM-2450",
+                "MAE-4272",
+                "MSE-4030",
+                "MSE-4050"
+              ]
+            }
+          },
+          {
+            "not": {
+              "number": {
+                "min": 5000
+              }
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6
+    },
+    {
+      "id": "statistics",
+      "label": "One statistics course",
+      "group": "Statistics",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Statistics"
+      },
+      "note": "The page puts this single-choice list under its own heading without saying whether it is optional; read as required (the stricter reading). ILRST 6100 is held out as a graduate-level course, and exam credit is not counted because the minor is expected to be done at Cornell.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AEM-2100",
+              "CEE-3040",
+              "ENGRD-2700",
+              "ILRST-2100",
+              "ILRST-6100",
+              "ORIE-3500",
+              "PUBPOL-2100",
+              "PUBPOL-2101",
+              "PSYCH-2500",
+              "SOC-3010",
+              "STSCI-2100",
+              "STSCI-2150",
+              "STSCI-2200"
+            ]
+          },
+          {
+            "not": {
+              "number": {
+                "min": 5000
+              }
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C or better in every course used for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-gpa",
+      "label": "Keep the GPA across the minor's courses above 2.0 (not your overall GPA)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "total-credits",
+      "label": "Check the minor totals six courses and at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "engineering-affiliation",
+      "label": "Be an Engineering undergraduate in a specific major, and in a major that approves the minor",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declaration",
+      "label": "Get pre-approval: apply with a completion plan, a statement of intent and your Engineering advisor's consent, and pass the e-portfolio review",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "completion-timing",
+      "label": "Finish the minor during your continuous undergraduate enrollment at Cornell",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-graduate-courses",
+      "label": "Graduate-level courses cannot count, even by petition",
+      "group": "Limits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "The board already holds 5000-level and above out of the elective and statistics rows.",
+      "kind": "confirm"
+    },
+    {
+      "id": "offering-restricted-courses",
+      "label": "A few listed courses count only in writing-intensive or communication-intensive offerings; confirm yours was one (not counted on the board)",
+      "group": "Limits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "BEE 4530, BEE 4730, CHEME 4320, COMM 2450 (as an elective), MAE 4272, MSE 4030 and MSE 4050 are held out of the elective pool because the board cannot see the offering type.",
+      "kind": "confirm"
+    },
+    {
+      "id": "leadership-admission",
+      "label": "ENGRG 3910 counts only if you were admitted to the Leadership Certificate Program (not counted on the board)",
+      "group": "Limits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "language-category",
+      "label": "Language: a non-English course at 3000 level or above can count, up to 4 credits; exam-based credit needs a petition (not counted on the board)",
+      "group": "Petitions",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Language"
+      },
+      "note": "The page does not say which requirement language credit fills, so the board counts none of it; confirm with the minor advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "study-abroad-petition",
+      "label": "Study-abroad communication courses count (up to 3 credits) only if petitioned and approved before you go (not counted on the board)",
+      "group": "Petitions",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/engineering-communications-minor/",
+        "anchor": "Study Abroad"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

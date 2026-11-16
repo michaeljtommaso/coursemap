@@ -1,0 +1,145 @@
+{
+  "id": "cornell-smart-cities-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Smart Cities (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-smart-cities-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCredits": 9
+    }
+  },
+  "rows": [
+    {
+      "id": "core-two",
+      "label": "Core: at least two courses from the core list",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/smart-cities-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Every course on the core list is 3 credits, so two courses is 6 credits. Extra core courses are not counted toward the focus-area courses here (the stricter reading).",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "ORIE-2380",
+          "CEE-4665",
+          "CEE-4795",
+          "CEE-4800",
+          "CEE-4930",
+          "CEE-5735",
+          "CEE-5745"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "focus-four",
+      "label": "Four more courses from the three focus areas (transportation and energy, climate-energy-water, finance and policy)",
+      "group": "Focus areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/smart-cities-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Six courses in all, two from the core list, so four remain. The remaining credits are read as 12 (18 minus the 6 core credits); a 1.5-credit course therefore needs another course alongside it. A course appearing in two areas counts once. Courses outside the printed lists need a petition (see the petition confirm item).",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "CEE-3610",
+          "CEE-4210",
+          "CEE-4620",
+          "CEE-4640",
+          "CEE-4880",
+          "ENMGT-5200",
+          "MAE-4220",
+          "BEE-4310",
+          "CEE-4200",
+          "CEE-4565",
+          "CEE-5420",
+          "CEE-3230",
+          "ENMGT-5940",
+          "INFO-5455",
+          "PUBPOL-5755",
+          "PUBPOL-5757",
+          "PUBPOL-4640"
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 12
+    },
+    {
+      "id": "min-credits",
+      "label": "Check the six courses add up to at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/smart-cities-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "unique-credits",
+      "label": "At least 9 of the minor's credits must be separate from the required courses your major uses",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/smart-cities-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board holds the minor to at most 9 credits shared with your major (any major row, stricter than Cornell, which only counts required major courses). Confirm the real count with your advisor.",
+      "kind": "confirm"
+    },
+    {
+      "id": "engineering-students-only",
+      "label": "Open to Engineering students in any major except Civil Engineering",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/smart-cities-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "Civil Engineering students follow the Smart Cities concentration of their own major instead.",
+      "kind": "confirm"
+    },
+    {
+      "id": "major-approves",
+      "label": "Your major must approve taking this minor",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/smart-cities-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "degree-and-timing",
+      "label": "Finish all requirements for your undergraduate degree, completing the minor during your continuous undergraduate enrollment",
+      "group": "Completion",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/smart-cities-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "petition-courses",
+      "label": "A course or focus area outside the printed lists counts only if you petitioned and it was approved",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/smart-cities-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "certify-minor",
+      "label": "Apply for certification of the minor once the coursework is finished",
+      "group": "Completion",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/smart-cities-minor/",
+        "anchor": "Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

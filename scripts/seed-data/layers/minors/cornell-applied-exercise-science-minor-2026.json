@@ -1,0 +1,175 @@
+{
+  "id": "cornell-applied-exercise-science-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Applied Exercise Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-exercise-science-minor-2026",
+  "rows": [
+    {
+      "id": "prereq-anatomy-physiology",
+      "label": "NS 3410, the Cornell anatomy and physiology lecture course (taken at Cornell)",
+      "group": "Cornell prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-exercise-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Exam and transfer credit are held out because the prerequisite credits are to be earned at Cornell.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "NS-3410"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "prereq-anatomy-lab",
+      "label": "NS 3420, the Cornell anatomy and physiology lab (taken at Cornell)",
+      "group": "Cornell prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-exercise-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Exam and transfer credit are held out. The page also lets this course count as a DNS elective or HBHS selective.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "NS-3420"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "prereq-applied-anatomy",
+      "label": "NS 4430, the Cornell applied anatomy and physiology course (taken at Cornell)",
+      "group": "Cornell prerequisites",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-exercise-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Exam and transfer credit are held out. The page names six prerequisite credits yet lists three courses worth eight, so all three are required.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "NS-4430"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "ic-kinesiology",
+      "label": "EXSS 22000 Kinesiology at Ithaca College",
+      "group": "Ithaca College courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-exercise-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Taken at Ithaca College, so the board cannot see it (the course is not in the Cornell catalog): confirm it yourself. It is a required 4-credit course.",
+      "kind": "confirm"
+    },
+    {
+      "id": "ic-exercise-physiology",
+      "label": "EXSS 32100 Exercise Physiology at Ithaca College",
+      "group": "Ithaca College courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-exercise-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Taken at Ithaca College, so the board cannot see it (the course is not in the Cornell catalog): confirm it yourself. It is a required 4-credit course.",
+      "kind": "confirm"
+    },
+    {
+      "id": "ic-biomechanics",
+      "label": "EXSS 30600 Biomechanical Principles of Human Movement at Ithaca College",
+      "group": "Ithaca College courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-exercise-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Taken at Ithaca College, so the board cannot see it (the course is not in the Cornell catalog): confirm it yourself. It is a required 4-credit course.",
+      "kind": "confirm"
+    },
+    {
+      "id": "prereqs-before-ic",
+      "label": "Confirm all three Cornell prerequisites were finished before you enrolled in the Ithaca College courses",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-exercise-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board does not check enrollment order.",
+      "kind": "confirm"
+    },
+    {
+      "id": "physics-for-biomechanics",
+      "label": "Confirm you have the physics prerequisite for the biomechanics course",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-exercise-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page states the prerequisite as physics; the board cannot see which course meets it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "dns-major-only",
+      "label": "Confirm you are a Division of Nutritional Sciences major, the only students this minor admits",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-exercise-science-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "Every other major is barred in the picker; this reminder covers which majors count as Division majors.",
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "programId": "cornell-smart-cities-minor-2026",
+  "description": "A fictional electrical and computer engineering student whose major and minor both count five courses, more than the nine shared credits the minor allows.",
+  "layerIds": [
+    "cornell-ece-bs-2026",
+    "cornell-smart-cities-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-ece-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CEE-4665",
+    "CEE-4795",
+    "CEE-3610",
+    "CEE-4210",
+    "CEE-4200",
+    "CEE-3230"
+  ],
+  "limit": {
+    "maxCredits": 9
+  },
+  "shared": [
+    "CEE-3610",
+    "CEE-4200",
+    "CEE-4210",
+    "CEE-4665",
+    "CEE-4795"
+  ],
+  "heldBack": [
+    {
+      "courseId": "CEE-3610",
+      "from": "cornell-smart-cities-minor-2026",
+      "why": "Five shared courses are 15 credits, so the minor gives up courses until only nine remain shared."
+    },
+    {
+      "courseId": "CEE-4210",
+      "from": "cornell-smart-cities-minor-2026",
+      "why": "A second course is held back to bring the shared credits down to the nine allowed."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CEE-4665",
+      "subject": "CEE",
+      "number": "4665",
+      "title": "Modeling and Optimization for Smart Infrastructure Systems",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CEE-4795",
+      "subject": "CEE",
+      "number": "4795",
+      "title": "Sensors for the Built and Natural Environments",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CEE-3610",
+      "subject": "CEE",
+      "number": "3610",
+      "title": "Introduction to Transportation Engineering",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CEE-4210",
+      "subject": "CEE",
+      "number": "4210",
+      "title": "Renewable Energy Systems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CEE-4200",
+      "subject": "CEE",
+      "number": "4200",
+      "title": "Managing Water Resources in a Changing World",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "CEE-3230",
+      "subject": "CEE",
+      "number": "3230",
+      "title": "Engineering Economics and Management",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

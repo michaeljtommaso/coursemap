@@ -35,7 +35,8 @@
   },
   "cornell-applied-exercise-science-minor-2026": {
     "shortName": "Applied Exercise Science minor",
-    "offeredBy": "Nutritional Sciences"
+    "offeredBy": "Nutritional Sciences",
+    "onlyOpenTo": ["cornell-nutritional-sciences-bs"]
   },
   "cornell-applied-mathematics-minor-2026": {
     "shortName": "Applied Math minor",
@@ -79,7 +80,8 @@
   "cornell-biological-engineering-minor-2026": {
     "shortName": "Biological Engineering minor",
     "offeredBy": "Engineering",
-    "notOpenTo": ["cornell-be-bs", "cornell-biological-engineering-bs"]
+    "notOpenTo": ["cornell-be-bs", "cornell-biological-engineering-bs"],
+    "onlyOpenTo": ["cornell-cs-bs", "cornell-ece-bs", "cornell-me-bs", "cornell-ore-bs", "cornell-bme-bs", "cornell-ce-bs", "cornell-cheme-bs", "cornell-eas-bs", "cornell-enve-bs", "cornell-ep-bs", "cornell-isst-bs", "cornell-mse-bs"]
   },
   "cornell-biomedical-engineering-minor-2026": {
     "shortName": "BME minor",
@@ -198,7 +200,8 @@
   },
   "cornell-engineering-communications-minor-2026": {
     "shortName": "Engineering Communications minor",
-    "offeredBy": "Engineering"
+    "offeredBy": "Engineering",
+    "onlyOpenTo": ["cornell-cs-bs", "cornell-ece-bs", "cornell-me-bs", "cornell-ore-bs", "cornell-be-bs", "cornell-bme-bs", "cornell-ce-bs", "cornell-cheme-bs", "cornell-eas-bs", "cornell-enve-bs", "cornell-ep-bs", "cornell-isst-bs", "cornell-mse-bs"]
   },
   "cornell-engineering-management-minor-2026": {
     "shortName": "Engineering Management minor",
@@ -524,7 +527,8 @@
   "cornell-smart-cities-minor-2026": {
     "shortName": "Smart Cities minor",
     "offeredBy": "Engineering",
-    "notOpenTo": ["cornell-ce-bs"]
+    "notOpenTo": ["cornell-ce-bs"],
+    "onlyOpenTo": ["cornell-cs-bs", "cornell-ece-bs", "cornell-me-bs", "cornell-ore-bs", "cornell-be-bs", "cornell-bme-bs", "cornell-cheme-bs", "cornell-eas-bs", "cornell-enve-bs", "cornell-ep-bs", "cornell-isst-bs", "cornell-mse-bs"]
   },
   "cornell-soil-science-minor-2026": {
     "shortName": "Soil Science minor",

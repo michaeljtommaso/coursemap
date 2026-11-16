@@ -1,0 +1,48 @@
+{
+  "programId": "cornell-applied-exercise-science-minor-2026",
+  "description": "A nutrition major completes the three Cornell anatomy and physiology courses that the minor requires on campus.",
+  "layerIds": [
+    "cornell-applied-exercise-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-nutritional-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "NS-3410",
+    "NS-3420",
+    "NS-4430"
+  ],
+  "mustNotCount": [],
+  "courses": [
+    {
+      "id": "NS-3410",
+      "subject": "NS",
+      "number": "3410",
+      "title": "Human Anatomy and Physiology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "NS-3420",
+      "subject": "NS",
+      "number": "3420",
+      "title": "Human Anatomy and Physiology Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "NS-4430",
+      "subject": "NS",
+      "number": "4430",
+      "title": "Applied Anatomy and Physiology",
+      "credits": 2,
+      "attrs": []
+    }
+  ]
+}
