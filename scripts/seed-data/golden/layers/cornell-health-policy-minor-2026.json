@@ -1,0 +1,146 @@
+{
+  "programId": "cornell-health-policy-minor-2026",
+  "description": "A student pairs the intro health systems course with one other policy course and three approved health electives from economics and population health.",
+  "layerIds": [
+    "cornell-health-policy-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PUBPOL-2350",
+    "PUBPOL-2000",
+    "ECON-3711",
+    "ECON-3720",
+    "GDEV-3280"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PUBPOL-4030",
+      "rowId": "pubpol-coursework",
+      "why": "Special studies numbers are explicitly left out of the minor."
+    },
+    {
+      "courseId": "PUBPOL-1111",
+      "rowId": "pubpol-coursework",
+      "why": "A first-year level policy course sits below the 2000 floor."
+    },
+    {
+      "courseId": "PUBPOL-2350",
+      "rowId": "pubpol-coursework",
+      "why": "The required intro course is its own requirement, not the extra policy course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PUBPOL-2350",
+      "subject": "PUBPOL",
+      "number": "2350",
+      "title": "The U.S. Health Care System",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2000",
+      "subject": "PUBPOL",
+      "number": "2000",
+      "title": "Intermediate Microeconomics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3711",
+      "subject": "ECON",
+      "number": "3711",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ECON-3720",
+      "subject": "ECON",
+      "number": "3720",
+      "title": "The Economics of Health Care Markets",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        },
+        {
+          "value": "HCP-EL"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3280",
+      "subject": "GDEV",
+      "number": "3280",
+      "title": "Fundamentals of Population Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "HCP-EL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-4030",
+      "subject": "PUBPOL",
+      "number": "4030",
+      "title": "Course Assistantship",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-1111",
+      "subject": "PUBPOL",
+      "number": "1111",
+      "title": "Building Success at Brooks",
+      "credits": 1,
+      "attrs": []
+    }
+  ]
+}

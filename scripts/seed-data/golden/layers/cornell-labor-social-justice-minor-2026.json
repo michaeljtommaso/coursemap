@@ -1,0 +1,131 @@
+{
+  "programId": "cornell-labor-social-justice-minor-2026",
+  "description": "A student takes five three-credit courses from the ILR global labor department, which adds up to the fifteen credits the minor asks for.",
+  "layerIds": [
+    "cornell-labor-social-justice-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-asian-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ILRGL-1100",
+    "ILRGL-2010",
+    "ILRGL-2050",
+    "ILRGL-3055",
+    "ILRGL-4066"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ILRGL-4990",
+      "rowId": "ilrgl-credits",
+      "why": "Directed study credit is named as not counting toward the minor."
+    },
+    {
+      "courseId": "GOVT-1111",
+      "rowId": "ilrgl-credits",
+      "why": "Only courses with the ILRGL prefix count toward the fifteen credits."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ILRGL-1100",
+      "subject": "ILRGL",
+      "number": "1100",
+      "title": "Introduction to U.S. Labor History",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ILRGL-2010",
+      "subject": "ILRGL",
+      "number": "2010",
+      "title": "Labor and Employment Law",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ILRGL-2050",
+      "subject": "ILRGL",
+      "number": "2050",
+      "title": "Labor Relations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        }
+      ]
+    },
+    {
+      "id": "ILRGL-3055",
+      "subject": "ILRGL",
+      "number": "3055",
+      "title": "Rhetoric of the Labor Movement",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "ILRGL-4066",
+      "subject": "ILRGL",
+      "number": "4066",
+      "title": "Technological Change at Work",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "AWI-IL"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ILRGL-4990",
+      "subject": "ILRGL",
+      "number": "4990",
+      "title": "Directed Studies",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-1111",
+      "subject": "GOVT",
+      "number": "1111",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    }
+  ]
+}

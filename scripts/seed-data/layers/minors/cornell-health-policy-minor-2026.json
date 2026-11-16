@@ -1,0 +1,182 @@
+{
+  "id": "cornell-health-policy-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Health Policy (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-health-policy-minor-2026",
+  "sharing": {
+    "forbiddenWith": [
+      "cornell-policy-analysis-management-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "us-health-care-system",
+      "label": "Take PUBPOL 2350, the required introduction to the U.S. health care system",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/health-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Named course; the page allows no substitutes.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "PUBPOL-2350"
+        ]
+      }
+    },
+    {
+      "id": "pubpol-coursework",
+      "label": "One more PUBPOL course (3 credits) at the 2000, 3000 or 4000 level",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/health-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Matches the PUBPOL subject code only, so cross-listed courses under other codes are not counted here (a confirm row covers them). The four Special Studies numbers are excluded, PUBPOL 2350 is held back for its own row, and variable-credit courses are held out (a confirm row covers them).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PUBPOL"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 4999
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "PUBPOL-4000",
+                "PUBPOL-4010",
+                "PUBPOL-4020",
+                "PUBPOL-4030"
+              ]
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "PUBPOL-2350"
+              ]
+            }
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 3
+    },
+    {
+      "id": "hcp-el-credits",
+      "label": "Nine credits from the approved health-policy elective list",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/health-policy-minor/",
+        "anchor": "HCP-EL Courses"
+      },
+      "note": "The printed elective list is used as written. Its courses are fixed 3 or 4 credit courses. These nine credits must come from courses distinct from the two rows above, which together give the 15-credit minimum.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AMST-3230",
+          "AMST-3261",
+          "ECON-3711",
+          "ECON-3720",
+          "ECON-3910",
+          "FGSS-3260",
+          "GDEV-3280",
+          "GOVT-3251",
+          "NS-4570",
+          "PUBPOL-2050",
+          "PUBPOL-3011",
+          "PUBPOL-3110",
+          "PUBPOL-3180",
+          "PUBPOL-3230",
+          "PUBPOL-3251",
+          "PUBPOL-3260",
+          "PUBPOL-3280",
+          "PUBPOL-3320",
+          "PUBPOL-3350",
+          "PUBPOL-3490",
+          "PUBPOL-3650",
+          "PUBPOL-3720",
+          "PUBPOL-3780",
+          "PUBPOL-3870",
+          "PUBPOL-4110",
+          "PUBPOL-4281",
+          "PUBPOL-4370",
+          "SOC-3180",
+          "SOC-3230"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9
+    },
+    {
+      "id": "variable-credit-courses",
+      "label": "If a variable-credit PUBPOL course is in your plan, confirm the credits you took meet the 3-credit course requirement",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/health-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board holds variable-credit courses out of the PUBPOL coursework row, which may be stricter than needed.",
+      "kind": "confirm"
+    },
+    {
+      "id": "cross-list-timing",
+      "label": "Confirm any cross-listed course (including elective-list courses under non-PUBPOL codes) had its PUBPOL cross-list when you completed it",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/health-policy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot see when a cross-list existed. The PUBPOL coursework row counts PUBPOL-coded courses only; the elective list counts the courses as printed.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn B- or better in every course counted (SX if the course is offered only S-U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/health-policy-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the Brooks School intention-to-minor form to declare the minor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/health-policy-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-to-graduate",
+      "label": "Submit the Brooks application to graduate with a minor once enrolled in your final required course",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/health-policy-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

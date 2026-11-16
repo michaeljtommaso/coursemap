@@ -1,0 +1,225 @@
+{
+  "programId": "cornell-healthy-futures-minor-2026",
+  "description": "A student takes the shared seminar, fieldwork, a studio, a health course, a hospitality course and two design electives.",
+  "layerIds": [
+    "cornell-healthy-futures-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "DEA-3055",
+    "DEA-4020",
+    "DEA-3308",
+    "PUBPOL-2350",
+    "HADM-2365",
+    "DEA-2025",
+    "DEA-1500"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "DEA-5540",
+      "rowId": "studio",
+      "why": "The workplace strategy studio is an option only on the Human Centered Design list, not the general one."
+    },
+    {
+      "courseId": "HADM-4145",
+      "rowId": "hospitality",
+      "why": "Business model innovation is an option only on the Nolan School list, not the general one."
+    },
+    {
+      "courseId": "PUBPOL-2301",
+      "rowId": "health",
+      "why": "The intro public policy course is an elective but not one of the listed health courses."
+    },
+    {
+      "courseId": "DEA-5540",
+      "rowId": "electives",
+      "why": "The workplace strategy studio is not on any elective list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "DEA-3055",
+      "subject": "DEA",
+      "number": "3055",
+      "title": "Hospitality, Health and Design Industry Immersion Seminar",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "DEA-4020",
+      "subject": "DEA",
+      "number": "4020",
+      "title": "Supervised Fieldwork",
+      "credits": 1,
+      "creditsMax": 15,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "DEA-3308",
+      "subject": "DEA",
+      "number": "3308",
+      "title": "Positive Design Studio",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "KCM-HE"
+        },
+        {
+          "value": "LAD-HE"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2350",
+      "subject": "PUBPOL",
+      "number": "2350",
+      "title": "The U.S. Health Care System",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "HADM-2365",
+      "subject": "HADM",
+      "number": "2365",
+      "title": "Foodservice Management Essentials",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "DEA-2025",
+      "subject": "DEA",
+      "number": "2025",
+      "title": "Impactful Graphics: Visual Communication for Social Impact",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
+        }
+      ]
+    },
+    {
+      "id": "DEA-1500",
+      "subject": "DEA",
+      "number": "1500",
+      "title": "Introduction to Environmental Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "DEA-5540",
+      "subject": "DEA",
+      "number": "5540",
+      "title": "Workplace Strategy Studio",
+      "credits": 3.5,
+      "attrs": [
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "HADM-4145",
+      "subject": "HADM",
+      "number": "4145",
+      "title": "Business Model Innovation and Design",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2301",
+      "subject": "PUBPOL",
+      "number": "2301",
+      "title": "Introduction to Public Policy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    }
+  ]
+}

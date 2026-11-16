@@ -1,0 +1,199 @@
+{
+  "id": "cornell-horticulture-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Horticulture (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-horticulture-minor-2026",
+  "sharing": {
+    "otherMajors": "none",
+    "minors": "none",
+    "forbiddenWith": [
+      "cornell-plant-sciences-minor",
+      "cornell-crop-management-minor",
+      "cornell-fungal-biology-minor",
+      "cornell-plant-breeding-minor",
+      "cornell-soil-science-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "req-plsci-1101",
+      "label": "Plant Science and Systems (PLSCI 1101)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/horticulture-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Exam credit never counts here, since the minor's courses must be taken in person; transfer credit counts only with approval (confirm row).",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-1101"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "req-plsci-1115",
+      "label": "The Nature of Plants (PLSCI 1115)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/horticulture-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-1115"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "horticulture-electives",
+      "label": "At least 8 credits of horticulture electives from the minor's list",
+      "group": "Elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/horticulture-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Only the listed courses count. Special topics, seminar and no-regular-instruction courses are excluded by the page; the listed PLSCI 2930 carries a special-topics style number, so check the confirm row if you rely on it.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-2020",
+              "PLSCI-2930",
+              "PLSCI-3000",
+              "PLSCI-3025",
+              "PLSCI-3050",
+              "PLSCI-3350",
+              "PLSCI-3520",
+              "PLSCI-3550",
+              "PLSCI-4020",
+              "PLSCI-4175",
+              "PLSCI-4500",
+              "PLSCI-4551",
+              "PLSCI-4730",
+              "PLSCI-5850"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 8
+    },
+    {
+      "id": "no-special-topics",
+      "label": "Special topics, seminar and no-regular-instruction courses do not count; make sure none of your minor courses is one (including PLSCI 2930)",
+      "group": "Elective courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/horticulture-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "total-credits-15",
+      "label": "The required courses plus electives must total at least 15 credits",
+      "group": "Credit total",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/horticulture-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-letter-c",
+      "label": "Every minor course taken for a letter grade (no S/U) and finished with a C or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/horticulture-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "in-person-transfer",
+      "label": "Minor courses taken in person, not online; transfer students use only approved equivalent courses",
+      "group": "Course conditions",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/horticulture-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "matriculated",
+      "label": "You are a matriculated Cornell student (minors are not open to others)",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/horticulture-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "unique-credits",
+      "label": "Credits counted here must be unique: no overlap with major requirements or another SIPS minor, and only one SIPS minor in total",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/horticulture-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "Encoded as strict limits in the layer's sharing field (no course shared with a major or any other minor); this row restates the rule.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the Declaration of Intent by your final semester's last day of classes; meet your minor advisor the semester before to check what remains",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/horticulture-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

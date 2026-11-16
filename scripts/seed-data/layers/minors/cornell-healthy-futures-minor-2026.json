@@ -1,0 +1,427 @@
+{
+  "id": "cornell-healthy-futures-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Healthy Futures (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-healthy-futures-minor-2026",
+  "rows": [
+    {
+      "id": "seminar",
+      "label": "Take the Hospitality, Health and Design industry seminar (listed under DEA or HADM)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Getting Started"
+      },
+      "note": "The seminar is also the first step to declaring intent to minor. Exam and transfer credit are left out because the minor takes no credit from outside Cornell.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "DEA-3055",
+              "HADM-3055"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "fieldwork",
+      "label": "Take supervised fieldwork (DEA 4020)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Requirements for Other majors"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "DEA-4020"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 1
+    },
+    {
+      "id": "studio",
+      "label": "Take one design studio or policy-and-design course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Requirements for Other majors"
+      },
+      "note": "Uses the choice offered to majors other than Human Centered Design; Human Centered Design majors may use only the studio or the workplace strategy studio, see the track check row.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "DEA-3308",
+              "DEA-4500",
+              "DEA-2700"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 3.5
+    },
+    {
+      "id": "health",
+      "label": "Take one health or population-health course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Requirements for Other majors"
+      },
+      "note": "Public Policy majors may not use the introductory public health course (NS 1600) for this slot, so it is held out when the plan's major is a Public Policy major.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "allOf": [
+              {
+                "course": [
+                  "PUBPOL-2350",
+                  "PUBPOL-3280",
+                  "NS-1600",
+                  "NS-2600"
+                ]
+              },
+              {
+                "not": {
+                  "allOf": [
+                    {
+                      "course": [
+                        "NS-1600"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-public-policy-ba",
+                        "cornell-policy-analysis-management-bs",
+                        "cornell-health-care-policy-bs"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "hospitality",
+      "label": "Take one hospitality course: foodservice, facilities design or entrepreneurial management",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Requirements for Other majors"
+      },
+      "note": "Nolan School majors have a narrower choice here; see the track check row.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "HADM-2365",
+              "HADM-5365",
+              "HADM-3510",
+              "HADM-4130"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "electives",
+      "label": "Take 6 credits of electives from the Human Centered Design, Public Policy, Hotel Administration or other elective lists",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Electives"
+      },
+      "note": "At least one elective must lie outside your own major; the board checks this for Public Policy, Nutritional Sciences, Global Public Health and Applied Economics and Management majors (their own subject does not count) and a confirm row covers every other major. Exam and transfer credit left out.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "DEA-1110",
+                  "DEA-1112",
+                  "DEA-1500",
+                  "DEA-2025",
+                  "DEA-2200",
+                  "DEA-2700",
+                  "DEA-3308",
+                  "DEA-3510",
+                  "DEA-3530",
+                  "DEA-4500",
+                  "DEA-5700",
+                  "PUBPOL-2301",
+                  "PUBPOL-2350",
+                  "PUBPOL-3180",
+                  "PUBPOL-3230",
+                  "PUBPOL-3280",
+                  "PUBPOL-3650",
+                  "PUBPOL-3730",
+                  "PUBPOL-4370",
+                  "PUBPOL-5500",
+                  "HADM-6033",
+                  "HADM-2365",
+                  "HADM-2560",
+                  "HADM-3470",
+                  "HADM-3510",
+                  "HADM-4130",
+                  "HADM-4145",
+                  "HADM-4190",
+                  "HADM-4315",
+                  "HADM-4320",
+                  "HADM-4500",
+                  "HADM-4515",
+                  "HADM-4530",
+                  "AEM-3440",
+                  "NS-1600",
+                  "NS-2600"
+                ]
+              },
+              {
+                "course": [
+                  "HADM-5365"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6,
+      "limits": [
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "not": {
+                  "program": [
+                    "cornell-public-policy-ba",
+                    "cornell-policy-analysis-management-bs",
+                    "cornell-health-care-policy-bs",
+                    "cornell-nutritional-sciences-bs",
+                    "cornell-global-public-health-sciences-bs",
+                    "cornell-applied-economics-management-bs"
+                  ]
+                }
+              },
+              {
+                "allOf": [
+                  {
+                    "program": [
+                      "cornell-public-policy-ba",
+                      "cornell-policy-analysis-management-bs",
+                      "cornell-health-care-policy-bs"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "subject": [
+                        "PUBPOL"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "program": [
+                      "cornell-nutritional-sciences-bs",
+                      "cornell-global-public-health-sciences-bs"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "subject": [
+                        "NS"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "program": [
+                      "cornell-applied-economics-management-bs"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "subject": [
+                        "AEM"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "label": "At least one elective from outside your major",
+          "minCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "track-check",
+      "label": "Check your major's own list: Human Centered Design and Nolan School majors have a narrower required list than the one the board uses",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Requirements for Human Centered Design (HCD) majors"
+      },
+      "note": "Human Centered Design majors may use only the studio or the workplace strategy studio as the design course; Nolan School majors may use only facilities design or business model innovation as the hospitality course. The board applies the Other-majors list (and the Public Policy health-course limit).",
+      "kind": "confirm"
+    },
+    {
+      "id": "outside-major",
+      "label": "Confirm at least one elective comes from outside your own major",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Electives"
+      },
+      "note": "The board checks this only for a few majors that own courses on the elective lists.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every course for a letter grade (no pass/fail)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a B- or better in each course that counts toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "total-credits",
+      "label": "Reach at least 17 credits in the minor",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The required seats plus 6 elective credits reach 17; confirm your actual credits.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-intent",
+      "label": "Submit the intention-to-minor form after the seminar and plan the minor with your major advisor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Getting Started"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-to-graduate",
+      "label": "In your graduating semester, submit the application to graduate with the minor and email it to the minor address",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/healthy-futures-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

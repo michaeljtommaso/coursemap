@@ -1,0 +1,108 @@
+{
+  "programId": "cornell-infectious-disease-biology-minor-2026",
+  "description": "A student finishes the minor with its core course plus one fungi, one ecology and one plant-disease course.",
+  "layerIds": [
+    "cornell-infectious-disease-biology-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOMI-2950",
+    "PLSCI-4300",
+    "BIOEE-4800",
+    "PLSCI-3010"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "BIOMI-2900",
+      "rowId": "foundation-course",
+      "why": "A listed elective is not the required foundation course."
+    },
+    {
+      "courseId": "BIOMI-2970",
+      "rowId": "elective-credits",
+      "why": "A course missing from the three lists needs advisor sign-off and is not counted automatically."
+    },
+    {
+      "courseId": "BIOMI-2950",
+      "rowId": "elective-credits",
+      "why": "The foundation course is not one of the elective-group options; its credits come in addition."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOMI-2950",
+      "subject": "BIOMI",
+      "number": "2950",
+      "title": "Biology of Infectious Disease: From Molecules to Ecosystems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4300",
+      "subject": "PLSCI",
+      "number": "4300",
+      "title": "Mycology: The Interactive World of Fungi",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-4800",
+      "subject": "BIOEE",
+      "number": "4800",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PLSCI-3010",
+      "subject": "PLSCI",
+      "number": "3010",
+      "title": "Biology and Management of Plant Diseases",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2900",
+      "subject": "BIOMI",
+      "number": "2900",
+      "title": "General Microbiology Lectures",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "BIOMI-2970",
+      "subject": "BIOMI",
+      "number": "2970",
+      "title": "Principles of Pharmaceutical Science",
+      "credits": 2,
+      "attrs": []
+    }
+  ]
+}

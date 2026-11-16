@@ -346,7 +346,8 @@
   },
   "cornell-italian-minor-2026": {
     "shortName": "Italian minor",
-    "offeredBy": "Arts & Sciences"
+    "offeredBy": "Arts & Sciences",
+    "notOpenTo": ["cornell-italian-ba"]
   },
   "cornell-jewish-studies-minor-2026": {
     "shortName": "Jewish Studies minor",

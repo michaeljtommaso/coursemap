@@ -1,0 +1,163 @@
+{
+  "id": "cornell-infectious-disease-biology-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Infectious Disease Biology (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-infectious-disease-biology-minor-2026",
+  "rows": [
+    {
+      "id": "foundation-course",
+      "label": "Take the one required foundation course, BIOMI 2950",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/infectious-disease-biology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "BIOMI-2950"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "elective-credits",
+      "label": "12 credits from the three listed groups (infectious agents, host-pathogen interactions, disease and health management), with at least one course from each group",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/infectious-disease-biology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Only the listed courses count here; anything else needs the minor advisor to approve it (see the confirm row). Two pairs of listed courses give no credit to a student who took both, so each pair is capped at one course. The 12 credits come on top of the foundation course, for the 15-credit minimum.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "BIOMI-2900",
+          "BIOMS-4310",
+          "BIOMS-3310",
+          "BIOMI-4040",
+          "BIOMI-4090",
+          "PLSCI-4300",
+          "PLSCI-6380",
+          "ANSC-3700",
+          "BIOMS-4340",
+          "ENTOM-3630",
+          "BIOEE-4800",
+          "BIOMI-2600",
+          "BIOMI-3500",
+          "BIOMS-4150",
+          "BIOEE-4460",
+          "ANTHR-4041",
+          "BIOMI-2500",
+          "BIOMI-3210",
+          "ENTOM-2100",
+          "ENTOM-3520",
+          "ENTOM-4000",
+          "ENTOM-4520",
+          "ENTOM-6520",
+          "ENTOM-6530",
+          "NS-2600",
+          "NTRES-4150",
+          "PLSCI-3010"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 12,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOMI-2900",
+              "BIOMS-4310",
+              "BIOMS-3310",
+              "BIOMI-4040",
+              "BIOMI-4090",
+              "PLSCI-4300",
+              "PLSCI-6380"
+            ]
+          },
+          "label": "At least one infectious agents course",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "ANSC-3700",
+              "BIOMS-4340",
+              "ENTOM-3630",
+              "BIOEE-4800",
+              "BIOMI-2600",
+              "BIOMI-3500",
+              "BIOMS-4150",
+              "BIOEE-4460"
+            ]
+          },
+          "label": "At least one host-pathogen interactions course",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "ANTHR-4041",
+              "BIOMI-2500",
+              "BIOMI-3210",
+              "ENTOM-2100",
+              "ENTOM-3520",
+              "ENTOM-4000",
+              "ENTOM-4520",
+              "ENTOM-6520",
+              "ENTOM-6530",
+              "NS-2600",
+              "NTRES-4150",
+              "PLSCI-3010"
+            ]
+          },
+          "label": "At least one disease and health management course",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "BIOMS-4310",
+              "BIOMS-3310"
+            ]
+          },
+          "label": "Medical parasitology and its lower-numbered twin give credit only once",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "ANSC-3700",
+              "BIOMS-4150"
+            ]
+          },
+          "label": "The two immunology courses give credit only once",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "grade-letter-check",
+      "label": "Take every minor course for a letter grade and earn a C or better in each",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/infectious-disease-biology-minor/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "unlisted-courses-approval",
+      "label": "Unlisted courses, special topics, independent study, seminars and courses without regular instruction need the minor advisor's written approval",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/infectious-disease-biology-minor/",
+        "anchor": "Program Policies"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

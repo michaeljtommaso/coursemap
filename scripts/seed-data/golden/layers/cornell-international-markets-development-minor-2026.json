@@ -1,0 +1,190 @@
+{
+  "programId": "cornell-international-markets-development-minor-2026",
+  "description": "A fictional economics major takes both intro economics courses, a trade course, two global-economy electives and an econometrics course.",
+  "layerIds": [
+    "cornell-international-markets-development-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ECON-1110",
+    "ECON-1120",
+    "AEM-2300",
+    "AEM-4300",
+    "AEM-4420",
+    "ECON-3120"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "AEM-4110",
+      "rowId": "elective-a",
+      "why": "An econometrics course belongs to the research-oriented list, not the first elective list."
+    },
+    {
+      "courseId": "AEM-2350",
+      "rowId": "elective-a",
+      "why": "A core-choice course is not on the first elective list."
+    },
+    {
+      "courseId": "ECON-1110",
+      "rowId": "elective-bcd",
+      "why": "A foundation course is not on any of the later elective lists."
+    },
+    {
+      "courseId": "AEM-4300",
+      "rowId": "elective-bcd",
+      "why": "A first-list elective is not on the later elective lists."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1120",
+      "subject": "ECON",
+      "number": "1120",
+      "title": "Introductory Macroeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2300",
+      "subject": "AEM",
+      "number": "2300",
+      "title": "International Trade and Finance",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4300",
+      "subject": "AEM",
+      "number": "4300",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AEM-4420",
+      "subject": "AEM",
+      "number": "4420",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ECON-3120",
+      "subject": "ECON",
+      "number": "3120",
+      "title": "Applied Econometrics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4110",
+      "subject": "AEM",
+      "number": "4110",
+      "title": "Introduction to Econometrics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-2350",
+      "subject": "AEM",
+      "number": "2350",
+      "title": "Introduction To The Economics Of Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

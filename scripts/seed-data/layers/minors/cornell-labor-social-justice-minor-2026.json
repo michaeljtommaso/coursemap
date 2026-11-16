@@ -1,0 +1,115 @@
+{
+  "id": "cornell-labor-social-justice-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Labor and Social Justice (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-labor-social-justice-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCredits": 3
+    },
+    "minors": "none"
+  },
+  "rows": [
+    {
+      "id": "ilrgl-credits",
+      "label": "Fifteen credits of ILRGL courses (not counting internship, thesis, directed or independent study)",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/labor-social-justice-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Matches the ILRGL subject only. Exam credit and transfer credit are held out here: the page allows only a small pre-matriculation transfer amount, which the board cannot tell from later transfer work, so see the transfer confirm row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ILRGL"
+            ]
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "titleStartsWith": "Independent Study"
+                },
+                {
+                  "titleStartsWith": "Directed Stud"
+                },
+                {
+                  "titleStartsWith": "Honors Thesis"
+                },
+                {
+                  "titleStartsWith": "ILR Honors"
+                },
+                {
+                  "titleStartsWith": "Internship"
+                },
+                {
+                  "titleStartsWith": "ILR Internship"
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 15
+    },
+    {
+      "id": "excluded-coursework-check",
+      "label": "Confirm none of the counted courses is an ILR credit internship, honors thesis, directed study or independent study, and none is study abroad coursework",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/labor-social-justice-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board screens these out by course title only, so check the ones it cannot recognize.",
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-check",
+      "label": "Up to 3 pre-matriculation transfer credits judged equal to an ILRGL course may count; confirm with ILR (the board counts none)",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/labor-social-justice-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every counted course for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/labor-social-justice-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "overlap-check",
+      "label": "No more than 3 credits of the minor may also count toward another major or minor",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/labor-social-justice-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "programId": "cornell-horticulture-minor-2026",
+  "description": "An agricultural sciences major whose core intro courses would also fill the minor's two required slots.",
+  "layerIds": [
+    "cornell-agricultural-sciences-bs-2026",
+    "cornell-horticulture-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-1101",
+    "PLSCI-1115",
+    "PLSCI-3025",
+    "PLSCI-4730"
+  ],
+  "limit": {
+    "maxCourses": 0
+  },
+  "shared": [
+    "PLSCI-1101",
+    "PLSCI-1115"
+  ],
+  "heldBack": [
+    {
+      "courseId": "PLSCI-1101",
+      "from": "cornell-horticulture-minor-2026",
+      "why": "The minor allows no course in common with a major."
+    },
+    {
+      "courseId": "PLSCI-1115",
+      "from": "cornell-horticulture-minor-2026",
+      "why": "The minor allows no course in common with a major."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-1101",
+      "subject": "PLSCI",
+      "number": "1101",
+      "title": "Plant Science and Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-1115",
+      "subject": "PLSCI",
+      "number": "1115",
+      "title": "The Nature of Plants",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3025",
+      "subject": "PLSCI",
+      "number": "3025",
+      "title": "Hydroponic Food Crop Production and Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4730",
+      "subject": "PLSCI",
+      "number": "4730",
+      "title": "Agroecology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

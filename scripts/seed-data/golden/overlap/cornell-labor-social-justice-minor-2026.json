@@ -1,0 +1,136 @@
+{
+  "programId": "cornell-labor-social-justice-minor-2026",
+  "description": "An Asian Studies major finds two of the minor's ILR labor courses also count for the major, which is more shared credit than the minor permits.",
+  "layerIds": [
+    "cornell-asian-studies-ba-2026",
+    "cornell-labor-social-justice-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-asian-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ILRGL-3380",
+    "ILRGL-4355",
+    "ILRGL-1100",
+    "ILRGL-2010",
+    "ILRGL-2050"
+  ],
+  "limit": {
+    "maxCredits": 3
+  },
+  "shared": [
+    "ILRGL-3380",
+    "ILRGL-4355"
+  ],
+  "heldBack": [
+    {
+      "courseId": "ILRGL-4355",
+      "from": "cornell-labor-social-justice-minor-2026",
+      "why": "Two shared three-credit courses make six shared credits, so one must stop counting for the minor to stay within three."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ILRGL-3380",
+      "subject": "ILRGL",
+      "number": "3380",
+      "title": "The Asian Century: The Rise of China and India",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "ICL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        },
+        {
+          "value": "ASIAN-SC"
+        }
+      ]
+    },
+    {
+      "id": "ILRGL-4355",
+      "subject": "ILRGL",
+      "number": "4355",
+      "title": "Work and Labor in China",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "ICL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ILRGL-1100",
+      "subject": "ILRGL",
+      "number": "1100",
+      "title": "Introduction to U.S. Labor History",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ILRGL-2010",
+      "subject": "ILRGL",
+      "number": "2010",
+      "title": "Labor and Employment Law",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ILRGL-2050",
+      "subject": "ILRGL",
+      "number": "2050",
+      "title": "Labor Relations",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        }
+      ]
+    }
+  ]
+}

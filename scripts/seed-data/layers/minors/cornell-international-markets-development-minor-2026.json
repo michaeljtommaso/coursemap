@@ -1,0 +1,387 @@
+{
+  "id": "cornell-international-markets-development-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "International Markets & Development (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-international-markets-development-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCredits": 6
+    },
+    "minors": {
+      "maxCredits": 6
+    }
+  },
+  "rows": [
+    {
+      "id": "foundation-micro",
+      "label": "Foundation: introductory microeconomics",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1110"
+        ]
+      }
+    },
+    {
+      "id": "foundation-macro",
+      "label": "Foundation: introductory macroeconomics",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1120"
+        ]
+      }
+    },
+    {
+      "id": "core-intl",
+      "label": "Core: one of the two international economics courses (trade and finance, or development)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Core Course (3 Credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2300",
+          "AEM-2350"
+        ]
+      }
+    },
+    {
+      "id": "elective-a",
+      "label": "Electives, category A: two courses totaling at least 6 credits",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Electives: Various Topics (9 Credits)"
+      },
+      "note": "The page asks for three elective courses in all: two from category A (6 credits) plus one from B, C or D (3 credits). Two courses and 6 credits is the strict reading, so a 1.5-credit course cannot reach the total with fewer than two others.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2000",
+          "AEM-4005",
+          "AEM-4290",
+          "AEM-4300",
+          "AEM-4315",
+          "AEM-4350",
+          "AEM-4420",
+          "AEM-4421",
+          "AEM-4450",
+          "AEM-4485",
+          "AEM-4545"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "elective-bcd",
+      "label": "Electives, categories B, C or D: one course worth at least 3 credits",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Electives: Various Topics (9 Credits)"
+      },
+      "note": "Pools the econometrics/data list (B), the consulting/international organizations list (C) and the directed research course (D). Study abroad and foreign language petitions are not counted here; see the confirm row. Each category is capped, and a 4-credit course in B is treated as one course.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "AEM-4110",
+              "ECON-3120",
+              "ECON-3140",
+              "PLSCI-4200",
+              "STSCI-3740",
+              "STSCI-4060",
+              "AEM-4415",
+              "AEM-4580",
+              "AEM-6125",
+              "ILRGL-2300",
+              "PUBPOL-5345",
+              "CRP-6720"
+            ]
+          },
+          {
+            "course": [
+              "AEM-4993"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 3,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "AEM-4110",
+              "ECON-3120",
+              "ECON-3140",
+              "PLSCI-4200",
+              "STSCI-3740",
+              "STSCI-4060"
+            ]
+          },
+          "label": "Category B cap",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "AEM-4415",
+              "AEM-4580",
+              "AEM-6125",
+              "ILRGL-2300",
+              "PUBPOL-5345",
+              "CRP-6720"
+            ]
+          },
+          "label": "Category C cap",
+          "maxCredits": 3
+        },
+        {
+          "rule": {
+            "course": [
+              "AEM-4993"
+            ]
+          },
+          "label": "Category D cap",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "credits-cornell",
+      "label": "At least 9 of the minor's 18 credits taken at Cornell (the same courses can also count toward the 9 SC Johnson credits)",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Overlay count over every minor-list course on the plan, leaving out exam and transfer credit. The requirement rows above decide which courses the minor uses; the confirm row backs this up.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-1110",
+              "ECON-1120",
+              "AEM-2300",
+              "AEM-2350",
+              "AEM-2000",
+              "AEM-4005",
+              "AEM-4290",
+              "AEM-4300",
+              "AEM-4315",
+              "AEM-4350",
+              "AEM-4420",
+              "AEM-4421",
+              "AEM-4450",
+              "AEM-4485",
+              "AEM-4545",
+              "AEM-4110",
+              "ECON-3120",
+              "ECON-3140",
+              "PLSCI-4200",
+              "STSCI-3740",
+              "STSCI-4060",
+              "AEM-4415",
+              "AEM-4580",
+              "AEM-6125",
+              "ILRGL-2300",
+              "PUBPOL-5345",
+              "CRP-6720"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCredits": 9
+    },
+    {
+      "id": "credits-jcb",
+      "label": "At least 9 of the minor's 18 credits from SC Johnson courses (AEM, HADM, NBA, NCC)",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Overlay count. The core choices and every category A course carry an AEM code, so the core plus two category A courses already reaches 9.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-1110",
+              "ECON-1120",
+              "AEM-2300",
+              "AEM-2350",
+              "AEM-2000",
+              "AEM-4005",
+              "AEM-4290",
+              "AEM-4300",
+              "AEM-4315",
+              "AEM-4350",
+              "AEM-4420",
+              "AEM-4421",
+              "AEM-4450",
+              "AEM-4485",
+              "AEM-4545",
+              "AEM-4110",
+              "ECON-3120",
+              "ECON-3140",
+              "PLSCI-4200",
+              "STSCI-3740",
+              "STSCI-4060",
+              "AEM-4415",
+              "AEM-4580",
+              "AEM-6125",
+              "ILRGL-2300",
+              "PUBPOL-5345",
+              "CRP-6720"
+            ]
+          },
+          {
+            "subject": [
+              "AEM",
+              "HADM",
+              "NBA",
+              "NCC"
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 9
+    },
+    {
+      "id": "cornell-jcb-check",
+      "label": "Check that at least 9 of the 18 minor credits were earned at Cornell and at least 9 are SC Johnson courses (one course can count for both)",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Backs up the two overlay credit rows, which count every minor-list course on the plan, including ones the minor does not use.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Check the minor totals at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "foundation-first",
+      "label": "Finish both foundation economics courses before starting the core courses",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "petition-electives",
+      "label": "Study abroad or foreign language courses for category D need an approved substitution petition (Business Minors dashboard); they are not counted by the board",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Category D (Maximum of 3 Credits)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "three-electives",
+      "label": "Check the electives are exactly three courses (6 credits from category A and 3 from B, C or D) with each of B, C and D capped at 3 credits",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Electives: Various Topics (9 Credits)"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "econ-crosslist",
+      "label": "Economics majors: courses taken under a cross-listed ECON code do not count toward the elective categories; take them under their listed code",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Core Requirements"
+      },
+      "note": "Only the listed course ids count on the board, so a cross-listed ECON id never matches category A or C.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Academic Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Academic Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "signup-eligibility",
+      "label": "Sign up for the minor no later than your sixth semester; Dyson students are not eligible",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Eligibility"
+      },
+      "note": "Dyson students are barred in the minor index.",
+      "kind": "confirm"
+    },
+    {
+      "id": "unique-credits",
+      "label": "At least 12 of the minor's credits must be unique, outside your major's core requirements; some majors need an extra course to get there",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/international-markets-development-minor/",
+        "anchor": "Academic Policies"
+      },
+      "note": "The real rule covers only the major's core. The sharing limit uses the stricter 6 credits of overlap with any major or other minor.",
+      "kind": "confirm"
+    }
+  ]
+}
