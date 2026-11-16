@@ -80,6 +80,9 @@
       "number": "1100",
       "title": "Art Histories: An Introduction",
       "credits": 4,
+      "crossListedSubjects": [
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -107,6 +110,11 @@
       "number": "2000",
       "title": "Introduction to Visual Studies",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ARTH",
+        "COML"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -134,6 +142,10 @@
       "number": "2200",
       "title": "Introduction to the Classical World in 24 Objects",
       "credits": 4,
+      "crossListedSubjects": [
+        "ARKEO",
+        "CLASS"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -155,6 +167,10 @@
       "number": "2240",
       "title": "The Art and Architecture of Ancient Egypt",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARKEO",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -209,6 +225,11 @@
       "number": "3850",
       "title": "The Arts of Southeast Asia",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN",
+        "MEDVL",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "SEAREA"
@@ -239,6 +260,9 @@
       "number": "4101",
       "title": "Proseminar: Introduction to Methods",
       "credits": 3,
+      "crossListedSubjects": [
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -269,6 +293,10 @@
       "number": "4233",
       "title": "Greek and Roman Art and Archaeology",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARKEO",
+        "CLASS"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -307,6 +335,11 @@
       "number": "3250",
       "title": "Introduction to Dendrochronology",
       "credits": 4,
+      "crossListedSubjects": [
+        "ARKEO",
+        "CLASS",
+        "MEDVL"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -325,6 +358,11 @@
       "number": "2805",
       "title": "Introduction to Asian Art: Material Worlds",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASIAN",
+        "SHUM",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -352,6 +390,11 @@
       "number": "3650",
       "title": "History and Theory of Digital Art",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARTH",
+        "INFO",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -373,6 +416,9 @@
       "number": "4101",
       "title": "Proseminar: Introduction to Methods",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARTH"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

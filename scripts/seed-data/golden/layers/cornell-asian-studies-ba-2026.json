@@ -90,6 +90,9 @@
       "number": "2299",
       "title": "Buddhism",
       "credits": 3,
+      "crossListedSubjects": [
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -174,6 +177,10 @@
       "number": "4435",
       "title": "Making Sense of China: The Capstone Seminar",
       "credits": 4,
+      "crossListedSubjects": [
+        "CAPS",
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "EAAREA"

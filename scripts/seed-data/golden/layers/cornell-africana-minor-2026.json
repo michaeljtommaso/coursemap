@@ -45,6 +45,10 @@
       "number": "1500",
       "title": "Introduction to Africana Studies",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -66,6 +70,9 @@
       "number": "2020",
       "title": "Introduction to African Philosophy",
       "credits": 3,
+      "crossListedSubjects": [
+        "PHIL"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -81,6 +88,9 @@
       "number": "2060",
       "title": "Introduction to Africana Religions",
       "credits": 3,
+      "crossListedSubjects": [
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -102,6 +112,10 @@
       "number": "2317",
       "title": "Histories of the African Diaspora",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST",
+        "LATA"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -120,6 +134,9 @@
       "number": "3060",
       "title": "Emotions, Religion, and Race",
       "credits": 3,
+      "crossListedSubjects": [
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -141,6 +158,10 @@
       "number": "1595",
       "title": "African American History from 1865",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -171,6 +192,11 @@
       "number": "2680",
       "title": "Introduction to African American Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "AFAREA"

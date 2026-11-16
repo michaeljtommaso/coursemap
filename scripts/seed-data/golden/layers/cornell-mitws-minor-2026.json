@@ -54,6 +54,10 @@
       "number": "2600",
       "title": "Introduction to Native American Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "AIIS",
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -75,6 +79,10 @@
       "number": "2620",
       "title": "Introduction to Asian American Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "AAS",
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -111,6 +119,11 @@
       "number": "2650",
       "title": "Introduction to African American Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ASRC",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "AFAREA"
@@ -141,6 +154,9 @@
       "number": "2901",
       "title": "Contemporary Canadian Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "FREN"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -185,6 +201,9 @@
       "number": "2603",
       "title": "The Novels of Toni Morrison",
       "credits": 1,
+      "crossListedSubjects": [
+        "ASRC"
+      ],
       "attrs": []
     },
     {

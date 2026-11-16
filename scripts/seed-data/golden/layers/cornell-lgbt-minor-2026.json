@@ -39,6 +39,9 @@
       "number": "2290",
       "title": "Introduction to Lesbian, Gay, Bisexual, and Transgender Studies",
       "credits": 3,
+      "crossListedSubjects": [
+        "FGSS"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -57,6 +60,11 @@
       "number": "2232",
       "title": "Queer Pop from the Stonewall Uprising to the Millennium",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "FGSS",
+        "MUSIC"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -69,6 +77,10 @@
       "number": "2310",
       "title": "Sociology of Sexualities",
       "credits": 3,
+      "crossListedSubjects": [
+        "FGSS",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -84,6 +96,12 @@
       "number": "2760",
       "title": "Desire",
       "credits": 3,
+      "crossListedSubjects": [
+        "COML",
+        "ENGL",
+        "FGSS",
+        "PMA"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -117,6 +135,10 @@
       "number": "6301",
       "title": "Queer Media Studies",
       "credits": 3,
+      "crossListedSubjects": [
+        "COMM",
+        "FGSS"
+      ],
       "attrs": []
     }
   ]

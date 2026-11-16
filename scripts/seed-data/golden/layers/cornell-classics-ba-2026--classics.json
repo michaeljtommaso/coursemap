@@ -224,6 +224,9 @@
       "number": "2615",
       "title": "Introduction to Ancient Rome",
       "credits": 3,
+      "crossListedSubjects": [
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -242,6 +245,11 @@
       "number": "2652",
       "title": "Ancient Greek Drama",
       "credits": 3,
+      "crossListedSubjects": [
+        "FGSS",
+        "PMA",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -331,6 +339,10 @@
       "number": "1702",
       "title": "Great Discoveries in Greek and Roman Archaeology",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARKEO",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "HA-AG"

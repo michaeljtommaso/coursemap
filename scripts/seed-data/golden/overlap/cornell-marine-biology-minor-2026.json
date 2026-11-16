@@ -75,6 +75,9 @@
       "number": "3300",
       "title": "Fish Physiology",
       "credits": 3,
+      "crossListedSubjects": [
+        "ANSC"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"

@@ -86,6 +86,9 @@
       "number": "3010",
       "title": "Screening Cosa Nostra: The Mafia and the Movies from Scarface to The Sopranos",
       "credits": 3,
+      "crossListedSubjects": [
+        "PMA"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -177,6 +180,9 @@
       "number": "1111",
       "title": "Introduction to American Government and Politics",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

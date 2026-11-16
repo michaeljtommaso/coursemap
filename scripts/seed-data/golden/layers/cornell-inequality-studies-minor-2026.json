@@ -31,6 +31,10 @@
       "number": "2208",
       "title": "Social Inequality",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "PUBPOL"
+      ],
       "attrs": [
         {
           "value": "AFAREA"
@@ -88,6 +92,10 @@
       "number": "1500",
       "title": "Introduction to Africana Studies",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -133,6 +141,10 @@
       "number": "2061",
       "title": "Ethics and the Environment",
       "credits": 4,
+      "crossListedSubjects": [
+        "BSOC",
+        "PHIL"
+      ],
       "attrs": [
         {
           "value": "ETH-AG"

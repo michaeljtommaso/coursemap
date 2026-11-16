@@ -206,6 +206,9 @@
       "number": "3110",
       "title": "Documentary Production I",
       "credits": 4,
+      "crossListedSubjects": [
+        "PMA"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -227,6 +230,9 @@
       "number": "3431",
       "title": "Sound Design",
       "credits": 4,
+      "crossListedSubjects": [
+        "PMA"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

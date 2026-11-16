@@ -86,6 +86,9 @@
       "number": "2600",
       "title": "Principles of Biological Engineering",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": []
     },
     {
@@ -129,6 +132,9 @@
       "number": "4710",
       "title": "Introduction to Groundwater",
       "credits": 3,
+      "crossListedSubjects": [
+        "EAS"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"

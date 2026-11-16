@@ -38,6 +38,9 @@
       "number": "2011",
       "title": "What Is Science? An Introduction to the Social Studies of Science and Technology",
       "credits": 3,
+      "crossListedSubjects": [
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -59,6 +62,11 @@
       "number": "3111",
       "title": "Social Studies of Medicine",
       "credits": 3,
+      "crossListedSubjects": [
+        "BSOC",
+        "GDEV",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -80,6 +88,9 @@
       "number": "4292",
       "title": "Politics and Technology Since 1960",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -95,6 +106,9 @@
       "number": "2051",
       "title": "Ethical Issues in Health and Medicine",
       "credits": 4,
+      "crossListedSubjects": [
+        "BSOC"
+      ],
       "attrs": [
         {
           "value": "ETH-AG"
@@ -122,6 +136,10 @@
       "number": "2061",
       "title": "Ethics and the Environment",
       "credits": 4,
+      "crossListedSubjects": [
+        "BSOC",
+        "PHIL"
+      ],
       "attrs": [
         {
           "value": "ETH-AG"

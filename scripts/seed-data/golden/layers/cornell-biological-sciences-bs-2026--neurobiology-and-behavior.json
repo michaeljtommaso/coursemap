@@ -344,6 +344,10 @@
       "number": "4140",
       "title": "Principles of Pharmacology",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOAP",
+        "BIOMS"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -359,6 +363,11 @@
       "number": "3300",
       "title": "Introduction to Computational Neuroscience",
       "credits": 4,
+      "crossListedSubjects": [
+        "BME",
+        "COGST",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -389,6 +398,10 @@
       "number": "3215",
       "title": "Gender and the Brain",
       "credits": 3,
+      "crossListedSubjects": [
+        "FGSS",
+        "LGBT"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"
@@ -413,6 +426,9 @@
       "number": "3020",
       "title": "Methods in Neuroscience",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"

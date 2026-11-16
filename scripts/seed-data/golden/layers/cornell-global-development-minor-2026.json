@@ -180,6 +180,9 @@
       "number": "2010",
       "title": "Population and Social Change",
       "credits": 3,
+      "crossListedSubjects": [
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -201,6 +204,9 @@
       "number": "2940",
       "title": "Preparing for Food Systems and Agriculture Engaged Experiences",
       "credits": 1,
+      "crossListedSubjects": [
+        "ALS"
+      ],
       "attrs": [
         {
           "value": "CU-CEL"
@@ -262,6 +268,10 @@
       "number": "1702",
       "title": "Great Discoveries in Greek and Roman Archaeology",
       "credits": 3,
+      "crossListedSubjects": [
+        "CLASS",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "HA-AG"

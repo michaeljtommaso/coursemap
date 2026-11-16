@@ -254,6 +254,9 @@
       "number": "3011",
       "title": "Life Sciences and Society",
       "credits": 3,
+      "crossListedSubjects": [
+        "STS"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -275,6 +278,11 @@
       "number": "2599",
       "title": "Medicine, Magic and Science in the Ancient Near East",
       "credits": 3,
+      "crossListedSubjects": [
+        "JWST",
+        "NES",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -305,6 +313,9 @@
       "number": "1500",
       "title": "An Introduction to the Economics of Environmental and Natural Resources",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -331,6 +342,9 @@
       "number": "3020",
       "title": "Farm Business Management",
       "credits": 4,
+      "crossListedSubjects": [
+        "ALS"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -359,6 +373,9 @@
       "number": "2110",
       "title": "Object-Oriented Programming and Data Structures",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -410,6 +427,9 @@
       "number": "2100",
       "title": "Introduction to Circuits for Electrical and Computer Engineers",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": []
     },
     {
@@ -418,6 +438,9 @@
       "number": "2300",
       "title": "Digital Logic and Computer Organization",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": []
     },
     {
@@ -426,6 +449,9 @@
       "number": "2400",
       "title": "Computer Systems Programming",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": []
     },
     {
@@ -434,6 +460,9 @@
       "number": "3200",
       "title": "Engineering Computation",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": []
     },
     {
@@ -450,6 +479,9 @@
       "number": "2305",
       "title": "Puzzles and Paradoxes",
       "credits": 4,
+      "crossListedSubjects": [
+        "PHIL"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -478,6 +510,9 @@
       "number": "2020",
       "title": "Statics and Mechanics of Solids",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": []
     },
     {
@@ -506,6 +541,9 @@
       "number": "3545",
       "title": "Money and Finance in the Digital Age",
       "credits": 3,
+      "crossListedSubjects": [
+        "AEM"
+      ],
       "attrs": [
         {
           "value": "SAAREA"
@@ -521,6 +559,10 @@
       "number": "3825",
       "title": "Networks II: Market Design",
       "credits": 3,
+      "crossListedSubjects": [
+        "CS",
+        "INFO"
+      ],
       "attrs": []
     },
     {
@@ -592,6 +634,12 @@
       "number": "4020",
       "title": "Science, Medicine, and Media Technologies in East Asia",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN",
+        "HIST",
+        "SHUM",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

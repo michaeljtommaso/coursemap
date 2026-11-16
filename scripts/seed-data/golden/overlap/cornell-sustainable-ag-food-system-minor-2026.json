@@ -49,6 +49,12 @@
       "number": "4880",
       "title": "Global Food, Energy, and Water Nexus – Engage the US, China, and India for Sustainable Future",
       "credits": 3,
+      "crossListedSubjects": [
+        "ANSC",
+        "CHEME",
+        "FDSC",
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "SAAREA"
@@ -124,6 +130,9 @@
       "number": "2000",
       "title": "Introduction to Physiochemical and Biological Aspects of Foods",
       "credits": 3,
+      "crossListedSubjects": [
+        "NS"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"

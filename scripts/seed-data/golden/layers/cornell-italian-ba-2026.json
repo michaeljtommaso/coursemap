@@ -114,6 +114,9 @@
       "number": "3010",
       "title": "Screening Cosa Nostra: The Mafia and the Movies from Scarface to The Sopranos",
       "credits": 3,
+      "crossListedSubjects": [
+        "PMA"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -141,6 +144,12 @@
       "number": "3485",
       "title": "Cinematic Cities",
       "credits": 4,
+      "crossListedSubjects": [
+        "COML",
+        "FREN",
+        "PMA",
+        "SPAN"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

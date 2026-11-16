@@ -66,6 +66,9 @@
       "number": "2300",
       "title": "International Trade and Finance",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -231,6 +234,9 @@
       "number": "2232",
       "title": "Introduction to China: Getting Rich in Modern China",
       "credits": 3,
+      "crossListedSubjects": [
+        "CAPS"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -255,6 +261,9 @@
       "number": "4000",
       "title": "Contemporary Issues in Latin - Latino America",
       "credits": 1,
+      "crossListedSubjects": [
+        "LSP"
+      ],
       "attrs": []
     },
     {

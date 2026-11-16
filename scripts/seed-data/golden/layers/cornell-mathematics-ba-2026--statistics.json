@@ -227,6 +227,10 @@
       "number": "4720",
       "title": "Theory of Statistics",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "STSCI"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -245,6 +249,10 @@
       "number": "3100",
       "title": "Statistical Sampling",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -266,6 +274,10 @@
       "number": "4100",
       "title": "Multivariate Analysis",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -343,6 +355,9 @@
       "number": "3510",
       "title": "Stochastic Processes",
       "credits": 4,
+      "crossListedSubjects": [
+        "STSCI"
+      ],
       "attrs": []
     },
     {

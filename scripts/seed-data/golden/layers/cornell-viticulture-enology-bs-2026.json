@@ -206,6 +206,9 @@
       "number": "2100",
       "title": "Introductory Statistics and Data Science",
       "credits": 4,
+      "crossListedSubjects": [
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -320,6 +323,9 @@
       "number": "2205",
       "title": "Growing Grapes and Making Wines Laboratory",
       "credits": 2,
+      "crossListedSubjects": [
+        "FDSC"
+      ],
       "attrs": []
     },
     {
@@ -336,6 +342,9 @@
       "number": "2400",
       "title": "Wines and Grapes: Composition and Analysis",
       "credits": 2,
+      "crossListedSubjects": [
+        "FDSC"
+      ],
       "attrs": []
     },
     {
@@ -352,6 +361,9 @@
       "number": "4700",
       "title": "Advanced Winemaking Theory and Practice II",
       "credits": 2,
+      "crossListedSubjects": [
+        "FDSC"
+      ],
       "attrs": []
     },
     {
@@ -360,6 +372,9 @@
       "number": "4710",
       "title": "Advanced Winemaking Theory and Practice II Laboratory",
       "credits": 2,
+      "crossListedSubjects": [
+        "FDSC"
+      ],
       "attrs": []
     },
     {
@@ -377,6 +392,9 @@
       "number": "4400",
       "title": "Wine and Grape Flavor Chemistry",
       "credits": 3,
+      "crossListedSubjects": [
+        "FDSC"
+      ],
       "attrs": []
     },
     {
@@ -438,6 +456,9 @@
       "number": "2310",
       "title": "The Science and Technology of Beer",
       "credits": 1,
+      "crossListedSubjects": [
+        "FDSC"
+      ],
       "attrs": []
     },
     {
@@ -446,6 +467,9 @@
       "number": "4500",
       "title": "Advanced Winemaking Theory and Practice I",
       "credits": 2,
+      "crossListedSubjects": [
+        "FDSC"
+      ],
       "attrs": []
     },
     {
@@ -454,6 +478,9 @@
       "number": "2360",
       "title": "Distillation Principles and Practices",
       "credits": 1,
+      "crossListedSubjects": [
+        "FDSC"
+      ],
       "attrs": []
     },
     {
@@ -491,6 +518,9 @@
       "number": "2200",
       "title": "Statistics I",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"

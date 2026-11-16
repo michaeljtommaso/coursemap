@@ -81,6 +81,9 @@
       "number": "2020",
       "title": "Statics and Mechanics of Solids",
       "credits": 4,
+      "crossListedSubjects": [
+        "MAE"
+      ],
       "attrs": []
     },
     {
@@ -89,6 +92,9 @@
       "number": "2210",
       "title": "Thermodynamics",
       "credits": 3,
+      "crossListedSubjects": [
+        "MAE"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -141,6 +147,9 @@
       "number": "1170",
       "title": "Introduction to Mechanical Engineering",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGRI"
+      ],
       "attrs": []
     },
     {
@@ -172,6 +181,10 @@
       "number": "4180",
       "title": "Autonomous Mobile Robots",
       "credits": 3,
+      "crossListedSubjects": [
+        "CS",
+        "ECE"
+      ],
       "attrs": []
     },
     {

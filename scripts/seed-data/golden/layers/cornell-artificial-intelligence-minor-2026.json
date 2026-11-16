@@ -87,6 +87,9 @@
       "number": "4210",
       "title": "Artificial Intelligence: Law, Ethics, and Policy",
       "credits": 3,
+      "crossListedSubjects": [
+        "PUBPOL"
+      ],
       "attrs": [
         {
           "value": "ETM-AS"
@@ -126,6 +129,9 @@
       "number": "3450",
       "title": "Human-Computer Interaction Design",
       "credits": 3,
+      "crossListedSubjects": [
+        "COMM"
+      ],
       "attrs": []
     },
     {

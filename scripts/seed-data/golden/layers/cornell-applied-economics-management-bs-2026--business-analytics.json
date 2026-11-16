@@ -170,6 +170,9 @@
       "number": "3205",
       "title": "Ethics in Business and Organizations",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "ETH-AG"
@@ -250,6 +253,9 @@
       "number": "2500",
       "title": "Environmental and Resource Economics",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

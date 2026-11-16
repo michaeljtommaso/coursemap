@@ -179,6 +179,9 @@
       "number": "2051",
       "title": "Ethical Issues in Health and Medicine",
       "credits": 4,
+      "crossListedSubjects": [
+        "STS"
+      ],
       "attrs": [
         {
           "value": "ETH-AG"
@@ -206,6 +209,10 @@
       "number": "2455",
       "title": "Introduction to Bioethics",
       "credits": 4,
+      "crossListedSubjects": [
+        "SHUM",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -221,6 +228,10 @@
       "number": "3241",
       "title": "Environmental Sociology",
       "credits": 3,
+      "crossListedSubjects": [
+        "GDEV",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -317,6 +328,11 @@
       "number": "2468",
       "title": "Medicine, Culture, and Society",
       "credits": 4,
+      "crossListedSubjects": [
+        "ANTHR",
+        "FGSS",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -354,6 +370,11 @@
       "number": "3311",
       "title": "Environmental Governance",
       "credits": 3,
+      "crossListedSubjects": [
+        "GDEV",
+        "NTRES",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "SAAREA"
@@ -378,6 +399,9 @@
       "number": "3180",
       "title": "Health Disparities",
       "credits": 3,
+      "crossListedSubjects": [
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -435,6 +459,10 @@
       "number": "2071",
       "title": "Introduction to the History of Medicine",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "EUAREA"

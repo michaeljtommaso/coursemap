@@ -98,6 +98,9 @@
       "number": "3410",
       "title": "Biology of the Mammary Gland in Health and Disease",
       "credits": 2,
+      "crossListedSubjects": [
+        "BIOAP"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"

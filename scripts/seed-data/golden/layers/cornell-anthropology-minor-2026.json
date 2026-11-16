@@ -128,6 +128,9 @@
       "number": "3420",
       "title": "Myth, Ritual, and Symbol",
       "credits": 3,
+      "crossListedSubjects": [
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -161,6 +164,9 @@
       "number": "4418",
       "title": "Writing Ethnography: Theory, Genre and Practice",
       "credits": 3,
+      "crossListedSubjects": [
+        "FGSS"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

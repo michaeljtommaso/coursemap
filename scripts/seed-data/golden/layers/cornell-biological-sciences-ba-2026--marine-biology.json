@@ -318,6 +318,9 @@
       "number": "1540",
       "title": "Introductory Oceanography",
       "credits": 3,
+      "crossListedSubjects": [
+        "EAS"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"

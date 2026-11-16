@@ -38,6 +38,12 @@
       "number": "3380",
       "title": "The Asian Century: The Rise of China and India",
       "credits": 3,
+      "crossListedSubjects": [
+        "AEM",
+        "ASIAN",
+        "CAPS",
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -77,6 +83,10 @@
       "number": "4355",
       "title": "Work and Labor in China",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN",
+        "CAPS"
+      ],
       "attrs": [
         {
           "value": "EAAREA"

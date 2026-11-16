@@ -405,6 +405,9 @@
       "number": "4460",
       "title": "Plant Behavior and Biotic Interactions, Lecture",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIONB"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"
@@ -463,6 +466,9 @@
       "number": "1540",
       "title": "Introductory Oceanography",
       "credits": 3,
+      "crossListedSubjects": [
+        "EAS"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"

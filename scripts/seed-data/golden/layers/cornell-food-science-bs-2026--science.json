@@ -431,6 +431,9 @@
       "number": "3940",
       "title": "Applied and Food Microbiology",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOMI"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"

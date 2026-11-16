@@ -97,6 +97,9 @@
       "number": "1312",
       "title": "History of Rock Music",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -175,6 +178,9 @@
       "number": "1212",
       "title": "Music on the Brain",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

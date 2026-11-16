@@ -70,6 +70,10 @@
       "number": "3080",
       "title": "Probability Models and Inference",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -94,6 +98,10 @@
       "number": "4090",
       "title": "Theory of Statistics",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "MATH"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -130,6 +138,9 @@
       "number": "4550",
       "title": "Applied Time Series Analysis",
       "credits": 4,
+      "crossListedSubjects": [
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"

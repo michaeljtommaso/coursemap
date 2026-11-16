@@ -130,6 +130,10 @@
       "number": "2070",
       "title": "Social Problems in the United States",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "PUBPOL"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -166,6 +170,9 @@
       "number": "2202",
       "title": "Population and Social Change",
       "credits": 3,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -187,6 +194,9 @@
       "number": "2210",
       "title": "How College Works: Making Sense of Higher Education",
       "credits": 2,
+      "crossListedSubjects": [
+        "HE"
+      ],
       "attrs": [
         {
           "value": "CA-HE"
@@ -202,6 +212,9 @@
       "number": "2250",
       "title": "Schooling and Society",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -220,6 +233,9 @@
       "number": "3030",
       "title": "Research Design and Methods of Social Research",
       "credits": 3,
+      "crossListedSubjects": [
+        "PUBPOL"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -235,6 +251,11 @@
       "number": "3130",
       "title": "Social Studies of Medicine",
       "credits": 3,
+      "crossListedSubjects": [
+        "BSOC",
+        "GDEV",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -256,6 +277,9 @@
       "number": "3180",
       "title": "Health Disparities",
       "credits": 3,
+      "crossListedSubjects": [
+        "PUBPOL"
+      ],
       "attrs": [
         {
           "value": "D-AG"

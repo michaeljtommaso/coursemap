@@ -35,6 +35,12 @@
       "number": "2262",
       "title": "Medicine and Healing in China",
       "credits": 4,
+      "crossListedSubjects": [
+        "BSOC",
+        "CAPS",
+        "HIST",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -71,6 +77,11 @@
       "number": "2280",
       "title": "Law and Society in Early Modern and Modern China",
       "credits": 4,
+      "crossListedSubjects": [
+        "CAPS",
+        "HIST",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -101,6 +112,11 @@
       "number": "2291",
       "title": "Engendering China",
       "credits": 4,
+      "crossListedSubjects": [
+        "CAPS",
+        "FGSS",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -131,6 +147,9 @@
       "number": "2296",
       "title": "Korea and East Asia",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -155,6 +174,10 @@
       "number": "3395",
       "title": "What is China?",
       "credits": 3,
+      "crossListedSubjects": [
+        "CAPS",
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "EAAREA"

@@ -399,6 +399,9 @@
       "number": "1130",
       "title": "Sustainable Engineering of Energy, Water, Soil, and Air Resources",
       "credits": 3,
+      "crossListedSubjects": [
+        "CEE"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -411,6 +414,9 @@
       "number": "2020",
       "title": "Statics and Mechanics of Solids",
       "credits": 4,
+      "crossListedSubjects": [
+        "MAE"
+      ],
       "attrs": []
     },
     {
@@ -431,6 +437,9 @@
       "number": "2600",
       "title": "Principles of Biological Engineering",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": []
     },
     {
@@ -569,6 +578,9 @@
       "number": "2110",
       "title": "Object-Oriented Programming and Data Structures",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -611,6 +623,9 @@
       "number": "4530",
       "title": "Computer-Aided Engineering: Applications to Biological Processes",
       "credits": 3,
+      "crossListedSubjects": [
+        "MAE"
+      ],
       "attrs": []
     },
     {

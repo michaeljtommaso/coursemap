@@ -137,6 +137,9 @@
       "number": "2200",
       "title": "Statistics I",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -200,6 +203,9 @@
       "number": "3200",
       "title": "Statistics II",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -221,6 +227,10 @@
       "number": "3080",
       "title": "Probability Models and Inference",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -245,6 +255,9 @@
       "number": "4030",
       "title": "Linear Models with Matrices",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -266,6 +279,10 @@
       "number": "4090",
       "title": "Theory of Statistics",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "MATH"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -332,6 +349,10 @@
       "number": "3900",
       "title": "Causal Inference",
       "credits": 3,
+      "crossListedSubjects": [
+        "ILRST",
+        "INFO"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -350,6 +371,10 @@
       "number": "3100",
       "title": "Statistical Sampling",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -422,6 +447,10 @@
       "number": "4720",
       "title": "Theory of Statistics",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "STSCI"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -440,6 +469,9 @@
       "number": "2110",
       "title": "Object-Oriented Programming and Data Structures",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"

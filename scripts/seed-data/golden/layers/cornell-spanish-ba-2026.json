@@ -127,6 +127,10 @@
       "number": "2170",
       "title": "Early Modern Iberian Survey",
       "credits": 3,
+      "crossListedSubjects": [
+        "LATA",
+        "MEDVL"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -262,6 +266,12 @@
       "number": "3485",
       "title": "Cinematic Cities",
       "credits": 4,
+      "crossListedSubjects": [
+        "COML",
+        "FREN",
+        "ITAL",
+        "PMA"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -370,6 +380,9 @@
       "number": "2200",
       "title": "Perspectives on Latin America",
       "credits": 3,
+      "crossListedSubjects": [
+        "LATA"
+      ],
       "attrs": [
         {
           "value": "LAAREA"

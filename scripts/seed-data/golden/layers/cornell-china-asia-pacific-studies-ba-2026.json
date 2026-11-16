@@ -49,6 +49,9 @@
       "number": "2232",
       "title": "Introduction to China: Getting Rich in Modern China",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -73,6 +76,9 @@
       "number": "4001",
       "title": "China in Transition",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -100,6 +106,9 @@
       "number": "4002",
       "title": "Chinese Perspectives on International and Global Affairs",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -121,6 +130,10 @@
       "number": "4030",
       "title": "Making Sense of China: The Capstone Seminar",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASIAN",
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -157,6 +170,14 @@
       "number": "4127",
       "title": "The Body Politic in Asia",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASIAN",
+        "BSOC",
+        "FGSS",
+        "HIST",
+        "SHUM",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "SAAREA"
@@ -253,6 +274,9 @@
       "number": "1111",
       "title": "Introduction to American Government and Politics",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

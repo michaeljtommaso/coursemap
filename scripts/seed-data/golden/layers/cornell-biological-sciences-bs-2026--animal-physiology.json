@@ -297,6 +297,10 @@
       "number": "3110",
       "title": "Principles of Animal Physiology",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOMS",
+        "VTBMS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"
@@ -315,6 +319,9 @@
       "number": "3160",
       "title": "Cellular Physiology",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOMS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"
@@ -333,6 +340,9 @@
       "number": "3190",
       "title": "Laboratory in Physiology",
       "credits": 4,
+      "crossListedSubjects": [
+        "BIOMS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"

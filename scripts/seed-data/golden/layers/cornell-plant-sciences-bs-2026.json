@@ -151,6 +151,9 @@
       "number": "2100",
       "title": "Introductory Statistics and Data Science",
       "credits": 4,
+      "crossListedSubjects": [
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"

@@ -167,6 +167,10 @@
       "number": "1501",
       "title": "Introduction to Environmental Psychology - Writing in the Major",
       "credits": 1,
+      "crossListedSubjects": [
+        "COGST",
+        "DEA"
+      ],
       "attrs": [
         {
           "value": "D-AG"

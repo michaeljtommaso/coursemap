@@ -64,6 +64,9 @@
       "number": "2450",
       "title": "Communication and Technology",
       "credits": 3,
+      "crossListedSubjects": [
+        "COMM"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -79,6 +82,11 @@
       "number": "2850",
       "title": "Networks",
       "credits": 3,
+      "crossListedSubjects": [
+        "CS",
+        "ECON",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -154,6 +162,9 @@
       "number": "2200",
       "title": "Statistics I",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -184,6 +195,9 @@
       "number": "3450",
       "title": "Human-Computer Interaction Design",
       "credits": 3,
+      "crossListedSubjects": [
+        "COMM"
+      ],
       "attrs": []
     },
     {
@@ -201,6 +215,9 @@
       "number": "2110",
       "title": "Object-Oriented Programming and Data Structures",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"

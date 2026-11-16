@@ -98,6 +98,9 @@
       "number": "3200",
       "title": "Technology, Behavior and Society",
       "credits": 3,
+      "crossListedSubjects": [
+        "INFO"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -110,6 +113,9 @@
       "number": "4450",
       "title": "Computer-Mediated Communication",
       "credits": 3,
+      "crossListedSubjects": [
+        "INFO"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -160,6 +166,9 @@
       "number": "2450",
       "title": "Communication and Technology",
       "credits": 3,
+      "crossListedSubjects": [
+        "INFO"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -183,6 +192,10 @@
       "number": "6100",
       "title": "Statistical Methods I",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "STSCI"
+      ],
       "attrs": []
     },
     {

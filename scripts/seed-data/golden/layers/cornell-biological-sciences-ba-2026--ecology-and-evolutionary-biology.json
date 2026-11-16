@@ -378,6 +378,9 @@
       "number": "1560",
       "title": "Introductory Oceanography with Laboratory",
       "credits": 4,
+      "crossListedSubjects": [
+        "EAS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"

@@ -52,6 +52,10 @@
       "number": "1540",
       "title": "American Capitalism",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ILRGL"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -94,6 +98,9 @@
       "number": "2031",
       "title": "Global History of Data",
       "credits": 3,
+      "crossListedSubjects": [
+        "STS"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -130,6 +137,10 @@
       "number": "2155",
       "title": "The Invention of Religion",
       "credits": 4,
+      "crossListedSubjects": [
+        "JWST",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -169,6 +180,11 @@
       "number": "2132",
       "title": "Law and Society in Early Modern and Modern China",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASIAN",
+        "CAPS",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "EAAREA"

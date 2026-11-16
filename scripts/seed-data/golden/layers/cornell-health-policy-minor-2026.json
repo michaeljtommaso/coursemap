@@ -82,6 +82,9 @@
       "number": "3720",
       "title": "The Economics of Health Care Markets",
       "credits": 3,
+      "crossListedSubjects": [
+        "PUBPOL"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -109,6 +112,9 @@
       "number": "3280",
       "title": "Fundamentals of Population Health",
       "credits": 3,
+      "crossListedSubjects": [
+        "PUBPOL"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

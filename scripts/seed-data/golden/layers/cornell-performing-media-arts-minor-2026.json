@@ -131,6 +131,9 @@
       "number": "2300",
       "title": "Dance Composition",
       "credits": 3,
+      "crossListedSubjects": [
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

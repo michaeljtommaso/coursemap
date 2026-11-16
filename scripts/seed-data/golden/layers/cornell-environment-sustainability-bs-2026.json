@@ -60,6 +60,9 @@
       "number": "1101",
       "title": "Understanding Environment and Sustainability",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -75,6 +78,11 @@
       "number": "2201",
       "title": "Society and Natural Resources",
       "credits": 3,
+      "crossListedSubjects": [
+        "BSOC",
+        "ENVS",
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "AFAREA"
@@ -150,6 +158,9 @@
       "number": "2100",
       "title": "Introductory Statistics and Data Science",
       "credits": 4,
+      "crossListedSubjects": [
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -186,6 +197,9 @@
       "number": "1500",
       "title": "An Introduction to the Economics of Environmental and Natural Resources",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -204,6 +218,9 @@
       "number": "2100",
       "title": "Introductory Field Biology",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -216,6 +233,10 @@
       "number": "2000",
       "title": "Environment and Sustainability Colloquium",
       "credits": 1,
+      "crossListedSubjects": [
+        "CLASS",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -228,6 +249,9 @@
       "number": "4500",
       "title": "Climate Solutions Capstone",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

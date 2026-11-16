@@ -61,6 +61,10 @@
       "number": "3290",
       "title": "Comparative Politics of Latin America",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV",
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "LAAREA"
@@ -85,6 +89,9 @@
       "number": "1960",
       "title": "Modern Latin America",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "LAAREA"
@@ -112,6 +119,10 @@
       "number": "2307",
       "title": "Histories of the African Diaspora",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASRC",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -130,6 +141,9 @@
       "number": "2200",
       "title": "Perspectives on Latin America",
       "credits": 3,
+      "crossListedSubjects": [
+        "SPAN"
+      ],
       "attrs": [
         {
           "value": "LAAREA"
@@ -157,6 +171,9 @@
       "number": "6000",
       "title": "Contemporary Issues in Latin-Latino America",
       "credits": 1,
+      "crossListedSubjects": [
+        "LSP"
+      ],
       "attrs": []
     },
     {

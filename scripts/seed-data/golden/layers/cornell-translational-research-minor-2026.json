@@ -69,6 +69,9 @@
       "number": "2400",
       "title": "Introduction to Community Psychology",
       "credits": 3,
+      "crossListedSubjects": [
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -152,6 +155,9 @@
       "number": "3320",
       "title": "Gender and Psychopathology",
       "credits": 3,
+      "crossListedSubjects": [
+        "FGSS"
+      ],
       "attrs": [
         {
           "value": "D-AG"

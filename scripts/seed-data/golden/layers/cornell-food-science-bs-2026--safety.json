@@ -417,6 +417,9 @@
       "number": "3940",
       "title": "Applied and Food Microbiology",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOMI"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -521,6 +524,9 @@
       "number": "4040",
       "title": "Pathogenic Bacteriology",
       "credits": 2,
+      "crossListedSubjects": [
+        "BIOMI"
+      ],
       "attrs": []
     },
     {

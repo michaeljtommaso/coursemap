@@ -74,6 +74,9 @@
       "number": "2440",
       "title": "Integrated Pest Management",
       "credits": 3,
+      "crossListedSubjects": [
+        "PLSCI"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"

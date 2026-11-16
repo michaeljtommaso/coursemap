@@ -159,6 +159,9 @@
       "number": "4910",
       "title": "Plants in Practice",
       "credits": 5,
+      "crossListedSubjects": [
+        "PLSCI"
+      ],
       "attrs": [
         {
           "value": "CU-CEL"

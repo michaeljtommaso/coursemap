@@ -100,6 +100,9 @@
       "number": "4500",
       "title": "Resource Economics",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -121,6 +124,9 @@
       "number": "4510",
       "title": "Environmental Economics",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

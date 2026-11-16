@@ -322,6 +322,9 @@
       "number": "4130",
       "title": "Histology: The Biology of the Tissues",
       "credits": 4,
+      "crossListedSubjects": [
+        "BIOMS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"
@@ -425,6 +428,9 @@
       "number": "1560",
       "title": "Introductory Oceanography with Laboratory",
       "credits": 4,
+      "crossListedSubjects": [
+        "EAS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"

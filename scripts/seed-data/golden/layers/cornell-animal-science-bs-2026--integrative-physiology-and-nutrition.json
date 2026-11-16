@@ -177,6 +177,9 @@
       "number": "2100",
       "title": "Introductory Statistics and Data Science",
       "credits": 4,
+      "crossListedSubjects": [
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -230,6 +233,9 @@
       "number": "4270",
       "title": "Endocrinology: Biology of Hormones",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOAP"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -329,6 +335,9 @@
       "number": "3190",
       "title": "Laboratory in Physiology",
       "credits": 4,
+      "crossListedSubjects": [
+        "BIOMS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"

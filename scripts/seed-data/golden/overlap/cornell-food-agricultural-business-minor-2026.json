@@ -54,6 +54,9 @@
       "number": "2310",
       "title": "Business and Economics of Food",
       "credits": 3,
+      "crossListedSubjects": [
+        "ALS"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -74,6 +77,9 @@
       "number": "3020",
       "title": "Farm Business Management",
       "credits": 4,
+      "crossListedSubjects": [
+        "ALS"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"

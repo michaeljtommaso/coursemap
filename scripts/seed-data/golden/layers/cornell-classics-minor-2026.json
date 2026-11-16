@@ -122,6 +122,9 @@
       "number": "2615",
       "title": "Introduction to Ancient Rome",
       "credits": 3,
+      "crossListedSubjects": [
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -140,6 +143,10 @@
       "number": "3669",
       "title": "Plato",
       "credits": 3,
+      "crossListedSubjects": [
+        "PHIL",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -164,6 +171,9 @@
       "number": "3661",
       "title": "Hellenistic Philosophy",
       "credits": 3,
+      "crossListedSubjects": [
+        "PHIL"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -190,6 +200,11 @@
       "number": "2652",
       "title": "Ancient Greek Drama",
       "credits": 3,
+      "crossListedSubjects": [
+        "FGSS",
+        "PMA",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

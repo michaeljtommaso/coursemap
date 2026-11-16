@@ -35,6 +35,9 @@
       "number": "2208",
       "title": "Introduction to Southeast Asia",
       "credits": 3,
+      "crossListedSubjects": [
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "SEAREA"
@@ -65,6 +68,11 @@
       "number": "2222",
       "title": "From Samurai to Superpower: Japan in World History II",
       "credits": 4,
+      "crossListedSubjects": [
+        "CAPS",
+        "GOVT",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -86,6 +94,12 @@
       "number": "2262",
       "title": "Medicine and Healing in China",
       "credits": 4,
+      "crossListedSubjects": [
+        "BSOC",
+        "CAPS",
+        "HIST",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -137,6 +151,9 @@
       "number": "3396",
       "title": "Transnational Local: Southeast Asian History from the Eighteenth Century",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "EAAREA"

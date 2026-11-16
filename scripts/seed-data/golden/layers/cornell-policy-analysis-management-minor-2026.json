@@ -88,6 +88,9 @@
       "number": "3080",
       "title": "Economics of the U.S. Social Safety Net",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON"
+      ],
       "attrs": [
         {
           "value": "D-AG"

@@ -99,6 +99,9 @@
       "number": "2450",
       "title": "Communication and Technology",
       "credits": 3,
+      "crossListedSubjects": [
+        "COMM"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -114,6 +117,11 @@
       "number": "2850",
       "title": "Networks",
       "credits": 3,
+      "crossListedSubjects": [
+        "CS",
+        "ECON",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -189,6 +197,9 @@
       "number": "2200",
       "title": "Statistics I",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -210,6 +221,9 @@
       "number": "2110",
       "title": "Object-Oriented Programming and Data Structures",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -249,6 +263,10 @@
       "number": "2770",
       "title": "Excursions in Computational Sustainability",
       "credits": 3,
+      "crossListedSubjects": [
+        "AEM",
+        "CS"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -264,6 +282,12 @@
       "number": "2921",
       "title": "Inventing an Information Society",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGRG",
+        "HIST",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -351,6 +375,9 @@
       "number": "2100",
       "title": "Introductory Statistics and Data Science",
       "credits": 4,
+      "crossListedSubjects": [
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"

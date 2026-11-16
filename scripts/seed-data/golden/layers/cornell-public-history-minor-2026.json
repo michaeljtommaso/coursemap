@@ -43,6 +43,10 @@
       "number": "2792",
       "title": "Monuments, Museums, and Memory: An Introduction to Public History",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -70,6 +74,9 @@
       "number": "4243",
       "title": "Public History in Place: Interpreting the Environment",
       "credits": 4,
+      "crossListedSubjects": [
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -85,6 +92,9 @@
       "number": "4422",
       "title": "Oral History: Theory, Practice, and Method",
       "credits": 4,
+      "crossListedSubjects": [
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -106,6 +116,10 @@
       "number": "3490",
       "title": "Museum Studies: Histories, Problems, and Practices",
       "credits": 4,
+      "crossListedSubjects": [
+        "ARKEO",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -121,6 +135,10 @@
       "number": "2012",
       "title": "September 11 and the Politics of Memory",
       "credits": 3,
+      "crossListedSubjects": [
+        "GOVT",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

@@ -111,6 +111,9 @@
       "number": "2615",
       "title": "Introduction to Ancient Rome",
       "credits": 3,
+      "crossListedSubjects": [
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -129,6 +132,9 @@
       "number": "2675",
       "title": "Ancient Greek History",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -159,6 +165,9 @@
       "number": "3616",
       "title": "The Rise and Fall of Julius Caesar, and the Death of the Roman Republic",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -177,6 +186,10 @@
       "number": "3669",
       "title": "Plato",
       "credits": 3,
+      "crossListedSubjects": [
+        "PHIL",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -245,6 +258,10 @@
       "number": "2010",
       "title": "Archaeology and the Middle East",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARKEO",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "EAAREA"

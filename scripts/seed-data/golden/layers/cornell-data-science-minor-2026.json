@@ -166,6 +166,9 @@
       "number": "3200",
       "title": "Statistics II",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"

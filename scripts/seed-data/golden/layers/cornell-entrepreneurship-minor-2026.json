@@ -99,6 +99,9 @@
       "number": "3255",
       "title": "Creativity Sprint: An Entrepreneurship Hackathon",
       "credits": 1.5,
+      "crossListedSubjects": [
+        "ILROB"
+      ],
       "attrs": [
         {
           "value": "ICE-IL"

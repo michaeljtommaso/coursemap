@@ -68,6 +68,9 @@
       "number": "2205",
       "title": "Growing Grapes and Making Wines Laboratory",
       "credits": 2,
+      "crossListedSubjects": [
+        "FDSC"
+      ],
       "attrs": []
     },
     {
@@ -76,6 +79,9 @@
       "number": "4400",
       "title": "Wine and Grape Flavor Chemistry",
       "credits": 3,
+      "crossListedSubjects": [
+        "FDSC"
+      ],
       "attrs": []
     },
     {

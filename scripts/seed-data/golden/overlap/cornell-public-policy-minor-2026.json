@@ -62,6 +62,9 @@
       "number": "3061",
       "title": "Climate Politics in the US",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -80,6 +83,9 @@
       "number": "3087",
       "title": "International Human Rights Law and Advocacy",
       "credits": 3,
+      "crossListedSubjects": [
+        "LAW"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -101,6 +107,10 @@
       "number": "3131",
       "title": "The Nature, Functions, and Limits of Law",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "LAW"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

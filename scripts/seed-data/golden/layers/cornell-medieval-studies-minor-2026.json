@@ -35,6 +35,9 @@
       "number": "2100",
       "title": "Medieval Romance: Voyages to the Otherworld",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGL"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -59,6 +62,11 @@
       "number": "2627",
       "title": "Introduction to Islam",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST",
+        "NES",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -86,6 +94,11 @@
       "number": "2722",
       "title": "Of Saints, Poets, and Revolutionaries: Medieval and Modern Iran and Central Asia",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN",
+        "NES",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "SAAREA"
@@ -113,6 +126,9 @@
       "number": "3120",
       "title": "Beowulf",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGL"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -137,6 +153,10 @@
       "number": "3210",
       "title": "Medieval Philosophy",
       "credits": 3,
+      "crossListedSubjects": [
+        "PHIL",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -161,6 +181,11 @@
       "number": "1740",
       "title": "Imperial China",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASIAN",
+        "CAPS",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"

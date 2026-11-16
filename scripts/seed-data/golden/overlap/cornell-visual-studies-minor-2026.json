@@ -44,6 +44,11 @@
       "number": "2000",
       "title": "Introduction to Visual Studies",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ARTH",
+        "COML"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -110,6 +115,9 @@
       "number": "3910",
       "title": "Visual Cultures of the Global Cold War",
       "credits": 3,
+      "crossListedSubjects": [
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"

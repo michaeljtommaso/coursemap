@@ -30,6 +30,9 @@
       "number": "1131",
       "title": "Elementary Sanskrit I",
       "credits": 4,
+      "crossListedSubjects": [
+        "CLASS"
+      ],
       "attrs": [
         {
           "value": "SALANG"
@@ -48,6 +51,9 @@
       "number": "1132",
       "title": "Elementary Sanskrit II",
       "credits": 4,
+      "crossListedSubjects": [
+        "CLASS"
+      ],
       "attrs": [
         {
           "value": "SALANG"
@@ -66,6 +72,9 @@
       "number": "2251",
       "title": "Intermediate Sanskrit I",
       "credits": 3,
+      "crossListedSubjects": [
+        "CLASS"
+      ],
       "attrs": [
         {
           "value": "SALANG"
@@ -87,6 +96,9 @@
       "number": "3301",
       "title": "Advanced Sanskrit I",
       "credits": 4,
+      "crossListedSubjects": [
+        "CLASS"
+      ],
       "attrs": [
         {
           "value": "SAAREA"

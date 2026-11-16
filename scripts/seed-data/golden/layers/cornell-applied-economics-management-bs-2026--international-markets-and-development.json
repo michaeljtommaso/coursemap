@@ -164,6 +164,9 @@
       "number": "3205",
       "title": "Ethics in Business and Organizations",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "ETH-AG"
@@ -252,6 +255,9 @@
       "number": "2500",
       "title": "Environmental and Resource Economics",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -317,6 +323,9 @@
       "number": "2300",
       "title": "International Trade and Finance",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -371,6 +380,9 @@
       "number": "4485",
       "title": "Economics of Food and Malnutrition",
       "credits": 3,
+      "crossListedSubjects": [
+        "NS"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -398,6 +410,9 @@
       "number": "4545",
       "title": "Money and Finance in the Digital Age",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON"
+      ],
       "attrs": [
         {
           "value": "SAAREA"

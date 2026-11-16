@@ -148,6 +148,9 @@
       "number": "2440",
       "title": "Integrated Pest Management",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENTOM"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -280,6 +283,9 @@
       "number": "1300",
       "title": "Just Food: Exploring the Modern Food System",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -313,6 +319,9 @@
       "number": "2200",
       "title": "Introduction to Adult Learning",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -331,6 +340,9 @@
       "number": "3260",
       "title": "Cooperative Business Management",
       "credits": 4,
+      "crossListedSubjects": [
+        "ALS"
+      ],
       "attrs": [
         {
           "value": "CU-CEL"
@@ -417,6 +429,9 @@
       "number": "2310",
       "title": "Business and Economics of Food",
       "credits": 3,
+      "crossListedSubjects": [
+        "ALS"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -429,6 +444,9 @@
       "number": "3020",
       "title": "Farm Business Management",
       "credits": 4,
+      "crossListedSubjects": [
+        "ALS"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -493,6 +511,9 @@
       "number": "2300",
       "title": "International Trade and Finance",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -547,6 +568,9 @@
       "number": "2500",
       "title": "Environmental and Resource Economics",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

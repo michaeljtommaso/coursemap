@@ -61,6 +61,10 @@
       "number": "1500",
       "title": "Introduction to Environmental Psychology",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "D-AG"

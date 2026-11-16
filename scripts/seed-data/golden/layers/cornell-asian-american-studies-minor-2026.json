@@ -74,6 +74,10 @@
       "number": "2100",
       "title": "South Asian Diaspora",
       "credits": 3,
+      "crossListedSubjects": [
+        "ANTHR",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -104,6 +108,10 @@
       "number": "2620",
       "title": "Introduction to Asian American Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -186,6 +194,9 @@
       "number": "6623",
       "title": "Natures of U.S. Empire",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGL"
+      ],
       "attrs": []
     },
     {
@@ -215,6 +226,9 @@
       "number": "1960",
       "title": "Modern Latin America",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "LAAREA"

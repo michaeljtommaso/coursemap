@@ -411,6 +411,9 @@
       "number": "3940",
       "title": "Applied and Food Microbiology",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOMI"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -546,6 +549,9 @@
       "number": "4400",
       "title": "Wine and Grape Flavor Chemistry",
       "credits": 3,
+      "crossListedSubjects": [
+        "VIEN"
+      ],
       "attrs": []
     },
     {

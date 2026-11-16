@@ -119,6 +119,9 @@
       "number": "1111",
       "title": "Introduction to American Government and Politics",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -203,6 +206,9 @@
       "number": "2030",
       "title": "Population and Public Policy",
       "credits": 4,
+      "crossListedSubjects": [
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -245,6 +251,10 @@
       "number": "2370",
       "title": "Race, Racism, and Public Policy",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -299,6 +309,9 @@
       "number": "2320",
       "title": "Global Democracy and Public Policy",
       "credits": 3,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "SSC-AS"
@@ -311,6 +324,9 @@
       "number": "3583",
       "title": "Comparative Public Policy: Political Pathways to Equality",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -326,6 +342,13 @@
       "number": "4060",
       "title": "Engaged Learning About Policy Making in Washington D.C.",
       "credits": 4,
+      "crossListedSubjects": [
+        "ALS",
+        "AMST",
+        "CAPS",
+        "GOVT",
+        "NS"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -386,6 +409,9 @@
       "number": "3480",
       "title": "Sustainability Education Policy in the U.S. and Ecuador",
       "credits": 4,
+      "crossListedSubjects": [
+        "LATA"
+      ],
       "attrs": [
         {
           "value": "CU-CEL"
@@ -437,6 +463,9 @@
       "number": "3080",
       "title": "Economics of the U.S. Social Safety Net",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -502,6 +531,9 @@
       "number": "5060",
       "title": "Experiential Learning in Policy Making in Washington, DC",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "CU-CEL"
@@ -526,6 +558,10 @@
       "number": "2208",
       "title": "Social Inequality",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "AFAREA"

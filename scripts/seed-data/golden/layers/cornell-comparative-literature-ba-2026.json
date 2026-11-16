@@ -71,6 +71,9 @@
       "number": "2251",
       "title": "Poetry's Image",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGL"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -89,6 +92,9 @@
       "number": "2272",
       "title": "Out of Line: Introduction to Narrative and Media",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGL"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -101,6 +107,11 @@
       "number": "3550",
       "title": "Decadence",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGL",
+        "FGSS",
+        "LGBT"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -122,6 +133,11 @@
       "number": "3006",
       "title": "Race, Slavery, and Cinema",
       "credits": 3,
+      "crossListedSubjects": [
+        "FGSS",
+        "ILRGL",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -149,6 +165,11 @@
       "number": "2650",
       "title": "Introduction to African American Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ASRC",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "AFAREA"

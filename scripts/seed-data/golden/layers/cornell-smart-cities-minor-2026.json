@@ -108,6 +108,9 @@
       "number": "3230",
       "title": "Engineering Economics and Management",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGRG"
+      ],
       "attrs": []
     },
     {

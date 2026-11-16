@@ -296,6 +296,9 @@
       "number": "1130",
       "title": "Sustainable Engineering of Energy, Water, Soil, and Air Resources",
       "credits": 3,
+      "crossListedSubjects": [
+        "CEE"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -308,6 +311,9 @@
       "number": "2510",
       "title": "Engineering Processes for Environmental Sustainability",
       "credits": 3,
+      "crossListedSubjects": [
+        "BEE"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -320,6 +326,9 @@
       "number": "3200",
       "title": "Engineering Computation",
       "credits": 4,
+      "crossListedSubjects": [
+        "CEE"
+      ],
       "attrs": []
     },
     {
@@ -420,6 +429,9 @@
       "number": "2250",
       "title": "The Earth System",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -446,6 +458,9 @@
       "number": "3230",
       "title": "Engineering Economics and Management",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGRG"
+      ],
       "attrs": []
     },
     {
@@ -510,6 +525,9 @@
       "number": "1540",
       "title": "Introductory Oceanography",
       "credits": 3,
+      "crossListedSubjects": [
+        "EAS"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -594,6 +612,9 @@
       "number": "2110",
       "title": "Object-Oriented Programming and Data Structures",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"

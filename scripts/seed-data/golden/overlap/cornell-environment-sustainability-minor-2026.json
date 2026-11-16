@@ -115,6 +115,10 @@
       "number": "2420",
       "title": "Nature-Culture: Ethnographic Approaches to Human Environment Relations",
       "credits": 4,
+      "crossListedSubjects": [
+        "AIIS",
+        "BSOC"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -157,6 +161,10 @@
       "number": "2000",
       "title": "Environment and Sustainability Colloquium",
       "credits": 1,
+      "crossListedSubjects": [
+        "CLASS",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"

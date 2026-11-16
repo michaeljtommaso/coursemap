@@ -67,6 +67,13 @@
       "number": "1101",
       "title": "Introduction to Cognitive Science",
       "credits": 3,
+      "crossListedSubjects": [
+        "CS",
+        "HD",
+        "LING",
+        "PHIL",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -112,6 +119,9 @@
       "number": "2310",
       "title": "Introduction to Deductive Logic",
       "credits": 4,
+      "crossListedSubjects": [
+        "PHIL"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -133,6 +143,10 @@
       "number": "2090",
       "title": "Developmental Psychology",
       "credits": 3,
+      "crossListedSubjects": [
+        "HD",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -151,6 +165,11 @@
       "number": "3300",
       "title": "Introduction to Computational Neuroscience",
       "credits": 4,
+      "crossListedSubjects": [
+        "BIONB",
+        "BME",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -169,6 +188,10 @@
       "number": "4240",
       "title": "Computational Linguistics I",
       "credits": 4,
+      "crossListedSubjects": [
+        "CS",
+        "LING"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -181,6 +204,10 @@
       "number": "4150",
       "title": "Culture, Cognition, Humanities",
       "credits": 3,
+      "crossListedSubjects": [
+        "COML",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -214,6 +241,9 @@
       "number": "3302",
       "title": "Introduction to Phonetics and Phonology",
       "credits": 4,
+      "crossListedSubjects": [
+        "LING"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -229,6 +259,9 @@
       "number": "2200",
       "title": "The Human Brain and Mind: An Introduction to Cognitive Neuroscience",
       "credits": 3,
+      "crossListedSubjects": [
+        "HD"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -262,6 +295,9 @@
       "number": "3020",
       "title": "Methods in Neuroscience",
       "credits": 3,
+      "crossListedSubjects": [
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -277,6 +313,13 @@
       "number": "1102",
       "title": "Introduction to Cognitive Science",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "CS",
+        "HD",
+        "LING",
+        "PHIL"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"

@@ -60,6 +60,9 @@
       "number": "1101",
       "title": "Introduction to Linguistics",
       "credits": 4,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -81,6 +84,9 @@
       "number": "3302",
       "title": "Introduction to Phonetics and Phonology",
       "credits": 4,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -111,6 +117,13 @@
       "number": "1170",
       "title": "Introduction to Cognitive Science",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "CS",
+        "HD",
+        "PHIL",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -129,6 +142,14 @@
       "number": "2212",
       "title": "Hieroglyphs to HTML: History of Writing",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARKEO",
+        "CLASS",
+        "NES",
+        "SHUM",
+        "STS",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -189,6 +210,9 @@
       "number": "3315",
       "title": "Old Norse I",
       "credits": 3,
+      "crossListedSubjects": [
+        "MEDVL"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -201,6 +225,9 @@
       "number": "3324",
       "title": "Cayuga Language and Culture",
       "credits": 3,
+      "crossListedSubjects": [
+        "AIIS"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

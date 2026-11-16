@@ -319,6 +319,9 @@
       "number": "4230",
       "title": "Statistical Thermodynamics",
       "credits": 4,
+      "crossListedSubjects": [
+        "AEP"
+      ],
       "attrs": [
         {
           "value": "CHPH-AG"
@@ -461,6 +464,9 @@
       "number": "4445",
       "title": "Introduction to General Relativity",
       "credits": 4,
+      "crossListedSubjects": [
+        "PHYS"
+      ],
       "attrs": [
         {
           "value": "CHPH-AG"
@@ -521,6 +527,9 @@
       "number": "3360",
       "title": "Modern Physics",
       "credits": 4,
+      "crossListedSubjects": [
+        "AEP"
+      ],
       "attrs": []
     }
   ]

@@ -93,6 +93,9 @@
       "number": "3211",
       "title": "Sharing Space: Fantasy and Form in German Architectural Imaginations",
       "credits": 3,
+      "crossListedSubjects": [
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -108,6 +111,11 @@
       "number": "3212",
       "title": "Germanophone Science and Speculative Fiction",
       "credits": 3,
+      "crossListedSubjects": [
+        "FGSS",
+        "LGBT",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -142,6 +150,9 @@
       "number": "3514",
       "title": "Trash Talk: Garbage and Beauty",
       "credits": 3,
+      "crossListedSubjects": [
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -160,6 +171,11 @@
       "number": "3550",
       "title": "Political Theory and Cinema",
       "credits": 3,
+      "crossListedSubjects": [
+        "COML",
+        "GOVT",
+        "PMA"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -178,6 +194,13 @@
       "number": "3561",
       "title": "Freud and Psychoanalysis",
       "credits": 3,
+      "crossListedSubjects": [
+        "COML",
+        "FGSS",
+        "FREN",
+        "ROMS",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"

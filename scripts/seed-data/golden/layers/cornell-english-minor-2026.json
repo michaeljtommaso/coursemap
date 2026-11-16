@@ -123,6 +123,9 @@
       "number": "3120",
       "title": "Beowulf",
       "credits": 3,
+      "crossListedSubjects": [
+        "MEDVL"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -192,6 +195,9 @@
       "number": "2603",
       "title": "The Novels of Toni Morrison",
       "credits": 1,
+      "crossListedSubjects": [
+        "ASRC"
+      ],
       "attrs": []
     },
     {

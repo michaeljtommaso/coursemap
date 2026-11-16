@@ -40,6 +40,12 @@
       "number": "3810",
       "title": "Migration: Histories, Controversies, and Perspectives",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "LSP",
+        "PUBPOL",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -79,6 +85,11 @@
       "number": "3655",
       "title": "Minorities of the Middle East",
       "credits": 3,
+      "crossListedSubjects": [
+        "COML",
+        "JWST",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

@@ -52,6 +52,9 @@
       "number": "2510",
       "title": "Engineering Processes for Environmental Sustainability",
       "credits": 3,
+      "crossListedSubjects": [
+        "BEE"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -115,6 +118,9 @@
       "number": "3230",
       "title": "Engineering Economics and Management",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGRG"
+      ],
       "attrs": []
     }
   ]

@@ -81,6 +81,9 @@
       "number": "2031",
       "title": "Introduction to Latino-a-x Politics",
       "credits": 3,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -108,6 +111,9 @@
       "number": "3250",
       "title": "Vamos Pa'l Norte: U.S. Migration and Communication",
       "credits": 3,
+      "crossListedSubjects": [
+        "COMM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -123,6 +129,11 @@
       "number": "3678",
       "title": "Diasporas, Disasters, and Dissent: Re-Thinking Puerto Rican Studies in the 20th and 21st Centuries",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL",
+        "SPAN"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -147,6 +158,11 @@
       "number": "3801",
       "title": "War and Revolution in 20th Century Latino History",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "HIST",
+        "LATA"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -171,6 +187,11 @@
       "number": "4577",
       "title": "Desbordando: Reading Caribbean Waters in Latinx Studies",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL",
+        "SPAN"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -186,6 +207,10 @@
       "number": "4612",
       "title": "LA Stories: Literature, Film, and Music from Los Angeles",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -198,6 +223,9 @@
       "number": "3805",
       "title": "African American and Latinx Histories",
       "credits": 3,
+      "crossListedSubjects": [
+        "ILRGL"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -219,6 +247,12 @@
       "number": "3810",
       "title": "Migration: Histories, Controversies, and Perspectives",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ILRGL",
+        "PUBPOL",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -240,6 +274,13 @@
       "number": "4701",
       "title": "Nightlife",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "FGSS",
+        "LGBT",
+        "PMA",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -264,6 +305,9 @@
       "number": "4875",
       "title": "Global Food Cultures of Greater Mexico",
       "credits": 3,
+      "crossListedSubjects": [
+        "SPAN"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -276,6 +320,10 @@
       "number": "2251",
       "title": "U.S. Immigration Narratives",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -300,6 +348,10 @@
       "number": "2765",
       "title": "The North American West",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -321,6 +373,9 @@
       "number": "4000",
       "title": "Contemporary Issues in Latin - Latino America",
       "credits": 1,
+      "crossListedSubjects": [
+        "LATA"
+      ],
       "attrs": []
     },
     {
@@ -329,6 +384,13 @@
       "number": "3754",
       "title": "Spoken Word, Hip-Hop Theater, and the Politics of Performance",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL",
+        "FGSS",
+        "LGBT",
+        "PMA"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

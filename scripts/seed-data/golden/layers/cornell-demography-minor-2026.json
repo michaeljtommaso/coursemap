@@ -50,6 +50,9 @@
       "number": "2010",
       "title": "Population and Social Change",
       "credits": 3,
+      "crossListedSubjects": [
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -89,6 +92,10 @@
       "number": "3240",
       "title": "Environmental Sociology",
       "credits": 3,
+      "crossListedSubjects": [
+        "SOC",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -118,6 +125,9 @@
       "number": "2250",
       "title": "Schooling and Society",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -151,6 +161,9 @@
       "number": "3120",
       "title": "Research Design and Methods of Social Research",
       "credits": 3,
+      "crossListedSubjects": [
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

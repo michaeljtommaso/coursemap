@@ -40,6 +40,9 @@
       "number": "1560",
       "title": "Introductory Oceanography with Laboratory",
       "credits": 4,
+      "crossListedSubjects": [
+        "EAS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"
@@ -79,6 +82,9 @@
       "number": "3300",
       "title": "Fish Physiology",
       "credits": 3,
+      "crossListedSubjects": [
+        "ANSC"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -97,6 +103,9 @@
       "number": "3500",
       "title": "Marine Microbes and Disease in a Changing Ocean",
       "credits": 3,
+      "crossListedSubjects": [
+        "EAS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"
@@ -148,6 +157,9 @@
       "number": "3555",
       "title": "Marine Microbes and Disease in a Changing Ocean",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOMI"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"

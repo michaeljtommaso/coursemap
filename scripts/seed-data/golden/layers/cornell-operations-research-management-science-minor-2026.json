@@ -88,6 +88,9 @@
       "number": "3510",
       "title": "Stochastic Processes",
       "credits": 4,
+      "crossListedSubjects": [
+        "STSCI"
+      ],
       "attrs": []
     },
     {
@@ -133,6 +136,9 @@
       "number": "2720",
       "title": "Data Science for Engineers",
       "credits": 4,
+      "crossListedSubjects": [
+        "ECE"
+      ],
       "attrs": []
     }
   ]

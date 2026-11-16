@@ -39,6 +39,9 @@
       "number": "1976",
       "title": "Recreating the Caribbean: Migration and Identity in Contemporary Caribbean History",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASRC"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -63,6 +66,11 @@
       "number": "3679",
       "title": "Diasporas, Disasters, and Dissent: Re-Thinking Puerto Rican Studies in the 20th and 21st Centuries",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGL",
+        "LSP",
+        "SPAN"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -87,6 +95,11 @@
       "number": "4577",
       "title": "Desbordando: Reading Caribbean Waters in Latinx Studies",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGL",
+        "LSP",
+        "SPAN"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -102,6 +115,10 @@
       "number": "2317",
       "title": "Histories of the African Diaspora",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST",
+        "LATA"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -120,6 +137,10 @@
       "number": "3293",
       "title": "Comparative Politics of Latin America",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV",
+        "LATA"
+      ],
       "attrs": [
         {
           "value": "LAAREA"

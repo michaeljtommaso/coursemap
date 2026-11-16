@@ -45,6 +45,10 @@
       "number": "1540",
       "title": "American Capitalism",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ILRGL"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -72,6 +76,9 @@
       "number": "1561",
       "title": "Introduction to the Ottoman Empire",
       "credits": 4,
+      "crossListedSubjects": [
+        "NES"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -99,6 +106,10 @@
       "number": "1595",
       "title": "African American History from 1865",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ASRC"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -129,6 +140,10 @@
       "number": "1985",
       "title": "American History from 1500 to 1800",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ASRC"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -150,6 +165,11 @@
       "number": "2132",
       "title": "Law and Society in Early Modern and Modern China",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASIAN",
+        "CAPS",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -204,6 +224,10 @@
       "number": "2005",
       "title": "The First American University",
       "credits": 1,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL"
+      ],
       "attrs": []
     },
     {

@@ -51,6 +51,10 @@
       "number": "2644",
       "title": "Introduction to Judaism",
       "credits": 3,
+      "crossListedSubjects": [
+        "NES",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -78,6 +82,10 @@
       "number": "2852",
       "title": "Judaism and the Origins of Christianity",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -99,6 +107,9 @@
       "number": "2488",
       "title": "Modern Israel: History, Culture, Society",
       "credits": 3,
+      "crossListedSubjects": [
+        "NES"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -126,6 +137,9 @@
       "number": "3722",
       "title": "Zionism and other Jewish nationalisms",
       "credits": 3,
+      "crossListedSubjects": [
+        "NES"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -144,6 +158,10 @@
       "number": "2697",
       "title": "History of the Israeli-Palestinian Conflict",
       "credits": 3,
+      "crossListedSubjects": [
+        "GOVT",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -168,6 +186,11 @@
       "number": "2790",
       "title": "Jewish Films and Filmmakers: Hollywood and Beyond",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "PMA",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -189,6 +212,9 @@
       "number": "1101",
       "title": "Elementary Modern Hebrew I",
       "credits": 4,
+      "crossListedSubjects": [
+        "HEBRW"
+      ],
       "attrs": [
         {
           "value": "FL-AG"
@@ -207,6 +233,10 @@
       "number": "2853",
       "title": "The Law in Jewish History",
       "credits": 3,
+      "crossListedSubjects": [
+        "JWST",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"

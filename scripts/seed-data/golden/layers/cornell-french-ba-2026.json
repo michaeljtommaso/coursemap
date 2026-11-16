@@ -229,6 +229,9 @@
       "number": "4250",
       "title": "Ecological Thinking: Philosophy, Ethics, and Politics Beyond the Human",
       "credits": 3,
+      "crossListedSubjects": [
+        "COML"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -250,6 +253,10 @@
       "number": "4368",
       "title": "Reading Édouard Glissant",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASRC",
+        "COML"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

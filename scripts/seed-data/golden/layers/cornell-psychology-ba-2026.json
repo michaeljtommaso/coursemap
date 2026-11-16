@@ -53,6 +53,11 @@
       "number": "2580",
       "title": "Six Pretty Good Books: Explorations in Social Science",
       "credits": 4,
+      "crossListedSubjects": [
+        "HD",
+        "ILRGL",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -74,6 +79,10 @@
       "number": "2650",
       "title": "Psychology and Law",
       "credits": 4,
+      "crossListedSubjects": [
+        "HD",
+        "LAW"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -92,6 +101,11 @@
       "number": "3300",
       "title": "Introduction to Computational Neuroscience",
       "credits": 4,
+      "crossListedSubjects": [
+        "BIONB",
+        "BME",
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -110,6 +124,10 @@
       "number": "2090",
       "title": "Developmental Psychology",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "HD"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -128,6 +146,9 @@
       "number": "2830",
       "title": "Research Methods in Human Development",
       "credits": 3,
+      "crossListedSubjects": [
+        "HD"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -143,6 +164,10 @@
       "number": "4150",
       "title": "Culture, Cognition, Humanities",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "COML"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -210,6 +235,9 @@
       "number": "2100",
       "title": "The Science of Human Stupidity",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

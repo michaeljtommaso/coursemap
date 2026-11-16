@@ -193,6 +193,9 @@
       "number": "4250",
       "title": "Numerical Analysis and Differential Equations",
       "credits": 4,
+      "crossListedSubjects": [
+        "CS"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -336,6 +339,9 @@
       "number": "2110",
       "title": "Object-Oriented Programming and Data Structures",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"

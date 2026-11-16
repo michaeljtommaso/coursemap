@@ -51,6 +51,9 @@
       "number": "2410",
       "title": "The Art of Teaching",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -66,6 +69,11 @@
       "number": "2710",
       "title": "US Education System: Courts, Data, Law and Politics",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "GDEV",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -84,6 +92,9 @@
       "number": "2200",
       "title": "Introduction to Adult Learning",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -114,6 +125,10 @@
       "number": "3550",
       "title": "Economics of Education",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON",
+        "ILRLE"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

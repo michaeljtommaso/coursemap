@@ -75,6 +75,9 @@
       "number": "1101",
       "title": "Understanding Environment and Sustainability",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -90,6 +93,11 @@
       "number": "2201",
       "title": "Society and Natural Resources",
       "credits": 3,
+      "crossListedSubjects": [
+        "BSOC",
+        "ENVS",
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "AFAREA"
@@ -165,6 +173,9 @@
       "number": "2200",
       "title": "Statistics I",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -207,6 +218,9 @@
       "number": "2500",
       "title": "Environmental and Resource Economics",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -225,6 +239,9 @@
       "number": "2100",
       "title": "Introductory Field Biology",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -237,6 +254,10 @@
       "number": "2000",
       "title": "Environment and Sustainability Colloquium",
       "credits": 1,
+      "crossListedSubjects": [
+        "CLASS",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -249,6 +270,9 @@
       "number": "4500",
       "title": "Climate Solutions Capstone",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -363,6 +387,10 @@
       "number": "4225",
       "title": "Arboreal Humanities: Ecology, Aesthetics, and Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "COML",
+        "GERST"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -384,6 +412,9 @@
       "number": "2830",
       "title": "DNA, Genes and Genetic Diversity",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"

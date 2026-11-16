@@ -71,6 +71,9 @@
       "number": "2001",
       "title": "Russian Jews and Jewish Russians in Literature and Film",
       "credits": 3,
+      "crossListedSubjects": [
+        "JWST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

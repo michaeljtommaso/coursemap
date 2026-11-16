@@ -75,6 +75,9 @@
       "number": "4066",
       "title": "Technological Change at Work",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -115,6 +118,9 @@
       "number": "1111",
       "title": "Introduction to American Government and Politics",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

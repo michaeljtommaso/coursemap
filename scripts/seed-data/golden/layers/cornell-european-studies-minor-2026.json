@@ -69,6 +69,11 @@
       "number": "2721",
       "title": "The Holocaust in Europe:A Victim-Centered History",
       "credits": 3,
+      "crossListedSubjects": [
+        "GERST",
+        "HIST",
+        "JWST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

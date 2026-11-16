@@ -45,6 +45,11 @@
       "number": "2627",
       "title": "Introduction to Islam",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST",
+        "MEDVL",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -72,6 +77,10 @@
       "number": "2644",
       "title": "Introduction to Judaism",
       "credits": 3,
+      "crossListedSubjects": [
+        "JWST",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -99,6 +108,12 @@
       "number": "3448",
       "title": "Islamic Mysticism",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST",
+        "MEDVL",
+        "RELST",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -126,6 +141,11 @@
       "number": "3655",
       "title": "Minorities of the Middle East",
       "credits": 3,
+      "crossListedSubjects": [
+        "COML",
+        "JWST",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -144,6 +164,10 @@
       "number": "3778",
       "title": "Pharaohs and Fables",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARKEO",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -165,6 +189,9 @@
       "number": "1201",
       "title": "Elementary Arabic I",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASRC"
+      ],
       "attrs": [
         {
           "value": "AFLANG"
@@ -186,6 +213,9 @@
       "number": "2201",
       "title": "Intermediate Urdu Reading and Writing I",
       "credits": 3,
+      "crossListedSubjects": [
+        "URDU"
+      ],
       "attrs": [
         {
           "value": "SALANG"
@@ -207,6 +237,9 @@
       "number": "3325",
       "title": "Literary Reading and Writing in Advanced Urdu",
       "credits": 3,
+      "crossListedSubjects": [
+        "URDU"
+      ],
       "attrs": [
         {
           "value": "SAAREA"

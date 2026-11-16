@@ -200,6 +200,9 @@
       "number": "2110",
       "title": "Object-Oriented Programming and Data Structures",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -330,6 +333,9 @@
       "number": "4210",
       "title": "Numerical Analysis and Differential Equations",
       "credits": 4,
+      "crossListedSubjects": [
+        "MATH"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -348,6 +354,9 @@
       "number": "4300",
       "title": "Language and Information",
       "credits": 3,
+      "crossListedSubjects": [
+        "INFO"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -405,6 +414,10 @@
       "number": "3110",
       "title": "Applied Probability and Statistics",
       "credits": 4,
+      "crossListedSubjects": [
+        "ILRST",
+        "STSCI"
+      ],
       "attrs": [
         {
           "value": "DLG-AG"
@@ -457,6 +470,9 @@
       "number": "3420",
       "title": "Embedded Systems",
       "credits": 4,
+      "crossListedSubjects": [
+        "ECE"
+      ],
       "attrs": []
     },
     {
@@ -486,6 +502,9 @@
       "number": "2112",
       "title": "Object-Oriented Design and Data Structures - Honors",
       "credits": 5,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -513,6 +532,10 @@
       "number": "4740",
       "title": "Natural Language Processing",
       "credits": 4,
+      "crossListedSubjects": [
+        "COGST",
+        "LING"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -551,6 +574,13 @@
       "number": "1710",
       "title": "Introduction to Cognitive Science",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "HD",
+        "LING",
+        "PHIL",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"

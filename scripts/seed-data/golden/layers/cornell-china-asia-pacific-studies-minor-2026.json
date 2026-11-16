@@ -55,6 +55,9 @@
       "number": "2232",
       "title": "Introduction to China: Getting Rich in Modern China",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -79,6 +82,9 @@
       "number": "4001",
       "title": "China in Transition",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -106,6 +112,9 @@
       "number": "4002",
       "title": "Chinese Perspectives on International and Global Affairs",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "EAAREA"

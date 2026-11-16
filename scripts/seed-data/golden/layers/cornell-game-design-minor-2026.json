@@ -70,6 +70,9 @@
       "number": "2450",
       "title": "Communication and Technology",
       "credits": 3,
+      "crossListedSubjects": [
+        "COMM"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -85,6 +88,9 @@
       "number": "3450",
       "title": "Human-Computer Interaction Design",
       "credits": 3,
+      "crossListedSubjects": [
+        "COMM"
+      ],
       "attrs": []
     },
     {
@@ -93,6 +99,9 @@
       "number": "3200",
       "title": "Technology, Behavior and Society",
       "credits": 3,
+      "crossListedSubjects": [
+        "COMM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -105,6 +114,9 @@
       "number": "4400",
       "title": "Qualitative User Research and Design Methods",
       "credits": 3,
+      "crossListedSubjects": [
+        "COMM"
+      ],
       "attrs": [
         {
           "value": "DLG-AG"

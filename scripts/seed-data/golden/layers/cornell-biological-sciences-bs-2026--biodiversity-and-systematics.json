@@ -373,6 +373,9 @@
       "number": "2250",
       "title": "The Earth System",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"

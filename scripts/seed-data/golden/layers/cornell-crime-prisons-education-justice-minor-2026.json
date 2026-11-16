@@ -70,6 +70,10 @@
       "number": "3808",
       "title": "Mass Incarceration and Social Inequality in America",
       "credits": 3,
+      "crossListedSubjects": [
+        "PUBPOL",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -127,6 +131,11 @@
       "number": "3885",
       "title": "Race and War in History: Workers, Soldiers, Prisoners, Activists",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "HIST",
+        "ILRGL"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -157,6 +166,10 @@
       "number": "3131",
       "title": "The Nature, Functions, and Limits of Law",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "LAW"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -172,6 +185,11 @@
       "number": "3110",
       "title": "Educational Psychology",
       "credits": 4,
+      "crossListedSubjects": [
+        "COMM",
+        "GDEV",
+        "HD"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

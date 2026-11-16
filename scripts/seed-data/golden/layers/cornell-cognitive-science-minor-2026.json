@@ -55,6 +55,13 @@
       "number": "1101",
       "title": "Introduction to Cognitive Science",
       "credits": 3,
+      "crossListedSubjects": [
+        "CS",
+        "HD",
+        "LING",
+        "PHIL",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -73,6 +80,10 @@
       "number": "3420",
       "title": "Human Perception: Application to Computer Graphics, Art, and Visual Display",
       "credits": 3,
+      "crossListedSubjects": [
+        "PSYCH",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -88,6 +99,11 @@
       "number": "3300",
       "title": "Introduction to Computational Neuroscience",
       "credits": 4,
+      "crossListedSubjects": [
+        "BME",
+        "COGST",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -106,6 +122,9 @@
       "number": "3302",
       "title": "Introduction to Phonetics and Phonology",
       "credits": 4,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -133,6 +152,9 @@
       "number": "2200",
       "title": "The Human Brain and Mind: An Introduction to Cognitive Neuroscience",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -166,6 +188,10 @@
       "number": "2415",
       "title": "Introduction to Moral Psychology",
       "credits": 3,
+      "crossListedSubjects": [
+        "PHIL",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -181,6 +207,9 @@
       "number": "2110",
       "title": "Object-Oriented Programming and Data Structures",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -205,6 +234,9 @@
       "number": "6422",
       "title": "Semantics II",
       "credits": 4,
+      "crossListedSubjects": [
+        "PHIL"
+      ],
       "attrs": []
     }
   ]

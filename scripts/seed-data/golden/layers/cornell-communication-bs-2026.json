@@ -151,6 +151,9 @@
       "number": "2100",
       "title": "Introductory Statistics and Data Science",
       "credits": 4,
+      "crossListedSubjects": [
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -190,6 +193,9 @@
       "number": "2450",
       "title": "Communication and Technology",
       "credits": 3,
+      "crossListedSubjects": [
+        "INFO"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -217,6 +223,9 @@
       "number": "2850",
       "title": "Communication, Environment, Science, and Health",
       "credits": 3,
+      "crossListedSubjects": [
+        "STS"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -244,6 +253,9 @@
       "number": "3200",
       "title": "Technology, Behavior and Society",
       "credits": 3,
+      "crossListedSubjects": [
+        "INFO"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

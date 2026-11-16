@@ -99,6 +99,10 @@
       "number": "2154",
       "title": "Sex and Power in Jewish History",
       "credits": 4,
+      "crossListedSubjects": [
+        "JWST",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -123,6 +127,14 @@
       "number": "2023",
       "title": "Fighting for Our Lives: Black Women's Reproductive Health and Activism in Historical Perspective",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ASRC",
+        "FGSS",
+        "GOVT",
+        "SHUM",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -190,6 +202,11 @@
       "number": "1740",
       "title": "Imperial China",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASIAN",
+        "CAPS",
+        "MEDVL"
+      ],
       "attrs": [
         {
           "value": "HA-AG"

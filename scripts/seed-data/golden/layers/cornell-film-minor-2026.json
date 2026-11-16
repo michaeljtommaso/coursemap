@@ -71,6 +71,10 @@
       "number": "3550",
       "title": "Global Cinema and Media",
       "credits": 4,
+      "crossListedSubjects": [
+        "COML",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -184,6 +188,9 @@
       "number": "2452",
       "title": "Introduction to Japanese Film",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -205,6 +212,9 @@
       "number": "3410",
       "title": "Screening Cosa Nostra: The Mafia and the Movies from Scarface to The Sopranos",
       "credits": 3,
+      "crossListedSubjects": [
+        "ITAL"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -265,6 +275,10 @@
       "number": "3560",
       "title": "American Cinema since 1968",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"

@@ -106,6 +106,9 @@
       "number": "3450",
       "title": "Introduction to Physiochemical and Biological Aspects of Foods",
       "credits": 3,
+      "crossListedSubjects": [
+        "FDSC"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -144,6 +147,9 @@
       "number": "3150",
       "title": "Obesity and the Regulation of Body Weight",
       "credits": 3,
+      "crossListedSubjects": [
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"

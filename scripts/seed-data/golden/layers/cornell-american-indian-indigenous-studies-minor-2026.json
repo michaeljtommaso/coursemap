@@ -35,6 +35,10 @@
       "number": "1100",
       "title": "Indigenous North America",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ANTHR"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -59,6 +63,10 @@
       "number": "2600",
       "title": "Introduction to Native American Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -89,6 +97,9 @@
       "number": "3324",
       "title": "Cayuga Language and Culture",
       "credits": 3,
+      "crossListedSubjects": [
+        "LING"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -116,6 +127,10 @@
       "number": "2660",
       "title": "Everything You Know About Indians is Wrong: Unlearning Native American History",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -134,6 +149,11 @@
       "number": "2720",
       "title": "From the Swampy Land: Indigenous People of the Ithaca Area",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ANTHR",
+        "ARKEO"
+      ],
       "attrs": [
         {
           "value": "HA-AG"

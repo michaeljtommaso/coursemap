@@ -69,6 +69,9 @@
       "number": "2100",
       "title": "Introduction to Circuits for Electrical and Computer Engineers",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": []
     },
     {
@@ -77,6 +80,9 @@
       "number": "2300",
       "title": "Digital Logic and Computer Organization",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": []
     },
     {
@@ -85,6 +91,9 @@
       "number": "3140",
       "title": "Embedded Systems",
       "credits": 4,
+      "crossListedSubjects": [
+        "CS"
+      ],
       "attrs": []
     },
     {
@@ -109,6 +118,9 @@
       "number": "4750",
       "title": "Computer Architecture",
       "credits": 4,
+      "crossListedSubjects": [
+        "CS"
+      ],
       "attrs": []
     },
     {
@@ -117,6 +129,9 @@
       "number": "2720",
       "title": "Data Science for Engineers",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": []
     },
     {
@@ -125,6 +140,9 @@
       "number": "2400",
       "title": "Computer Systems Programming",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": []
     },
     {
@@ -133,6 +151,9 @@
       "number": "3420",
       "title": "Embedded Systems",
       "credits": 4,
+      "crossListedSubjects": [
+        "ECE"
+      ],
       "attrs": []
     },
     {

@@ -74,6 +74,9 @@
       "number": "3100",
       "title": "Advanced Portuguese I",
       "credits": 3,
+      "crossListedSubjects": [
+        "LATA"
+      ],
       "attrs": [
         {
           "value": "LAAREA"
@@ -89,6 +92,9 @@
       "number": "4320",
       "title": "Anthropophagic Brazil",
       "credits": 3,
+      "crossListedSubjects": [
+        "SPAN"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -104,6 +110,9 @@
       "number": "6325",
       "title": "Anthropophagic Brazil",
       "credits": 3,
+      "crossListedSubjects": [
+        "SPAN"
+      ],
       "attrs": []
     },
     {

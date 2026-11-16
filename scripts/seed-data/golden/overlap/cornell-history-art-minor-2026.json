@@ -51,6 +51,10 @@
       "number": "2200",
       "title": "Introduction to the Classical World in 24 Objects",
       "credits": 4,
+      "crossListedSubjects": [
+        "ARKEO",
+        "CLASS"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -72,6 +76,9 @@
       "number": "2400",
       "title": "Introduction to Early Modern Art: Cosmopolitanism and Empire",
       "credits": 4,
+      "crossListedSubjects": [
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -132,6 +139,11 @@
       "number": "3650",
       "title": "History and Theory of Digital Art",
       "credits": 3,
+      "crossListedSubjects": [
+        "INFO",
+        "STS",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "EUAREA"

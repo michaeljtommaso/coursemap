@@ -180,6 +180,9 @@
       "number": "4263",
       "title": "Zooarchaeological Method",
       "credits": 6,
+      "crossListedSubjects": [
+        "ARKEO"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -207,6 +210,9 @@
       "number": "2310",
       "title": "Business and Economics of Food",
       "credits": 3,
+      "crossListedSubjects": [
+        "AEM"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -246,6 +252,9 @@
       "number": "4600",
       "title": "Planning for Environmental Conservation and Sustainability",
       "credits": 3,
+      "crossListedSubjects": [
+        "NTRES"
+      ],
       "attrs": [
         {
           "value": "SCH-AG"
@@ -288,6 +297,9 @@
       "number": "4300",
       "title": "Ethics in New Media, Technology, and Communication",
       "credits": 3,
+      "crossListedSubjects": [
+        "INFO"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -558,6 +570,10 @@
       "number": "2061",
       "title": "Ethics and the Environment",
       "credits": 4,
+      "crossListedSubjects": [
+        "PHIL",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "ETH-AG"
@@ -627,6 +643,10 @@
       "number": "1501",
       "title": "Introduction to Environmental Psychology - Writing in the Major",
       "credits": 1,
+      "crossListedSubjects": [
+        "COGST",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -657,6 +677,10 @@
       "number": "1100",
       "title": "Indigenous North America",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ANTHR"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -711,6 +735,9 @@
       "number": "2020",
       "title": "Better Decisions for Life, Love and Money",
       "credits": 3,
+      "crossListedSubjects": [
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -762,6 +789,9 @@
       "number": "3300",
       "title": "Fish Physiology",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOAP"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"

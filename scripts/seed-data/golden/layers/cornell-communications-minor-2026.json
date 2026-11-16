@@ -118,6 +118,9 @@
       "number": "2450",
       "title": "Communication and Technology",
       "credits": 3,
+      "crossListedSubjects": [
+        "INFO"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -145,6 +148,9 @@
       "number": "3200",
       "title": "Technology, Behavior and Society",
       "credits": 3,
+      "crossListedSubjects": [
+        "INFO"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

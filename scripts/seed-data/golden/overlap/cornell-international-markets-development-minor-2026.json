@@ -73,6 +73,9 @@
       "number": "2300",
       "title": "International Trade and Finance",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON"
+      ],
       "attrs": [
         {
           "value": "EAAREA"

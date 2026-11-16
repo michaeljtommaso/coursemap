@@ -207,6 +207,10 @@
       "number": "2005",
       "title": "Intermediate Yiddish",
       "credits": 4,
+      "crossListedSubjects": [
+        "JWST",
+        "YIDSH"
+      ],
       "attrs": [
         {
           "value": "FLOPI-AS"

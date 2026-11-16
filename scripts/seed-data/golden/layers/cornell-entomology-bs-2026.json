@@ -317,6 +317,10 @@
       "number": "4100",
       "title": "Advanced Conservation Biology",
       "credits": 4,
+      "crossListedSubjects": [
+        "BIOCB",
+        "NTRES"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"
@@ -341,6 +345,9 @@
       "number": "2440",
       "title": "Integrated Pest Management",
       "credits": 3,
+      "crossListedSubjects": [
+        "PLSCI"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"

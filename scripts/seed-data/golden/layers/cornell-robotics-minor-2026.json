@@ -77,6 +77,10 @@
       "number": "4810",
       "title": "Robot Perception",
       "credits": 3,
+      "crossListedSubjects": [
+        "CEE",
+        "ECE"
+      ],
       "attrs": []
     },
     {

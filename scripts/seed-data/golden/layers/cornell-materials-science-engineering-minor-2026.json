@@ -61,6 +61,9 @@
       "number": "2610",
       "title": "Mechanical Properties of Materials: From Nanodevices to Superstructures",
       "credits": 4,
+      "crossListedSubjects": [
+        "MSE"
+      ],
       "attrs": []
     },
     {
@@ -109,6 +112,9 @@
       "number": "2020",
       "title": "Statics and Mechanics of Solids",
       "credits": 4,
+      "crossListedSubjects": [
+        "MAE"
+      ],
       "attrs": []
     },
     {
@@ -117,6 +123,9 @@
       "number": "3360",
       "title": "Modern Physics",
       "credits": 4,
+      "crossListedSubjects": [
+        "AEP"
+      ],
       "attrs": []
     },
     {
@@ -134,6 +143,9 @@
       "number": "2060",
       "title": "Atomic and Molecular Structure of Matter",
       "credits": 3,
+      "crossListedSubjects": [
+        "MAE"
+      ],
       "attrs": []
     },
     {

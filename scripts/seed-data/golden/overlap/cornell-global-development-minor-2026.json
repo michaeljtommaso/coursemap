@@ -107,6 +107,9 @@
       "number": "3280",
       "title": "Fundamentals of Population Health",
       "credits": 3,
+      "crossListedSubjects": [
+        "PUBPOL"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -125,6 +128,9 @@
       "number": "3700",
       "title": "Comparative Social Inequalities",
       "credits": 3,
+      "crossListedSubjects": [
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "AFAREA"

@@ -60,6 +60,9 @@
       "number": "1130",
       "title": "Introduction to Human Development",
       "credits": 3,
+      "crossListedSubjects": [
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -78,6 +81,11 @@
       "number": "3110",
       "title": "Educational Psychology",
       "credits": 4,
+      "crossListedSubjects": [
+        "COMM",
+        "EDUC",
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -96,6 +104,11 @@
       "number": "3150",
       "title": "Language and Power",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "LING",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -123,6 +136,10 @@
       "number": "3190",
       "title": "Memory and the Law",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -147,6 +164,9 @@
       "number": "3210",
       "title": "Developmental Cognitive Neuroscience",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -227,6 +247,9 @@
       "number": "2200",
       "title": "The Human Brain and Mind: An Introduction to Cognitive Neuroscience",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -260,6 +283,9 @@
       "number": "6020",
       "title": "Research in Risk and Rational Decision Making",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": []
     },
     {

@@ -30,6 +30,9 @@
       "number": "2250",
       "title": "Introduction to Asian Religions",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -60,6 +63,9 @@
       "number": "3049",
       "title": "History, Theory, and Methods in the Academic Study of Religion",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -81,6 +87,9 @@
       "number": "3420",
       "title": "Myth, Ritual, and Symbol",
       "credits": 3,
+      "crossListedSubjects": [
+        "ANTHR"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -114,6 +123,9 @@
       "number": "3695",
       "title": "History of Christianity",
       "credits": 3,
+      "crossListedSubjects": [
+        "NES"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -135,6 +147,9 @@
       "number": "4020",
       "title": "Buddhist Moderns: Visions of Human Flourishing",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASIAN"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

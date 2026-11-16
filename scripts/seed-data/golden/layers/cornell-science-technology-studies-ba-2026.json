@@ -49,6 +49,9 @@
       "number": "2011",
       "title": "What Is Science? An Introduction to the Social Studies of Science and Technology",
       "credits": 3,
+      "crossListedSubjects": [
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -70,6 +73,9 @@
       "number": "1180",
       "title": "Evolution",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOEE"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -97,6 +103,9 @@
       "number": "2381",
       "title": "Ten Technologies That Shook the World?",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -115,6 +124,9 @@
       "number": "2031",
       "title": "Global History of Data",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -136,6 +148,9 @@
       "number": "2051",
       "title": "Ethical Issues in Health and Medicine",
       "credits": 4,
+      "crossListedSubjects": [
+        "BSOC"
+      ],
       "attrs": [
         {
           "value": "ETH-AG"
@@ -163,6 +178,10 @@
       "number": "2061",
       "title": "Ethics and the Environment",
       "credits": 4,
+      "crossListedSubjects": [
+        "BSOC",
+        "PHIL"
+      ],
       "attrs": [
         {
           "value": "ETH-AG"
@@ -190,6 +209,10 @@
       "number": "2071",
       "title": "Introduction to the History of Medicine",
       "credits": 4,
+      "crossListedSubjects": [
+        "BSOC",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -211,6 +234,11 @@
       "number": "3111",
       "title": "Social Studies of Medicine",
       "credits": 3,
+      "crossListedSubjects": [
+        "BSOC",
+        "GDEV",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "D-AG"

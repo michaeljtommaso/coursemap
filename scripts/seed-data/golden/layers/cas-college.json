@@ -149,6 +149,9 @@
       "number": "4263",
       "title": "Zooarchaeological Method",
       "credits": 6,
+      "crossListedSubjects": [
+        "ARKEO"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -215,6 +218,10 @@
       "number": "2200",
       "title": "Introduction to the Classical World in 24 Objects",
       "credits": 4,
+      "crossListedSubjects": [
+        "ARKEO",
+        "CLASS"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -236,6 +243,10 @@
       "number": "2455",
       "title": "Introduction to Bioethics",
       "credits": 4,
+      "crossListedSubjects": [
+        "SHUM",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -272,6 +283,9 @@
       "number": "4011",
       "title": "Diversity, Racism, Democracy",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SCD-AS"
@@ -284,6 +298,9 @@
       "number": "1111",
       "title": "Introduction to American Government and Politics",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -424,6 +441,10 @@
       "number": "1501",
       "title": "Introduction to Environmental Psychology - Writing in the Major",
       "credits": 1,
+      "crossListedSubjects": [
+        "COGST",
+        "DEA"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -455,6 +476,13 @@
       "title": "Thinking Media",
       "credits": 3,
       "creditsMax": 4,
+      "crossListedSubjects": [
+        "ENGL",
+        "GERST",
+        "MUSIC",
+        "PMA",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -473,6 +501,10 @@
       "number": "1540",
       "title": "American Capitalism",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ILRGL"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -500,6 +532,9 @@
       "number": "2860",
       "title": "The French Revolution",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"

@@ -66,6 +66,9 @@
       "number": "2300",
       "title": "Dance Composition",
       "credits": 3,
+      "crossListedSubjects": [
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -219,6 +222,10 @@
       "number": "2380",
       "title": "Performing Hip Hop",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASRC",
+        "MUSIC"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

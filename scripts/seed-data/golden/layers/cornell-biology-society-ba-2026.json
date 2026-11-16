@@ -149,6 +149,9 @@
       "number": "2051",
       "title": "Ethical Issues in Health and Medicine",
       "credits": 4,
+      "crossListedSubjects": [
+        "STS"
+      ],
       "attrs": [
         {
           "value": "ETH-AG"
@@ -176,6 +179,9 @@
       "number": "1180",
       "title": "Evolution",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOEE"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -203,6 +209,10 @@
       "number": "2455",
       "title": "Introduction to Bioethics",
       "credits": 4,
+      "crossListedSubjects": [
+        "SHUM",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -293,6 +303,11 @@
       "number": "2468",
       "title": "Medicine, Culture, and Society",
       "credits": 4,
+      "crossListedSubjects": [
+        "ANTHR",
+        "FGSS",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -344,6 +359,9 @@
       "number": "3030",
       "title": "FoodCycle: Systems Thinking Toward Circular Economy for Organic Resources",
       "credits": 3,
+      "crossListedSubjects": [
+        "PLSCI"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"

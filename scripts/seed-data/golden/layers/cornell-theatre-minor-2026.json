@@ -159,6 +159,9 @@
       "number": "3880",
       "title": "Fundamentals of Directing I",
       "credits": 4,
+      "crossListedSubjects": [
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -204,6 +207,9 @@
       "number": "6866",
       "title": "Practicum in Performance Criticism and Dramaturgy",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGL"
+      ],
       "attrs": []
     },
     {
@@ -212,6 +218,11 @@
       "number": "2560",
       "title": "American Cinema",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

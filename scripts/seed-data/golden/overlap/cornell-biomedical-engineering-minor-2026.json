@@ -103,6 +103,9 @@
       "number": "3020",
       "title": "Molecular Principles of Biomedical Engineering",
       "credits": 3,
+      "crossListedSubjects": [
+        "CHEME"
+      ],
       "attrs": []
     },
     {
@@ -111,6 +114,9 @@
       "number": "4010",
       "title": "Biomedical Engineering Analysis of Metabolic and Structural Systems",
       "credits": 3,
+      "crossListedSubjects": [
+        "MAE"
+      ],
       "attrs": []
     },
     {

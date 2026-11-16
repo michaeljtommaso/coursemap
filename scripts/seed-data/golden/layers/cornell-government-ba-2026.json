@@ -97,6 +97,9 @@
       "number": "1615",
       "title": "Introduction to Political Theory",
       "credits": 4,
+      "crossListedSubjects": [
+        "PHIL"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -115,6 +118,9 @@
       "number": "4011",
       "title": "Diversity, Racism, Democracy",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SCD-AS"
@@ -166,6 +172,10 @@
       "number": "2665",
       "title": "American Political Thought",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -223,6 +233,9 @@
       "number": "4011",
       "title": "Diversity, Racism, Democracy",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "SCD-AS"
@@ -253,6 +266,10 @@
       "number": "4435",
       "title": "Making Sense of China: The Capstone Seminar",
       "credits": 4,
+      "crossListedSubjects": [
+        "CAPS",
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -280,6 +297,9 @@
       "number": "1115",
       "title": "Introduction to American Government and Politics",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

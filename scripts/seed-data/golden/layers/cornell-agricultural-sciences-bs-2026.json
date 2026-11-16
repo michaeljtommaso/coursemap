@@ -130,6 +130,9 @@
       "number": "2440",
       "title": "Integrated Pest Management",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENTOM"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -262,6 +265,9 @@
       "number": "1300",
       "title": "Just Food: Exploring the Modern Food System",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -295,6 +301,9 @@
       "number": "2200",
       "title": "Introduction to Adult Learning",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -396,6 +405,10 @@
       "number": "3080",
       "title": "Probability Models and Inference",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -432,6 +445,9 @@
       "number": "2310",
       "title": "Business and Economics of Food",
       "credits": 3,
+      "crossListedSubjects": [
+        "ALS"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"

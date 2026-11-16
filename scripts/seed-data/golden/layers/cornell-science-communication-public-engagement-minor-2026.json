@@ -41,6 +41,9 @@
       "number": "2850",
       "title": "Communication, Environment, Science, and Health",
       "credits": 3,
+      "crossListedSubjects": [
+        "STS"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -56,6 +59,9 @@
       "number": "3510",
       "title": "Engaged Learning through Extension, Outreach, and Instruction",
       "credits": 3,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": []
     },
     {
@@ -127,6 +133,9 @@
       "number": "3020",
       "title": "Science Writing for the Media",
       "credits": 3,
+      "crossListedSubjects": [
+        "STS"
+      ],
       "attrs": [
         {
           "value": "WRT-AG"

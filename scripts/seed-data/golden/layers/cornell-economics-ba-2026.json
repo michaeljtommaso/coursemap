@@ -181,6 +181,10 @@
       "number": "3110",
       "title": "Applied Probability and Statistics",
       "credits": 4,
+      "crossListedSubjects": [
+        "ILRST",
+        "STSCI"
+      ],
       "attrs": [
         {
           "value": "DLG-AG"
@@ -292,6 +296,11 @@
       "number": "2801",
       "title": "Game Theory: For Economics, Politics, Knowledge and Rationality",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "GOVT",
+        "PHIL"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -313,6 +322,9 @@
       "number": "3250",
       "title": "Economics of the U.S. Social Safety Net",
       "credits": 3,
+      "crossListedSubjects": [
+        "PUBPOL"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -337,6 +349,9 @@
       "number": "3255",
       "title": "Economics of Crime",
       "credits": 3,
+      "crossListedSubjects": [
+        "PUBPOL"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -386,6 +401,11 @@
       "number": "2850",
       "title": "Networks",
       "credits": 3,
+      "crossListedSubjects": [
+        "CS",
+        "INFO",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -407,6 +427,9 @@
       "number": "2300",
       "title": "International Trade and Finance",
       "credits": 3,
+      "crossListedSubjects": [
+        "AEM"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -448,6 +471,9 @@
       "number": "3300",
       "title": "Development of Economic Thought and Institutions",
       "credits": 3,
+      "crossListedSubjects": [
+        "ILRLE"
+      ],
       "attrs": [
         {
           "value": "HA-AG"

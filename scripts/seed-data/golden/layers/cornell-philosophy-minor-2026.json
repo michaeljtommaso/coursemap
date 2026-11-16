@@ -95,6 +95,10 @@
       "number": "3202",
       "title": "Plato",
       "credits": 3,
+      "crossListedSubjects": [
+        "CLASS",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -179,6 +183,11 @@
       "number": "1621",
       "title": "WIM: Introduction to Cognitive Science",
       "credits": 1,
+      "crossListedSubjects": [
+        "COGST",
+        "LING",
+        "PSYCH"
+      ],
       "attrs": []
     }
   ]

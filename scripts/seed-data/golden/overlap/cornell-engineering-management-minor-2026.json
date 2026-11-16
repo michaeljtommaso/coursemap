@@ -44,6 +44,9 @@
       "number": "3230",
       "title": "Engineering Economics and Management",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGRG"
+      ],
       "attrs": []
     },
     {
@@ -70,6 +73,10 @@
       "number": "3600",
       "title": "Ethical Issues in Engineering Practice",
       "credits": 3,
+      "crossListedSubjects": [
+        "PHIL",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -91,6 +98,9 @@
       "number": "5900",
       "title": "Project Management",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENMGT"
+      ],
       "attrs": []
     },
     {
@@ -99,6 +109,9 @@
       "number": "5980",
       "title": "Decision Framing and Analytics",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENMGT"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"

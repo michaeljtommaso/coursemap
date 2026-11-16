@@ -121,6 +121,9 @@
       "number": "2200",
       "title": "Statistics I",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -142,6 +145,9 @@
       "number": "3200",
       "title": "Statistics II",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -163,6 +169,10 @@
       "number": "3080",
       "title": "Probability Models and Inference",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -205,6 +215,10 @@
       "number": "3100",
       "title": "Statistical Sampling",
       "credits": 4,
+      "crossListedSubjects": [
+        "BTRY",
+        "ILRST"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"
@@ -226,6 +240,9 @@
       "number": "3510",
       "title": "Stochastic Processes for Decision-Making",
       "credits": 4,
+      "crossListedSubjects": [
+        "ORIE"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"

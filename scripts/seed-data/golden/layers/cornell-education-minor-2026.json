@@ -40,6 +40,9 @@
       "number": "2410",
       "title": "The Art of Teaching",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -64,6 +67,9 @@
       "number": "2200",
       "title": "Introduction to Adult Learning",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -82,6 +88,9 @@
       "number": "2250",
       "title": "Schooling and Society",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -112,6 +121,9 @@
       "number": "2155",
       "title": "Exploring Strategies for Teaching and Learning",
       "credits": 2,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": []
     },
     {

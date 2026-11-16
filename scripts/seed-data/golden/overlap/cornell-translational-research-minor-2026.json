@@ -77,6 +77,9 @@
       "number": "2400",
       "title": "Introduction to Community Psychology",
       "credits": 3,
+      "crossListedSubjects": [
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

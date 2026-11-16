@@ -224,6 +224,9 @@
       "number": "4250",
       "title": "Numerical Analysis and Differential Equations",
       "credits": 4,
+      "crossListedSubjects": [
+        "CS"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"

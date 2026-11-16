@@ -79,6 +79,9 @@
       "number": "1300",
       "title": "Just Food: Exploring the Modern Food System",
       "credits": 4,
+      "crossListedSubjects": [
+        "PLSCI"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -144,6 +147,10 @@
       "number": "4961",
       "title": "Perspectives in Global Development",
       "credits": 1,
+      "crossListedSubjects": [
+        "AEM",
+        "NTRES"
+      ],
       "attrs": []
     },
     {
@@ -175,6 +182,9 @@
       "number": "3105",
       "title": "Post-Internship: Reflection on Engaged Experiences",
       "credits": 1,
+      "crossListedSubjects": [
+        "ALS"
+      ],
       "attrs": [
         {
           "value": "EEE-AG"

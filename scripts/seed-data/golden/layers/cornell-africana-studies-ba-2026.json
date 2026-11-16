@@ -65,6 +65,10 @@
       "number": "1500",
       "title": "Introduction to Africana Studies",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -86,6 +90,10 @@
       "number": "2317",
       "title": "Histories of the African Diaspora",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST",
+        "LATA"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -104,6 +112,10 @@
       "number": "2353",
       "title": "Civil Rights vs. Human Rights in the Black Freedom Struggle",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HST-AS"
@@ -116,6 +128,10 @@
       "number": "2700",
       "title": "Introduction to Black Art",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ARTH"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -134,6 +150,12 @@
       "number": "3322",
       "title": "Gospel and The Blues: A Black Women's History I, 1900-1973",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "FGSS",
+        "MUSIC",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -152,6 +174,11 @@
       "number": "3334",
       "title": "Black Body Politics: Histories, Theories, and Debates",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "FGSS",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -167,6 +194,10 @@
       "number": "3508",
       "title": "African American Literature: 1930s-present",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL"
+      ],
       "attrs": []
     },
     {
@@ -175,6 +206,10 @@
       "number": "3705",
       "title": "Zora Neale Hurston and Langston Hughes",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -199,6 +234,9 @@
       "number": "4526",
       "title": "Black Feminism: Practice and Purpose",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGL"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -214,6 +252,10 @@
       "number": "4570",
       "title": "Africa Writes Back: Colonizer and the Colonized",
       "credits": 4,
+      "crossListedSubjects": [
+        "COML",
+        "ENGL"
+      ],
       "attrs": [
         {
           "value": "GLC-AS"
@@ -226,6 +268,10 @@
       "number": "1595",
       "title": "African American History from 1865",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -256,6 +302,11 @@
       "number": "2680",
       "title": "Introduction to African American Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "AFAREA"
@@ -286,6 +337,11 @@
       "number": "4509",
       "title": "Toni Morrison's Novels",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ENGL",
+        "FGSS"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -316,6 +372,9 @@
       "number": "3947",
       "title": "Race and World Politics",
       "credits": 3,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -337,6 +396,11 @@
       "number": "2650",
       "title": "Introduction to African American Literature",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ASRC",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "AFAREA"

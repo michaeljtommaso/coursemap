@@ -45,6 +45,11 @@
       "number": "2000",
       "title": "Introduction to Visual Studies",
       "credits": 4,
+      "crossListedSubjects": [
+        "AMST",
+        "ARTH",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -191,6 +196,10 @@
       "number": "2010",
       "title": "Archaeology and the Middle East",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARKEO",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "EAAREA"

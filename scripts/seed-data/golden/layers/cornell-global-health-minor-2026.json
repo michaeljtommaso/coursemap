@@ -74,6 +74,9 @@
       "number": "4480",
       "title": "Economics of Food and Malnutrition",
       "credits": 3,
+      "crossListedSubjects": [
+        "AEM"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"

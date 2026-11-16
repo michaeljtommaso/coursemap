@@ -41,6 +41,9 @@
       "number": "1101",
       "title": "Understanding Environment and Sustainability",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -125,6 +128,9 @@
       "number": "1500",
       "title": "An Introduction to the Economics of Environmental and Natural Resources",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -143,6 +149,10 @@
       "number": "2000",
       "title": "Environment and Sustainability Colloquium",
       "credits": 1,
+      "crossListedSubjects": [
+        "CLASS",
+        "VISST"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"

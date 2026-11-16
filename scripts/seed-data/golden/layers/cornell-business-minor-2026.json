@@ -46,6 +46,9 @@
       "number": "2100",
       "title": "Introductory Statistics and Data Science",
       "credits": 4,
+      "crossListedSubjects": [
+        "STSCI"
+      ],
       "attrs": [
         {
           "value": "DLS-AG"

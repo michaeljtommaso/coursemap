@@ -346,6 +346,9 @@
       "number": "4310",
       "title": "Medical Parasitology",
       "credits": 2,
+      "crossListedSubjects": [
+        "BIOMS"
+      ],
       "attrs": []
     },
     {
@@ -372,6 +375,10 @@
       "number": "3110",
       "title": "Principles of Animal Physiology",
       "credits": 3,
+      "crossListedSubjects": [
+        "BIOAP",
+        "VTBMS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"
@@ -390,6 +397,9 @@
       "number": "4130",
       "title": "Histology: The Biology of the Tissues",
       "credits": 4,
+      "crossListedSubjects": [
+        "BIOMS"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"

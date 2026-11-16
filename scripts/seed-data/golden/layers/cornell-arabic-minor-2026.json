@@ -40,6 +40,9 @@
       "number": "2202",
       "title": "Intermediate Arabic II",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASRC"
+      ],
       "attrs": [
         {
           "value": "AFLANG"
@@ -79,6 +82,9 @@
       "number": "3201",
       "title": "Advanced Arabic I",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASRC"
+      ],
       "attrs": [
         {
           "value": "AFLANG"
@@ -133,6 +139,11 @@
       "number": "2204",
       "title": "Introduction to Quranic Arabic",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASRC",
+        "NES",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "AFAREA"
@@ -160,6 +171,9 @@
       "number": "1203",
       "title": "Intermediate Arabic I",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASRC"
+      ],
       "attrs": [
         {
           "value": "AFLANG"

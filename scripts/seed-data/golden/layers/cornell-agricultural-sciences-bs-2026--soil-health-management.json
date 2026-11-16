@@ -121,6 +121,9 @@
       "number": "2440",
       "title": "Integrated Pest Management",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENTOM"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -253,6 +256,9 @@
       "number": "1300",
       "title": "Just Food: Exploring the Modern Food System",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "AFS-AG"
@@ -286,6 +292,9 @@
       "number": "2200",
       "title": "Introduction to Adult Learning",
       "credits": 4,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "D-AG"

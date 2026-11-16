@@ -100,6 +100,9 @@
       "number": "2430",
       "title": "The Rise and Fall of Civilizations",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARKEO"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -169,6 +172,10 @@
       "number": "3210",
       "title": "Historical Archaeology: A Global Perspective",
       "credits": 3,
+      "crossListedSubjects": [
+        "AMST",
+        "ARKEO"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -193,6 +200,9 @@
       "number": "3420",
       "title": "Myth, Ritual, and Symbol",
       "credits": 3,
+      "crossListedSubjects": [
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -226,6 +236,13 @@
       "number": "4254",
       "title": "Themes in Mediterranean Archaeology",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARKEO",
+        "ARTH",
+        "CLASS",
+        "MEDVL",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -265,6 +282,9 @@
       "number": "3390",
       "title": "Primate Behavior and Ecology with Emphasis on African Apes",
       "credits": 3,
+      "crossListedSubjects": [
+        "BSOC"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -283,6 +303,10 @@
       "number": "3414",
       "title": "Geography and Genealogy in the Talmud",
       "credits": 3,
+      "crossListedSubjects": [
+        "JWST",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -307,6 +331,11 @@
       "number": "2468",
       "title": "Medicine, Culture, and Society",
       "credits": 4,
+      "crossListedSubjects": [
+        "BSOC",
+        "FGSS",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -363,6 +392,9 @@
       "number": "3110",
       "title": "Documentary Production I",
       "credits": 4,
+      "crossListedSubjects": [
+        "PMA"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

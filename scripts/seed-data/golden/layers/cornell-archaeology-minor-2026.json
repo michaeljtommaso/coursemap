@@ -35,6 +35,10 @@
       "number": "1702",
       "title": "Great Discoveries in Greek and Roman Archaeology",
       "credits": 3,
+      "crossListedSubjects": [
+        "CLASS",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -53,6 +57,10 @@
       "number": "2010",
       "title": "Archaeology and the Middle East",
       "credits": 3,
+      "crossListedSubjects": [
+        "ANTHR",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -83,6 +91,9 @@
       "number": "2430",
       "title": "The Rise and Fall of Civilizations",
       "credits": 3,
+      "crossListedSubjects": [
+        "ANTHR"
+      ],
       "attrs": [
         {
           "value": "EAAREA"
@@ -110,6 +121,10 @@
       "number": "2433",
       "title": "The Art and Architecture of Ancient Egypt",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARTH",
+        "NES"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -125,6 +140,10 @@
       "number": "2641",
       "title": "The Technology of Ancient Rome",
       "credits": 3,
+      "crossListedSubjects": [
+        "CLASS",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "CA-AG"

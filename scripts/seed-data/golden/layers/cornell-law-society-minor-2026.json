@@ -39,6 +39,10 @@
       "number": "3131",
       "title": "The Nature, Functions, and Limits of Law",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT",
+        "LAW"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -54,6 +58,10 @@
       "number": "3271",
       "title": "Constitutional Law: An Introduction",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT",
+        "PUBPOL"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -78,6 +86,9 @@
       "number": "3121",
       "title": "Crime and Punishment",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -96,6 +107,9 @@
       "number": "3800",
       "title": "Economics and the Law",
       "credits": 4,
+      "crossListedSubjects": [
+        "LAW"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"

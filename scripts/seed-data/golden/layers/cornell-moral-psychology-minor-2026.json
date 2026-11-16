@@ -35,6 +35,10 @@
       "number": "2415",
       "title": "Introduction to Moral Psychology",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -50,6 +54,11 @@
       "number": "4940",
       "title": "Moral Psychology in Action",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "HD",
+        "PHIL"
+      ],
       "attrs": [
         {
           "value": "CU-CEL"
@@ -86,6 +95,9 @@
       "number": "4250",
       "title": "Translational Research on Decision Making",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "D-AG"

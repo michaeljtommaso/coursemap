@@ -75,6 +75,9 @@
       "number": "2200",
       "title": "Greek and Roman Philosophy",
       "credits": 4,
+      "crossListedSubjects": [
+        "CLASS"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -120,6 +123,10 @@
       "number": "3310",
       "title": "Deductive Logic",
       "credits": 4,
+      "crossListedSubjects": [
+        "COGST",
+        "MATH"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -132,6 +139,10 @@
       "number": "3202",
       "title": "Plato",
       "credits": 3,
+      "crossListedSubjects": [
+        "CLASS",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -156,6 +167,10 @@
       "number": "3210",
       "title": "Medieval Philosophy",
       "credits": 3,
+      "crossListedSubjects": [
+        "MEDVL",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -180,6 +195,9 @@
       "number": "2310",
       "title": "Introduction to Deductive Logic",
       "credits": 4,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -192,6 +210,10 @@
       "number": "2415",
       "title": "Introduction to Moral Psychology",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST",
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -207,6 +229,9 @@
       "number": "2300",
       "title": "Puzzles and Paradoxes",
       "credits": 4,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "SMR-AS"
@@ -219,6 +244,9 @@
       "number": "2430",
       "title": "Moral Dilemmas in the Law",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "D-AG"

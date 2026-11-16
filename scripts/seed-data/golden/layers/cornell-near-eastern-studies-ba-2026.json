@@ -77,6 +77,9 @@
       "number": "1561",
       "title": "Introduction to the Ottoman Empire",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -104,6 +107,11 @@
       "number": "3200",
       "title": "The Viking Age",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST",
+        "JWST",
+        "MEDVL"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -125,6 +133,10 @@
       "number": "4345",
       "title": "Ancient Empires: From Persia to Rome, 550 BCE to 14 CE",
       "credits": 4,
+      "crossListedSubjects": [
+        "CLASS",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HST-AS"
@@ -140,6 +152,9 @@
       "number": "4542",
       "title": "The Modern Middle East During the Long Nineteenth Century",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -155,6 +170,9 @@
       "number": "4543",
       "title": "State and Society in the Late Ottoman Empire",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "EUAREA"
@@ -182,6 +200,11 @@
       "number": "2204",
       "title": "Introduction to Quranic Arabic",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARAB",
+        "ASRC",
+        "RELST"
+      ],
       "attrs": [
         {
           "value": "AFAREA"
@@ -209,6 +232,10 @@
       "number": "2433",
       "title": "The Art and Architecture of Ancient Egypt",
       "credits": 3,
+      "crossListedSubjects": [
+        "ARKEO",
+        "ARTH"
+      ],
       "attrs": [
         {
           "value": "ALC-AS"
@@ -224,6 +251,9 @@
       "number": "2488",
       "title": "Modern Israel: History, Culture, Society",
       "credits": 3,
+      "crossListedSubjects": [
+        "JWST"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -300,6 +330,9 @@
       "number": "2202",
       "title": "Intermediate Arabic II",
       "credits": 4,
+      "crossListedSubjects": [
+        "ASRC"
+      ],
       "attrs": [
         {
           "value": "AFLANG"

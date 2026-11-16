@@ -71,6 +71,9 @@
       "number": "2290",
       "title": "Introduction to Lesbian, Gay, Bisexual, and Transgender Studies",
       "credits": 3,
+      "crossListedSubjects": [
+        "LGBT"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -86,6 +89,10 @@
       "number": "2310",
       "title": "Sociology of Sexualities",
       "credits": 3,
+      "crossListedSubjects": [
+        "LGBT",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -101,6 +108,11 @@
       "number": "2352",
       "title": "How Do You Know? The Ethics and Politics of Knowledge",
       "credits": 3,
+      "crossListedSubjects": [
+        "ANTHR",
+        "MUSIC",
+        "SHUM"
+      ],
       "attrs": [
         {
           "value": "HST-AS"

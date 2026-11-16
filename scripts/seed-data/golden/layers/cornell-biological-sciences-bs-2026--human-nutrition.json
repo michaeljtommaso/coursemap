@@ -309,6 +309,9 @@
       "number": "3150",
       "title": "Obesity and the Regulation of Body Weight",
       "credits": 3,
+      "crossListedSubjects": [
+        "PSYCH"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"

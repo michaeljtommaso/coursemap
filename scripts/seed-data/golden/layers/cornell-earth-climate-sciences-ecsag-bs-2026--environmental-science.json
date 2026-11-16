@@ -246,6 +246,9 @@
       "number": "2250",
       "title": "The Earth System",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -273,6 +276,9 @@
       "number": "3030",
       "title": "Introduction to Biogeochemistry",
       "credits": 4,
+      "crossListedSubjects": [
+        "NTRES"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -297,6 +303,9 @@
       "number": "4710",
       "title": "Introduction to Groundwater",
       "credits": 3,
+      "crossListedSubjects": [
+        "BEE"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -471,6 +480,9 @@
       "number": "4800",
       "title": "Atmospheric Chemistry: From Air Pollution to Global Change",
       "credits": 3,
+      "crossListedSubjects": [
+        "BEE"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"

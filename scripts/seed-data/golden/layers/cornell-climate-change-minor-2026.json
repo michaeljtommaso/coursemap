@@ -41,6 +41,9 @@
       "number": "2000",
       "title": "Perspectives on the Climate Change Challenge",
       "credits": 1.5,
+      "crossListedSubjects": [
+        "ENVS"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
@@ -77,6 +80,9 @@
       "number": "3030",
       "title": "Introduction to Biogeochemistry",
       "credits": 4,
+      "crossListedSubjects": [
+        "NTRES"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -131,6 +137,11 @@
       "number": "3311",
       "title": "Environmental Governance",
       "credits": 3,
+      "crossListedSubjects": [
+        "BSOC",
+        "GDEV",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "SAAREA"

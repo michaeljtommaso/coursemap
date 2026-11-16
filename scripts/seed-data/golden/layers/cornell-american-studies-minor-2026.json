@@ -97,6 +97,10 @@
       "number": "2365",
       "title": "Race, Racism, and Public Policy",
       "credits": 4,
+      "crossListedSubjects": [
+        "PUBPOL",
+        "SOC"
+      ],
       "attrs": [
         {
           "value": "D-AG"
@@ -124,6 +128,9 @@
       "number": "2665",
       "title": "The American Revolutionary Era",
       "credits": 3,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -145,6 +152,9 @@
       "number": "3430",
       "title": "History of the U.S. Civil War and Reconstruction",
       "credits": 4,
+      "crossListedSubjects": [
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -169,6 +179,9 @@
       "number": "4011",
       "title": "Diversity, Racism, Democracy",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "SCD-AS"
@@ -181,6 +194,9 @@
       "number": "1115",
       "title": "Introduction to American Government and Politics",
       "credits": 4,
+      "crossListedSubjects": [
+        "GOVT"
+      ],
       "attrs": [
         {
           "value": "SBA-AG"
@@ -199,6 +215,10 @@
       "number": "1985",
       "title": "American History from 1500 to 1800",
       "credits": 3,
+      "crossListedSubjects": [
+        "ASRC",
+        "HIST"
+      ],
       "attrs": [
         {
           "value": "HA-AG"
@@ -220,6 +240,10 @@
       "number": "2001",
       "title": "The First American University",
       "credits": 1,
+      "crossListedSubjects": [
+        "ENGL",
+        "HIST"
+      ],
       "attrs": []
     },
     {
@@ -228,6 +252,9 @@
       "number": "3617",
       "title": "Cornell Hip-Hop Collective",
       "credits": 1,
+      "crossListedSubjects": [
+        "MUSIC"
+      ],
       "attrs": [
         {
           "value": "MUSIC-PL"
@@ -252,6 +279,10 @@
       "number": "3445",
       "title": "Inequality in U.S. Higher Education",
       "credits": 3,
+      "crossListedSubjects": [
+        "ECON",
+        "ILRLE"
+      ],
       "attrs": [
         {
           "value": "D-AG"

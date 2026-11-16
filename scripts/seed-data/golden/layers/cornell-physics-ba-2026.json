@@ -97,6 +97,9 @@
       "number": "2217",
       "title": "Physics II: Electricity and Magnetism",
       "credits": 4,
+      "crossListedSubjects": [
+        "AEP"
+      ],
       "attrs": [
         {
           "value": "CHPH-AG"

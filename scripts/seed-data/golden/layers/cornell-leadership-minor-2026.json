@@ -50,6 +50,9 @@
       "number": "2610",
       "title": "Intergroup Dialogue",
       "credits": 3,
+      "crossListedSubjects": [
+        "ILRID"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -77,6 +80,9 @@
       "number": "3100",
       "title": "Foundations in Leadership: Skills for Personal and Professional Effectiveness",
       "credits": 3,
+      "crossListedSubjects": [
+        "GDEV"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"

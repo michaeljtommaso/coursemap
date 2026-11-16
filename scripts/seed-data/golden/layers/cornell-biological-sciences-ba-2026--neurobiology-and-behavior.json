@@ -376,6 +376,10 @@
       "number": "3215",
       "title": "Gender and the Brain",
       "credits": 3,
+      "crossListedSubjects": [
+        "FGSS",
+        "LGBT"
+      ],
       "attrs": [
         {
           "value": "BSC-AG"
@@ -400,6 +404,9 @@
       "number": "3020",
       "title": "Methods in Neuroscience",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -415,6 +422,9 @@
       "number": "4230",
       "title": "Navigation, Memory, and Context: What Does the Hippocampus Do?",
       "credits": 3,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"

@@ -83,6 +83,9 @@
       "number": "1101",
       "title": "Introduction to Linguistics",
       "credits": 4,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -104,6 +107,9 @@
       "number": "3215",
       "title": "Deaf Art, Film and Theatre",
       "credits": 3,
+      "crossListedSubjects": [
+        "PMA"
+      ],
       "attrs": [
         {
           "value": "CA-AG"
@@ -122,6 +128,10 @@
       "number": "2455",
       "title": "Introduction to Bioethics",
       "credits": 4,
+      "crossListedSubjects": [
+        "SHUM",
+        "STS"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"
@@ -164,6 +174,9 @@
       "number": "3302",
       "title": "Introduction to Phonetics and Phonology",
       "credits": 4,
+      "crossListedSubjects": [
+        "COGST"
+      ],
       "attrs": [
         {
           "value": "KCM-AG"

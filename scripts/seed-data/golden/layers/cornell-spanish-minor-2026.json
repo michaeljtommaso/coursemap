@@ -87,6 +87,10 @@
       "number": "2170",
       "title": "Early Modern Iberian Survey",
       "credits": 3,
+      "crossListedSubjects": [
+        "LATA",
+        "MEDVL"
+      ],
       "attrs": [
         {
           "value": "EUAREA"

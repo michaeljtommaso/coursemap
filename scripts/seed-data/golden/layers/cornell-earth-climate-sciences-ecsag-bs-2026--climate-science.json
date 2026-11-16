@@ -241,6 +241,9 @@
       "number": "2250",
       "title": "The Earth System",
       "credits": 4,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "OPHLS-AG"
@@ -319,6 +322,9 @@
       "number": "2400",
       "title": "Observing the Earth: Remote Sensing and GIS",
       "credits": 3,
+      "crossListedSubjects": [
+        "ENGRD"
+      ],
       "attrs": [
         {
           "value": "DLG-AG"
@@ -475,6 +481,9 @@
       "number": "4710",
       "title": "Introduction to Groundwater",
       "credits": 3,
+      "crossListedSubjects": [
+        "BEE"
+      ],
       "attrs": [
         {
           "value": "CU-SBY"
