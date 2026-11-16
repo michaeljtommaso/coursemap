@@ -1,0 +1,136 @@
+{
+  "programId": "cornell-education-minor-2026",
+  "description": "An Italian major with open elective room counts the same education courses toward the minor, which exceeds the two courses the pair may share.",
+  "layerIds": [
+    "cornell-italian-ba-2026",
+    "cornell-education-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-italian-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "EDUC-2410",
+    "EDUC-2710",
+    "EDUC-2200",
+    "PUBPOL-3231",
+    "PUBPOL-3550"
+  ],
+  "limit": {
+    "maxCourses": 2
+  },
+  "shared": [
+    "EDUC-2200",
+    "EDUC-2410",
+    "EDUC-2710",
+    "PUBPOL-3231",
+    "PUBPOL-3550"
+  ],
+  "heldBack": [
+    {
+      "courseId": "EDUC-2200",
+      "from": "cornell-education-minor-2026",
+      "why": "Only two courses may count toward both programs, so this one stops counting for the minor."
+    },
+    {
+      "courseId": "EDUC-2410",
+      "from": "cornell-education-minor-2026",
+      "why": "Another of the surplus common courses released from the minor to stay within two."
+    },
+    {
+      "courseId": "EDUC-2710",
+      "from": "cornell-education-minor-2026",
+      "why": "The last surplus common course released from the minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "EDUC-2410",
+      "subject": "EDUC",
+      "number": "2410",
+      "title": "The Art of Teaching",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "EDUC-2710",
+      "subject": "EDUC",
+      "number": "2710",
+      "title": "US Education System: Courts, Data, Law and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "EDUC-2200",
+      "subject": "EDUC",
+      "number": "2200",
+      "title": "Introduction to Adult Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3231",
+      "subject": "PUBPOL",
+      "number": "3231",
+      "title": "Comparative Education Policy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3550",
+      "subject": "PUBPOL",
+      "number": "3550",
+      "title": "Economics of Education",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    }
+  ]
+}

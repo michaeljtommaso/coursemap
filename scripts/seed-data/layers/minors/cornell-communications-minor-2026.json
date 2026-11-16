@@ -1,0 +1,314 @@
+{
+  "id": "cornell-communications-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Communication (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-communications-minor-2026",
+  "rows": [
+    {
+      "id": "comm-intro",
+      "label": "Introduction to Communication",
+      "group": "Required course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communications-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Transfer and exam credit are held out here so the transfer limit cannot be exceeded; it is spent in the skills and elective rows instead. Confirm by hand if a transfer equivalent covers this course.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "COMM-1101"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-one",
+      "label": "One core course: media, technology, persuasion, or environment/science/health",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communications-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Transfer and exam credit are held out here (stricter than the page) to protect the transfer limit.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "COMM-2200",
+              "COMM-2450",
+              "COMM-2760",
+              "COMM-2850"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "skills-two",
+      "label": "Two skills courses: visual, oral, writing options, or research methods (at most one writing course)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communications-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Every course in the skills list counts on its own; the or-lines are the writing alternatives, which share the one-writing-course cap. Transfer credit may supply at most 3 credits here, exam credit none: with the electives' own 3-credit allowance that keeps the total at the page's 6.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "COMM-1300",
+              "COMM-2010",
+              "COMM-2310",
+              "COMM-3010",
+              "COMM-3020",
+              "COMM-3040",
+              "COMM-3050",
+              "COMM-3065",
+              "COMM-3070",
+              "COMM-2820"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "COMM-2310"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "COMM"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 3000,
+                      "max": 3099
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "label": "At most one writing course",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer"
+            ]
+          },
+          "label": "At most 3 transfer credits in this row",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "electives",
+      "label": "Three upper-level electives (COMM 3100 and up)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communications-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts COMM 3100-4999 of 3+ credits, MUSIC 2703, and at most one more core-list course (a footnote lets one extra core course stand in for an elective). COMM 4970 and 4990 count only at 3+ credits (the minor needs 21). COMM 4950-4952, 4960, 4980 and graduate numbers are left out. Transfer credit: at most 3 credits here; exam credit none. Cross-listed lower-numbered courses: see the reminder row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "COMM"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 3100,
+                      "max": 4999
+                    }
+                  },
+                  {
+                    "not": {
+                      "number": {
+                        "min": 4950,
+                        "max": 4952
+                      }
+                    }
+                  },
+                  {
+                    "not": {
+                      "course": [
+                        "COMM-4960",
+                        "COMM-4980"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "course": [
+                  "MUSIC-2703"
+                ]
+              },
+              {
+                "course": [
+                  "COMM-2200",
+                  "COMM-2450",
+                  "COMM-2760",
+                  "COMM-2850"
+                ]
+              }
+            ]
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "COMM-2200",
+              "COMM-2450",
+              "COMM-2760",
+              "COMM-2850"
+            ]
+          },
+          "label": "At most one additional core course (3 credits)",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer"
+            ]
+          },
+          "label": "At most 3 transfer credits in this row",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "cross-listed-electives",
+      "label": "Check by hand: upper-level courses cross-listed with other departments may carry lower numbers",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communications-minor/",
+        "anchor": "Academic Policies"
+      },
+      "note": "The board counts only COMM 3100 and up (plus MUSIC 2703). Such cross-listed courses are not recognised; confirm any you want to count with the department.",
+      "kind": "confirm"
+    },
+    {
+      "id": "total-credits",
+      "label": "Seven courses and at least 21 credits in all",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communications-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Every row above holds courses of 3+ credits (the intro is 4), so a complete board reaches 21; check variable-credit courses yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every Communication course for a letter grade (no S/U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communications-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "transfer-limit",
+      "label": "No more than 6 transfer credits, and only courses with a Cornell equivalent count",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communications-minor/",
+        "anchor": "Academic Policies"
+      },
+      "note": "The board allows transfer credit only in the skills and elective rows, 3 credits in each, which cannot add up to more than 6.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Reach out to the Communication department to sign up for the minor",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/communications-minor/",
+        "anchor": "Academic Policies"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

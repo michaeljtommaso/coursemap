@@ -1,0 +1,133 @@
+{
+  "programId": "cornell-education-minor-2026",
+  "description": "A sociology major finishes the education minor with a teaching course, a policy course, a hands-on learner course and two outside electives.",
+  "layerIds": [
+    "cornell-education-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-sociology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "EDUC-2410",
+    "EDUC-3405",
+    "EDUC-2200",
+    "SOC-2250",
+    "PUBPOL-3231"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "EDUC-2155",
+      "rowId": "direct-experience",
+      "why": "This two-credit course falls short of the four credits the learner-experience requirement needs."
+    },
+    {
+      "courseId": "PSYCH-1101",
+      "rowId": "electives",
+      "why": "It is neither an education course nor on the approved outside list."
+    },
+    {
+      "courseId": "EDUC-2200",
+      "rowId": "history-policy-philosophy",
+      "why": "Adult learning belongs to the learner-experience list, not the history, policy and philosophy list."
+    }
+  ],
+  "courses": [
+    {
+      "id": "EDUC-2410",
+      "subject": "EDUC",
+      "number": "2410",
+      "title": "The Art of Teaching",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "EDUC-3405",
+      "subject": "EDUC",
+      "number": "3405",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "EDUC-2200",
+      "subject": "EDUC",
+      "number": "2200",
+      "title": "Introduction to Adult Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "SOC-2250",
+      "subject": "SOC",
+      "number": "2250",
+      "title": "Schooling and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3231",
+      "subject": "PUBPOL",
+      "number": "3231",
+      "title": "Comparative Education Policy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-HE"
+        }
+      ]
+    },
+    {
+      "id": "EDUC-2155",
+      "subject": "EDUC",
+      "number": "2155",
+      "title": "Exploring Strategies for Teaching and Learning",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PSYCH-1101",
+      "subject": "PSYCH",
+      "number": "1101",
+      "title": "Introduction to Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "id": "cornell-european-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "European Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-european-studies-minor-2026",
+  "rows": [
+    {
+      "id": "core-course",
+      "label": "Core survey course on Europe (one of the named examples the catalog can match)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/european-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page gives five examples and sends students to the program website for the full list. GOVT 3437 and STS 1942 are named only as plain text (no course link, not in the catalog dump), so the checker will not accept them as ids; they are left to the confirm row. This seat is the stricter reading.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GOVT-2553",
+          "HIST-1511",
+          "PHIL-2240"
+        ]
+      }
+    },
+    {
+      "id": "core-other-confirm",
+      "label": "If your core course is GOVT 3437, STS 1942 or another course on the program's core list, confirm it counts",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/european-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "language-competency-confirm",
+      "label": "Show competence in a European language (third-semester course, competency exam, or native speaker)",
+      "group": "Language",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/european-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "No language courses are named, so the board cannot check this; if you pass the exam or are a native speaker, add one extra course to reach five.",
+      "kind": "confirm"
+    },
+    {
+      "id": "electives-confirm",
+      "label": "Complete three Europe-focused elective courses in the listed disciplines",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/european-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page names disciplines but no courses; whether a course is Europe-related is a topic the board cannot see, so any course rule would be more generous than the page. Left as a confirm row; check each elective against the program's current list.",
+      "kind": "confirm"
+    },
+    {
+      "id": "course-total-confirm",
+      "label": "Reach at least five courses in total (up to seven depending on language level)",
+      "group": "Overall",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/european-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

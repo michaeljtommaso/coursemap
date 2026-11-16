@@ -1,0 +1,162 @@
+{
+  "id": "cornell-fashion-studies-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Fashion Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-fashion-studies-minor-2026",
+  "rows": [
+    {
+      "id": "fsad-1000",
+      "label": "Two FSAD courses at the 1000 level",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fashion-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FSAD"
+            ]
+          },
+          {
+            "number": {
+              "min": 1000,
+              "max": 1999
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "fsad-2000-3000",
+      "label": "Two FSAD courses spanning the 2000 and 3000 levels",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fashion-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FSAD"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 3999
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "fsad-4000-6000",
+      "label": "One FSAD course at an upper level (4000s or 6000s)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fashion-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "FSAD"
+                ]
+              },
+              {
+                "number": {
+                  "min": 4000,
+                  "max": 4999
+                }
+              },
+              {
+                "minCredits": 3
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "FSAD"
+                ]
+              },
+              {
+                "number": {
+                  "min": 6000,
+                  "max": 6999
+                }
+              },
+              {
+                "minCredits": 3
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "grade-b-or-better",
+      "label": "Earn a B or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fashion-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fashion-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intent-to-minor",
+      "label": "Submit the Intention to Minor form after a first 1000-level FSAD course",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fashion-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-to-graduate",
+      "label": "Apply to graduate with the minor (with a transcript copy) by March 15 of your graduating semester",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fashion-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

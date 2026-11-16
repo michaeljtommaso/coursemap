@@ -1,0 +1,218 @@
+{
+  "id": "cornell-education-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Education (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-education-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 2
+    }
+  },
+  "rows": [
+    {
+      "id": "core-art-of-teaching",
+      "label": "The Art of Teaching (EDUC 2410)",
+      "group": "Required",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/education-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "EDUC-2410"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "history-policy-philosophy",
+      "label": "One history, policy or philosophy course (EDUC 2710 only at 4 credits)",
+      "group": "Education history, policy, philosophy",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/education-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "EDUC-3405",
+              "EDUC-4720"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "EDUC-2710"
+                ]
+              },
+              {
+                "minCredits": 4
+              }
+            ]
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "direct-experience",
+      "label": "One direct-experience-with-learners course, taken for 4 credits",
+      "group": "Direct experience with learners",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/education-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "EDUC-2155",
+              "EDUC-2200",
+              "EDUC-2210",
+              "EDUC-3110",
+              "EDUC-3142",
+              "EDUC-4200",
+              "EDUC-4223"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "EDUC-2155"
+              ]
+            }
+          },
+          {
+            "minCredits": 4
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "electives",
+      "label": "Electives: 6 credits in two or more courses (any EDUC course or an approved outside course)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/education-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "subject": [
+              "EDUC"
+            ]
+          },
+          {
+            "course": [
+              "SOC-2210",
+              "SOC-2250",
+              "ENTOM-3350",
+              "ILRLE-3445",
+              "PUBPOL-3231",
+              "PUBPOL-3480",
+              "PUBPOL-3550",
+              "PSYCH-4500",
+              "ANTHR-4790",
+              "PLSCI-4825",
+              "ILRGL-4865"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "EDUC-4960",
+              "EDUC-4970",
+              "EDUC-4980"
+            ]
+          },
+          "label": "Internship, individual study and teaching assistantship credits",
+          "maxCredits": 4
+        }
+      ]
+    },
+    {
+      "id": "confirm-teaching-experience-route",
+      "label": "Confirm: EDUC 2155 counts for direct experience only with a 2-credit TA experience (EDUC 4980), which can't also be an elective",
+      "group": "Direct experience with learners",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/education-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-total-credits",
+      "label": "Confirm: the minor totals at least 18 credits",
+      "group": "Credits and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/education-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-grades",
+      "label": "Confirm: letter grades throughout (except the S/U capstone) and C or better in every course",
+      "group": "Credits and grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/education-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-capstone",
+      "label": "Confirm: capstone completed in the final semester (educator discussion or publication)",
+      "group": "Capstone",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/education-minor/",
+        "anchor": "Capstone"
+      },
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/education-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "Must be taken for 4 credits to count for Category 1.",
+      "type": "creditsTaken",
+      "course": "EDUC-2710",
+      "values": [
+        3,
+        4
+      ]
+    },
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/education-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "Must be taken for 4 credits to count for Category 2.",
+      "type": "creditsTaken",
+      "course": "EDUC-3142",
+      "values": [
+        2,
+        3,
+        4
+      ]
+    }
+  ]
+}

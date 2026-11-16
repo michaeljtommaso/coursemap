@@ -1,0 +1,123 @@
+{
+  "id": "cornell-design-environmental-analysis-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Design and Environmental Analysis (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-design-environmental-analysis-minor-2026",
+  "rows": [
+    {
+      "id": "core-intro",
+      "label": "Intro course: Making a Difference by Design or Art and Science",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "DEA-1110",
+          "DEA-2200"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "core-env-psych",
+      "label": "Introduction to Environmental Psychology (DEA 1500)",
+      "group": "Core courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "DEA-1500"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "studio-course",
+      "label": "One DEA studio course (confirm which courses qualify with the DEA coordinator)",
+      "group": "Studio and thematic courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "thematic-courses",
+      "label": "Two upper-level DEA thematic courses (confirm which courses qualify with the DEA coordinator)",
+      "group": "Studio and thematic courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "dea-credits-only",
+      "label": "At least 15 credits, all in DEA courses (only DEA courses count)",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-b-minus",
+      "label": "Earn a B- or better in every course the minor requires",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "su-limit",
+      "label": "S/U-only courses may count, but for 3 credits in total at most",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intent-to-minor",
+      "label": "Submit the Intent to Minor form for enrollment priority (after a required course with B- or better)",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "track-own-progress",
+      "label": "Track your own progress: no DEA advisor is assigned",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-to-graduate",
+      "label": "In your final semester, apply to graduate with the minor by March 15",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/design-environmental-analysis-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

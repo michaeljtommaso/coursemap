@@ -1,0 +1,173 @@
+{
+  "id": "cornell-entomology-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Entomology (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-entomology-minor-2026",
+  "rows": [
+    {
+      "id": "insect-biology",
+      "label": "Insect Biology (ENTOM 2120)",
+      "group": "Required course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENTOM-2120"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "group-a-core-elective",
+      "label": "One Group A core elective (a single course, or a lecture and its lab together)",
+      "group": "Group A",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Two options on the page are a lecture plus a lab listed together; both courses are required for those options, so each is its own two-course pool.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "a-single-course",
+          "label": "A single Group A course",
+          "group": "Group A",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/entomology-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "course": [
+              "ENTOM-3030",
+              "ENTOM-3410",
+              "ENTOM-4100",
+              "ENTOM-4550",
+              "ENTOM-4610",
+              "ENTOM-4830"
+            ]
+          }
+        },
+        {
+          "id": "a-diversity-pair",
+          "label": "Insect Diversity and Evolution with its laboratory (both)",
+          "group": "Group A",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/entomology-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "ENTOM-3310",
+              "ENTOM-3311"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "a-vector-pair",
+          "label": "Biology of Disease Vectors with its lab (both)",
+          "group": "Group A",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/entomology-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "course": [
+              "ENTOM-4520",
+              "ENTOM-4521"
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        }
+      ]
+    },
+    {
+      "id": "group-b-specialized-elective",
+      "label": "One Group B specialized elective",
+      "group": "Group B",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ENTOM-2030",
+          "ENTOM-2440",
+          "ENTOM-2300",
+          "ENTOM-2500",
+          "ENTOM-3150",
+          "ENTOM-3350",
+          "ENTOM-3440",
+          "ENTOM-3630",
+          "ENTOM-3690",
+          "ENTOM-3755",
+          "ENTOM-3800",
+          "ENTOM-4000",
+          "ENTOM-4700"
+        ]
+      }
+    },
+    {
+      "id": "minimum-credits",
+      "label": "At least 10 credits in the minor",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Re-counts the credits of the courses listed on the page; it never uses a course up. Every listed course counts on its own for credits.",
+      "overlay": true,
+      "kind": "credits",
+      "rule": {
+        "course": [
+          "ENTOM-2120",
+          "ENTOM-3030",
+          "ENTOM-3310",
+          "ENTOM-3311",
+          "ENTOM-3410",
+          "ENTOM-4100",
+          "ENTOM-4520",
+          "ENTOM-4521",
+          "ENTOM-4550",
+          "ENTOM-4610",
+          "ENTOM-4830",
+          "ENTOM-2030",
+          "ENTOM-2440",
+          "ENTOM-2300",
+          "ENTOM-2500",
+          "ENTOM-3150",
+          "ENTOM-3350",
+          "ENTOM-3440",
+          "ENTOM-3630",
+          "ENTOM-3690",
+          "ENTOM-3755",
+          "ENTOM-3800",
+          "ENTOM-4000",
+          "ENTOM-4700"
+        ]
+      },
+      "requiredCredits": 10
+    },
+    {
+      "id": "grade-c-minus-or-better",
+      "label": "Earn a C- or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/entomology-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

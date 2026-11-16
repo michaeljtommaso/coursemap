@@ -1,0 +1,188 @@
+{
+  "id": "cornell-crop-management-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Crop Management (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-crop-management-minor-2026",
+  "sharing": {
+    "otherMajors": "none",
+    "minors": "none",
+    "forbiddenWith": [
+      "cornell-plant-sciences-minor",
+      "cornell-fungal-biology-minor",
+      "cornell-horticulture-minor",
+      "cornell-plant-breeding-minor",
+      "cornell-soil-science-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "core-areas",
+      "label": "Courses from the crop, soil and plant protection areas: at least one in each, 15 credits in all",
+      "group": "Core areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crop-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Extra courses from the same three lists supply the credits beyond one course per area; the page names no other source. Exam credit is held out. Soil Ecology is held out (see the soil-ecology-lab row). The plant protection area is set at 4 credits, so only courses of 4 or more credits fill it (stricter reading).",
+      "kind": "distribution",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "PLSCI-2110",
+                  "PLSCI-4140"
+                ]
+              },
+              {
+                "course": [
+                  "PLSCI-2600",
+                  "PLSCI-3210",
+                  "PLSCI-3650",
+                  "PLSCI-4660",
+                  "PLSCI-4720"
+                ]
+              },
+              {
+                "course": [
+                  "PLSCI-2440",
+                  "PLSCI-3010",
+                  "PLSCI-3150"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "PLSCI-4660"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "categories": [
+        {
+          "id": "crop",
+          "label": "Crop science",
+          "rule": {
+            "course": [
+              "PLSCI-2110",
+              "PLSCI-4140"
+            ]
+          }
+        },
+        {
+          "id": "soil",
+          "label": "Soil science",
+          "rule": {
+            "course": [
+              "PLSCI-2600",
+              "PLSCI-3210",
+              "PLSCI-3650",
+              "PLSCI-4660",
+              "PLSCI-4720"
+            ]
+          }
+        },
+        {
+          "id": "protection",
+          "label": "Plant protection and pest management (4 credits)",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "PLSCI-2440",
+                  "PLSCI-3010",
+                  "PLSCI-3150"
+                ]
+              },
+              {
+                "minCredits": 4
+              }
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 3,
+      "minDistinctCategories": 3,
+      "requiredCredits": 15,
+      "perCategory": {
+        "crop": {
+          "min": 1
+        },
+        "soil": {
+          "min": 1
+        },
+        "protection": {
+          "min": 1
+        }
+      }
+    },
+    {
+      "id": "soil-ecology-lab",
+      "label": "If you use Soil Ecology for the soil area, you must take it together with its lab",
+      "group": "Core areas",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crop-management-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Soil Ecology is held out of the soil-science row; tick this only if you used it with the lab and want it to stand in for the soil area.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Every course taken for a letter grade (no S/U) and finished with a C or better",
+      "group": "Grades and course type",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crop-management-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "course-conditions",
+      "label": "Courses taken in person (not online), regular instruction only; no special-topic or seminar courses; transfer credit only through an approved equivalent",
+      "group": "Grades and course type",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crop-management-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "matriculated",
+      "label": "You must be a matriculated Cornell student and not a Plant Sciences major",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crop-management-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the SIPS minor declaration form by the last day of classes of your final semester",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/crop-management-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

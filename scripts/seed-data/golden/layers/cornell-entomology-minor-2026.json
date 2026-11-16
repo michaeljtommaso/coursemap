@@ -1,0 +1,93 @@
+{
+  "programId": "cornell-entomology-minor-2026",
+  "description": "A student takes the insect biology course plus one core elective and one specialized elective, reaching ten credits.",
+  "layerIds": [
+    "cornell-entomology-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biological-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ENTOM-2120",
+    "ENTOM-3030",
+    "ENTOM-2440"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ENTOM-2440",
+      "rowId": "group-a-core-elective",
+      "why": "A specialized elective, not a core elective."
+    },
+    {
+      "courseId": "ENTOM-3030",
+      "rowId": "group-b-specialized-elective",
+      "why": "A core elective, not on the specialized list."
+    },
+    {
+      "courseId": "ENTOM-2120",
+      "rowId": "group-b-specialized-elective",
+      "why": "The required course is not a specialized elective."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ENTOM-2120",
+      "subject": "ENTOM",
+      "number": "2120",
+      "title": "Insect Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "EEE-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ENTOM-3030",
+      "subject": "ENTOM",
+      "number": "3030",
+      "title": "Applied Statistics: Biological Experiments in Practice",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENTOM-2440",
+      "subject": "ENTOM",
+      "number": "2440",
+      "title": "Integrated Pest Management",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

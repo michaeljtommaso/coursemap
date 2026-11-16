@@ -1,0 +1,39 @@
+{
+  "programId": "cornell-european-studies-minor-2026",
+  "description": "A student takes one broad Europe survey course, which is the only requirement the board can check.",
+  "layerIds": [
+    "cornell-european-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-anthropology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GOVT-2553"
+  ],
+  "mustNotCount": [],
+  "courses": [
+    {
+      "id": "GOVT-2553",
+      "subject": "GOVT",
+      "number": "2553",
+      "title": "Inside Europe",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "GOVT-CP"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "programId": "cornell-east-asian-studies-minor-2026",
+  "description": "A student takes five China and Korea focused Asian Studies courses worth 18 credits, one of them at the 3000 level.",
+  "layerIds": [
+    "cornell-east-asian-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ASIAN-2262",
+    "ASIAN-2280",
+    "ASIAN-2291",
+    "ASIAN-2296",
+    "ASIAN-3395"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CHIN-6616",
+      "rowId": "minor-courses",
+      "why": "A one-credit language course falls below the three-credit minimum for language study."
+    },
+    {
+      "courseId": "JAPAN-2221",
+      "rowId": "minor-courses",
+      "why": "A one-credit language reading course falls below the three-credit minimum for language study."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ASIAN-2262",
+      "subject": "ASIAN",
+      "number": "2262",
+      "title": "Medicine and Healing in China",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HAN"
+        },
+        {
+          "value": "HIST-HPE"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-2280",
+      "subject": "ASIAN",
+      "number": "2280",
+      "title": "Law and Society in Early Modern and Modern China",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HAN"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-2291",
+      "subject": "ASIAN",
+      "number": "2291",
+      "title": "Engendering China",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HAN"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-2296",
+      "subject": "ASIAN",
+      "number": "2296",
+      "title": "Korea and East Asia",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HAN"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-3395",
+      "subject": "ASIAN",
+      "number": "3395",
+      "title": "What is China?",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "GOVT-IR"
+        }
+      ]
+    },
+    {
+      "id": "CHIN-6616",
+      "subject": "CHIN",
+      "number": "6616",
+      "title": "Mandarin Language Across the Curriculum (LAC)",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "JAPAN-2221",
+      "subject": "JAPAN",
+      "number": "2221",
+      "title": "Extensive Reading in Japanese - Tadoku",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "EALANG"
+        }
+      ]
+    }
+  ]
+}

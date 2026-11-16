@@ -1,0 +1,293 @@
+{
+  "id": "cornell-east-asian-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "East Asian Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-east-asian-studies-minor-2026",
+  "rows": [
+    {
+      "id": "minor-courses",
+      "label": "Five or more qualifying courses worth at least 18 credits: East Asia-focused ASIAN courses, at most one intro, and capped language study",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/east-asian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "East Asia courses are matched through the ASIAN subject (cross-listings included) plus the roster's East Asia area tag, at 2200 or above. Language study is CHIN, JAPAN and KOREA courses at 1100 or above with 3 or more credits (variable-credit courses held out as the stricter reading), at most two courses and 6 credits. Transfer and exam credit together are capped at 8 credits, the stricter reading of the transfer cap.",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "ASIAN"
+                ],
+                "crossListed": true
+              },
+              {
+                "tag": [
+                  "EAAREA"
+                ]
+              },
+              {
+                "number": {
+                  "min": 2200
+                }
+              }
+            ]
+          },
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "ASIAN-2211",
+                  "ASIAN-2218",
+                  "ASIAN-2230",
+                  "ASIAN-2232",
+                  "ASIAN-2250"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "ASIAN"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 2231,
+                      "max": 2231
+                    }
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "ASIAN"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 2233,
+                      "max": 2233
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "CHIN",
+                  "JAPAN",
+                  "KOREA"
+                ]
+              },
+              {
+                "number": {
+                  "min": 1100
+                }
+              },
+              {
+                "minCredits": 3
+              },
+              {
+                "not": {
+                  "variableCredit": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 18,
+      "limits": [
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "ASIAN-2211",
+                  "ASIAN-2218",
+                  "ASIAN-2230",
+                  "ASIAN-2232",
+                  "ASIAN-2250"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "ASIAN"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 2231,
+                      "max": 2231
+                    }
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "ASIAN"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 2233,
+                      "max": 2233
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "label": "At most one introductory course",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "CHIN",
+                  "JAPAN",
+                  "KOREA"
+                ]
+              },
+              {
+                "number": {
+                  "min": 1100
+                }
+              }
+            ]
+          },
+          "label": "At most two language courses",
+          "maxCourses": 2
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "CHIN",
+                  "JAPAN",
+                  "KOREA"
+                ]
+              },
+              {
+                "number": {
+                  "min": 1100
+                }
+              }
+            ]
+          },
+          "label": "At most 6 language credits",
+          "maxCredits": 6
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "ASIAN"
+                ],
+                "crossListed": true
+              },
+              {
+                "tag": [
+                  "EAAREA"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000
+                }
+              }
+            ]
+          },
+          "label": "At least one non-language course at 3000 or above",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer",
+              "ap",
+              "ib",
+              "alevel",
+              "intl",
+              "placement"
+            ]
+          },
+          "label": "At most 8 transfer credits",
+          "maxCredits": 8
+        }
+      ]
+    },
+    {
+      "id": "approved-other-courses",
+      "label": "Count courses outside the matched list (other East Asia content, cross-listings, area courses the roster tag misses) only with Asian Studies approval",
+      "group": "Approvals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/east-asian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board only counts courses it can match; anything else needs the department's approval, which you confirm.",
+      "kind": "confirm"
+    },
+    {
+      "id": "jumpstart-limit",
+      "label": "Count no more than one language jumpstart course",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/east-asian-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot tell which language courses are jumpstart courses, so you confirm this limit.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every counted course for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/east-asian-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn B- or better in each counted course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/east-asian-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor with the Asian Studies department, no later than the first semester of your graduating year",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/east-asian-studies-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

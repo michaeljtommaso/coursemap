@@ -1,0 +1,192 @@
+{
+  "programId": "cornell-communications-minor-2026",
+  "description": "A student takes the intro, one core course, two skills courses and three upper-level electives for the communication minor.",
+  "layerIds": [
+    "cornell-communications-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-animal-science-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "COMM-1101",
+    "COMM-2200",
+    "COMM-1300",
+    "COMM-2820",
+    "COMM-2450",
+    "COMM-3100",
+    "COMM-3200"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "COMM-4960",
+      "rowId": "electives",
+      "why": "This course number is excluded from the elective count."
+    },
+    {
+      "courseId": "COMM-4980",
+      "rowId": "electives",
+      "why": "This course number is excluded from the elective count."
+    },
+    {
+      "courseId": "COMM-1300",
+      "rowId": "electives",
+      "why": "A lower-numbered skills course is not an upper-level elective."
+    },
+    {
+      "courseId": "COMM-1111",
+      "rowId": "electives",
+      "why": "Below the upper-level floor and not a core course."
+    },
+    {
+      "courseId": "COMM-1111",
+      "rowId": "skills-two",
+      "why": "Not on the skills list."
+    },
+    {
+      "courseId": "COMM-3100",
+      "rowId": "skills-two",
+      "why": "An upper-level elective is not a skills-list course."
+    },
+    {
+      "courseId": "COMM-3100",
+      "rowId": "core-one",
+      "why": "Only the four named core courses fill the core seat."
+    },
+    {
+      "courseId": "COMM-2760",
+      "rowId": "electives",
+      "why": "Only one extra core course may stand in for an upper-level elective."
+    }
+  ],
+  "courses": [
+    {
+      "id": "COMM-1101",
+      "subject": "COMM",
+      "number": "1101",
+      "title": "Introduction to Communication",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2200",
+      "subject": "COMM",
+      "number": "2200",
+      "title": "Media Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-1300",
+      "subject": "COMM",
+      "number": "1300",
+      "title": "Visual Communication",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2820",
+      "subject": "COMM",
+      "number": "2820",
+      "title": "Research Methods in Communication Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-2450",
+      "subject": "COMM",
+      "number": "2450",
+      "title": "Communication and Technology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "ETM-AS"
+        }
+      ]
+    },
+    {
+      "id": "COMM-3100",
+      "subject": "COMM",
+      "number": "3100",
+      "title": "Communication and Decision Making in Groups",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-3200",
+      "subject": "COMM",
+      "number": "3200",
+      "title": "Technology, Behavior and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        }
+      ]
+    },
+    {
+      "id": "COMM-4960",
+      "subject": "COMM",
+      "number": "4960",
+      "title": "Communication Internship",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "COMM-4980",
+      "subject": "COMM",
+      "number": "4980",
+      "title": "Communication Teaching Experience",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": []
+    },
+    {
+      "id": "COMM-1111",
+      "subject": "COMM",
+      "number": "1111",
+      "title": "Navigating the Communication Major and Beyond",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "COMM-2760",
+      "subject": "COMM",
+      "number": "2760",
+      "title": "Persuasion and Social Influence",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    }
+  ]
+}

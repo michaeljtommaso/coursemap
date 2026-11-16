@@ -1,0 +1,103 @@
+{
+  "programId": "cornell-crop-management-minor-2026",
+  "description": "An agricultural sciences student's crop and soil courses count for the major, so the minor's no-sharing rule holds them back.",
+  "layerIds": [
+    "cornell-agricultural-sciences-bs-2026",
+    "cornell-crop-management-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-2110",
+    "PLSCI-2600",
+    "PLSCI-3010",
+    "PLSCI-3210"
+  ],
+  "limit": {
+    "maxCourses": 0
+  },
+  "shared": [
+    "PLSCI-2110",
+    "PLSCI-2600"
+  ],
+  "heldBack": [
+    {
+      "courseId": "PLSCI-2110",
+      "from": "cornell-crop-management-minor-2026",
+      "why": "The minor allows no course shared with a major, so the crop course stops counting for the minor."
+    },
+    {
+      "courseId": "PLSCI-2600",
+      "from": "cornell-crop-management-minor-2026",
+      "why": "Same limit: the soils course is also a major course and is held back from the minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-2110",
+      "subject": "PLSCI",
+      "number": "2110",
+      "title": "Field Crop Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2600",
+      "subject": "PLSCI",
+      "number": "2600",
+      "title": "Soil Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3010",
+      "subject": "PLSCI",
+      "number": "3010",
+      "title": "Biology and Management of Plant Diseases",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3210",
+      "subject": "PLSCI",
+      "number": "3210",
+      "title": "Soil and Crop Management for Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

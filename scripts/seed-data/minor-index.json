@@ -171,7 +171,8 @@
   },
   "cornell-design-environmental-analysis-minor-2026": {
     "shortName": "Design & Env. Analysis minor",
-    "offeredBy": "Human Ecology"
+    "offeredBy": "Human Ecology",
+    "notOpenTo": ["cornell-design-environmental-analysis"]
   },
   "cornell-digital-agriculture-minor-2026": {
     "shortName": "Digital Agriculture minor",
@@ -180,7 +181,7 @@
   "cornell-earth-atmospheric-sciences-minor-2026": {
     "shortName": "Earth & Climate Sciences minor",
     "offeredBy": "Earth & Atmospheric Sciences",
-    "notOpenTo": ["cornell-earth-climate-sciences-ba", "cornell-earth-climate-sciences-ecsag-bs"]
+    "notOpenTo": ["cornell-earth-climate-sciences-ba", "cornell-earth-climate-sciences-ecsag-bs", "cornell-eas-bs"]
   },
   "cornell-east-asian-studies-minor-2026": {
     "shortName": "East Asian Studies minor",

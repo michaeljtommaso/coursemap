@@ -1,0 +1,212 @@
+{
+  "programId": "cornell-fashion-studies-minor-2026",
+  "description": "A fictional student takes five FSAD courses spread across the three required level bands, with no other courses needed.",
+  "layerIds": [
+    "cornell-fashion-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "FSAD-1140",
+    "FSAD-1170",
+    "FSAD-2190",
+    "FSAD-3200",
+    "FSAD-4190"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "FSAD-1360",
+      "rowId": "fsad-1000",
+      "why": "Only one credit, below the three credits each course needs here."
+    },
+    {
+      "courseId": "CS-1110",
+      "rowId": "fsad-1000",
+      "why": "Not an FSAD course; only FSAD courses can fill the minor."
+    },
+    {
+      "courseId": "FSAD-2190",
+      "rowId": "fsad-1000",
+      "why": "A 2000-level course is outside the 1000-level band."
+    },
+    {
+      "courseId": "FSAD-1250",
+      "rowId": "fsad-2000-3000",
+      "why": "A 1000-level course is below the 2000-3000 band."
+    },
+    {
+      "courseId": "FSAD-4190",
+      "rowId": "fsad-2000-3000",
+      "why": "A 4000-level course is above the 2000-3000 band."
+    },
+    {
+      "courseId": "CS-2110",
+      "rowId": "fsad-2000-3000",
+      "why": "Not an FSAD course."
+    },
+    {
+      "courseId": "FSAD-3200",
+      "rowId": "fsad-4000-6000",
+      "why": "A 3000-level course is below the top band."
+    },
+    {
+      "courseId": "FSAD-5990",
+      "rowId": "fsad-4000-6000",
+      "why": "A 5000-level course falls between the 4000 and 6000 bands."
+    },
+    {
+      "courseId": "CS-4820",
+      "rowId": "fsad-4000-6000",
+      "why": "Not an FSAD course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "FSAD-1140",
+      "subject": "FSAD",
+      "number": "1140",
+      "title": "Principles of Design Computing",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "FSAD-1170",
+      "subject": "FSAD",
+      "number": "1170",
+      "title": "Fashion Graphics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "FSAD-2190",
+      "subject": "FSAD",
+      "number": "2190",
+      "title": "Fashion, Aesthetics and Society",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "HA-HE"
+        }
+      ]
+    },
+    {
+      "id": "FSAD-3200",
+      "subject": "FSAD",
+      "number": "3200",
+      "title": "Global Textile and Apparel Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "FSAD-4190",
+      "subject": "FSAD",
+      "number": "4190",
+      "title": "Project Management for Creative Practice",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "FSAD-1360",
+      "subject": "FSAD",
+      "number": "1360",
+      "title": "Fiber and Yarn Analysis Laboratory",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "FSAD-1250",
+      "subject": "FSAD",
+      "number": "1250",
+      "title": "Fashion, Art and Design Thinking",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CS-2110",
+      "subject": "CS",
+      "number": "2110",
+      "title": "Object-Oriented Programming and Data Structures",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "FSAD-5990",
+      "subject": "FSAD",
+      "number": "5990",
+      "title": "Smart Clothing: Design and Programming",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "CS-4820",
+      "subject": "CS",
+      "number": "4820",
+      "title": "Introduction to Analysis of Algorithms",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

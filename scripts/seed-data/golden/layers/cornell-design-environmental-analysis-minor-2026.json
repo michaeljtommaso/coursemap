@@ -1,0 +1,69 @@
+{
+  "programId": "cornell-design-environmental-analysis-minor-2026",
+  "description": "A student takes the design-impact intro and the environmental psychology intro, the only two courses this minor names.",
+  "layerIds": [
+    "cornell-design-environmental-analysis-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-anthropology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "DEA-1110",
+    "DEA-1500"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "DEA-1500",
+      "rowId": "core-intro",
+      "why": "The intro row lists only two other courses, so the psychology course cannot fill it."
+    },
+    {
+      "courseId": "DEA-1110",
+      "rowId": "core-env-psych",
+      "why": "The psychology row names a single course, so the design intro cannot fill it."
+    }
+  ],
+  "courses": [
+    {
+      "id": "DEA-1110",
+      "subject": "DEA",
+      "number": "1110",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "DEA-1500",
+      "subject": "DEA",
+      "number": "1500",
+      "title": "Introduction to Environmental Psychology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

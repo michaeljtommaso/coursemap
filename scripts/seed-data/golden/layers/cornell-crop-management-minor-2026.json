@@ -1,0 +1,134 @@
+{
+  "programId": "cornell-crop-management-minor-2026",
+  "description": "A student pairs a field crops course, an introductory soils course, a four-credit plant disease course and a further soils course to reach the 15-credit total.",
+  "layerIds": [
+    "cornell-crop-management-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-2110",
+    "PLSCI-2600",
+    "PLSCI-3010",
+    "PLSCI-3210"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PLSCI-4660",
+      "rowId": "core-areas",
+      "why": "Soil ecology counts only when taken with its lab, which the board cannot see, so it is held out of the soil row."
+    },
+    {
+      "courseId": "PLSCI-2440",
+      "rowId": "core-areas",
+      "why": "The pest management course carries fewer credits than the four this area calls for."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-2110",
+      "subject": "PLSCI",
+      "number": "2110",
+      "title": "Field Crop Systems",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2600",
+      "subject": "PLSCI",
+      "number": "2600",
+      "title": "Soil Science",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3010",
+      "subject": "PLSCI",
+      "number": "3010",
+      "title": "Biology and Management of Plant Diseases",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3210",
+      "subject": "PLSCI",
+      "number": "3210",
+      "title": "Soil and Crop Management for Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4660",
+      "subject": "PLSCI",
+      "number": "4660",
+      "title": "Soil Ecology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2440",
+      "subject": "PLSCI",
+      "number": "2440",
+      "title": "Integrated Pest Management",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}
