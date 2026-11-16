@@ -1,0 +1,224 @@
+{
+  "programId": "cornell-africana-minor-2026",
+  "description": "A student takes the Africana intro plus four upper-level ASRC courses, one of them at advanced level.",
+  "layerIds": [
+    "cornell-africana-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ASRC-1500",
+    "ASRC-2020",
+    "ASRC-2060",
+    "ASRC-2317",
+    "ASRC-3060"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASRC-1595",
+      "rowId": "area-courses",
+      "why": "A 1000-level ASRC course is below the 2000-level floor for the area courses."
+    },
+    {
+      "courseId": "ASRC-1595",
+      "rowId": "diaspora-topic-course",
+      "why": "A 1000-level ASRC course is below the 3000-level floor for the diaspora course."
+    },
+    {
+      "courseId": "ASRC-2680",
+      "rowId": "diaspora-topic-course",
+      "why": "A 2000-level ASRC course is below the 3000-level floor for the diaspora course."
+    },
+    {
+      "courseId": "ENGL-2010",
+      "rowId": "area-courses",
+      "why": "Only ASRC-subject courses count toward the minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ASRC-1500",
+      "subject": "ASRC",
+      "number": "1500",
+      "title": "Introduction to Africana Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-2020",
+      "subject": "ASRC",
+      "number": "2020",
+      "title": "Introduction to African Philosophy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-2060",
+      "subject": "ASRC",
+      "number": "2060",
+      "title": "Introduction to Africana Religions",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-2317",
+      "subject": "ASRC",
+      "number": "2317",
+      "title": "Histories of the African Diaspora",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HGS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-3060",
+      "subject": "ASRC",
+      "number": "3060",
+      "title": "Emotions, Religion, and Race",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "KCM-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-1595",
+      "subject": "ASRC",
+      "number": "1595",
+      "title": "African American History from 1865",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "LH-IL"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-2680",
+      "subject": "ASRC",
+      "number": "2680",
+      "title": "Introduction to African American Literature",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2010",
+      "subject": "ENGL",
+      "number": "2010",
+      "title": "Literatures in English I: From Old English to the New World",
+      "credits": 3,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-PRE"
+        }
+      ]
+    }
+  ]
+}

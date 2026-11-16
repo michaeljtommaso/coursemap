@@ -1,0 +1,108 @@
+{
+  "programId": "cornell-animal-science-minor-2026",
+  "description": "An agricultural sciences student counts two intro courses toward both the major and the minor, which is one more than the minor allows.",
+  "layerIds": [
+    "cornell-agricultural-sciences-bs-2026",
+    "cornell-animal-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "BIOAP-1100",
+    "ANSC-2500",
+    "ANSC-3100",
+    "ANSC-4140",
+    "ANSC-3410"
+  ],
+  "limit": {
+    "maxCourses": 1,
+    "maxCredits": 3
+  },
+  "shared": [
+    "BIOAP-1100",
+    "ANSC-2500"
+  ],
+  "heldBack": [
+    {
+      "courseId": "BIOAP-1100",
+      "from": "cornell-animal-science-minor-2026",
+      "why": "Its four credits exceed the three-credit allowance, so it stops counting for the minor and the major keeps it."
+    }
+  ],
+  "courses": [
+    {
+      "id": "BIOAP-1100",
+      "subject": "BIOAP",
+      "number": "1100",
+      "title": "Domestic Animal Biology",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-2500",
+      "subject": "ANSC",
+      "number": "2500",
+      "title": "Dairy Cattle Principles",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3100",
+      "subject": "ANSC",
+      "number": "3100",
+      "title": "Animal Welfare",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4140",
+      "subject": "ANSC",
+      "number": "4140",
+      "title": "Ethics and Animal Science",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "KCM-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3410",
+      "subject": "ANSC",
+      "number": "3410",
+      "title": "Biology of the Mammary Gland in Health and Disease",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "programId": "cornell-astronomy-minor-2026",
+  "description": "A student pairs three introductory astronomy courses with two upper-level ones to reach fifteen credits.",
+  "layerIds": [
+    "cornell-astronomy-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-physics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ASTRO-2211",
+    "ASTRO-2212",
+    "ASTRO-2290",
+    "ASTRO-3301",
+    "ASTRO-3303"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASTRO-1101",
+      "rowId": "minor-credits",
+      "why": "Introductory 1000-level course is not among the lower-level courses the minor accepts."
+    },
+    {
+      "courseId": "ASTRO-2201",
+      "rowId": "minor-credits",
+      "why": "Only four named 2000-level courses count; this other 2000-level course is not one of them."
+    },
+    {
+      "courseId": "ASTRO-2202",
+      "rowId": "minor-credits",
+      "why": "Only four named 2000-level courses count; this other 2000-level course is not one of them."
+    },
+    {
+      "courseId": "ASTRO-6525",
+      "rowId": "minor-credits",
+      "why": "Graduate-numbered course sits above the undergraduate range the minor draws on."
+    },
+    {
+      "courseId": "ASTRO-4940",
+      "rowId": "minor-credits",
+      "why": "Independent study counts only with the director's approval, which this student has not recorded."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ASTRO-2211",
+      "subject": "ASTRO",
+      "number": "2211",
+      "title": "Astronomy: Stars, Galaxies, and Cosmology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-2212",
+      "subject": "ASTRO",
+      "number": "2212",
+      "title": "The Solar System: Planets, Small Bodies and New Worlds",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-2290",
+      "subject": "ASTRO",
+      "number": "2290",
+      "title": "Relativity and Astrophysics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ASTRO-3301",
+      "subject": "ASTRO",
+      "number": "3301",
+      "title": "Exoplanets and Planetary Systems",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-3303",
+      "subject": "ASTRO",
+      "number": "3303",
+      "title": "Galaxies Across Cosmic Time",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-1101",
+      "subject": "ASTRO",
+      "number": "1101",
+      "title": "From New Worlds to Black Holes",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-2201",
+      "subject": "ASTRO",
+      "number": "2201",
+      "title": "The History of the Universe",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-2202",
+      "subject": "ASTRO",
+      "number": "2202",
+      "title": "A Spacecraft Tour of the Solar System: Science, Policy and Exploration",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "ASTRO-6525",
+      "subject": "ASTRO",
+      "number": "6525",
+      "title": "Multiwavelength Astronomical Techniques",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ASTRO-4940",
+      "subject": "ASTRO",
+      "number": "4940",
+      "title": "Independent Study in Astronomy",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}

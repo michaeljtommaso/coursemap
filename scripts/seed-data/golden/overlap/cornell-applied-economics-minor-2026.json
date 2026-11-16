@@ -1,0 +1,148 @@
+{
+  "programId": "cornell-applied-economics-minor-2026",
+  "description": "An economics major adds the applied economics minor, and the minor gives up one shared course because the pair may overlap by only six credits.",
+  "layerIds": [
+    "cornell-economics-ba-2026",
+    "cornell-applied-economics-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ECON-1110",
+    "ECON-1120",
+    "ECON-3030",
+    "AEM-4110",
+    "AEM-4500",
+    "AEM-4510",
+    "AEM-4100"
+  ],
+  "limit": {
+    "maxCredits": 6
+  },
+  "shared": [
+    "ECON-1110",
+    "ECON-1120",
+    "ECON-3030"
+  ],
+  "heldBack": [
+    {
+      "courseId": "ECON-3030",
+      "from": "cornell-applied-economics-minor-2026",
+      "why": "The three shared courses total nine credits, over the six allowed, so the minor gives up the intermediate micro course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-1120",
+      "subject": "ECON",
+      "number": "1120",
+      "title": "Introductory Macroeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ECON-3030",
+      "subject": "ECON",
+      "number": "3030",
+      "title": "Intermediate Microeconomic Theory",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4110",
+      "subject": "AEM",
+      "number": "4110",
+      "title": "Introduction to Econometrics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-4500",
+      "subject": "AEM",
+      "number": "4500",
+      "title": "Resource Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4510",
+      "subject": "AEM",
+      "number": "4510",
+      "title": "Environmental Economics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "OCE-IL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-4100",
+      "subject": "AEM",
+      "number": "4100",
+      "title": "Microeconomics for Management and Consulting",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

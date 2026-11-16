@@ -1,0 +1,158 @@
+{
+  "id": "cornell-astronomy-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Astronomy (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-astronomy-minor-2026",
+  "rows": [
+    {
+      "id": "minor-credits",
+      "label": "15 credits of qualifying astronomy courses, 6 of them at the 3000 level or above",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts the four named 2000-level courses and ASTRO 3000-4999 courses. 1000-level courses, graduate-level (5000+) courses and other 2000-level courses are not counted (the page lists only the four). ASTRO 4940 counts only if the student answers yes to the approval question, up to 4 credits, and is not counted toward the 6 upper-level credits (stricter).",
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "ASTRO-2211",
+              "ASTRO-2212",
+              "ASTRO-2290",
+              "ASTRO-2299"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "subject": [
+                  "ASTRO"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "ASTRO-4940"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "ASTRO-4940"
+                ]
+              },
+              {
+                "answered": "approvedFor:cornell-astronomy-minor-2026/minor-credits"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "ASTRO"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000,
+                  "max": 4999
+                }
+              },
+              {
+                "not": {
+                  "course": [
+                    "ASTRO-4940"
+                  ]
+                }
+              }
+            ]
+          },
+          "minCredits": 6
+        },
+        {
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "ASTRO-4940"
+                ]
+              },
+              {
+                "answered": "approvedFor:cornell-astronomy-minor-2026/minor-credits"
+              }
+            ]
+          },
+          "maxCredits": 4
+        }
+      ]
+    },
+    {
+      "id": "grades",
+      "label": "Minimum grades: B- in 1000-2000 level courses, C- in 3000+ courses",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Apply for the minor by meeting the Astronomy Director of Undergraduate Studies",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "eligibility",
+      "label": "Open to undergraduates who are not Astronomy majors",
+      "group": "Standards",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/astronomy-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "quote": "Up to 4 credits of ASTRO 4940 Independent Study in Astronomy may be applied with approval of the Astronomy Director of Undergraduate Studies",
+      "type": "approvedFor",
+      "row": "minor-credits",
+      "courses": {
+        "course": [
+          "ASTRO-4940"
+        ]
+      },
+      "approver": "dus"
+    }
+  ]
+}

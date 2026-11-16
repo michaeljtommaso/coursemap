@@ -1,0 +1,149 @@
+{
+  "programId": "cornell-actuarial-science-minor-2026",
+  "description": "A statistics major also takes the actuarial minor, and courses both programs count are held back from the minor.",
+  "layerIds": [
+    "cornell-statistics-data-science-ba-2026",
+    "cornell-actuarial-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-statistics-data-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "STSCI-3090",
+    "STSCI-3080",
+    "STSCI-4090",
+    "STSCI-3740",
+    "STSCI-4550"
+  ],
+  "limit": {
+    "maxCourses": 0
+  },
+  "shared": [
+    "STSCI-3090",
+    "STSCI-3080",
+    "STSCI-4090",
+    "STSCI-3740",
+    "STSCI-4550"
+  ],
+  "heldBack": [
+    {
+      "courseId": "STSCI-3090",
+      "from": "cornell-actuarial-science-minor-2026",
+      "why": "The minor allows no course shared with this statistics major, so the minor gives it up."
+    },
+    {
+      "courseId": "STSCI-3080",
+      "from": "cornell-actuarial-science-minor-2026",
+      "why": "The minor allows no course shared with this statistics major, so the minor gives it up."
+    },
+    {
+      "courseId": "STSCI-4090",
+      "from": "cornell-actuarial-science-minor-2026",
+      "why": "The minor allows no course shared with this statistics major, so the minor gives it up."
+    },
+    {
+      "courseId": "STSCI-3740",
+      "from": "cornell-actuarial-science-minor-2026",
+      "why": "The minor allows no course shared with this statistics major, so the minor gives it up."
+    },
+    {
+      "courseId": "STSCI-4550",
+      "from": "cornell-actuarial-science-minor-2026",
+      "why": "The minor allows no course shared with this statistics major, so the minor gives it up."
+    }
+  ],
+  "courses": [
+    {
+      "id": "STSCI-3090",
+      "subject": "STSCI",
+      "number": "3090",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "STSCI-3080",
+      "subject": "STSCI",
+      "number": "3080",
+      "title": "Probability Models and Inference",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-4090",
+      "subject": "STSCI",
+      "number": "4090",
+      "title": "Theory of Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3740",
+      "subject": "STSCI",
+      "number": "3740",
+      "title": "Data Mining and Machine Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-4550",
+      "subject": "STSCI",
+      "number": "4550",
+      "title": "Applied Time Series Analysis",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    }
+  ]
+}

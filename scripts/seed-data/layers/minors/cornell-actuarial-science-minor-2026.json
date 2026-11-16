@@ -1,0 +1,194 @@
+{
+  "id": "cornell-actuarial-science-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Actuarial Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-actuarial-science-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 0,
+      "with": [
+        "cornell-biometry-statistics-bs",
+        "cornell-statistics-data-science-ba"
+      ]
+    }
+  },
+  "rows": [
+    {
+      "id": "financial-math",
+      "label": "Financial math for actuaries (STSCI 3090)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/actuarial-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "STSCI-3090"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "probability",
+      "label": "One probability course from the approved five",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/actuarial-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-3110",
+              "ECON-3130",
+              "MATH-4710",
+              "ORIE-3500",
+              "STSCI-3080"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "electives",
+      "label": "Three electives from the approved list (one of the investments/derivatives alternatives at most)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/actuarial-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page writes AEM 4210, HADM 3230 and AEM 4670 as alternatives of one another, so at most one of the three counts here (the stricter reading).",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AEM-4210",
+              "HADM-3230",
+              "AEM-4670",
+              "CS-3780",
+              "STSCI-3740",
+              "STSCI-4090",
+              "STSCI-4270",
+              "STSCI-4550",
+              "STSCI-4750",
+              "ORIE-3741",
+              "ORIE-4630"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "AEM-4210",
+              "HADM-3230",
+              "AEM-4670"
+            ]
+          },
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "grade-c-or-better",
+      "label": "Earn a C or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/actuarial-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade-at-cornell",
+      "label": "Take every qualifying course at Cornell for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/actuarial-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "minimum-credits",
+      "label": "Reach at least 15 credits across the five courses",
+      "group": "Totals",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/actuarial-science-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the minor application by the deadline (May 31 or December 31, no late forms)",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/actuarial-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "stat-major-overlap",
+      "label": "Statistics-type majors: no overlap of the three electives and STSCI 3090 with major requirements (probability may overlap)",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/actuarial-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board holds back every shared course with these two majors, which is stricter than the page (probability courses may be shared).",
+      "kind": "confirm"
+    }
+  ]
+}

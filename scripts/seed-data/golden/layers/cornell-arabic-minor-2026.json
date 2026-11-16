@@ -1,0 +1,191 @@
+{
+  "programId": "cornell-arabic-minor-2026",
+  "description": "A student finishes three upper Arabic language courses plus one Arabic-taught elective and the Quranic Arabic elective.",
+  "layerIds": [
+    "cornell-arabic-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ARAB-2202",
+    "ARAB-3201",
+    "ARAB-3202",
+    "ARAB-4203",
+    "ARAB-2204"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ARAB-2204",
+      "rowId": "elective-group-a",
+      "why": "The Quranic course is taught in English, so it cannot fill the Arabic-taught elective."
+    },
+    {
+      "courseId": "ARAB-4203",
+      "rowId": "elective-group-b",
+      "why": "Only the Quranic Arabic course fills the English-taught elective."
+    },
+    {
+      "courseId": "ARAB-1203",
+      "rowId": "core-arab-2202",
+      "why": "An intermediate course from the prerequisite sequence is not the required second-year course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ARAB-2202",
+      "subject": "ARAB",
+      "number": "2202",
+      "title": "Intermediate Arabic II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "OCL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ARAB-3201",
+      "subject": "ARAB",
+      "number": "3201",
+      "title": "Advanced Arabic I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "OCL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ARAB-3202",
+      "subject": "ARAB",
+      "number": "3202",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ARAB-4203",
+      "subject": "ARAB",
+      "number": "4203",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ARAB-2204",
+      "subject": "ARAB",
+      "number": "2204",
+      "title": "Introduction to Quranic Arabic",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFAREA"
+        },
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "ARAB-1203",
+      "subject": "ARAB",
+      "number": "1203",
+      "title": "Intermediate Arabic I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "OCL-IL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    }
+  ]
+}

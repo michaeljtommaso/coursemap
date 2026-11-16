@@ -176,6 +176,11 @@
     "offeredBy": "Arts & Sciences",
     "notOpenTo": ["cornell-philosophy-ba"]
   },
+  "cornell-physics-minor-2026": {
+    "shortName": "Physics minor",
+    "offeredBy": "Arts & Sciences",
+    "notOpenTo": ["cornell-physics-ba"]
+  },
   "cornell-policy-analysis-management-minor-2026": {
     "shortName": "PAM minor",
     "offeredBy": "Brooks School",

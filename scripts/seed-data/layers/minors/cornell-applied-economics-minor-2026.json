@@ -1,0 +1,452 @@
+{
+  "id": "cornell-applied-economics-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Applied Economics (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-applied-economics-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCredits": 6
+    },
+    "minors": {
+      "maxCredits": 6
+    }
+  },
+  "rows": [
+    {
+      "id": "foundation-micro",
+      "label": "Foundation: introductory microeconomics",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1110"
+        ]
+      }
+    },
+    {
+      "id": "foundation-macro",
+      "label": "Foundation: introductory macroeconomics",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ECON-1120"
+        ]
+      }
+    },
+    {
+      "id": "core-theory",
+      "label": "Core: managerial economics (Economics majors may swap in intermediate microeconomic theory, Public Policy majors intermediate microeconomics)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Core Requirements"
+      },
+      "note": "The two swaps count only when the plan includes that major.",
+      "kind": "seat",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "AEM-2600"
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "ECON-3030"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-economics-ba"
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "course": [
+                  "PUBPOL-2000"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-public-policy-ba"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "core-topics",
+      "label": "Core: applied economics electives from the approved list (three courses; four for Economics majors)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Core Requirements"
+      },
+      "note": "Economics majors take one more elective than everyone else; the two options split students by major so each sees only the count that applies.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "topics-three",
+          "label": "Three electives from the approved list (students outside the Economics major)",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+            "anchor": "Core Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "AEM-4100",
+                  "AEM-4110",
+                  "AEM-4140",
+                  "AEM-4150",
+                  "AEM-4160",
+                  "AEM-4190",
+                  "AEM-4210",
+                  "AEM-4300",
+                  "AEM-4315",
+                  "AEM-4350",
+                  "AEM-4420",
+                  "AEM-4450",
+                  "AEM-4485",
+                  "AEM-4500",
+                  "AEM-4510",
+                  "AEM-4545",
+                  "AEM-4550",
+                  "AEM-4880"
+                ]
+              },
+              {
+                "not": {
+                  "program": [
+                    "cornell-economics-ba"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 3,
+          "requiredCredits": 9
+        },
+        {
+          "id": "topics-four-econ",
+          "label": "Four electives from the approved list (Economics majors)",
+          "group": "Core",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+            "anchor": "Core Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "AEM-4100",
+                  "AEM-4110",
+                  "AEM-4140",
+                  "AEM-4150",
+                  "AEM-4160",
+                  "AEM-4190",
+                  "AEM-4210",
+                  "AEM-4300",
+                  "AEM-4315",
+                  "AEM-4350",
+                  "AEM-4420",
+                  "AEM-4450",
+                  "AEM-4485",
+                  "AEM-4500",
+                  "AEM-4510",
+                  "AEM-4545",
+                  "AEM-4550",
+                  "AEM-4880"
+                ]
+              },
+              {
+                "program": [
+                  "cornell-economics-ba"
+                ]
+              }
+            ]
+          },
+          "requiredCourses": 4,
+          "requiredCredits": 12
+        }
+      ]
+    },
+    {
+      "id": "credits-cornell",
+      "label": "At least 9 of the minor's credits earned at Cornell (a course can also count toward the business-college credits)",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Re-counts minor-list courses on the plan, leaving out every exam and transfer credit; the requirement rows above decide which courses the minor uses.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "ECON-1110",
+                  "ECON-1120"
+                ]
+              },
+              {
+                "course": [
+                  "AEM-2600"
+                ]
+              },
+              {
+                "course": [
+                  "AEM-4100",
+                  "AEM-4110",
+                  "AEM-4140",
+                  "AEM-4150",
+                  "AEM-4160",
+                  "AEM-4190",
+                  "AEM-4210",
+                  "AEM-4300",
+                  "AEM-4315",
+                  "AEM-4350",
+                  "AEM-4420",
+                  "AEM-4450",
+                  "AEM-4485",
+                  "AEM-4500",
+                  "AEM-4510",
+                  "AEM-4545",
+                  "AEM-4550",
+                  "AEM-4880"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "ECON-3030"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-economics-ba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "PUBPOL-2000"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-public-policy-ba"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCredits": 9
+    },
+    {
+      "id": "credits-jcb",
+      "label": "At least 9 of the minor's credits from SC Johnson College courses (codes AEM, HADM, NBA, NCC)",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Re-counts minor-list courses on the plan with those codes; the same course can also count toward the Cornell credits.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "course": [
+                  "ECON-1110",
+                  "ECON-1120"
+                ]
+              },
+              {
+                "course": [
+                  "AEM-2600"
+                ]
+              },
+              {
+                "course": [
+                  "AEM-4100",
+                  "AEM-4110",
+                  "AEM-4140",
+                  "AEM-4150",
+                  "AEM-4160",
+                  "AEM-4190",
+                  "AEM-4210",
+                  "AEM-4300",
+                  "AEM-4315",
+                  "AEM-4350",
+                  "AEM-4420",
+                  "AEM-4450",
+                  "AEM-4485",
+                  "AEM-4500",
+                  "AEM-4510",
+                  "AEM-4545",
+                  "AEM-4550",
+                  "AEM-4880"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "ECON-3030"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-economics-ba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "course": [
+                      "PUBPOL-2000"
+                    ]
+                  },
+                  {
+                    "program": [
+                      "cornell-public-policy-ba"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "subject": [
+              "AEM",
+              "HADM",
+              "NBA",
+              "NCC"
+            ]
+          }
+        ]
+      },
+      "requiredCredits": 9
+    },
+    {
+      "id": "residency-check",
+      "label": "Check that at least 9 of the minor's credits were taken at Cornell and at least 9 are SC Johnson College courses",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Backs up the two credit rows, which count every minor-list course on the plan, not only those the requirement rows use.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (S/U and SX/UX are not accepted)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Check the minor totals at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "foundation-first",
+      "label": "Take the two foundation courses before the core courses",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "signup-eligibility",
+      "label": "Sign up between your first year and your sixth semester; check your major is not in Dyson and does not share two or more core courses with the minor",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Eligibility"
+      },
+      "note": "The Dyson major is barred in the minor index; the unnamed overlap rule cannot be listed, so the sharing cap approximates it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "unique-credits",
+      "label": "Keep at least 12 of the minor's credits outside your major's core requirements; some majors need an extra course to get there",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/applied-economics-minor/",
+        "anchor": "Academic Policies"
+      },
+      "note": "The real rule covers only the major's core. The sharing cap encodes a stricter 6 credits of overlap with any major or other minor.",
+      "kind": "confirm"
+    }
+  ]
+}

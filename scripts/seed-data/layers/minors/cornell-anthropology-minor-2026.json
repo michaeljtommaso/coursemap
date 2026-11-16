@@ -1,0 +1,165 @@
+{
+  "id": "cornell-anthropology-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Anthropology (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-anthropology-minor-2026",
+  "rows": [
+    {
+      "id": "anthropology-courses",
+      "label": "Five anthropology courses of 3+ credits: one at the intro level, one at 3000 level, one at 4000 level, any two more",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts ANTHR courses numbered 1000 to 4999 with fixed credits of 3 or more. First-year writing seminars (by title), independent study, directed study, variable-credit courses and all exam credit are held out (stricter than the page). At most one transfer course counts. The board cannot tell a 4000-level seminar from other 4000-level courses, so it requires a 4000-level course and the seminar reminder asks you to confirm it is a seminar.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ANTHR"
+            ]
+          },
+          {
+            "number": {
+              "min": 1000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "variableCredit": true
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Independent Study"
+            }
+          },
+          {
+            "not": {
+              "titleStartsWith": "Directed Study"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "min": 1000,
+              "max": 2999
+            }
+          },
+          "label": "At least one intro-level (1000 or 2000) course",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 3000,
+              "max": 3999
+            }
+          },
+          "label": "At least one 3000-level course",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "number": {
+              "min": 4000,
+              "max": 4999
+            }
+          },
+          "label": "At least one 4000-level course (a seminar)",
+          "minCourses": 1
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer"
+            ]
+          },
+          "label": "At most one transfer course",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "seminar-4000",
+      "label": "Make sure your 4000-level course is a seminar",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "cornell-residency",
+      "label": "Take at least three of the five courses at Cornell; at most one may be study abroad",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board allows one transfer course. It cannot see study abroad, so count that one yourself.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Take every course for a letter grade and earn C- or better in each (no S/U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "course-exclusions",
+      "label": "Anthropology courses should be fixed 3+ credit; independent study and first-year writing seminars are not counted by the board",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page does not say whether independent study or variable-credit courses count; the board leaves them out. If the department accepts one, count it by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "As an undergraduate, apply by March 31 before you graduate; give the undergraduate director your transcript and a filled-out course plan form",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/anthropology-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

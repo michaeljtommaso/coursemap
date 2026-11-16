@@ -1,0 +1,240 @@
+{
+  "programId": "cornell-creative-writing-minor-2026",
+  "description": "A fictional economics major takes the four workshop courses and one period literature course to finish this minor.",
+  "layerIds": [
+    "cornell-creative-writing-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ENGL-2800",
+    "ENGL-3820",
+    "ENGL-3840",
+    "ENGL-4800",
+    "ENGL-3120"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ENGL-1105",
+      "rowId": "literature-elective",
+      "why": "A first-year writing seminar cannot be used for the minor."
+    },
+    {
+      "courseId": "ENGL-2603",
+      "rowId": "literature-elective",
+      "why": "A one-credit course falls below the three-credit floor."
+    },
+    {
+      "courseId": "ENGL-4801",
+      "rowId": "literature-elective",
+      "why": "A writing workshop is not a literature or cultural studies elective."
+    },
+    {
+      "courseId": "ENGL-4950",
+      "rowId": "literature-elective",
+      "why": "Independent study needs department approval, which the board cannot see."
+    },
+    {
+      "courseId": "ENGL-7800",
+      "rowId": "literature-elective",
+      "why": "A graduate MFA seminar sits above the undergraduate range."
+    },
+    {
+      "courseId": "MATH-1910",
+      "rowId": "literature-elective",
+      "why": "A mathematics course is neither English nor cross-listed with it."
+    },
+    {
+      "courseId": "ENGL-3120",
+      "rowId": "advanced-workshop",
+      "why": "A literature course is not an advanced workshop."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ENGL-2800",
+      "subject": "ENGL",
+      "number": "2800",
+      "title": "Creative Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3820",
+      "subject": "ENGL",
+      "number": "3820",
+      "title": "Narrative Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3840",
+      "subject": "ENGL",
+      "number": "3840",
+      "title": "Poetry Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-4800",
+      "subject": "ENGL",
+      "number": "4800",
+      "title": "Advanced Poetry Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-3120",
+      "subject": "ENGL",
+      "number": "3120",
+      "title": "Beowulf",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-1105",
+      "subject": "ENGL",
+      "number": "1105",
+      "title": "FWS: Writing and Sexual Politics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-2603",
+      "subject": "ENGL",
+      "number": "2603",
+      "title": "The Novels of Toni Morrison",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ENGL-4801",
+      "subject": "ENGL",
+      "number": "4801",
+      "title": "Advanced Narrative Writing",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-4950",
+      "subject": "ENGL",
+      "number": "4950",
+      "title": "Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "ENGL-7800",
+      "subject": "ENGL",
+      "number": "7800",
+      "title": "MFA Seminar: Poetry",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MATH-1910",
+      "subject": "MATH",
+      "number": "1910",
+      "title": "Calculus for Engineers",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "MQL-AG"
+        },
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    }
+  ]
+}

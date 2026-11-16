@@ -1,0 +1,277 @@
+{
+  "programId": "cornell-american-studies-minor-2026",
+  "description": "A student takes the intro, one upper-level seminar and three more American Studies courses at 2000 level or above.",
+  "layerIds": [
+    "cornell-american-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-american-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "AMST-1101",
+    "AMST-2365",
+    "AMST-2665",
+    "AMST-3430",
+    "AMST-4011"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "AMST-1115",
+      "rowId": "other-courses",
+      "why": "A 1000-level course is below the 2000 floor for the three further courses."
+    },
+    {
+      "courseId": "AMST-1985",
+      "rowId": "other-courses",
+      "why": "A 1000-level course is below the 2000 floor for the three further courses."
+    },
+    {
+      "courseId": "AMST-2001",
+      "rowId": "other-courses",
+      "why": "A one-credit course is too small to count toward the minor's 15 credits."
+    },
+    {
+      "courseId": "AMST-3617",
+      "rowId": "other-courses",
+      "why": "A one-credit course is too small to count toward the minor's 15 credits."
+    },
+    {
+      "courseId": "AMST-4993",
+      "rowId": "other-courses",
+      "why": "Honors tutorials are left out of the pool."
+    },
+    {
+      "courseId": "AMST-4993",
+      "rowId": "seminar-4000",
+      "why": "An honors tutorial is not a seminar."
+    },
+    {
+      "courseId": "AMST-3445",
+      "rowId": "seminar-4000",
+      "why": "A 3000-level course is below the 4000-level seminar requirement."
+    },
+    {
+      "courseId": "AMST-2365",
+      "rowId": "seminar-4000",
+      "why": "A 2000-level course is below the 4000-level seminar requirement."
+    },
+    {
+      "courseId": "AMST-1115",
+      "rowId": "amst-1101",
+      "why": "Only the named introduction fills the required-course row."
+    }
+  ],
+  "courses": [
+    {
+      "id": "AMST-1101",
+      "subject": "AMST",
+      "number": "1101",
+      "title": "Introduction to American Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "D-HA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2365",
+      "subject": "AMST",
+      "number": "2365",
+      "title": "Race, Racism, and Public Policy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2665",
+      "subject": "AMST",
+      "number": "2665",
+      "title": "The American Revolutionary Era",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HPE"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-3430",
+      "subject": "AMST",
+      "number": "3430",
+      "title": "History of the U.S. Civil War and Reconstruction",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-4011",
+      "subject": "AMST",
+      "number": "4011",
+      "title": "Diversity, Racism, Democracy",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "AMST-1115",
+      "subject": "AMST",
+      "number": "1115",
+      "title": "Introduction to American Government and Politics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "GOVT-AM"
+        }
+      ]
+    },
+    {
+      "id": "AMST-1985",
+      "subject": "AMST",
+      "number": "1985",
+      "title": "American History from 1500 to 1800",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HPE"
+        },
+        {
+          "value": "HIST-HNA"
+        }
+      ]
+    },
+    {
+      "id": "AMST-2001",
+      "subject": "AMST",
+      "number": "2001",
+      "title": "The First American University",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "AMST-3617",
+      "subject": "AMST",
+      "number": "3617",
+      "title": "Cornell Hip-Hop Collective",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "AMST-4993",
+      "subject": "AMST",
+      "number": "4993",
+      "title": "Honors Essay Tutorial I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "AMST-3445",
+      "subject": "AMST",
+      "number": "3445",
+      "title": "Inequality in U.S. Higher Education",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "ICE-IL"
+        },
+        {
+          "value": "QP-IL"
+        }
+      ]
+    }
+  ]
+}

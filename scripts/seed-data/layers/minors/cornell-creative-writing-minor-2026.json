@@ -1,0 +1,335 @@
+{
+  "id": "cornell-creative-writing-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Creative Writing (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-creative-writing-minor-2026",
+  "rows": [
+    {
+      "id": "intro-creative-writing",
+      "label": "Introductory creative writing course (ENGL 2800)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Must be taken at Cornell; transfer and exam credit are not counted.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ENGL-2800"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "narrative-writing",
+      "label": "Narrative writing workshop (ENGL 3820)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Must be taken at Cornell; transfer and exam credit are not counted.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ENGL-3820"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "poetry-writing",
+      "label": "Poetry writing workshop (ENGL 3840)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Must be taken at Cornell; transfer and exam credit are not counted.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ENGL-3840"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "advanced-workshop",
+      "label": "Advanced workshop: poetry (ENGL 4800) or narrative (ENGL 4801)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Either advanced course satisfies this; only one is needed. Transfer and exam credit are not counted.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ENGL-4800",
+              "ENGL-4801"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "literature-elective",
+      "label": "One literature or cultural studies elective (3 to 4 credits, not a writing workshop)",
+      "group": "Elective",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts ENGL courses and cross-listings worth 3 or more credits. Left out: writing workshops recognised by title, first-year writing seminars, independent, directed and honors courses (they need approval), 7000-level MFA-program courses, and all transfer and exam credit. Courses of 5 or more credits and cross-listed workshops the title match misses are yours to check.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ENGL"
+            ],
+            "crossListed": true
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "number": {
+              "max": 6999
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "titleStartsWith": "Creative"
+                },
+                {
+                  "titleStartsWith": "Expository Writing"
+                },
+                {
+                  "titleStartsWith": "Narrative Writing"
+                },
+                {
+                  "titleStartsWith": "Poetry Writing"
+                },
+                {
+                  "titleStartsWith": "Advanced Poetry"
+                },
+                {
+                  "titleStartsWith": "Advanced Narrative"
+                },
+                {
+                  "titleStartsWith": "Advanced Writing"
+                },
+                {
+                  "titleStartsWith": "The Personal Voice"
+                },
+                {
+                  "titleStartsWith": "Graduate Creative"
+                },
+                {
+                  "titleStartsWith": "MFA Seminar"
+                },
+                {
+                  "titleStartsWith": "Article Writing"
+                },
+                {
+                  "titleStartsWith": "Reading for Writers"
+                },
+                {
+                  "titleStartsWith": "Pedagogical"
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "anyOf": [
+                {
+                  "titleStartsWith": "FWS"
+                },
+                {
+                  "titleStartsWith": "Honors Essay"
+                },
+                {
+                  "titleStartsWith": "Independent Study"
+                },
+                {
+                  "titleStartsWith": "Directed Study"
+                },
+                {
+                  "titleStartsWith": "Group Study"
+                },
+                {
+                  "titleStartsWith": "Placement Seminar"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 3,
+      "limits": [
+        {
+          "rule": {
+            "number": {
+              "max": 1999
+            }
+          },
+          "label": "At most one 1000-level course",
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "elective-not-workshop",
+      "label": "Check that your elective is a literature or cultural studies course and not a writing workshop",
+      "group": "Elective",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board excludes workshops it can recognise by title. A cross-listed workshop with an unusual title, or a reading-for-writers style course, may slip through or be held out; confirm by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "credit-size",
+      "label": "Take each of the five courses as a full-semester course for 3 or 4 credits (15 credits at least)",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Notes on Credits"
+      },
+      "note": "Four required courses at 3 credits plus a 3-4 credit elective reach the 15-credit minimum. The 4-credit ceiling and full-semester length are not checked.",
+      "kind": "confirm"
+    },
+    {
+      "id": "no-fws",
+      "label": "Do not count a first-year writing seminar toward the minor",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Notes on Credits"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "outside-course-approval",
+      "label": "Department approval is needed to count one 2000+ outside course on literary study (transfer, abroad, independent study, other Cornell department)",
+      "group": "Coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Notes on Credits"
+      },
+      "note": "The board counts no transfer, exam, independent-study or directed-study course. If the department approves one such course, count it by hand.",
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (no S/U or SX/UX)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Notes on Credits"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c",
+      "label": "Finish every minor course with a C or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Notes on Credits"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the Intent to Minor form once your courses are settled, and no later than the end of week seven of your final semester",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/creative-writing-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

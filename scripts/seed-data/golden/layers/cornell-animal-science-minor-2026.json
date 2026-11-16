@@ -1,0 +1,139 @@
+{
+  "programId": "cornell-animal-science-minor-2026",
+  "description": "A student takes four animal science courses worth fifteen credits, one of them a core course.",
+  "layerIds": [
+    "cornell-animal-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ANSC-2120",
+    "ANSC-3510",
+    "ANSC-4110",
+    "ANSC-3100"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ANSC-4970",
+      "rowId": "animal-science-credits",
+      "why": "Individual study falls in the special studies numbers, which are held out of the animal science credits."
+    },
+    {
+      "courseId": "ANSC-4990",
+      "rowId": "animal-science-credits",
+      "why": "Undergraduate research is a special studies course and adds no animal science credit."
+    },
+    {
+      "courseId": "BIOEE-1780",
+      "rowId": "animal-science-credits",
+      "why": "A general biology course outside the ANSC code and BIOAP 1100 is not an animal science course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ANSC-2120",
+      "subject": "ANSC",
+      "number": "2120",
+      "title": "Animal Nutrition",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3510",
+      "subject": "ANSC",
+      "number": "3510",
+      "title": "Dairy Herd Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-4110",
+      "subject": "ANSC",
+      "number": "4110",
+      "title": "Integrated Cattle Nutrition",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "ANSC-3100",
+      "subject": "ANSC",
+      "number": "3100",
+      "title": "Animal Welfare",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4970",
+      "subject": "ANSC",
+      "number": "4970",
+      "title": "Individual Study in Animal Science",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ANSC-4990",
+      "subject": "ANSC",
+      "number": "4990",
+      "title": "Undergraduate Research in Animal Science",
+      "credits": 1,
+      "creditsMax": 6,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "BIOEE-1780",
+      "subject": "BIOEE",
+      "number": "1780",
+      "title": "An Introduction to Evolutionary Biology and Diversity",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "BIO-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    }
+  ]
+}

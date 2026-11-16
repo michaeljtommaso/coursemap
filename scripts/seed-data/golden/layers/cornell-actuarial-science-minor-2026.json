@@ -1,0 +1,157 @@
+{
+  "programId": "cornell-actuarial-science-minor-2026",
+  "description": "A student finishes the finance-math course, one probability course and three approved electives for the actuarial minor.",
+  "layerIds": [
+    "cornell-actuarial-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-statistics-data-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "STSCI-3090",
+    "ECON-3130",
+    "CS-3780",
+    "STSCI-4270",
+    "ORIE-4630"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "STSCI-3100",
+      "rowId": "electives",
+      "why": "Not on the elective list."
+    },
+    {
+      "courseId": "MATH-4720",
+      "rowId": "electives",
+      "why": "Theory of statistics under another number is not listed."
+    },
+    {
+      "courseId": "STSCI-3100",
+      "rowId": "probability",
+      "why": "Not one of the five probability courses."
+    },
+    {
+      "courseId": "MATH-4720",
+      "rowId": "financial-math",
+      "why": "Only STSCI 3090 satisfies the finance-math seat."
+    }
+  ],
+  "courses": [
+    {
+      "id": "STSCI-3090",
+      "subject": "STSCI",
+      "number": "3090",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 4,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ECON-3130",
+      "subject": "ECON",
+      "number": "3130",
+      "title": "Probability and Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "CS-3780",
+      "subject": "CS",
+      "number": "3780",
+      "title": "Introduction to Machine Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-4270",
+      "subject": "STSCI",
+      "number": "4270",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 0,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "ORIE-4630",
+      "subject": "ORIE",
+      "number": "4630",
+      "title": "Operations Research Tools for Financial Engineering",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "STSCI-3100",
+      "subject": "STSCI",
+      "number": "3100",
+      "title": "Statistical Sampling",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        },
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "MATH-4720",
+      "subject": "MATH",
+      "number": "4720",
+      "title": "Theory of Statistics",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    }
+  ]
+}

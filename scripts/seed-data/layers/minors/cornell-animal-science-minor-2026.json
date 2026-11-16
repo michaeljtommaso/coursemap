@@ -1,0 +1,102 @@
+{
+  "id": "cornell-animal-science-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Animal Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-animal-science-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 1,
+      "maxCredits": 3
+    },
+    "minors": "none"
+  },
+  "rows": [
+    {
+      "id": "animal-science-credits",
+      "label": "15 credits of animal science courses (ANSC and cross-listed, plus BIOAP 1100), including a core course",
+      "group": "Animal science courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The core requirement is a limit inside this pool: one of the four core courses must be among the counted courses, and it also counts toward the 15 credits. Special studies are held out (the ANSC 4960-4999 numbers, which hold the individual study, research and teaching courses the animal science major layer treats as special studies); see the confirm row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "subject": [
+                  "ANSC"
+                ],
+                "crossListed": true
+              },
+              {
+                "course": [
+                  "BIOAP-1100"
+                ]
+              }
+            ]
+          },
+          {
+            "not": {
+              "allOf": [
+                {
+                  "subject": [
+                    "ANSC"
+                  ],
+                  "crossListed": true
+                },
+                {
+                  "number": {
+                    "min": 4960,
+                    "max": 4999
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "BIOAP-1100",
+              "ANSC-2400",
+              "ANSC-2120",
+              "ANSC-2210"
+            ]
+          },
+          "label": "At least one core course",
+          "minCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "special-studies-check",
+      "label": "Special studies courses do not count toward the animal science credits; make sure none of your courses is one",
+      "group": "Animal science courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page does not list which courses are special studies; the ANSC 4960-4999 numbers held out of the pool are the individual study, research and teaching numbers. Confirm with the program coordinator if another course you count is special studies.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor before you graduate through the Undergraduate Program Coordinator (no prerequisite courses needed)",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/animal-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

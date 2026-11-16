@@ -1,0 +1,120 @@
+{
+  "id": "cornell-africana-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Africana Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-africana-minor-2026",
+  "rows": [
+    {
+      "id": "intro-course",
+      "label": "Introduction to Africana Studies (ASRC 1500)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ASRC-1500"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "area-courses",
+      "label": "Three ASRC courses at the 2000 level or above, one each in the African, African American and Caribbean areas",
+      "group": "Area courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board checks the ASRC subject and level only; the area of each course is confirmed separately.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ASRC"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0
+    },
+    {
+      "id": "area-categories",
+      "label": "Confirm the three area courses cover the African, African American and Caribbean areas, one each",
+      "group": "Area courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "diaspora-topic-course",
+      "label": "One ASRC course at the 3000 level or above on a diaspora topic",
+      "group": "Diaspora topic",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board checks the ASRC subject and level only; the topic is confirmed separately. This course is in addition to the three area courses.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ASRC"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "diaspora-topic-check",
+      "label": "Confirm this course is on history, literature, politics, popular culture, race and inequality, or gender and sexuality in the African diaspora",
+      "group": "Diaspora topic",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c-or-better",
+      "label": "Earn a C or better in every course counted toward the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "advisor-dus",
+      "label": "Plan your minor with the director of undergraduate studies",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/africana-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

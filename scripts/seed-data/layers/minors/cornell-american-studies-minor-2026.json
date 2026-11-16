@@ -1,0 +1,193 @@
+{
+  "id": "cornell-american-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "American Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-american-studies-minor-2026",
+  "rows": [
+    {
+      "id": "amst-1101",
+      "label": "Take the required introductory course, Introduction to American Studies",
+      "group": "Required course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-minor/",
+        "anchor": "Coursework Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AMST-1101"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "seminar-4000",
+      "label": "Take one 4000-level American Studies seminar",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-minor/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "The page does not say which 4000-level courses are seminars. The board counts AMST-coded courses numbered 4000-4999 of at least 3 credits, leaving out the honors tutorials; the confirm row below covers the seminar format. Only AMST-coded courses count here so the discipline cap on the other courses stays easy to check.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "AMST"
+            ]
+          },
+          {
+            "number": {
+              "min": 4000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "titleStartsWith": "Honors Essay Tutorial"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "other-courses",
+      "label": "Take three more American Studies courses at the 2000 level or above (pre-1900, diversity and an elective)",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-minor/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "Five courses minus the intro and the seminar leaves three, all 2000+ (the one allowed course below 2000 is the intro). Cross-listed courses count, but at most two may carry a non-AMST code (stricter than the two-per-discipline cap, whose home disciplines the board cannot see). Courses under 3 credits and honors tutorials are left out so the minor reaches 15 credits.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "AMST"
+            ],
+            "crossListed": true
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "titleStartsWith": "Honors Essay Tutorial"
+            }
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "AMST"
+                ],
+                "crossListed": true
+              },
+              {
+                "not": {
+                  "subject": [
+                    "AMST"
+                  ]
+                }
+              }
+            ]
+          },
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "pre-1900-course",
+      "label": "One of your courses must be a pre-1900 course; confirm which one qualifies",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-minor/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "The page gives no list or definition of pre-1900 courses, so the board cannot check it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "diversity-course",
+      "label": "One of your courses must be an American diversity course (social justice or inequality: race, class, gender, sexuality); confirm which one qualifies",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-minor/",
+        "anchor": "Notes on Course Credits"
+      },
+      "note": "The page gives no list of diversity courses, so the board cannot check it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "seminar-confirm",
+      "label": "Confirm that your 4000-level American Studies course is a seminar",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-minor/",
+        "anchor": "Coursework Requirements"
+      },
+      "note": "The page does not list which 4000-level courses are seminars.",
+      "kind": "confirm"
+    },
+    {
+      "id": "discipline-cap",
+      "label": "Confirm that no more than two of your courses come from any one discipline or field",
+      "group": "Distribution",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-minor/",
+        "anchor": "Notes on Course Credits"
+      },
+      "note": "The board cannot see each cross-listed course's home discipline. It already holds non-AMST-coded courses to two in total, which is stricter than the page.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c",
+      "label": "Every course finished with a grade of C or better; at most one course S/U, and AMST 1101 taken for a letter grade",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "File the Intent to Declare AMST Minor form, by your second-to-last semester",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "certify-minor",
+      "label": "Confirm completion with the AMST Undergraduate Coordinator by the middle of your last semester",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/american-studies-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

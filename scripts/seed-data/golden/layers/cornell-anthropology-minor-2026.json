@@ -1,0 +1,241 @@
+{
+  "programId": "cornell-anthropology-minor-2026",
+  "description": "A student takes five anthropology courses spanning intro, theory, advanced seminar and electives.",
+  "layerIds": [
+    "cornell-anthropology-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-economics-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ANTHR-1400",
+    "ANTHR-2400",
+    "ANTHR-3000",
+    "ANTHR-3420",
+    "ANTHR-4418"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ANTHR-1101",
+      "rowId": "anthropology-courses",
+      "why": "A first-year writing seminar does not count toward the minor."
+    },
+    {
+      "courseId": "ANTHR-4910",
+      "rowId": "anthropology-courses",
+      "why": "Independent study is not an ordinary anthropology course for the minor."
+    },
+    {
+      "courseId": "ANTHR-4984",
+      "rowId": "anthropology-courses",
+      "why": "Honors thesis work carries fewer than three credits and is not counted."
+    },
+    {
+      "courseId": "ANTHR-4991",
+      "rowId": "anthropology-courses",
+      "why": "A one-credit workshop falls below the three-credit minimum."
+    },
+    {
+      "courseId": "ENGL-2010",
+      "rowId": "anthropology-courses",
+      "why": "Only anthropology-subject courses count."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ANTHR-1400",
+      "subject": "ANTHR",
+      "number": "1400",
+      "title": "Introduction to Sociocultural Anthropology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-2400",
+      "subject": "ANTHR",
+      "number": "2400",
+      "title": "Cultural Diversity and Contemporary Issues",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-3000",
+      "subject": "ANTHR",
+      "number": "3000",
+      "title": "Introduction to Anthropological Theory",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-3420",
+      "subject": "ANTHR",
+      "number": "3420",
+      "title": "Myth, Ritual, and Symbol",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-4418",
+      "subject": "ANTHR",
+      "number": "4418",
+      "title": "Writing Ethnography: Theory, Genre and Practice",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ANTHR-1101",
+      "subject": "ANTHR",
+      "number": "1101",
+      "title": "FWS: Culture, Society, and Power",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ANTHR-4910",
+      "subject": "ANTHR",
+      "number": "4910",
+      "title": "Independent Study: Undergrad I",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "ANTHR-4984",
+      "subject": "ANTHR",
+      "number": "4984",
+      "title": "Honors Thesis Write-Up",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "ANTHR-4991",
+      "subject": "ANTHR",
+      "number": "4991",
+      "title": "Honors Workshop I",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "ENGL-2010",
+      "subject": "ENGL",
+      "number": "2010",
+      "title": "Literatures in English I: From Old English to the New World",
+      "credits": 3,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "ENGL-PRE"
+        }
+      ]
+    }
+  ]
+}

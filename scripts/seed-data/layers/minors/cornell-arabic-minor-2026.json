@@ -1,0 +1,123 @@
+{
+  "id": "cornell-arabic-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Arabic (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-arabic-minor-2026",
+  "rows": [
+    {
+      "id": "language-prerequisite",
+      "label": "Meet the A&S language requirement first, by a course route or native-speaker proficiency, and record which",
+      "group": "Prerequisite",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/arabic-minor/",
+        "anchor": "Prerequisite"
+      },
+      "note": "The prerequisite courses are not among the five minor courses, and the board cannot see which route or proficiency applies, so you confirm it.",
+      "kind": "confirm"
+    },
+    {
+      "id": "core-arab-2202",
+      "label": "Required: Intermediate Arabic II",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/arabic-minor/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ARAB-2202"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-arab-3201",
+      "label": "Required: Advanced Arabic I",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/arabic-minor/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ARAB-3201"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "core-arab-3202",
+      "label": "Required: Advanced Arabic II",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/arabic-minor/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ARAB-3202"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "elective-group-a",
+      "label": "Elective group A: one course conducted entirely in Arabic",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/arabic-minor/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ARAB-4203",
+          "ARAB-3700",
+          "ARAB-4200"
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "elective-group-b",
+      "label": "Elective group B: the Quranic Arabic course (Arabic texts, taught in English)",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/arabic-minor/",
+        "anchor": "Required Coursework"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "ARAB-2204"
+        ]
+      },
+      "credits": 3
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn at least a C (or equivalent) in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/arabic-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor by getting in touch with the contact named on the catalog page",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/arabic-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}
