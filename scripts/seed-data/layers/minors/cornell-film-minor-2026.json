@@ -1,0 +1,397 @@
+{
+  "id": "cornell-film-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Film (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-film-minor-2026",
+  "rows": [
+    {
+      "id": "global-cinema",
+      "label": "Global Cinema and Media",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PMA-3550"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "writing-or-production",
+      "label": "Screenwriting, or one of the film and documentary production courses",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PMA-3531",
+              "PMA-3570",
+              "PMA-3571",
+              "PMA-3510"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "production-lab",
+      "label": "One production lab (media or technology)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Lab credit counts only here, so labs are kept out of the elective row.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PMA-1410",
+              "PMA-1610"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "film-electives",
+      "label": "Three further film-focused PMA courses of 3+ credits (no labs)",
+      "group": "Film electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The department does not list these courses. The board counts only undergraduate PMA courses whose catalog title is plainly about film, cinema, documentary, screenwriting, production or animation; see the reminder row for other film-focused courses. Independent study, first-year writing seminars, labs and graduate numbers are left out. A PMA-coded course that another department also teaches under the same title counts only when you answer that PMA faculty teach it.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PMA"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "anyOf": [
+              {
+                "titleStartsWith": "Introduction to Japanese Film"
+              },
+              {
+                "titleStartsWith": "Jewish Films and Filmmakers"
+              },
+              {
+                "titleStartsWith": "American Cinema"
+              },
+              {
+                "titleStartsWith": "Screening Cosa Nostra"
+              },
+              {
+                "titleStartsWith": "Filming Migration"
+              },
+              {
+                "titleStartsWith": "Cinematic Cities"
+              },
+              {
+                "titleStartsWith": "Political Theory and Cinema"
+              },
+              {
+                "titleStartsWith": "Material Filmmaking"
+              },
+              {
+                "titleStartsWith": "Screen and Story"
+              },
+              {
+                "titleStartsWith": "Screenwriting"
+              },
+              {
+                "titleStartsWith": "Cinematography"
+              },
+              {
+                "titleStartsWith": "Production Design for Film"
+              },
+              {
+                "titleStartsWith": "Film and Video Production"
+              },
+              {
+                "titleStartsWith": "Documentary Production"
+              },
+              {
+                "titleStartsWith": "Documentary Filmmaking"
+              },
+              {
+                "titleStartsWith": "Advanced Documentary Production"
+              },
+              {
+                "titleStartsWith": "Ethnographic Film"
+              },
+              {
+                "titleStartsWith": "States of Animation"
+              }
+            ]
+          },
+          {
+            "anyOf": [
+              {
+                "not": {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "PMA"
+                      ]
+                    },
+                    {
+                      "anyOf": [
+                        {
+                          "titleStartsWith": "Introduction to Japanese Film"
+                        },
+                        {
+                          "titleStartsWith": "Jewish Films and Filmmakers"
+                        },
+                        {
+                          "titleStartsWith": "American Cinema"
+                        },
+                        {
+                          "titleStartsWith": "Screening Cosa Nostra"
+                        },
+                        {
+                          "titleStartsWith": "Filming Migration"
+                        },
+                        {
+                          "titleStartsWith": "Cinematic Cities"
+                        },
+                        {
+                          "titleStartsWith": "Political Theory and Cinema"
+                        },
+                        {
+                          "titleStartsWith": "Screen and Story"
+                        },
+                        {
+                          "titleStartsWith": "Advanced Documentary Production"
+                        },
+                        {
+                          "titleStartsWith": "Ethnographic Film"
+                        },
+                        {
+                          "titleStartsWith": "Film and Video Production II"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "answered": "courseCondition:cornell-film-minor-2026/film-electives"
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 9
+    },
+    {
+      "id": "film-focus-other",
+      "label": "Other PMA courses focused on film count too: check yours against the department",
+      "group": "Film electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board recognizes film courses by title only. A PMA film course it misses is yours to count.",
+      "kind": "confirm"
+    },
+    {
+      "id": "credit-size",
+      "label": "Take every course for 3+ credits (labs excepted), at least 15 credits outside the labs",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The seats and the elective row already hold 3-credit courses to this; the total is 18 with a 2-credit lab.",
+      "kind": "confirm"
+    },
+    {
+      "id": "pma-faculty",
+      "label": "Cross-listed courses must be taught or co-taught by PMA faculty to count",
+      "group": "Course eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-unaffiliated-abroad",
+      "label": "Do not count study-abroad courses from programs not directly affiliated with Cornell",
+      "group": "Course eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Cornell-run programs such as Cornell in Rome are fine.",
+      "kind": "confirm"
+    },
+    {
+      "id": "no-independent-study",
+      "label": "Independent study and first-year writing seminars do not count",
+      "group": "Course eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c",
+      "label": "Earn a C or better in each course (an S where the course is S-U only)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor through the department before the third week of your last semester",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/film-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "Cross listed courses not taught or co-taught by PMA faculty will not count as credit for any PMA Minor.",
+      "type": "courseCondition",
+      "row": "film-electives",
+      "courses": {
+        "allOf": [
+          {
+            "subject": [
+              "PMA"
+            ]
+          },
+          {
+            "anyOf": [
+              {
+                "titleStartsWith": "Introduction to Japanese Film"
+              },
+              {
+                "titleStartsWith": "Jewish Films and Filmmakers"
+              },
+              {
+                "titleStartsWith": "American Cinema"
+              },
+              {
+                "titleStartsWith": "Screening Cosa Nostra"
+              },
+              {
+                "titleStartsWith": "Filming Migration"
+              },
+              {
+                "titleStartsWith": "Cinematic Cities"
+              },
+              {
+                "titleStartsWith": "Political Theory and Cinema"
+              },
+              {
+                "titleStartsWith": "Screen and Story"
+              },
+              {
+                "titleStartsWith": "Advanced Documentary Production"
+              },
+              {
+                "titleStartsWith": "Ethnographic Film"
+              },
+              {
+                "titleStartsWith": "Film and Video Production II"
+              }
+            ]
+          }
+        ]
+      },
+      "condition": "taughtByDepartmentFaculty"
+    }
+  ]
+}
