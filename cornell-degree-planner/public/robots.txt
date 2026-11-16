@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+# Shared plans are one student's plan behind a link: keep them out of search.
+Disallow: /s/
+
+Sitemap: https://cucoursemap.app/sitemap.xml

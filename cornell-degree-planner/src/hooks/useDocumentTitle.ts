@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 
-/** App-wide title prefix: every route title reads "Coursemap — <page>". */
-export const APP_TITLE = "Coursemap";
+/** App-wide title prefix: every route title reads "CU Coursemap — <page>" (the
+ *  brand as students search for it; e2e checks the title contains "Coursemap"). */
+export const APP_TITLE = "CU Coursemap";
 
 export function pageTitle(page: string): string {
   return `${APP_TITLE} — ${page}`;

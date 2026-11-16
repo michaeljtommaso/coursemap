@@ -11,10 +11,9 @@
       "**/node_modules/**"
     ],
     "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
+      { "source": "/classes", "destination": "/index.html" },
+      { "source": "/requirements", "destination": "/index.html" },
+      { "source": "/s/**", "destination": "/index.html" }
     ],
     "headers": [
       {

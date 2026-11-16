@@ -32,12 +32,13 @@ import { UpdateBanner } from "@/components/layout/UpdateBanner";
  * catalog subscriptions.
  *
  * Each route sets its own document title (useDocumentTitle) in the thin route
- * components below, so the tab reads "Coursemap — My roadmap" / "— Classes" /
+ * components below, so the tab reads "CU Coursemap — Cornell degree planner" (the
+ * planner: also what search engines index for the home page) / "— Classes" /
  * "— Shared plan" instead of index.html's static title everywhere.
  */
 
 function PlannerRoute() {
-  useDocumentTitle(pageTitle("My roadmap"));
+  useDocumentTitle(pageTitle("Cornell degree planner"));
   return <AppShell />;
 }
 
