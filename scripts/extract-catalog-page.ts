@@ -394,6 +394,71 @@ export function loadVerifiedExtract(dir: string): PageExtract {
   return saved;
 }
 
+// ─── Lists of another program's saved page ──────────────────────────────────
+//
+// A layer may name a list of ANOTHER program's saved catalog page as
+// "<programId>:L3" (e.g. a minor whose page defines its areas by the codes the
+// major's page lists courses under). The other program's provenance folder must
+// hold its own verified snapshot and extract.json, of the same catalog edition.
+// Such a list is added to this page's extract under its qualified id, so
+// expand-draft, check-draft (citation and page-only courses) and the review sheet
+// treat it like one of the page's own lists. Blocks are never added: the
+// sentence ledger stays this page's own.
+
+/** "<programId>:L<n>": a list of another program's saved page. */
+export const FOREIGN_LIST_ID = /^([a-z0-9][a-z0-9-]{0,100}):(L\d+)$/;
+
+/** Every qualified list id named anywhere in `v` (a { list } leaf or a listRefs value). */
+export function foreignListIdsIn(v: unknown, out: Set<string> = new Set()): Set<string> {
+  if (typeof v === "string") {
+    if (FOREIGN_LIST_ID.test(v)) out.add(v);
+  } else if (Array.isArray(v)) for (const x of v) foreignListIdsIn(x, out);
+  else if (v && typeof v === "object") for (const x of Object.values(v as object)) foreignListIdsIn(x, out);
+  return out;
+}
+
+/**
+ * `ex` with the named lists of other programs' saved pages appended under their
+ * qualified ids. Throws on a malformed id, this program's own id, a missing or
+ * unverifiable extract, an unknown list, or a page of a different catalog
+ * edition than `ownEdition` (when both are known). `dirOf` maps a program id
+ * to its provenance folder (tests pass their own).
+ */
+export function withForeignLists<T extends PageExtract>(
+  ex: T,
+  ids: Iterable<string>,
+  opts: { ownEdition?: string | null; dirOf?: (programId: string) => string } = {},
+): T {
+  const dirOf = opts.dirOf ?? provenanceDir;
+  const wanted = [...new Set(ids)].sort();
+  if (!wanted.length) return ex;
+  const loaded = new Map<string, PageExtract>();
+  const lists: CourseList[] = [];
+  for (const id of wanted) {
+    const m = FOREIGN_LIST_ID.exec(id);
+    if (!m) throw new Error(`list ${id} is not "<programId>:L<n>"`);
+    const [, programId, listId] = m;
+    if (programId === ex.programId) throw new Error(`list ${id} names this program's own page: write "${listId}"`);
+    let other = loaded.get(programId);
+    if (!other) {
+      const dir = dirOf(programId);
+      try {
+        other = loadVerifiedExtract(dir);
+      } catch (e) {
+        throw new Error(`list ${id}: the saved page of ${programId} cannot be used (${e instanceof Error ? e.message : String(e)})`);
+      }
+      const meta = JSON.parse(readFileSync(join(dir, PROVENANCE_FILES.meta), "utf-8")) as SnapshotMeta;
+      if (opts.ownEdition && meta.edition && meta.edition !== opts.ownEdition)
+        throw new Error(`list ${id}: ${programId}'s saved page is the ${meta.edition} catalog, this page is ${opts.ownEdition}`);
+      loaded.set(programId, other);
+    }
+    const l = other.lists.find((x) => x.id === listId);
+    if (!l) throw new Error(`unknown list ${id} (${programId}'s extract.json has no ${listId})`);
+    lists.push({ ...l, id });
+  }
+  return { ...ex, lists: [...ex.lists, ...lists] };
+}
+
 // ─── CLI ────────────────────────────────────────────────────────────────────
 
 const USAGE = "usage: npx tsx extract-catalog-page.ts --program <programId> [--dir <provenanceDir>] [--all] [--json]";

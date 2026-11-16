@@ -332,6 +332,18 @@ Check a list before using it whole:
   lines is several lists.
 - To leave courses out: `{ "allOf": [{ "list": "L3" }, { "not": { "course": ["X-1234"] } }] }`.
 
+**Another program's lists.** When the page defines a requirement by lists it
+does not print itself (a minor's areas named by the codes the major's page
+lists courses under), a rule may name a list of ANOTHER program's saved page:
+`{ "list": "cornell-music-ba-2026:L3" }`. That program's provenance folder must
+hold its own verified snapshot and `extract.json` (snapshot and extract it
+first if it has none), of the same catalog edition. Its courses then count as
+cited and as page-only courses like the page's own lists, but its lead lines
+never state a count for this page: quote this page's sentence for every count.
+Use it only when this page names the area, code or list the other page
+defines (say which in `notes`); never to borrow a list the page does not
+point to.
+
 Pages written as paragraphs (no tables) have no lists: type the course ids,
 and quote the sentence that names them. A sentence like "eight courses at the
 2000 level or above in the department" is a pool over a subject and number

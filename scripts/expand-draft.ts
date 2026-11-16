@@ -19,7 +19,9 @@
 // listFlatten: { "<unitKey>": ["L3"] } so reviewers see it.
 //
 // List ids come from extract.json (extract-catalog-page.ts), which is re-derived
-// from page.html before use. The expanded draft records which lists each row
+// from page.html before use. "<programId>:L3" names a list of ANOTHER program's
+// saved page (its provenance folder's verified extract, same catalog edition;
+// withForeignLists): for a page that points at the lists another page holds. The expanded draft records which lists each row
 // used in `listRefs` (and the opt-ins in `listFlatten`); check-draft.ts accepts a referenced list as the citation
 // for its courses, so a row backed by an 800-course table needs no 800 quotes.
 //
@@ -34,9 +36,9 @@
 // Exit: 0 written, 1 refused (an unknown list or an unflagged or/paired list in a counted rule; nothing written), 2 bad usage or unreadable input.
 
 import { readFileSync, writeFileSync } from "fs";
-import { dirname, resolve } from "path";
-import { provenanceDir, rowUnits, type Layer } from "./layer-authoring";
-import { listCourses, loadVerifiedExtract, type PageExtract } from "./extract-catalog-page";
+import { dirname, join, resolve } from "path";
+import { PROVENANCE_FILES, provenanceDir, rowUnits, type Layer, type SnapshotMeta } from "./layer-authoring";
+import { foreignListIdsIn, listCourses, loadVerifiedExtract, withForeignLists, type PageExtract } from "./extract-catalog-page";
 
 type Json = unknown;
 
@@ -173,7 +175,10 @@ export function runExpand(argv: string[]): number {
     return 2;
   }
   try {
-    const ex = loadVerifiedExtract(dir);
+    const own = loadVerifiedExtract(dir);
+    const meta = JSON.parse(readFileSync(join(dir, PROVENANCE_FILES.meta), "utf-8")) as SnapshotMeta;
+    // { "list": "<programId>:L3" }: a list of another program's saved page.
+    const ex = withForeignLists(own, foreignListIdsIn(src.layer), { ownEdition: meta.edition });
     const out = expandDraft(src, ex);
     writeFileSync(resolve(outPath), `${JSON.stringify(out, null, 2)}\n`);
     const refs = (out.listRefs ?? {}) as Record<string, string[]>;

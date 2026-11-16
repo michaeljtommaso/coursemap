@@ -1,0 +1,306 @@
+{
+  "programId": "cornell-music-minor-2026",
+  "description": "An English major reaches seventeen Music credits through a jazz theory course and a rock history course the roster gives no area tag, three choirs, and electives from music studies, music and the brain, and two ensembles.",
+  "layerIds": [
+    "cornell-music-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "MUSIC-3112",
+    "MUSIC-1312",
+    "MUSIC-3602",
+    "MUSIC-3603",
+    "MUSIC-3604",
+    "MUSIC-2201",
+    "MUSIC-1212",
+    "MUSIC-3621",
+    "MUSIC-3631"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "CS-1110",
+      "rowId": "music-credits",
+      "why": "A computing course is on none of the three Music area lists."
+    },
+    {
+      "courseId": "MUSIC-6201",
+      "rowId": "music-credits",
+      "why": "A graduate Music seminar is on no area list and above the undergraduate range."
+    },
+    {
+      "courseId": "MUSIC-3901",
+      "rowId": "music-credits",
+      "why": "Supplemental study is a Music course on none of the three area lists, so it adds nothing to the total."
+    },
+    {
+      "courseId": "MUSIC-1701",
+      "rowId": "area-history",
+      "why": "The Music writing seminar is left out of the minor's areas on the board."
+    },
+    {
+      "courseId": "MUSIC-1701",
+      "rowId": "electives-mix",
+      "why": "The Music writing seminar is left out of the minor's electives on the board."
+    },
+    {
+      "courseId": "MUSIC-4355",
+      "rowId": "area-history",
+      "why": "A four-credit History and Culture course cannot fill the three-credit seat."
+    },
+    {
+      "courseId": "MUSIC-3602",
+      "rowId": "area-techniques",
+      "why": "A one-credit choir is a performance course, not Materials and Techniques."
+    },
+    {
+      "courseId": "MUSIC-3602",
+      "rowId": "area-history",
+      "why": "A one-credit choir is a performance course, not History and Culture."
+    },
+    {
+      "courseId": "MUSIC-3511",
+      "rowId": "area-techniques",
+      "why": "Individual instruction is performance, not Materials and Techniques."
+    },
+    {
+      "courseId": "MUSIC-4911",
+      "rowId": "area-techniques",
+      "why": "The honors course is on none of the area lists."
+    }
+  ],
+  "courses": [
+    {
+      "id": "MUSIC-3112",
+      "subject": "MUSIC",
+      "number": "3112",
+      "title": "Jazz Improvisation and Theory II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-1312",
+      "subject": "MUSIC",
+      "number": "1312",
+      "title": "History of Rock Music",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3602",
+      "subject": "MUSIC",
+      "number": "3602",
+      "title": "Chorus",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3603",
+      "subject": "MUSIC",
+      "number": "3603",
+      "title": "Glee Club",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3604",
+      "subject": "MUSIC",
+      "number": "3604",
+      "title": "Chorale",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-2201",
+      "subject": "MUSIC",
+      "number": "2201",
+      "title": "Introduction to Music Studies",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-1212",
+      "subject": "MUSIC",
+      "number": "1212",
+      "title": "Music on the Brain",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3621",
+      "subject": "MUSIC",
+      "number": "3621",
+      "title": "Cornell Symphony Orchestra",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3631",
+      "subject": "MUSIC",
+      "number": "3631",
+      "title": "Cornell Wind Symphony",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "CS-1110",
+      "subject": "CS",
+      "number": "1110",
+      "title": "Introduction to Computing: A Design and Development Perspective",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        },
+        {
+          "value": "STA-IL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-6201",
+      "subject": "MUSIC",
+      "number": "6201",
+      "title": "Research and Critical Methodologies",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "MUSIC-3901",
+      "subject": "MUSIC",
+      "number": "3901",
+      "title": "Supplemental Study in Music",
+      "credits": 1,
+      "attrs": []
+    },
+    {
+      "id": "MUSIC-1701",
+      "subject": "MUSIC",
+      "number": "1701",
+      "title": "FWS: Sound, Sense and Ideas",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "WRT-AG"
+        },
+        {
+          "value": "MUSIC-HC"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-4355",
+      "subject": "MUSIC",
+      "number": "4355",
+      "title": "Rwanda Audio Lab",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-3511",
+      "subject": "MUSIC",
+      "number": "3511",
+      "title": "Individual Instruction",
+      "credits": 0.5,
+      "attrs": [
+        {
+          "value": "MUSIC-PL"
+        }
+      ]
+    },
+    {
+      "id": "MUSIC-4911",
+      "subject": "MUSIC",
+      "number": "4911",
+      "title": "Honors in Music",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    }
+  ]
+}
