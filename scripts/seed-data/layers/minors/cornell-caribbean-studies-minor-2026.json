@@ -1,0 +1,129 @@
+{
+  "id": "cornell-caribbean-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Caribbean Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-caribbean-studies-minor-2026",
+  "sharing": {
+    "minors": {
+      "maxCourses": 2
+    }
+  },
+  "rows": [
+    {
+      "id": "approved-courses",
+      "label": "Five courses from the program's approved list, at least one in History, 15 credits in all",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/caribbean-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The approved list is kept on the program website, not on the catalog page, so the board cannot see it. A course counts only when you answer that it is approved (or that the program accepted it on request). First-year writing seminars are excluded. At least one counted course must be a History course (stricter than the page's wording, which says should). The 15-credit floor is held on these same courses.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "not": {
+              "titleStartsWith": "FWS"
+            }
+          },
+          {
+            "answered": "approvedFor:cornell-caribbean-studies-minor-2026/approved-courses"
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "HIST"
+                ]
+              },
+              {
+                "not": {
+                  "titleStartsWith": "FWS"
+                }
+              },
+              {
+                "answered": "approvedFor:cornell-caribbean-studies-minor-2026/approved-courses"
+              }
+            ]
+          },
+          "minCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "approved-list-check",
+      "label": "Check each counted course against the approved list on the program website, or get approval for a non-listed course",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/caribbean-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "history-check",
+      "label": "Confirm one counted course is taught in the Department of History",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/caribbean-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every counted course for a letter grade (S/U not accepted)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/caribbean-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-b",
+      "label": "Earn a B or better in every counted course",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/caribbean-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "overlap-check",
+      "label": "No more than two courses may also count toward another minor",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/caribbean-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/caribbean-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "Five (5) approved courses",
+      "type": "approvedFor",
+      "row": "approved-courses",
+      "courses": {
+        "not": {
+          "titleStartsWith": "FWS"
+        }
+      },
+      "approver": "director"
+    }
+  ]
+}

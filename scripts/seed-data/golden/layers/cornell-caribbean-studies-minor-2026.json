@@ -1,0 +1,150 @@
+{
+  "programId": "cornell-caribbean-studies-minor-2026",
+  "description": "A student takes one history course plus four other Caribbean-focused courses, for eighteen credits.",
+  "layerIds": [
+    "cornell-caribbean-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-history-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "HIST-1976",
+    "AMST-3679",
+    "AMST-4577",
+    "ASRC-2317",
+    "GOVT-3293"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASRC-1835",
+      "rowId": "approved-courses",
+      "why": "A first-year writing seminar is explicitly excluded from the minor, even with a Caribbean topic."
+    }
+  ],
+  "answers": {
+    "marks": {
+      "approvedFor:cornell-caribbean-studies-minor-2026/approved-courses@AMST-3679": "yes",
+      "approvedFor:cornell-caribbean-studies-minor-2026/approved-courses@AMST-4577": "yes",
+      "approvedFor:cornell-caribbean-studies-minor-2026/approved-courses@ASRC-2317": "yes",
+      "approvedFor:cornell-caribbean-studies-minor-2026/approved-courses@GOVT-3293": "yes",
+      "approvedFor:cornell-caribbean-studies-minor-2026/approved-courses@HIST-1976": "yes"
+    }
+  },
+  "courses": [
+    {
+      "id": "HIST-1976",
+      "subject": "HIST",
+      "number": "1976",
+      "title": "Recreating the Caribbean: Migration and Identity in Contemporary Caribbean History",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "SCD-AS"
+        },
+        {
+          "value": "HIST-HGS"
+        }
+      ]
+    },
+    {
+      "id": "AMST-3679",
+      "subject": "AMST",
+      "number": "3679",
+      "title": "Diasporas, Disasters, and Dissent: Re-Thinking Puerto Rican Studies in the 20th and 21st Centuries",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "ENGL-GLS"
+        },
+        {
+          "value": "ENGL-LOA"
+        },
+        {
+          "value": "ENGL-PST"
+        }
+      ]
+    },
+    {
+      "id": "AMST-4577",
+      "subject": "AMST",
+      "number": "4577",
+      "title": "Desbordando: Reading Caribbean Waters in Latinx Studies",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-2317",
+      "subject": "ASRC",
+      "number": "2317",
+      "title": "Histories of the African Diaspora",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "HIST-HGS"
+        }
+      ]
+    },
+    {
+      "id": "GOVT-3293",
+      "subject": "GOVT",
+      "number": "3293",
+      "title": "Comparative Politics of Latin America",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASRC-1835",
+      "subject": "ASRC",
+      "number": "1835",
+      "title": "FWS: Fashioning the Caribbean: Dress, Textile, and History",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

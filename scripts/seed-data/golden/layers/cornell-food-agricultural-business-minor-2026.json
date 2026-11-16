@@ -1,0 +1,146 @@
+{
+  "programId": "cornell-food-agricultural-business-minor-2026",
+  "description": "A student finishes the food and agricultural business minor with one micro course, two business areas, the food course and two electives.",
+  "layerIds": [
+    "cornell-food-agricultural-business-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ECON-1110",
+    "AEM-2310",
+    "AEM-2400",
+    "AEM-3020",
+    "AEM-2480",
+    "AEM-3040"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "HADM-1410",
+      "rowId": "foundation-micro",
+      "why": "Nolan-only micro course is held out of the seat because the board cannot see the school."
+    },
+    {
+      "courseId": "HADM-1410",
+      "rowId": "cornell-credits",
+      "why": "Same held-out Nolan course gives no credit toward the Cornell residency total."
+    },
+    {
+      "courseId": "AEM-2480",
+      "rowId": "upper-level",
+      "why": "A 2000-level elective cannot be one of the two upper-level courses."
+    },
+    {
+      "courseId": "AEM-3290",
+      "rowId": "upper-level",
+      "why": "Experiential electives are kept out of the upper-level count."
+    },
+    {
+      "courseId": "AEM-2310",
+      "rowId": "electives",
+      "why": "The required food core course is not on the elective list."
+    },
+    {
+      "courseId": "AEM-2241",
+      "rowId": "electives",
+      "why": "Finance is a general-business pick, not an elective."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2310",
+      "subject": "AEM",
+      "number": "2310",
+      "title": "Business and Economics of Food",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2400",
+      "subject": "AEM",
+      "number": "2400",
+      "title": "Marketing",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3020",
+      "subject": "AEM",
+      "number": "3020",
+      "title": "Farm Business Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2480",
+      "subject": "AEM",
+      "number": "2480",
+      "title": "Food and Consumer Packaged Goods Industry Dynamics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3040",
+      "subject": "AEM",
+      "number": "3040",
+      "title": "Dairy Markets and Policy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        }
+      ]
+    },
+    {
+      "id": "HADM-1410",
+      "subject": "HADM",
+      "number": "1410",
+      "title": "Microeconomics for the Service Industry",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3290",
+      "subject": "AEM",
+      "number": "3290",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 2,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "AEM-2241",
+      "subject": "AEM",
+      "number": "2241",
+      "title": "Finance",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

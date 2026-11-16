@@ -1,0 +1,187 @@
+{
+  "programId": "cornell-french-minor-2026",
+  "description": "A fictional English major who completes five three-credit French courses, starting at the second intermediate language course.",
+  "layerIds": [
+    "cornell-french-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-english-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "FREN-2095",
+    "FREN-2310",
+    "FREN-2320",
+    "FREN-3120",
+    "FREN-3400"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "FREN-2090",
+      "rowId": "french-courses",
+      "why": "the first intermediate language course sits below the required starting level"
+    }
+  ],
+  "courses": [
+    {
+      "id": "FREN-2095",
+      "subject": "FREN",
+      "number": "2095",
+      "title": "French Intermediate Composition and Conversation II",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "FREN-2310",
+      "subject": "FREN",
+      "number": "2310",
+      "title": "Introduction to French and Francophone Literature and Culture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "FREN-2320",
+      "subject": "FREN",
+      "number": "2320",
+      "title": "Introduction to French and Francophone Film",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "FREN-3120",
+      "subject": "FREN",
+      "number": "3120",
+      "title": "French Stylistics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "FREN-3400",
+      "subject": "FREN",
+      "number": "3400",
+      "title": "French Identities: 21st Century Culture and Society in France",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "SCD-AS"
+        }
+      ]
+    },
+    {
+      "id": "FREN-2090",
+      "subject": "FREN",
+      "number": "2090",
+      "title": "French Intermediate Composition and Conversation I",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFLANG"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    }
+  ]
+}

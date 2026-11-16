@@ -1,0 +1,415 @@
+{
+  "id": "cornell-food-agricultural-business-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Food and Agricultural Business (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-food-agricultural-business-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCredits": 6
+    },
+    "minors": {
+      "maxCredits": 6
+    }
+  },
+  "rows": [
+    {
+      "id": "foundation-micro",
+      "label": "Foundation: one intermediate or introductory microeconomics course",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "Foundation Courses"
+      },
+      "note": "HADM 1410 is held out because it is for Nolan students only and the board cannot see the school; see the Nolan confirm row.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-1110",
+              "ECON-3030",
+              "HADM-1410",
+              "PUBPOL-2000"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "HADM-1410"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "core-general-business",
+      "label": "Core: two general business courses from two different areas",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "General Business and Management (6 credits)"
+      },
+      "note": "Four areas (management, marketing, finance, accounting); the two courses must come from different areas.",
+      "kind": "distribution",
+      "rule": {
+        "course": [
+          "AEM-1200",
+          "AEM-3020",
+          "AEM-3260",
+          "HADM-1810",
+          "AEM-2400",
+          "AEM-4150",
+          "HADM-2410",
+          "AEM-2050",
+          "AEM-2241",
+          "AEM-5241",
+          "HADM-2250",
+          "AEM-2210",
+          "HADM-2230"
+        ]
+      },
+      "categories": [
+        {
+          "id": "business-management",
+          "label": "Business management",
+          "rule": {
+            "course": [
+              "AEM-1200",
+              "AEM-3020",
+              "AEM-3260",
+              "HADM-1810"
+            ]
+          }
+        },
+        {
+          "id": "marketing",
+          "label": "Marketing",
+          "rule": {
+            "course": [
+              "AEM-2400",
+              "AEM-4150",
+              "HADM-2410"
+            ]
+          }
+        },
+        {
+          "id": "finance",
+          "label": "Finance",
+          "rule": {
+            "course": [
+              "AEM-2050",
+              "AEM-2241",
+              "AEM-5241",
+              "HADM-2250"
+            ]
+          }
+        },
+        {
+          "id": "accounting",
+          "label": "Accounting",
+          "rule": {
+            "course": [
+              "AEM-2210",
+              "HADM-2230"
+            ]
+          }
+        }
+      ],
+      "requiredCourses": 2,
+      "minDistinctCategories": 2,
+      "requiredCredits": 6,
+      "perCategory": {
+        "business-management": {
+          "max": 1
+        },
+        "marketing": {
+          "max": 1
+        },
+        "finance": {
+          "max": 1
+        },
+        "accounting": {
+          "max": 1
+        }
+      }
+    },
+    {
+      "id": "core-food-economics",
+      "label": "Core: business and economics of food",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "Core (3 credits)"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "AEM-2310"
+        ]
+      }
+    },
+    {
+      "id": "electives",
+      "label": "Electives: 6 credits from the elective list, at most 3 credits experiential",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "Electives (6 Credits)"
+      },
+      "note": "Credit-based; the experiential list is capped at 3 credits in all.",
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "AEM-2050",
+          "AEM-2480",
+          "AEM-3020",
+          "AEM-3040",
+          "AEM-3270",
+          "AEM-4450",
+          "AEM-3290",
+          "AEM-3385",
+          "AEM-4050",
+          "AEM-4460",
+          "HADM-4315",
+          "HADM-4340"
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 6,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "AEM-3290",
+              "AEM-3385",
+              "AEM-4050",
+              "AEM-4460",
+              "HADM-4315",
+              "HADM-4340"
+            ]
+          },
+          "label": "Experiential courses",
+          "maxCredits": 3
+        }
+      ]
+    },
+    {
+      "id": "upper-level",
+      "label": "At least two of the five minor courses at the 3000 level or above (experiential electives not counted here)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "Core Requirements"
+      },
+      "note": "Recount over the courses the other rows hold; the one-per-area limit is repeated so two courses from one business area never both count. Experiential courses are left out of this count to stay on the strict side; see the confirm row.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "AEM-1200",
+              "AEM-3020",
+              "AEM-3260",
+              "HADM-1810",
+              "AEM-2400",
+              "AEM-4150",
+              "HADM-2410",
+              "AEM-2050",
+              "AEM-2241",
+              "AEM-5241",
+              "HADM-2250",
+              "AEM-2210",
+              "HADM-2230",
+              "AEM-2480",
+              "AEM-3040",
+              "AEM-3270",
+              "AEM-4450"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "AEM-1200",
+              "AEM-3020",
+              "AEM-3260",
+              "HADM-1810"
+            ]
+          },
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "AEM-2400",
+              "AEM-4150",
+              "HADM-2410"
+            ]
+          },
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "AEM-2050",
+              "AEM-2241",
+              "AEM-5241",
+              "HADM-2250"
+            ]
+          },
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "course": [
+              "AEM-2210",
+              "HADM-2230"
+            ]
+          },
+          "maxCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "cornell-credits",
+      "label": "At least 9 of the minor's credits taken at Cornell (no exam or transfer credit)",
+      "group": "Residency",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Recount over the minor's courses. The business-college requirement (9 credits with AEM, HADM, NBA or NCC codes) is met automatically: every course the core and electives rows accept carries an AEM or HADM code.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "ECON-1110",
+              "ECON-3030",
+              "HADM-1410",
+              "PUBPOL-2000",
+              "AEM-1200",
+              "AEM-3020",
+              "AEM-3260",
+              "HADM-1810",
+              "AEM-2400",
+              "AEM-4150",
+              "HADM-2410",
+              "AEM-2050",
+              "AEM-2241",
+              "AEM-5241",
+              "HADM-2250",
+              "AEM-2210",
+              "HADM-2230",
+              "AEM-2310",
+              "AEM-2480",
+              "AEM-3040",
+              "AEM-3270",
+              "AEM-4450",
+              "AEM-3290",
+              "AEM-3385",
+              "AEM-4050",
+              "AEM-4460",
+              "HADM-4315",
+              "HADM-4340"
+            ]
+          },
+          {
+            "not": {
+              "course": [
+                "HADM-1410"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCredits": 9
+    },
+    {
+      "id": "confirm-eligibility",
+      "label": "Confirm you may take this minor: not enrolled in Dyson, and your major does not overlap two or more of its core courses; sign up by your sixth semester",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "Eligibility"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-grades",
+      "label": "Confirm every minor course is letter-graded with a C or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "Academic Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-unique-credits",
+      "label": "Confirm 12 of the minor's credits are unique, outside your major's core requirements (some majors need one extra course)",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "Academic Policies"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-foundation-timing",
+      "label": "Confirm the microeconomics foundation is finished by your sixth semester (best before the core)",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "Foundation Courses"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-nolan",
+      "label": "Nolan students only: HADM 1410 counts as the microeconomics foundation, and your allowed overlaps are HADM 1410 plus one non-elective core course",
+      "group": "Foundation",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "Core Requirements"
+      },
+      "note": "The layer holds HADM 1410 out of the foundation seat, so a Nolan student confirms it here instead.",
+      "kind": "confirm"
+    },
+    {
+      "id": "confirm-upper-level",
+      "label": "If your 3000-level courses are experiential electives, confirm you still have two of the five minor courses at 3000 level or above",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-agricultural-business-minor/",
+        "anchor": "Core Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

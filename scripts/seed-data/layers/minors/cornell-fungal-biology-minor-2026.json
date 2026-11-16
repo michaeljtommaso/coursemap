@@ -1,0 +1,289 @@
+{
+  "id": "cornell-fungal-biology-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Fungal Biology (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-fungal-biology-minor-2026",
+  "sharing": {
+    "otherMajors": "none",
+    "minors": "none",
+    "forbiddenWith": [
+      "cornell-plant-sciences-minor",
+      "cornell-crop-management-minor",
+      "cornell-horticulture-minor",
+      "cornell-plant-breeding-minor",
+      "cornell-soil-science-minor"
+    ]
+  },
+  "rows": [
+    {
+      "id": "plant-disease-course",
+      "label": "Required core: plant diseases course (PLSCI 3010)",
+      "group": "Required core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-3010"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "field-forest-mushrooms",
+      "label": "Required core: field mushrooms course (PLSCI 3190)",
+      "group": "Required core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-3190"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "mycology-with-lab",
+      "label": "Required core: mycology course (PLSCI 4300), taken with its lab",
+      "group": "Required core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page requires the lab section with this course; the board cannot see the lab, so a confirm row below covers it.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PLSCI-4300"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lab-check",
+      "label": "Take the mycology course together with its lab section",
+      "group": "Required core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "track",
+      "label": "Additional course(s): finish either the main track or the advanced track",
+      "group": "Track",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Main track (lighter biology focus): one introductory fungi course, or the paired course plus fermentation course. Advanced track (graduate school focus): the fungal genetics and genomics course.",
+      "kind": "anyOf",
+      "rows": [
+        {
+          "id": "main-track-single",
+          "label": "Main track: the introductory fungi course (PLSCI 2013)",
+          "group": "Track",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "PLSCI-2013"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "main-track-pair",
+          "label": "Main track: both PLSCI 2010 and FDSC 2206 together",
+          "group": "Track",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "pool",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "PLSCI-2010",
+                  "FDSC-2206"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "requiredCourses": 2,
+          "requiredCredits": 0
+        },
+        {
+          "id": "advanced-track",
+          "label": "Advanced track: fungal genetics and genomics (PLSCI 6380)",
+          "group": "Track",
+          "source": {
+            "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+            "anchor": "Minor Requirements"
+          },
+          "kind": "seat",
+          "rule": {
+            "allOf": [
+              {
+                "course": [
+                  "PLSCI-6380"
+                ]
+              },
+              {
+                "not": {
+                  "creditKind": [
+                    "ap",
+                    "ib",
+                    "alevel",
+                    "intl",
+                    "placement",
+                    "transfer"
+                  ]
+                }
+              }
+            ]
+          },
+          "credits": 4
+        }
+      ]
+    },
+    {
+      "id": "total-credits-check",
+      "label": "The minor totals at least 13 credits; check the credits of your courses add up",
+      "group": "Required core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "The core rows and the track together reach the minimum when taken at their usual credits; this reminder covers credit differences (for example the lab credit of the mycology course).",
+      "kind": "confirm"
+    },
+    {
+      "id": "course-conditions",
+      "label": "Check how each course counts: in person (not online), no special-topics or seminar versions, transfer only if approved as equivalent",
+      "group": "Course conditions",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "Rows leave out transfer and exam credit because the page accepts transfer work only when approved as equivalent; ask the minor coordinator if you have approved transfer credit.",
+      "kind": "confirm"
+    },
+    {
+      "id": "grades",
+      "label": "Every course taken for a letter grade (no S/U, SX/UX) and passed with a C or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "unique-credits",
+      "label": "Credits counted here must be unique: not used for a major requirement or another minor; and only one School of Integrative Plant Science minor in total",
+      "group": "Overlap and eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "The overlap limits are set on the layer: no courses shared with a major or minor, and the other five minors in this school are barred. This reminder states the rule in full.",
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Submit the Declaration of Intent form by the last day of classes of your final semester (you are held to the catalog in force when you submit it)",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fungal-biology-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "The page also asks you to meet your minor advisor in your second-to-last semester and fill in the survey in your last semester; the minor coordinator then checks your transcript.",
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "programId": "cornell-dance-minor-2026",
+  "description": "A student takes the composition course, a global movement course, one lab and three technique or dance-making studios.",
+  "layerIds": [
+    "cornell-dance-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-performing-media-arts-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PMA-2300",
+    "PMA-3226",
+    "PMA-1410",
+    "PMA-2221",
+    "PMA-3210",
+    "PMA-3243"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "PMA-1610",
+      "rowId": "dance-electives",
+      "why": "A production lab is expressly kept out of the three dance courses."
+    },
+    {
+      "courseId": "PMA-3750",
+      "rowId": "dance-electives",
+      "why": "The global theatre course is only an alternate for the required global course, not a dance elective."
+    },
+    {
+      "courseId": "PMA-3000",
+      "rowId": "dance-electives",
+      "why": "Independent study never counts toward a performing and media arts minor."
+    },
+    {
+      "courseId": "PMA-1100",
+      "rowId": "dance-electives",
+      "why": "First-year writing seminars do not count toward the minor."
+    },
+    {
+      "courseId": "PMA-2300",
+      "rowId": "dance-electives",
+      "why": "The required composition course cannot also serve as one of the additional dance courses."
+    },
+    {
+      "courseId": "PMA-2380",
+      "rowId": "dance-electives",
+      "why": "A music cross-listed hip hop course counts only with department approval, which the plan lacks."
+    },
+    {
+      "courseId": "PMA-1611",
+      "rowId": "production-lab",
+      "why": "Rehearsal and performance is not one of the two named lab courses."
+    },
+    {
+      "courseId": "PMA-2221",
+      "rowId": "production-lab",
+      "why": "A dance technique studio is not a production lab."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PMA-2300",
+      "subject": "PMA",
+      "number": "2300",
+      "title": "Dance Composition",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "PMA-AU"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3226",
+      "subject": "PMA",
+      "number": "3226",
+      "title": "Global Dance and Decolonizing Movement",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "PMA-HTC"
+        }
+      ]
+    },
+    {
+      "id": "PMA-1410",
+      "subject": "PMA",
+      "number": "1410",
+      "title": "Media Production Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PMA-2221",
+      "subject": "PMA",
+      "number": "2221",
+      "title": "Contemporary Dance Technique",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3210",
+      "subject": "PMA",
+      "number": "3210",
+      "title": "Classical Dance Technique",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3243",
+      "subject": "PMA",
+      "number": "3243",
+      "title": "Making Dance on Camera",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-1610",
+      "subject": "PMA",
+      "number": "1610",
+      "title": "Production Technology Laboratory",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "PMA-3750",
+      "subject": "PMA",
+      "number": "3750",
+      "title": "Global Theatre and Performance",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "LAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "GLC-AS"
+        }
+      ]
+    },
+    {
+      "id": "PMA-3000",
+      "subject": "PMA",
+      "number": "3000",
+      "title": "Independent Study",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    },
+    {
+      "id": "PMA-1100",
+      "subject": "PMA",
+      "number": "1100",
+      "title": "FWS: Critical Approaches to Performing and Media Arts",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "PMA-2380",
+      "subject": "PMA",
+      "number": "2380",
+      "title": "Performing Hip Hop",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "MUSIC-MT"
+        }
+      ]
+    },
+    {
+      "id": "PMA-1611",
+      "subject": "PMA",
+      "number": "1611",
+      "title": "Rehearsal and Performance",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": []
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "programId": "cornell-global-asia-studies-minor-2026",
+  "description": "A fictional student takes five Asian studies courses across several regions, one of them advanced, to finish the minor.",
+  "layerIds": [
+    "cornell-global-asia-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ASIAN-2208",
+    "ASIAN-2222",
+    "ASIAN-2262",
+    "ASIAN-2501",
+    "ASIAN-3396"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "ASIAN-1104",
+      "rowId": "five-courses",
+      "why": "A first-year seminar sits below the 2200 floor for the course pool."
+    },
+    {
+      "courseId": "ASIAN-2222",
+      "rowId": "advanced-non-language",
+      "why": "A 2000-level course falls short of the 3000 floor for the advanced course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ASIAN-2208",
+      "subject": "ASIAN",
+      "number": "2208",
+      "title": "Introduction to Southeast Asia",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-GE"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-2222",
+      "subject": "ASIAN",
+      "number": "2222",
+      "title": "From Samurai to Superpower: Japan in World History II",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-2262",
+      "subject": "ASIAN",
+      "number": "2262",
+      "title": "Medicine and Healing in China",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        },
+        {
+          "value": "HIST-HAN"
+        },
+        {
+          "value": "HIST-HPE"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-2501",
+      "subject": "ASIAN",
+      "number": "2501",
+      "title": "History of the Silk Roads",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ASIAN-SC"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-3396",
+      "subject": "ASIAN",
+      "number": "3396",
+      "title": "Transnational Local: Southeast Asian History from the Eighteenth Century",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SEAREA"
+        },
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        }
+      ]
+    },
+    {
+      "id": "ASIAN-1104",
+      "subject": "ASIAN",
+      "number": "1104",
+      "title": "FWS: Songs of Love and War: South Asian Lyrics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EAAREA"
+        },
+        {
+          "value": "SAAREA"
+        }
+      ]
+    }
+  ]
+}

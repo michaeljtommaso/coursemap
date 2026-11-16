@@ -1,0 +1,159 @@
+{
+  "id": "cornell-global-asia-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Global Asia Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-global-asia-studies-minor-2026",
+  "rows": [
+    {
+      "id": "five-courses",
+      "label": "Five ASIAN courses at 2200 or above totalling 18 credits, with at most one introductory course and at most 8 transfer credits",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-asia-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board counts ASIAN-subject courses at 2200 or above only. Cross-listed courses and language courses are left to the confirm rows below, which can only make the board stricter than the page.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ASIAN"
+            ]
+          },
+          {
+            "number": {
+              "min": 2200
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 18,
+      "limits": [
+        {
+          "rule": {
+            "anyOf": [
+              {
+                "course": [
+                  "ASIAN-2208",
+                  "ASIAN-2211",
+                  "ASIAN-2218",
+                  "ASIAN-2230",
+                  "ASIAN-2232",
+                  "ASIAN-2250"
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "subject": [
+                      "ASIAN"
+                    ]
+                  },
+                  {
+                    "number": {
+                      "min": 2231,
+                      "max": 2233
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "label": "At most one introductory course",
+          "maxCourses": 1
+        },
+        {
+          "rule": {
+            "creditKind": [
+              "transfer"
+            ]
+          },
+          "label": "At most 8 transfer credits",
+          "maxCredits": 8
+        }
+      ]
+    },
+    {
+      "id": "other-ways-to-count",
+      "label": "Confirm cross-listed courses, or up to two same-language courses (3+ credits, 1100+, six language credits max, one jumpstart max)",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-asia-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sub-region-breadth",
+      "label": "Confirm the breadth rule: one ASIAN 2200+ course spanning several sub-regions, or two 2200+ courses on different related sub-regions",
+      "group": "Breadth",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-asia-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "advanced-non-language",
+      "label": "One non-language ASIAN course at 3000 or above",
+      "group": "Advanced course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-asia-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Re-counts a course already held by the five-course row. The board checks subject and level only; confirm the course is not a language course.",
+      "overlay": true,
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "ASIAN"
+            ]
+          },
+          {
+            "number": {
+              "min": 3000
+            }
+          }
+        ]
+      },
+      "requiredCourses": 1,
+      "requiredCredits": 0
+    },
+    {
+      "id": "advanced-is-non-language",
+      "label": "Confirm the 3000-level or above course is not a language course",
+      "group": "Advanced course",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-asia-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grades-letter",
+      "label": "Confirm every course is taken for a letter grade and earns B- or better",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-asia-studies-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor with the Department of Asian Studies, no later than the first semester of your graduating year",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-asia-studies-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

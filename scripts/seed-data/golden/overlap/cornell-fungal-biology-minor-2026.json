@@ -1,0 +1,94 @@
+{
+  "programId": "cornell-fungal-biology-minor-2026",
+  "description": "A biology and society major also takes the fungi minor, and courses both count are held back from the minor.",
+  "layerIds": [
+    "cornell-biology-society-bs-2026",
+    "cornell-fungal-biology-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-biology-society-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "PLSCI-3010",
+    "PLSCI-3190",
+    "PLSCI-4300",
+    "PLSCI-2013"
+  ],
+  "limit": {
+    "maxCourses": 0
+  },
+  "shared": [
+    "PLSCI-3010",
+    "PLSCI-4300"
+  ],
+  "heldBack": [
+    {
+      "courseId": "PLSCI-3010",
+      "from": "cornell-fungal-biology-minor-2026",
+      "why": "The minor allows no course also counted by the major, so the minor gives it up."
+    },
+    {
+      "courseId": "PLSCI-4300",
+      "from": "cornell-fungal-biology-minor-2026",
+      "why": "The minor allows no course also counted by the major, so the minor gives it up."
+    }
+  ],
+  "courses": [
+    {
+      "id": "PLSCI-3010",
+      "subject": "PLSCI",
+      "number": "3010",
+      "title": "Biology and Management of Plant Diseases",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-3190",
+      "subject": "PLSCI",
+      "number": "3190",
+      "title": "Mushrooms of Field and Forest",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-4300",
+      "subject": "PLSCI",
+      "number": "4300",
+      "title": "Mycology: The Interactive World of Fungi",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    },
+    {
+      "id": "PLSCI-2013",
+      "subject": "PLSCI",
+      "number": "2013",
+      "title": "Mushrooms, Molds and More",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        },
+        {
+          "value": "BIO-AG"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    }
+  ]
+}

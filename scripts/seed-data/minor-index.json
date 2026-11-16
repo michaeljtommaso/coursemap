@@ -235,7 +235,8 @@
   },
   "cornell-fgss-minor-2026": {
     "shortName": "FGSS minor",
-    "offeredBy": "FGSS"
+    "offeredBy": "FGSS",
+    "notOpenTo": ["cornell-fgss-ba"]
   },
   "cornell-fiber-science-minor-2026": {
     "shortName": "Fiber Science minor",

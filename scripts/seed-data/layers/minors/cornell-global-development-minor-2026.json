@@ -1,0 +1,165 @@
+{
+  "id": "cornell-global-development-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Global Development (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-global-development-minor-2026",
+  "sharing": {
+    "otherMajors": {
+      "maxCourses": 2,
+      "maxCredits": 6
+    }
+  },
+  "rows": [
+    {
+      "id": "gdev-1102",
+      "label": "GDEV 1102, the introductory global development course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-1102"
+        ]
+      }
+    },
+    {
+      "id": "gdev-2202",
+      "label": "GDEV 2202, the ethics of technology and development course",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-2202"
+        ]
+      }
+    },
+    {
+      "id": "natural-systems",
+      "label": "One natural systems course from the agriculture focus or the environment focus",
+      "group": "Natural systems and development",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Either focus works, but only one course is needed in total. The course is 3 or 4 credits; the seat counts one course.",
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "GDEV-2300",
+          "GDEV-1300",
+          "GDEV-3240",
+          "GDEV-2065"
+        ]
+      }
+    },
+    {
+      "id": "cel-course",
+      "label": "One community-engaged learning (CU-CEL) course of at least 3 credits",
+      "group": "Community-engaged learning",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Matched by the CU-CEL roster attribute, any subject. A course used here fills no other row of this minor.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "tag": [
+              "CU-CEL"
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "gdev-electives",
+      "label": "Two more GDEV courses at the 2000 level or above, 6 credits together, not special studies",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The special studies numbers GDEV 4970, 4980 and 4990 are held out. Variable-credit courses count only for the credits the student takes, and the 6-credit floor is checked on this pool.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "GDEV"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000
+            }
+          },
+          {
+            "not": {
+              "course": [
+                "GDEV-4970",
+                "GDEV-4980",
+                "GDEV-4990"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 6
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn a C or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (S/U is not accepted)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "min-credits",
+      "label": "Check the minor totals at least 18 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "sharing-check",
+      "label": "No more than two courses (6 credits at least) may count toward both your major and this minor",
+      "group": "Overlap",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/global-development-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "The board holds back overlap beyond 2 courses and 6 credits, the stricter reading of the wording; confirm the exact count with the program.",
+      "kind": "confirm"
+    }
+  ]
+}

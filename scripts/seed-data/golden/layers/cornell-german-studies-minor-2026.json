@@ -1,0 +1,238 @@
+{
+  "programId": "cornell-german-studies-minor-2026",
+  "description": "A student takes five three-credit German Studies courses, mixing culture, literature and media topics at the intermediate and advanced levels.",
+  "layerIds": [
+    "cornell-german-studies-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-german-studies-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GERST-2020",
+    "GERST-2040",
+    "GERST-2700",
+    "GERST-3080",
+    "GERST-3105"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GERST-2000",
+      "rowId": "german-studies-courses",
+      "why": "The intro course is the entry prerequisite and sits below the 2010 floor, so it is not one of the four."
+    },
+    {
+      "courseId": "GERST-1210",
+      "rowId": "german-studies-courses",
+      "why": "A first-year language-context course is numbered under 2010."
+    },
+    {
+      "courseId": "GERST-2005",
+      "rowId": "german-studies-courses",
+      "why": "Intermediate Yiddish is numbered under 2010."
+    },
+    {
+      "courseId": "GERST-1230",
+      "rowId": "german-studies-courses",
+      "why": "Another course below the 2010 floor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GERST-2020",
+      "subject": "GERST",
+      "number": "2020",
+      "title": "Literary Texts and Contexts",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "GERST-2040",
+      "subject": "GERST",
+      "number": "2040",
+      "title": "Perspectives on German Culture",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "GERST-2700",
+      "subject": "GERST",
+      "number": "2700",
+      "title": "Introduction to German Culture and Thought",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        }
+      ]
+    },
+    {
+      "id": "GERST-3080",
+      "subject": "GERST",
+      "number": "3080",
+      "title": "Walking the Line: East and West Germany Then and Now",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "GLC-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "GERST-3105",
+      "subject": "GERST",
+      "number": "3105",
+      "title": "Performance, Theater and Politics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        }
+      ]
+    },
+    {
+      "id": "GERST-2000",
+      "subject": "GERST",
+      "number": "2000",
+      "title": "Germany: Intercultural Context",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "EULANG"
+        },
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "LA-AG"
+        },
+        {
+          "value": "ALC-AS"
+        },
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "GERST-1210",
+      "subject": "GERST",
+      "number": "1210",
+      "title": "Exploring German Contexts I",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    },
+    {
+      "id": "GERST-2005",
+      "subject": "GERST",
+      "number": "2005",
+      "title": "Intermediate Yiddish",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "FLOPI-AS"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "GERST-1230",
+      "subject": "GERST",
+      "number": "1230",
+      "title": "Expanding the German Dossier",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "EUAREA"
+        },
+        {
+          "value": "FL-AG"
+        },
+        {
+          "value": "OCL-IL"
+        }
+      ]
+    }
+  ]
+}

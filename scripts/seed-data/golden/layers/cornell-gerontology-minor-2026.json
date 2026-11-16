@@ -1,0 +1,99 @@
+{
+  "programId": "cornell-gerontology-minor-2026",
+  "description": "A student finishes the aging minor with one intro aging class and three health and policy electives.",
+  "layerIds": [
+    "cornell-gerontology-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-anthropology-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "HD-2510",
+    "PUBPOL-3230",
+    "PUBPOL-3280",
+    "PUBPOL-2350"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "NS-3200",
+      "rowId": "additional-coursework",
+      "why": "Not among the approved elective courses, and the list is closed."
+    }
+  ],
+  "courses": [
+    {
+      "id": "HD-2510",
+      "subject": "HD",
+      "number": "2510",
+      "title": "Social Gerontology: Aging and the Life Course",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-3230",
+      "subject": "PUBPOL",
+      "number": "3230",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "PUBPOL-3280",
+      "subject": "PUBPOL",
+      "number": "3280",
+      "title": "Fundamentals of Population Health",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "HCP-EL"
+        }
+      ]
+    },
+    {
+      "id": "PUBPOL-2350",
+      "subject": "PUBPOL",
+      "number": "2350",
+      "title": "The U.S. Health Care System",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SBA-HE"
+        }
+      ]
+    },
+    {
+      "id": "NS-3200",
+      "subject": "NS",
+      "number": "3200",
+      "title": "Introduction to Human Biochemistry",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "BSC-AG"
+        }
+      ]
+    }
+  ]
+}

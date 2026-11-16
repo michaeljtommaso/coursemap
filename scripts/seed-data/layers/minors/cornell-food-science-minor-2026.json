@@ -1,0 +1,142 @@
+{
+  "id": "cornell-food-science-minor-2026",
+  "kind": "minor",
+  "family": "cals",
+  "name": "Food Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-food-science-minor-2026",
+  "rows": [
+    {
+      "id": "fdsc-2005",
+      "label": "FDSC 2005, the introductory food science course",
+      "group": "Required coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FDSC-2005"
+        ]
+      }
+    },
+    {
+      "id": "choose-two-upper",
+      "label": "Two courses from the four upper-level food science options",
+      "group": "Required coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "course": [
+          "FDSC-3940",
+          "FDSC-4100",
+          "FDSC-4170",
+          "FDSC-4230"
+        ]
+      },
+      "requiredCourses": 2,
+      "requiredCredits": 0
+    },
+    {
+      "id": "fdsc-electives",
+      "label": "Five more credits of FDSC courses at the 2000 level or above, excluding special studies",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Special studies are held out by number: FDSC 4940 (special topics), 4960 (internship), 4970 (individual study), 4980 (teaching) and 4990 (research), and graduate 5000+ numbers are left out too, which is stricter than the page. See the confirm row.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FDSC"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 4939
+            }
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 5
+    },
+    {
+      "id": "credits-total",
+      "label": "At least 13 credits across the minor's FDSC courses",
+      "group": "Credit total",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-minor/",
+        "anchor": "Program Information"
+      },
+      "note": "Re-counts the FDSC courses the rows above use; the minimums of the rows alone add to only 12, so this total row decides.",
+      "kind": "credits",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FDSC"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 4939
+            }
+          }
+        ]
+      },
+      "requiredCredits": 13
+    },
+    {
+      "id": "special-studies-check",
+      "label": "Check that none of your elective courses is a special studies course",
+      "group": "Electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The page does not list which FDSC courses are special studies; the 4940-4999 numbers are held out of the elective rule. Confirm with the coordinator if another course you count is special studies.",
+      "kind": "confirm"
+    },
+    {
+      "id": "before-joining",
+      "label": "Finish FDSC 2005 before you join the minor",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor by contacting the Undergraduate Program Coordinator",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "open-to-non-majors",
+      "label": "Check you are not a Food Science major and that the minor has room for you",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/food-science-minor/",
+        "anchor": "Program Description"
+      },
+      "note": "Food Science majors are barred through the minor index; space in courses and schedules is up to the program.",
+      "kind": "confirm"
+    }
+  ]
+}

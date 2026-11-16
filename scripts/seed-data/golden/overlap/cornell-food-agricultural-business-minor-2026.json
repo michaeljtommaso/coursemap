@@ -1,0 +1,104 @@
+{
+  "programId": "cornell-food-agricultural-business-minor-2026",
+  "description": "An agricultural sciences student counts the food course and the farm management course toward both programs, which is more than the six shared credits allowed.",
+  "layerIds": [
+    "cornell-agricultural-sciences-bs-2026",
+    "cornell-food-agricultural-business-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "ECON-1110",
+    "AEM-2310",
+    "AEM-2400",
+    "AEM-3020",
+    "AEM-2480",
+    "AEM-3040"
+  ],
+  "limit": {
+    "maxCredits": 6
+  },
+  "shared": [
+    "AEM-2310",
+    "AEM-3020"
+  ],
+  "heldBack": [
+    {
+      "courseId": "AEM-3020",
+      "from": "cornell-food-agricultural-business-minor-2026",
+      "why": "Together the two shared courses carry seven credits, so the minor gives up the four-credit farm management course and the major keeps it."
+    }
+  ],
+  "courses": [
+    {
+      "id": "ECON-1110",
+      "subject": "ECON",
+      "number": "1110",
+      "title": "Introductory Microeconomics",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2310",
+      "subject": "AEM",
+      "number": "2310",
+      "title": "Business and Economics of Food",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2400",
+      "subject": "AEM",
+      "number": "2400",
+      "title": "Marketing",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3020",
+      "subject": "AEM",
+      "number": "3020",
+      "title": "Farm Business Management",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2480",
+      "subject": "AEM",
+      "number": "2480",
+      "title": "Food and Consumer Packaged Goods Industry Dynamics",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3040",
+      "subject": "AEM",
+      "number": "3040",
+      "title": "Dairy Markets and Policy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        }
+      ]
+    }
+  ]
+}

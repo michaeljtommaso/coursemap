@@ -122,7 +122,7 @@ export function layerFileText(layer: unknown): string {
   return `${JSON.stringify(layer, null, 2)}\n`;
 }
 
-const USAGE = "usage: npx tsx promote-layer.ts --program <layerId> --family cas|cals|other [--dir <provenanceDir>]";
+const USAGE = "usage: npx tsx promote-layer.ts --program <layerId> --family cas|cals|other [--dir <provenanceDir>] [--dump <catalogDump>]";
 
 /** A catalog of the app's course shape as validate-layers reads it. */
 function asValidateCatalog(byId: Map<string, DistCourse>): Catalog {
@@ -452,6 +452,8 @@ function main(): number {
   const program = flag("--program");
   const family = flag("--family");
   const dirArg = flag("--dir");
+  // A newer catalog dump, for a golden plan whose courses only it has (default: DEFAULT_DUMP).
+  const dumpArg = flag("--dump");
   if (!program || (family !== "cas" && family !== "cals" && family !== "other")) {
     console.error(USAGE);
     return 2;
@@ -463,7 +465,7 @@ function main(): number {
     console.error(e instanceof Error ? e.message : String(e));
     return 2;
   }
-  return promote({ program, family, base });
+  return promote({ program, family, base, ...(dumpArg ? { dump: resolve(dumpArg) } : {}) });
 }
 
 if (require.main === module) {

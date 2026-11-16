@@ -1,0 +1,176 @@
+{
+  "programId": "cornell-fiber-science-minor-2026",
+  "description": "A chemistry major finishes the minor with the three named fiber courses, one graduate-numbered course and one more department course.",
+  "layerIds": [
+    "cornell-fiber-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-chemistry-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "FSAD-3350",
+    "FSAD-4360",
+    "FSAD-4460",
+    "FSAD-6400",
+    "FSAD-3200"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "FSAD-6370",
+      "rowId": "fsad-6000-level",
+      "why": "A one-credit seminar is below the three-credit floor that keeps the total at fifteen."
+    },
+    {
+      "courseId": "FSAD-6370",
+      "rowId": "fsad-additional",
+      "why": "A one-credit course falls under the three-credit floor for the open seat."
+    },
+    {
+      "courseId": "FSAD-4390",
+      "rowId": "fsad-6000-level",
+      "why": "A 4000-numbered course is not at the 6000 level."
+    },
+    {
+      "courseId": "CHEM-2090",
+      "rowId": "fsad-additional",
+      "why": "Only courses coded FSAD may fill the minor."
+    },
+    {
+      "courseId": "FSAD-6460",
+      "rowId": "fsad-4460",
+      "why": "The page names the 4000-numbered nanotechnology course, not its graduate twin."
+    }
+  ],
+  "courses": [
+    {
+      "id": "FSAD-3350",
+      "subject": "FSAD",
+      "number": "3350",
+      "title": "Fiber Science",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "FSAD-4360",
+      "subject": "FSAD",
+      "number": "4360",
+      "title": "Fiber Materials",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "FSAD-4460",
+      "subject": "FSAD",
+      "number": "4460",
+      "title": "Nanotechnology in Fibers and Textiles",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "FSAD-6400",
+      "subject": "FSAD",
+      "number": "6400",
+      "title": "Polymer and Fiber Characterization",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "FSAD-3200",
+      "subject": "FSAD",
+      "number": "3200",
+      "title": "Global Textile and Apparel Sustainability",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "CA-HE"
+        },
+        {
+          "value": "PBS-HE"
+        },
+        {
+          "value": "SBA-HE"
+        },
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "FSAD-6370",
+      "subject": "FSAD",
+      "number": "6370",
+      "title": "Research Seminar in Apparel Design",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "SAAREA"
+        }
+      ]
+    },
+    {
+      "id": "FSAD-4390",
+      "subject": "FSAD",
+      "number": "4390",
+      "title": "Introduction to Color Science: Physics and Chemistry of Color",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PBS-HE"
+        }
+      ]
+    },
+    {
+      "id": "CHEM-2090",
+      "subject": "CHEM",
+      "number": "2090",
+      "title": "Engineering General Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CHPH-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "PHS-AS"
+        },
+        {
+          "value": "SCT-IL"
+        }
+      ]
+    },
+    {
+      "id": "FSAD-6460",
+      "subject": "FSAD",
+      "number": "6460",
+      "title": "Nanotechnology in Fibers and Textiles",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "id": "cornell-gerontology-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Gerontology (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-gerontology-minor-2026",
+  "rows": [
+    {
+      "id": "eligibility-undergraduate",
+      "label": "Confirm you are an undergraduate (the minor is open to undergraduates in any college)",
+      "group": "Eligibility",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/gerontology-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-letter",
+      "label": "Confirm every minor course is taken for a letter grade (an S-U-only course needs an SX grade)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/gerontology-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "core-aging",
+      "label": "Core: one introductory aging course (social gerontology, or adulthood and aging)",
+      "group": "Core",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/gerontology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "HD-2510",
+          "HD-2180"
+        ]
+      }
+    },
+    {
+      "id": "additional-coursework",
+      "label": "Additional coursework: 9 credits from the approved list (the other core course may count here; HD 3290 and HD 6290 count only once between them)",
+      "group": "Additional coursework",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/gerontology-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "pool",
+      "rule": {
+        "anyOf": [
+          {
+            "course": [
+              "DEA-1112",
+              "COGST-1112",
+              "DEA-4500",
+              "DEA-5700",
+              "EDUC-2200",
+              "FSAD-4660",
+              "HD-3120",
+              "HD-3290",
+              "HD-3490",
+              "HD-4600",
+              "HD-4610",
+              "HD-6290",
+              "NS-1220",
+              "NS-4410",
+              "NS-4500",
+              "PUBPOL-2030",
+              "SOC-2030",
+              "PUBPOL-2350",
+              "PUBPOL-3080",
+              "ECON-3250",
+              "PUBPOL-3230",
+              "PUBPOL-3280",
+              "PUBPOL-3650",
+              "PUBPOL-3780",
+              "PUBPOL-5500",
+              "PUBPOL-5520",
+              "PUBPOL-5740",
+              "SOC-2202",
+              "GDEV-2010"
+            ]
+          },
+          {
+            "course": [
+              "HD-2510",
+              "HD-2180"
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 0,
+      "requiredCredits": 9,
+      "limits": [
+        {
+          "rule": {
+            "course": [
+              "HD-3290",
+              "HD-6290"
+            ]
+          },
+          "label": "Only one of HD 3290 and HD 6290 counts",
+          "maxCourses": 1
+        }
+      ]
+    }
+  ]
+}

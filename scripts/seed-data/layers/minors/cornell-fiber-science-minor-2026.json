@@ -1,0 +1,158 @@
+{
+  "id": "cornell-fiber-science-minor-2026",
+  "kind": "minor",
+  "family": "other",
+  "name": "Fiber Science (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-fiber-science-minor-2026",
+  "rows": [
+    {
+      "id": "fsad-3350",
+      "label": "Fiber Science course (FSAD 3350)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fiber-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FSAD-3350"
+        ]
+      }
+    },
+    {
+      "id": "fsad-4360",
+      "label": "Fiber Materials course (FSAD 4360)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fiber-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FSAD-4360"
+        ]
+      }
+    },
+    {
+      "id": "fsad-4460",
+      "label": "Nanotechnology in Fibers and Textiles course (FSAD 4460)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fiber-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "course": [
+          "FSAD-4460"
+        ]
+      }
+    },
+    {
+      "id": "fsad-6000-level",
+      "label": "One FSAD course at the 6000 level (3 credits or more)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fiber-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Courses worth under 3 credits are left out so the 15-credit total holds; see the credit-total row.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FSAD"
+            ]
+          },
+          {
+            "number": {
+              "min": 6000,
+              "max": 6999
+            }
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "fsad-additional",
+      "label": "One more FSAD course, any level (3 credits or more)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fiber-science-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Courses worth under 3 credits are left out so the 15-credit total holds; see the credit-total row.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FSAD"
+            ]
+          },
+          {
+            "minCredits": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "credit-total-15",
+      "label": "Confirm the minor's courses add up to at least 15 credits",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fiber-science-minor/",
+        "anchor": "Program Information"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "letter-grade",
+      "label": "Take every minor course for a letter grade (no S/U)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fiber-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-b-or-better",
+      "label": "Earn a B or better in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fiber-science-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "intent-to-minor",
+      "label": "File the intent-to-minor form after one FSAD course with a B or better",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fiber-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "note": "Needed before the semester in which you want enrollment priority in FSAD courses; it does not guarantee a seat.",
+      "kind": "confirm"
+    },
+    {
+      "id": "apply-to-graduate",
+      "label": "In your graduation semester, apply to graduate with the minor and send an unofficial transcript by March 15",
+      "group": "Declaring the minor",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/fiber-science-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

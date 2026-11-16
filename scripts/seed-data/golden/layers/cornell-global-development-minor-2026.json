@@ -1,0 +1,278 @@
+{
+  "programId": "cornell-global-development-minor-2026",
+  "description": "A student takes the two core development courses, a food systems course, a community-engaged business course, and two upper-level development electives, six courses in all.",
+  "layerIds": [
+    "cornell-global-development-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-agricultural-sciences-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "GDEV-1102",
+    "GDEV-2202",
+    "GDEV-2300",
+    "AEM-3110",
+    "GDEV-2450",
+    "GDEV-3300"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "GDEV-3260",
+      "rowId": "natural-systems",
+      "why": "A water course is not among the four courses named for the natural systems requirement."
+    },
+    {
+      "courseId": "GDEV-2010",
+      "rowId": "natural-systems",
+      "why": "A population course is not one of the named natural systems courses."
+    },
+    {
+      "courseId": "GDEV-2940",
+      "rowId": "cel-course",
+      "why": "It carries the engaged-learning attribute but is only one credit, under the three-credit floor."
+    },
+    {
+      "courseId": "GDEV-3500",
+      "rowId": "cel-course",
+      "why": "Half-credit trip preparation is far below the three-credit floor for the engaged-learning course."
+    },
+    {
+      "courseId": "GDEV-4970",
+      "rowId": "gdev-electives",
+      "why": "Independent study is one of the special studies numbers held out of the electives."
+    },
+    {
+      "courseId": "GDEV-4990",
+      "rowId": "gdev-electives",
+      "why": "Independent research is a special studies number and is excluded from the electives."
+    },
+    {
+      "courseId": "GDEV-1200",
+      "rowId": "gdev-electives",
+      "why": "A first-year seminar sits below the 2000-level floor for the electives."
+    },
+    {
+      "courseId": "ARKEO-1702",
+      "rowId": "gdev-electives",
+      "why": "The electives must carry the GDEV prefix; an archaeology course does not."
+    }
+  ],
+  "courses": [
+    {
+      "id": "GDEV-1102",
+      "subject": "GDEV",
+      "number": "1102",
+      "title": "Introduction to Global Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "D-HA"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2202",
+      "subject": "GDEV",
+      "number": "2202",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "GDEV-2300",
+      "subject": "GDEV",
+      "number": "2300",
+      "title": "Food Systems and Sustainable Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "AEM-3110",
+      "subject": "AEM",
+      "number": "3110",
+      "title": "Design and Innovation",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2450",
+      "subject": "GDEV",
+      "number": "2450",
+      "title": "Development Economics: Global Perspectives",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3300",
+      "subject": "GDEV",
+      "number": "3300",
+      "title": "Impact Evaluation for Development",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLS-AG"
+        },
+        {
+          "value": "SBA-AG"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3260",
+      "subject": "GDEV",
+      "number": "3260",
+      "title": "Water",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "DLG-AG"
+        },
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SCH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2010",
+      "subject": "GDEV",
+      "number": "2010",
+      "title": "Population and Social Change",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CA-AG"
+        },
+        {
+          "value": "SBA-AG"
+        },
+        {
+          "value": "SSC-AS"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-2940",
+      "subject": "GDEV",
+      "number": "2940",
+      "title": "Preparing for Food Systems and Agriculture Engaged Experiences",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-3500",
+      "subject": "GDEV",
+      "number": "3500",
+      "title": "Development in Action: Fall Faculty-Led Study Trip Preparation",
+      "credits": 0.5,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        },
+        {
+          "value": "CU-ITL"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-4970",
+      "subject": "GDEV",
+      "number": "4970",
+      "title": "Independent Study in Global Development",
+      "credits": 1,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-4990",
+      "subject": "GDEV",
+      "number": "4990",
+      "title": "Independent Research in Global Development",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "GDEV-1200",
+      "subject": "GDEV",
+      "number": "1200",
+      "title": "FWS: Topics in Global Development",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ARKEO-1702",
+      "subject": "ARKEO",
+      "number": "1702",
+      "title": "Great Discoveries in Greek and Roman Archaeology",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "HA-AG"
+        },
+        {
+          "value": "HST-AS"
+        },
+        {
+          "value": "ARKEO-RMNE"
+        }
+      ]
+    }
+  ]
+}

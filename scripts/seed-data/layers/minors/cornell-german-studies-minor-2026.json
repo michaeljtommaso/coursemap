@@ -1,0 +1,107 @@
+{
+  "id": "cornell-german-studies-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "German Studies (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-german-studies-minor-2026",
+  "rows": [
+    {
+      "id": "prerequisite-gerst-2000",
+      "label": "Finish the intercultural-context intro (GERST 2000 or an equivalent) before declaring",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "undergraduate-enrollment",
+      "label": "Be an undergraduate in any Cornell college",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "german-studies-courses",
+      "label": "Four German Studies courses at the 2010 level or above, one of them 3000+",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts German Studies (GERST) courses only, so a course from another department is not counted here (see the confirm row). Whether the 3000+ course is taught in German is not visible to the board.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "GERST"
+            ]
+          },
+          {
+            "number": {
+              "min": 2010
+            }
+          }
+        ]
+      },
+      "requiredCourses": 4,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "allOf": [
+              {
+                "subject": [
+                  "GERST"
+                ]
+              },
+              {
+                "number": {
+                  "min": 3000
+                }
+              }
+            ]
+          },
+          "label": "At least one course at the 3000 level or higher",
+          "minCourses": 1
+        }
+      ]
+    },
+    {
+      "id": "taught-in-german",
+      "label": "Confirm that the 3000+ course counted was taught in German",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "course-from-other-department",
+      "label": "Optionally replace one of the four with another department's course that has a substantial German component",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "study-abroad-limit",
+      "label": "Count no more than one study abroad course per semester toward the minor",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/german-studies-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "programId": "cornell-food-science-minor-2026",
+  "description": "A student takes the intro food science course, two of the upper options and two more food science electives to reach thirteen credits.",
+  "layerIds": [
+    "cornell-food-science-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-animal-science-bs-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "FDSC-2005",
+    "FDSC-4100",
+    "FDSC-4170",
+    "FDSC-4220",
+    "FDSC-4040"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "FDSC-4940",
+      "rowId": "fdsc-electives",
+      "why": "Special topics course, a special studies number held out of electives."
+    },
+    {
+      "courseId": "FDSC-4970",
+      "rowId": "fdsc-electives",
+      "why": "Individual study is a special studies course."
+    },
+    {
+      "courseId": "FDSC-4990",
+      "rowId": "fdsc-electives",
+      "why": "Undergraduate research is a special studies course."
+    },
+    {
+      "courseId": "FDSC-1500",
+      "rowId": "fdsc-electives",
+      "why": "Numbered below 2000, so under the level floor."
+    },
+    {
+      "courseId": "FDSC-1500",
+      "rowId": "credits-total",
+      "why": "Numbered below 2000, so under the level floor."
+    },
+    {
+      "courseId": "FDSC-4210",
+      "rowId": "choose-two-upper",
+      "why": "Not one of the four listed upper-level options."
+    }
+  ],
+  "courses": [
+    {
+      "id": "FDSC-2005",
+      "subject": "FDSC",
+      "number": "2005",
+      "title": "Science and Technology of Raw and Processed Foods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-4100",
+      "subject": "FDSC",
+      "number": "4100",
+      "title": "Sensory Evaluation of Food",
+      "credits": 2,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "DLG-AG"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-4170",
+      "subject": "FDSC",
+      "number": "4170",
+      "title": "Food Chemistry",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "PSC-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-4220",
+      "subject": "FDSC",
+      "number": "4220",
+      "title": "Foods, Dietary Supplements, and Health",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "FDSC-4040",
+      "subject": "FDSC",
+      "number": "4040",
+      "title": "Chemistry and Functional Properties of Food Ingredients",
+      "credits": 2,
+      "attrs": []
+    },
+    {
+      "id": "FDSC-4940",
+      "subject": "FDSC",
+      "number": "4940",
+      "title": "Special Topics in Food Science",
+      "credits": 1,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-4970",
+      "subject": "FDSC",
+      "number": "4970",
+      "title": "Individual Study in Food Science",
+      "credits": 0.5,
+      "creditsMax": 3,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-4990",
+      "subject": "FDSC",
+      "number": "4990",
+      "title": "Undergraduate Research in Food Science",
+      "credits": 1,
+      "creditsMax": 4,
+      "attrs": [
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-1500",
+      "subject": "FDSC",
+      "number": "1500",
+      "title": "Food Choices and Issues",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "AFS-AG"
+        },
+        {
+          "value": "ETH-AG"
+        },
+        {
+          "value": "CU-SBY"
+        }
+      ]
+    },
+    {
+      "id": "FDSC-4210",
+      "subject": "FDSC",
+      "number": "4210",
+      "title": "Food Engineering Principles",
+      "credits": 4,
+      "attrs": []
+    }
+  ]
+}

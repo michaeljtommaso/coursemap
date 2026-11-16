@@ -1,0 +1,103 @@
+{
+  "id": "cornell-french-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "French (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-french-minor-2026",
+  "rows": [
+    {
+      "id": "declare-minor",
+      "label": "Register your intent to do the minor with the Director of Undergraduate Studies",
+      "group": "Declaration",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-minor/",
+        "anchor": "Program Description"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "french-courses",
+      "label": "Five French or Francophone courses of at least 3 credits each, FREN 2095 or higher",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Only FREN courses count on the board, and the page puts no cap on honors or special-topics FREN courses. A French or Francophone course from another department is a confirm row, and study-abroad or transfer courses are capped at two.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "FREN"
+            ]
+          },
+          {
+            "number": {
+              "min": 2095
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement"
+              ]
+            }
+          }
+        ]
+      },
+      "requiredCourses": 5,
+      "requiredCredits": 15,
+      "limits": [
+        {
+          "rule": {
+            "creditKind": [
+              "transfer"
+            ]
+          },
+          "maxCourses": 2
+        }
+      ]
+    },
+    {
+      "id": "other-department-courses",
+      "label": "Any course outside Romance Studies must be on a French or Francophone topic (confirm each one you count)",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot see a course topic, so only FREN courses fill the five seats; confirm any other course here that you want to count.",
+      "kind": "confirm"
+    },
+    {
+      "id": "english-cap",
+      "label": "No more than two of the five courses may be taught in English",
+      "group": "Courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board cannot see the language of instruction.",
+      "kind": "confirm"
+    },
+    {
+      "id": "min-grade",
+      "label": "Earn at least a B- in every course counted for the minor",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/french-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    }
+  ]
+}

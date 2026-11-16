@@ -1,0 +1,279 @@
+{
+  "id": "cornell-dance-minor-2026",
+  "kind": "minor",
+  "family": "cas",
+  "name": "Dance (Minor)",
+  "catalogYear": "2026-27",
+  "programId": "cornell-dance-minor-2026",
+  "rows": [
+    {
+      "id": "dance-composition",
+      "label": "Dance Composition",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PMA-2300"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "global-dance-or-theatre",
+      "label": "Global dance course, or the global theatre and performance alternative",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PMA-3226",
+              "PMA-3750"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 4
+    },
+    {
+      "id": "production-lab",
+      "label": "One production lab (media or technology)",
+      "group": "Required courses",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Lab credit counts only here, so labs are kept out of the dance elective row.",
+      "kind": "seat",
+      "rule": {
+        "allOf": [
+          {
+            "course": [
+              "PMA-1410",
+              "PMA-1610"
+            ]
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          }
+        ]
+      },
+      "credits": 2
+    },
+    {
+      "id": "dance-electives",
+      "label": "Three further dance-focused PMA courses of 3+ credits (no labs)",
+      "group": "Dance electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "Counts PMA 2000-4999 courses whose catalog title is plainly dance technique or dance-making; the reminder row covers others. Labs, independent study, writing seminars, graduate numbers and the two required courses are left out. Performing Hip Hop (a Music cross-list) counts only if you answer that the DUS approved it as dance-focused.",
+      "kind": "pool",
+      "rule": {
+        "allOf": [
+          {
+            "subject": [
+              "PMA"
+            ]
+          },
+          {
+            "number": {
+              "min": 2000,
+              "max": 4999
+            }
+          },
+          {
+            "minCredits": 3
+          },
+          {
+            "not": {
+              "course": [
+                "PMA-2300",
+                "PMA-3226",
+                "PMA-3750"
+              ]
+            }
+          },
+          {
+            "not": {
+              "creditKind": [
+                "ap",
+                "ib",
+                "alevel",
+                "intl",
+                "placement",
+                "transfer"
+              ]
+            }
+          },
+          {
+            "anyOf": [
+              {
+                "titleStartsWith": "Contemporary Dance Technique"
+              },
+              {
+                "titleStartsWith": "Classical Dance Technique"
+              },
+              {
+                "titleStartsWith": "Making Dance on Camera"
+              },
+              {
+                "allOf": [
+                  {
+                    "titleStartsWith": "Performing Hip Hop"
+                  },
+                  {
+                    "answered": "approvedFor:cornell-dance-minor-2026/dance-electives"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "requiredCourses": 3,
+      "requiredCredits": 9
+    },
+    {
+      "id": "dance-focus-other",
+      "label": "Other PMA courses focused on dance count too: check yours against the department",
+      "group": "Dance electives",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The board recognizes dance courses by title only. A dance-focused PMA course it misses is yours to count. Cross-listed courses with a PMA code and a music or other home (for example Performing Hip Hop) are not counted by the board; ask the department whether one is dance-focused.",
+      "kind": "confirm"
+    },
+    {
+      "id": "credit-size",
+      "label": "Take every course for 3+ credits (the lab excepted), 18 credits in all",
+      "group": "Credits",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "note": "The rows already hold the non-lab courses to 3 credits; a 4-credit global course, three 3-credit electives, the 3-credit composition course and a 2-credit lab reach the total.",
+      "kind": "confirm"
+    },
+    {
+      "id": "pma-faculty",
+      "label": "Cross-listed courses must be taught or co-taught by PMA faculty to count",
+      "group": "Which courses count",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-unaffiliated-abroad",
+      "label": "Do not count study-abroad courses from programs not directly affiliated with Cornell",
+      "group": "Which courses count",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "no-independent-study",
+      "label": "Independent study and first-year writing seminars do not count",
+      "group": "Which courses count",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "grade-c",
+      "label": "Earn a C or better in each course (an S where the course is S-U only)",
+      "group": "Grades",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Grade Requirements"
+      },
+      "kind": "confirm"
+    },
+    {
+      "id": "declare-minor",
+      "label": "Declare the minor with the Director of Undergraduate Study before the third week of your last semester",
+      "group": "Declaring",
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Minor Declaration Information"
+      },
+      "kind": "confirm"
+    }
+  ],
+  "questions": [
+    {
+      "source": {
+        "url": "https://catalog.cornell.edu/programs/dance-minor/",
+        "anchor": "Minor Requirements"
+      },
+      "quote": "Three additional courses focused on dance, excluding Production Laboratory courses",
+      "type": "approvedFor",
+      "row": "dance-electives",
+      "courses": {
+        "allOf": [
+          {
+            "subject": [
+              "PMA"
+            ]
+          },
+          {
+            "titleStartsWith": "Performing Hip Hop"
+          }
+        ]
+      },
+      "approver": "dus"
+    }
+  ]
+}
