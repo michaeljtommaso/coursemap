@@ -3,6 +3,19 @@
     "shortName": "Applied Math minor",
     "offeredBy": "Engineering"
   },
+  "cornell-artificial-intelligence-minor-2026": {
+    "shortName": "AI minor",
+    "offeredBy": "Bowers CIS"
+  },
+  "cornell-biomedical-engineering-minor-2026": {
+    "shortName": "BME minor",
+    "offeredBy": "Engineering"
+  },
+  "cornell-biometry-statistics-minor-2026": {
+    "shortName": "Biometry & Statistics minor",
+    "offeredBy": "Statistics & Data Science",
+    "notOpenTo": ["cornell-biometry-statistics-bs"]
+  },
   "cornell-business-minor-2026": {
     "shortName": "Business minor",
     "offeredBy": "SC Johnson College",
@@ -30,6 +43,15 @@
     "shortName": "Engineering Management minor",
     "offeredBy": "Engineering"
   },
+  "cornell-english-minor-2026": {
+    "shortName": "English minor",
+    "offeredBy": "Arts & Sciences",
+    "notOpenTo": ["cornell-english-ba"]
+  },
+  "cornell-entrepreneurship-minor-2026": {
+    "shortName": "Entrepreneurship minor",
+    "offeredBy": "SC Johnson College"
+  },
   "cornell-game-design-minor-2026": {
     "shortName": "Game Design minor",
     "offeredBy": "Engineering"
@@ -47,10 +69,22 @@
     "offeredBy": "Bowers CIS",
     "notOpenTo": ["cornell-information-science-ba", "cornell-information-science-bs", "cornell-isst-bs"]
   },
+  "cornell-international-relations-minor-2026": {
+    "shortName": "International Relations minor",
+    "offeredBy": "Einaudi Center"
+  },
   "cornell-mathematics-minor-2026": {
     "shortName": "Math minor",
     "offeredBy": "Arts & Sciences",
     "notOpenTo": ["cornell-mathematics-ba"]
+  },
+  "cornell-mechanical-engineering-minor-2026": {
+    "shortName": "ME minor",
+    "offeredBy": "Engineering"
+  },
+  "cornell-music-minor-2026": {
+    "shortName": "Music minor",
+    "offeredBy": "Arts & Sciences"
   },
   "cornell-operations-research-management-science-minor-2026": {
     "shortName": "ORMS minor",
@@ -70,5 +104,14 @@
   "cornell-public-policy-minor-2026": {
     "shortName": "Public Policy minor",
     "offeredBy": "Arts & Sciences"
+  },
+  "cornell-robotics-minor-2026": {
+    "shortName": "Robotics minor",
+    "offeredBy": "Engineering"
+  },
+  "cornell-spanish-minor-2026": {
+    "shortName": "Spanish minor",
+    "offeredBy": "Arts & Sciences",
+    "notOpenTo": ["cornell-spanish-ba"]
   }
 }
