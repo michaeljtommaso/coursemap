@@ -1,15 +1,54 @@
 {
+  "cornell-actuarial-science-minor-2026": {
+    "shortName": "Actuarial Science minor",
+    "offeredBy": "Statistics & Data Science"
+  },
   "cornell-aerospace-engineering-minor-2026": {
     "shortName": "Aerospace minor",
     "offeredBy": "Engineering"
+  },
+  "cornell-africana-minor-2026": {
+    "shortName": "Africana Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-american-studies-minor-2026": {
+    "shortName": "American Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-animal-science-minor-2026": {
+    "shortName": "Animal Science minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-animal-science-bs"]
+  },
+  "cornell-anthropology-minor-2026": {
+    "shortName": "Anthropology minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-applied-economics-minor-2026": {
+    "shortName": "Applied Economics minor",
+    "offeredBy": "SC Johnson College",
+    "notOpenTo": ["cornell-applied-economics-management-bs"]
+  },
+  "cornell-applied-exercise-science-minor-2026": {
+    "shortName": "Applied Exercise Science minor",
+    "offeredBy": "Nutritional Sciences"
   },
   "cornell-applied-mathematics-minor-2026": {
     "shortName": "Applied Math minor",
     "offeredBy": "Engineering"
   },
+  "cornell-arabic-minor-2026": {
+    "shortName": "Arabic minor",
+    "offeredBy": "Arts & Sciences"
+  },
   "cornell-artificial-intelligence-minor-2026": {
     "shortName": "AI minor",
     "offeredBy": "Bowers CIS"
+  },
+  "cornell-astronomy-minor-2026": {
+    "shortName": "Astronomy minor",
+    "offeredBy": "Astronomy",
+    "notOpenTo": ["cornell-astronomy-ba"]
   },
   "cornell-biomedical-engineering-minor-2026": {
     "shortName": "BME minor",
@@ -33,6 +72,10 @@
     "shortName": "CS minor",
     "offeredBy": "Arts & Sciences and Engineering",
     "notOpenTo": ["cornell-computer-science-ba", "cornell-cs-bs", "cornell-isst-bs"]
+  },
+  "cornell-creative-writing-minor-2026": {
+    "shortName": "Creative Writing minor",
+    "offeredBy": "Literatures in English"
   },
   "cornell-data-science-minor-2026": {
     "shortName": "Data Science minor",
