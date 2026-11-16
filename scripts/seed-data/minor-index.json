@@ -11,6 +11,10 @@
     "shortName": "Africana Studies minor",
     "offeredBy": "Arts & Sciences"
   },
+  "cornell-american-indian-indigenous-studies-minor-2026": {
+    "shortName": "AIIS minor",
+    "offeredBy": "Arts & Sciences"
+  },
   "cornell-american-studies-minor-2026": {
     "shortName": "American Studies minor",
     "offeredBy": "Arts & Sciences"
@@ -41,18 +45,50 @@
     "shortName": "Arabic minor",
     "offeredBy": "Arts & Sciences"
   },
+  "cornell-archaeology-minor-2026": {
+    "shortName": "Archaeology minor",
+    "offeredBy": "Archaeology & Material Studies"
+  },
   "cornell-artificial-intelligence-minor-2026": {
     "shortName": "AI minor",
     "offeredBy": "Bowers CIS"
+  },
+  "cornell-asian-american-studies-minor-2026": {
+    "shortName": "Asian American Studies minor",
+    "offeredBy": "Asian American Studies"
+  },
+  "cornell-asl-deaf-studies-minor-2026": {
+    "shortName": "ASL/Deaf Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-astrobiology-minor-2026": {
+    "shortName": "Astrobiology minor",
+    "offeredBy": "Arts & Sciences",
+    "notOpenTo": ["cornell-astronomy-ba"]
   },
   "cornell-astronomy-minor-2026": {
     "shortName": "Astronomy minor",
     "offeredBy": "Astronomy",
     "notOpenTo": ["cornell-astronomy-ba"]
   },
+  "cornell-atmospheric-science-minor-2026": {
+    "shortName": "Atmospheric Science minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-atmospheric-science-bs"]
+  },
+  "cornell-biological-engineering-minor-2026": {
+    "shortName": "Biological Engineering minor",
+    "offeredBy": "Engineering",
+    "notOpenTo": ["cornell-be-bs"]
+  },
   "cornell-biomedical-engineering-minor-2026": {
     "shortName": "BME minor",
     "offeredBy": "Engineering"
+  },
+  "cornell-biomedical-sciences-minor-2026": {
+    "shortName": "Biomedical Sciences minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-biological-sciences-ba", "cornell-biological-sciences-bs"]
   },
   "cornell-biometry-statistics-minor-2026": {
     "shortName": "Biometry & Statistics minor",
@@ -64,9 +100,39 @@
     "offeredBy": "SC Johnson College",
     "notOpenTo": ["cornell-applied-economics-management-bs"]
   },
+  "cornell-caribbean-studies-minor-2026": {
+    "shortName": "Caribbean Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-china-asia-pacific-studies-minor-2026": {
+    "shortName": "CAPS minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-classical-civilization-minor-2026": {
+    "shortName": "Classical Civilization minor",
+    "offeredBy": "Classics"
+  },
+  "cornell-classics-minor-2026": {
+    "shortName": "Classics minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-climate-change-minor-2026": {
+    "shortName": "Climate Change minor",
+    "offeredBy": "Earth & Atmospheric Sciences"
+  },
   "cornell-cognitive-science-minor-2026": {
     "shortName": "Cognitive Science minor",
     "offeredBy": "Arts & Sciences"
+  },
+  "cornell-communications-minor-2026": {
+    "shortName": "Communication minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-communication-bs"]
+  },
+  "cornell-comparative-literature-minor-2026": {
+    "shortName": "Comparative Literature minor",
+    "offeredBy": "Comparative Literature",
+    "notOpenTo": ["cornell-comparative-literature-ba"]
   },
   "cornell-computer-science-minor-2026": {
     "shortName": "CS minor",
@@ -77,14 +143,61 @@
     "shortName": "Creative Writing minor",
     "offeredBy": "Literatures in English"
   },
+  "cornell-crime-prisons-education-justice-minor-2026": {
+    "shortName": "Crime, Prisons, Education & Justice minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-crop-management-minor-2026": {
+    "shortName": "Crop Management minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-plant-sciences-bs"]
+  },
+  "cornell-dance-minor-2026": {
+    "shortName": "Dance minor",
+    "offeredBy": "Performing & Media Arts"
+  },
+  "cornell-data-science-astronomy-minor-2026": {
+    "shortName": "Data Science in Astronomy minor",
+    "offeredBy": "Astronomy",
+    "notOpenTo": ["cornell-astronomy-ba"]
+  },
   "cornell-data-science-minor-2026": {
     "shortName": "Data Science minor",
     "offeredBy": "Bowers CIS"
+  },
+  "cornell-demography-minor-2026": {
+    "shortName": "Demography minor",
+    "offeredBy": "Brooks School"
+  },
+  "cornell-design-environmental-analysis-minor-2026": {
+    "shortName": "Design & Env. Analysis minor",
+    "offeredBy": "Human Ecology"
+  },
+  "cornell-digital-agriculture-minor-2026": {
+    "shortName": "Digital Agriculture minor",
+    "offeredBy": "CALS"
+  },
+  "cornell-earth-atmospheric-sciences-minor-2026": {
+    "shortName": "Earth & Climate Sciences minor",
+    "offeredBy": "Earth & Atmospheric Sciences",
+    "notOpenTo": ["cornell-earth-climate-sciences-ba", "cornell-earth-climate-sciences-ecsag-bs"]
+  },
+  "cornell-east-asian-studies-minor-2026": {
+    "shortName": "East Asian Studies minor",
+    "offeredBy": "Asian Studies"
+  },
+  "cornell-education-minor-2026": {
+    "shortName": "Education minor",
+    "offeredBy": "Arts & Sciences"
   },
   "cornell-electrical-computer-engineering-minor-2026": {
     "shortName": "ECE minor",
     "offeredBy": "Engineering",
     "notOpenTo": ["cornell-ece-bs"]
+  },
+  "cornell-engineering-communications-minor-2026": {
+    "shortName": "Engineering Communications minor",
+    "offeredBy": "Engineering"
   },
   "cornell-engineering-management-minor-2026": {
     "shortName": "Engineering Management minor",
@@ -95,26 +208,112 @@
     "offeredBy": "Arts & Sciences",
     "notOpenTo": ["cornell-english-ba"]
   },
+  "cornell-entomology-minor-2026": {
+    "shortName": "Entomology minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-entomology-bs"]
+  },
   "cornell-entrepreneurship-minor-2026": {
     "shortName": "Entrepreneurship minor",
     "offeredBy": "SC Johnson College",
     "notOpenTo": ["cornell-applied-economics-management-bs"]
   },
+  "cornell-environment-sustainability-minor-2026": {
+    "shortName": "Environment & Sustainability minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-environment-sustainability-ba", "cornell-environment-sustainability-bs"]
+  },
+  "cornell-european-studies-minor-2026": {
+    "shortName": "European Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-fashion-studies-minor-2026": {
+    "shortName": "Fashion Studies minor",
+    "offeredBy": "Human Ecology",
+    "notOpenTo": ["cornell-fashion-design-management", "cornell-fiber-science"]
+  },
+  "cornell-fgss-minor-2026": {
+    "shortName": "FGSS minor",
+    "offeredBy": "FGSS"
+  },
+  "cornell-fiber-science-minor-2026": {
+    "shortName": "Fiber Science minor",
+    "offeredBy": "Human Ecology",
+    "notOpenTo": ["cornell-fashion-design-management", "cornell-fiber-science"]
+  },
   "cornell-film-minor-2026": {
     "shortName": "Film minor",
     "offeredBy": "Performing & Media Arts"
+  },
+  "cornell-food-agricultural-business-minor-2026": {
+    "shortName": "Food & Ag Business minor",
+    "offeredBy": "SC Johnson College",
+    "notOpenTo": ["cornell-applied-economics-management-bs"]
+  },
+  "cornell-food-science-minor-2026": {
+    "shortName": "Food Science minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-food-science-bs"]
+  },
+  "cornell-french-minor-2026": {
+    "shortName": "French minor",
+    "offeredBy": "Romance Studies"
+  },
+  "cornell-fungal-biology-minor-2026": {
+    "shortName": "Fungal Biology minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-plant-sciences-bs"]
   },
   "cornell-game-design-minor-2026": {
     "shortName": "Game Design minor",
     "offeredBy": "Engineering"
   },
+  "cornell-german-studies-minor-2026": {
+    "shortName": "German Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-gerontology-minor-2026": {
+    "shortName": "Gerontology minor",
+    "offeredBy": "Human Ecology"
+  },
+  "cornell-global-asia-studies-minor-2026": {
+    "shortName": "Global Asia Studies minor",
+    "offeredBy": "Asian Studies"
+  },
+  "cornell-global-development-minor-2026": {
+    "shortName": "Global Development minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-global-development-bs"]
+  },
   "cornell-global-health-minor-2026": {
     "shortName": "Global Health minor",
     "offeredBy": "Nutritional Sciences"
   },
+  "cornell-health-policy-minor-2026": {
+    "shortName": "Health Policy minor",
+    "offeredBy": "Brooks School",
+    "notOpenTo": ["cornell-public-policy-ba", "cornell-policy-analysis-management", "cornell-health-care-policy"]
+  },
+  "cornell-healthy-futures-minor-2026": {
+    "shortName": "Healthy Futures minor",
+    "offeredBy": "Human Ecology"
+  },
+  "cornell-history-art-minor-2026": {
+    "shortName": "History of Art minor",
+    "offeredBy": "History of Art"
+  },
+  "cornell-history-capitalism-interdisciplinary-minor-2026": {
+    "shortName": "History of Capitalism minor",
+    "offeredBy": "Arts & Sciences"
+  },
   "cornell-history-minor-2026": {
     "shortName": "History minor",
     "offeredBy": "Arts & Sciences"
+  },
+  "cornell-horticulture-minor-2026": {
+    "shortName": "Horticulture minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-plant-sciences-bs"]
   },
   "cornell-human-development-minor-2026": {
     "shortName": "Human Development minor",
@@ -125,22 +324,68 @@
     "shortName": "Inequality Studies minor",
     "offeredBy": "Arts & Sciences"
   },
+  "cornell-infectious-disease-biology-minor-2026": {
+    "shortName": "Infectious Disease Biology minor",
+    "offeredBy": "CALS"
+  },
   "cornell-information-science-minor-2026": {
     "shortName": "Info Science minor",
     "offeredBy": "Bowers CIS",
     "notOpenTo": ["cornell-information-science-ba", "cornell-information-science-bs", "cornell-isst-bs"]
   },
+  "cornell-international-markets-development-minor-2026": {
+    "shortName": "Intl Markets & Development minor",
+    "offeredBy": "SC Johnson College",
+    "notOpenTo": ["cornell-applied-economics-management-bs"]
+  },
   "cornell-international-relations-minor-2026": {
     "shortName": "International Relations minor",
     "offeredBy": "Einaudi Center"
+  },
+  "cornell-italian-minor-2026": {
+    "shortName": "Italian minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-jewish-studies-minor-2026": {
+    "shortName": "Jewish Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-labor-social-justice-minor-2026": {
+    "shortName": "Labor & Social Justice minor",
+    "offeredBy": "ILR School"
+  },
+  "cornell-landscape-studies-minor-2026": {
+    "shortName": "Landscape Studies minor",
+    "offeredBy": "Landscape Architecture",
+    "notOpenTo": ["cornell-landscape-architecture-bs"]
+  },
+  "cornell-latin-american-studies-minor-2026": {
+    "shortName": "Latin American Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-latina-o-studies-minor-2026": {
+    "shortName": "Latina/o Studies minor",
+    "offeredBy": "Arts & Sciences"
   },
   "cornell-law-society-minor-2026": {
     "shortName": "Law & Society minor",
     "offeredBy": "Arts & Sciences"
   },
+  "cornell-leadership-minor-2026": {
+    "shortName": "Leadership minor",
+    "offeredBy": "Engineering"
+  },
+  "cornell-lgbt-minor-2026": {
+    "shortName": "LGBT Studies minor",
+    "offeredBy": "LGBT Studies"
+  },
   "cornell-linguistics-minor-2026": {
     "shortName": "Linguistics minor",
     "offeredBy": "Arts & Sciences"
+  },
+  "cornell-marine-biology-minor-2026": {
+    "shortName": "Marine Biology minor",
+    "offeredBy": "CALS"
   },
   "cornell-materials-science-engineering-minor-2026": {
     "shortName": "MSE minor",
@@ -157,9 +402,37 @@
     "offeredBy": "Engineering",
     "notOpenTo": ["cornell-me-bs"]
   },
+  "cornell-media-studies-minor-2026": {
+    "shortName": "Media Studies minor",
+    "offeredBy": "Performing & Media Arts"
+  },
+  "cornell-medieval-studies-minor-2026": {
+    "shortName": "Medieval Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-microbial-science-minor-2026": {
+    "shortName": "Microbial Science minor",
+    "offeredBy": "Microbiology"
+  },
+  "cornell-migration-studies-minor-2026": {
+    "shortName": "Migration Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-mitws-minor-2026": {
+    "shortName": "MITWS minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-moral-psychology-minor-2026": {
+    "shortName": "Moral Psychology minor",
+    "offeredBy": "Arts & Sciences"
+  },
   "cornell-music-minor-2026": {
     "shortName": "Music minor",
     "offeredBy": "Arts & Sciences"
+  },
+  "cornell-near-eastern-studies-minor-2026": {
+    "shortName": "Near Eastern Studies minor",
+    "offeredBy": "Near Eastern Studies"
   },
   "cornell-nutrition-health-minor-2026": {
     "shortName": "Nutrition & Health minor",
@@ -171,6 +444,14 @@
     "offeredBy": "Engineering",
     "notOpenTo": ["cornell-ore-bs", "cornell-isst-bs"]
   },
+  "cornell-org-human-resource-management-minor-2026": {
+    "shortName": "Organizations & HR Management minor",
+    "offeredBy": "ILR School"
+  },
+  "cornell-performing-media-arts-minor-2026": {
+    "shortName": "Performing & Media Arts minor",
+    "offeredBy": "Performing & Media Arts"
+  },
   "cornell-philosophy-minor-2026": {
     "shortName": "Philosophy minor",
     "offeredBy": "Arts & Sciences",
@@ -181,31 +462,121 @@
     "offeredBy": "Arts & Sciences",
     "notOpenTo": ["cornell-physics-ba"]
   },
+  "cornell-plant-breeding-minor-2026": {
+    "shortName": "Plant Breeding minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-plant-sciences-bs"]
+  },
+  "cornell-plant-sciences-minor-2026": {
+    "shortName": "Plant Sciences minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-plant-sciences-bs"]
+  },
   "cornell-policy-analysis-management-minor-2026": {
     "shortName": "PAM minor",
     "offeredBy": "Brooks School",
     "notOpenTo": ["cornell-public-policy-ba", "cornell-policy-analysis-management", "cornell-health-care-policy"]
+  },
+  "cornell-portuguese-brazilian-studies-minor-2026": {
+    "shortName": "Portuguese & Brazilian Studies minor",
+    "offeredBy": "Arts & Sciences"
   },
   "cornell-psychology-minor-2026": {
     "shortName": "Psychology minor",
     "offeredBy": "Arts & Sciences",
     "notOpenTo": ["cornell-psychology-ba"]
   },
+  "cornell-public-history-minor-2026": {
+    "shortName": "Public History minor",
+    "offeredBy": "Arts & Sciences"
+  },
   "cornell-public-policy-minor-2026": {
     "shortName": "Public Policy minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-religious-studies-minor-2026": {
+    "shortName": "Religious Studies minor",
     "offeredBy": "Arts & Sciences"
   },
   "cornell-robotics-minor-2026": {
     "shortName": "Robotics minor",
     "offeredBy": "Engineering"
   },
+  "cornell-russian-minor-2026": {
+    "shortName": "Russian minor",
+    "offeredBy": "Comparative Literature"
+  },
+  "cornell-sanskrit-studies-minor-2026": {
+    "shortName": "Sanskrit Studies minor",
+    "offeredBy": "Asian Studies"
+  },
+  "cornell-science-communication-public-engagement-minor-2026": {
+    "shortName": "Science Comm & Public Engagement minor",
+    "offeredBy": "CALS"
+  },
+  "cornell-science-technology-studies-minor-2026": {
+    "shortName": "STS minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-smart-cities-minor-2026": {
+    "shortName": "Smart Cities minor",
+    "offeredBy": "Engineering",
+    "notOpenTo": ["cornell-ce-bs"]
+  },
+  "cornell-soil-science-minor-2026": {
+    "shortName": "Soil Science minor",
+    "offeredBy": "CALS",
+    "notOpenTo": ["cornell-plant-sciences-bs"]
+  },
+  "cornell-south-asian-studies-minor-2026": {
+    "shortName": "South Asian Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-southeast-asian-studies-minor-2026": {
+    "shortName": "Southeast Asian Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
   "cornell-spanish-minor-2026": {
     "shortName": "Spanish minor",
     "offeredBy": "Arts & Sciences",
     "notOpenTo": ["cornell-spanish-ba"]
   },
+  "cornell-sustainable-ag-food-system-minor-2026": {
+    "shortName": "Sustainable Ag & Food Systems minor",
+    "offeredBy": "CALS"
+  },
+  "cornell-sustainable-business-economic-policy-minor-2026": {
+    "shortName": "Sustainable Business & Econ Policy minor",
+    "offeredBy": "SC Johnson College",
+    "notOpenTo": ["cornell-applied-economics-management-bs"]
+  },
   "cornell-sustainable-energy-systems-minor-2026": {
     "shortName": "Sustainable Energy minor",
     "offeredBy": "Engineering"
+  },
+  "cornell-theatre-minor-2026": {
+    "shortName": "Theatre minor",
+    "offeredBy": "Performing & Media Arts"
+  },
+  "cornell-translational-research-minor-2026": {
+    "shortName": "Translational Research minor",
+    "offeredBy": "Human Ecology"
+  },
+  "cornell-urban-regional-studies-minor-2026": {
+    "shortName": "Urban & Regional Studies minor",
+    "offeredBy": "City & Regional Planning",
+    "notOpenTo": ["cornell-urban-regional-studies"]
+  },
+  "cornell-viking-studies-minor-2026": {
+    "shortName": "Viking Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-visual-studies-minor-2026": {
+    "shortName": "Visual Studies minor",
+    "offeredBy": "Arts & Sciences"
+  },
+  "cornell-viticulture-enology-minor-2026": {
+    "shortName": "Viticulture & Enology minor",
+    "offeredBy": "CALS"
   }
 }
