@@ -11,7 +11,8 @@
 // turned { list: "L3" } into course ids), each such unit shows where its courses
 // came from — "from list L3 — 214 courses, under '<last heading>' (lead: '<first
 // lead line>')" — read from extract.json, which is re-derived from page.html
-// before use (loadVerifiedExtract). Lead lines and headings are the catalog's
+// before use (loadVerifiedExtract); a "<programId>:L3" list is read from that
+// program's own verified extract (withForeignLists). Lead lines and headings are the catalog's
 // words: they appear only on this sheet (private provenance), never in a public
 // file. Flagged (exit 1, never a crash): a broken or stale extract.json (also
 // when no row uses it), a missing one when the layer names lists, a list id the
@@ -68,7 +69,7 @@ import { z } from "zod";
 import { coverageProblem, readCoverageReport, type CoverageReport } from "./check-coverage";
 import { overlapFixtureRequired } from "./check-overlap-fixture";
 import { LedgerInputError, checkLedger, loadLedger, normRef, type EditLedger } from "./edit-ledger";
-import { loadVerifiedExtract, type CourseList, type PageExtract } from "./extract-catalog-page";
+import { FOREIGN_LIST_ID, foreignListIdsIn, loadVerifiedExtract, withForeignLists, type CourseList, type PageExtract } from "./extract-catalog-page";
 import {
   PROVENANCE_FILES,
   SHARING_QUOTE_KEY,
@@ -562,7 +563,11 @@ export function buildReview(inputs: ReviewInputs): { markdown: string; summary: 
     flags++;
   } else if (listUnits.length && extract) {
     const ids = new Set(Object.values(listRefs).flat());
-    L.push(`- Extracted lists: ${listUnits.length} unit(s) use ${ids.size} list(s) from ${PROVENANCE_FILES.extract}`);
+    const foreign = [...ids].filter((id) => FOREIGN_LIST_ID.test(id)).length;
+    L.push(
+      `- Extracted lists: ${listUnits.length} unit(s) use ${ids.size} list(s) from ${PROVENANCE_FILES.extract}` +
+        (foreign ? ` (${foreign} of them from another program's saved page)` : ""),
+    );
     if (extract.textSha256 !== merged.snapshot.textSha256) {
       L.push(`  - ${WARN} ${PROVENANCE_FILES.extract} was made from a different snapshot than the merged layer`);
       flags++;
@@ -768,6 +773,12 @@ export function loadReviewInputs(base: string): ReviewInputs {
     try {
       extract = loadVerifiedExtract(base);
       if (!Array.isArray(extract.lists)) throw new Error("it has no lists");
+      // "<programId>:L3" in listRefs: a list of another program's saved page.
+      const foreign = foreignListIdsIn(merged.listRefs);
+      if (foreign.size) {
+        const meta = existsSync(at(PROVENANCE_FILES.meta)) ? readJson<SnapshotMeta>(at(PROVENANCE_FILES.meta), false) : undefined;
+        extract = withForeignLists(extract, foreign, { ownEdition: meta?.edition });
+      }
     } catch (e) {
       extract = undefined;
       extractError = e instanceof Error ? e.message : String(e);

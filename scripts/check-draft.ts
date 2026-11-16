@@ -44,7 +44,12 @@
 //   extract          a college layer whose extract.json was made without --all
 //                    (the shared college text was cut off)
 //   list-ref         listRefs names a list not in extract.json, a key that is
-//                    not a row, or extract.json is missing/stale/hand-edited
+//                    not a row, or extract.json is missing/stale/hand-edited.
+//                    A "<programId>:L3" id is a list of another program's saved
+//                    page (withForeignLists: its verified extract, same catalog
+//                    edition); its courses are cited and page-only like the
+//                    page's own, but its lead lines state no count for this page.
+//                    An unusable one makes extract.json unusable (list-ref).
 //   public-text     a label, note, group or name copies a run of the page
 //   question-quote   (spec 020) a question's `quote` is not on page.txt word
 //                    for word (normal form), or is shorter than QUOTE_MIN_CHARS.
@@ -118,7 +123,7 @@ import {
   type Row,
   type SnapshotMeta,
 } from "./layer-authoring";
-import { loadVerifiedExtract, pageOnlyCourses, type PageExtract } from "./extract-catalog-page";
+import { FOREIGN_LIST_ID, foreignListIdsIn, loadVerifiedExtract, pageOnlyCourses, withForeignLists, type PageExtract } from "./extract-catalog-page";
 import { extractPageText, sha256, toLf } from "./snapshot-catalog-page";
 import { checkCoverage } from "./check-coverage";
 import {
@@ -654,7 +659,8 @@ export function checkDraft(input: CheckInput): CheckReport {
           if (!l) errors.push({ code: "list-ref", key, message: `${key}: list ${id} is not in extract.json` });
           else {
             l.courseIds.forEach((c) => set.add(c));
-            for (const r of l.lead) leads.push(r.line);
+            // Another page's lead line ("<programId>:L3") never states this page's counts.
+            if (!FOREIGN_LIST_ID.test(id)) for (const r of l.lead) leads.push(r.line);
           }
         }
         listCited[key] = set;
@@ -844,6 +850,10 @@ export function runCheck(argv: string[], io: CliIo = {}): number {
   if (hasRefs || existsSync(extractPath)) {
     try {
       extract = loadVerifiedExtract(dirname(resolve(snapshotDir)));
+      // listRefs "<programId>:L3": lists of another program's saved page, cited
+      // like the page's own (their courses also count as page-only below).
+      const foreign = foreignListIdsIn((draftRaw as { listRefs?: unknown }).listRefs);
+      if (foreign.size) extract = withForeignLists(extract, foreign, { ownEdition: meta.edition });
     } catch (e) {
       extract = { error: e instanceof Error ? e.message : String(e) };
     }

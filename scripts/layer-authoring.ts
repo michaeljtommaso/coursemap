@@ -300,7 +300,8 @@ export type Draft = {
   notes?: string[];
   /** Written by expand-draft.ts: RowUnit key → the extracted lists (extract.json
    *  ids) the unit's rules were expanded from. Those lists' courses count as
-   *  cited by the page itself. */
+   *  cited by the page itself. A "<programId>:L3" id is a list of another
+   *  program's saved page (same catalog edition; withForeignLists). */
   listRefs?: Record<string, string[]>;
   /** Written by expand-draft.ts: RowUnit key → extracted lists that hold "or" or
    *  paired ("&") rows and were flattened into a counting rule on purpose
@@ -311,6 +312,10 @@ export type Draft = {
    *  check-draft.ts downgrades that unit's unstated-number errors to warnings. */
   derivedNumbers?: Record<string, string>;
 };
+
+/** A listRefs / listFlatten id: this page's list ("L3"), or another program's
+ *  saved page's list ("cornell-music-ba-2026:L3", extract-catalog-page.ts withForeignLists). */
+export const LIST_REF_ID = /^(?:[a-z0-9][a-z0-9-]{0,100}:)?L\d+$/;
 
 export const DraftSchema = z
   .object({
@@ -324,9 +329,9 @@ export const DraftSchema = z
     quotes: z.record(z.string(), z.array(z.string().min(1)).min(1)),
     checklist: z.array(z.string()).optional(),
     notes: z.array(z.string()).optional(),
-    listFlatten: z.record(z.string(), z.array(z.string().regex(/^L[0-9]+$/)).min(1)).optional(),
+    listFlatten: z.record(z.string(), z.array(z.string().regex(LIST_REF_ID)).min(1)).optional(),
     derivedNumbers: z.record(z.string(), z.string().min(1)).optional(),
-    listRefs: z.record(z.string(), z.array(z.string().regex(/^L\d+$/)).min(1)).optional(),
+    listRefs: z.record(z.string(), z.array(z.string().regex(LIST_REF_ID)).min(1)).optional(),
     ledger: z
       .array(
         z

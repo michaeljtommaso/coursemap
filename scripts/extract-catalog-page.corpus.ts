@@ -8,11 +8,11 @@
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
-import { checkExtract, extractPage, listCourses, loadVerifiedExtract, pageOnlyCourses, runExtract } from "./extract-catalog-page";
+import { checkExtract, extractPage, foreignListIdsIn, listCourses, loadVerifiedExtract, pageOnlyCourses, runExtract, withForeignLists } from "./extract-catalog-page";
 import { expandDraft, runExpand } from "./expand-draft";
 import { extractPageText, sha256, toLf } from "./snapshot-catalog-page";
 import { quoteCoverage } from "./check-draft";
-import type { Layer } from "./layer-authoring";
+import { DraftSchema, type Layer } from "./layer-authoring";
 
 let failures = 0;
 let passed = 0;
@@ -301,6 +301,49 @@ check("CLI: extract, a hand-edited extract is refused, expand writes the draft",
   // "fictional-ba" has no real provenance folder, so the CLI refuses (exit 1): the
   // folder is resolved from the programId, never from where the source happens to sit.
   eq(code2, 1, "expand exit for a program without a provenance folder");
+});
+
+// ── Lists of another program's saved page ("<programId>:L3") ────────────────
+check("a list of another program's saved page: added under its qualified id, expanded, recorded; bad ids refuse", () => {
+  const dir = mkdtempSync(join(tmpdir(), "extract-foreign-"));
+  mkdirSync(join(dir, "snapshot"));
+  writeFileSync(join(dir, "snapshot", "page.html"), PAGE);
+  writeFileSync(join(dir, "snapshot", "page.txt"), text);
+  writeFileSync(
+    join(dir, "snapshot", "meta.json"),
+    JSON.stringify({ programId: "fictional-ba", url: SRC.snapshot.url, fetchedAt: "2026-10-26T00:00:00Z", via: "direct", httpStatus: 200, title: null, edition: "2026-2027", htmlSha256: sha256(toLf(PAGE)), textSha256: ex.textSha256, textChars: text.length })
+  );
+  writeFileSync(join(dir, "extract.json"), JSON.stringify(ex));
+  const dirOf = (id: string) => (id === "fictional-ba" ? dir : join(dir, "nowhere"));
+  const own = { ...ex, programId: "fictional-minor", lists: [] };
+  eq([...foreignListIdsIn({ rows: [{ rule: { anyOf: [{ list: "fictional-ba:L2" }, { list: ["L1", "fictional-ba:L1"] }] } }] })].sort(), ["fictional-ba:L1", "fictional-ba:L2"]);
+  const aug = withForeignLists(own, ["fictional-ba:L2"], { ownEdition: "2026-2027", dirOf });
+  eq(aug.lists.map((l) => l.id), ["fictional-ba:L2"]);
+  eq(aug.lists[0].courseIds, ex.lists[1].courseIds, "the other page's list courses");
+  eq(aug.blocks, own.blocks, "blocks stay this page's own");
+  const src = {
+    ...SRC,
+    programId: "fictional-minor",
+    layer: { ...SRC.layer, id: "fictional-minor", kind: "minor", programId: "fictional-minor", rows: [{ id: "r", label: "R", group: "Core", source: SRCURL, kind: "seat", rule: { list: "fictional-ba:L2" } }] },
+  };
+  const out = expandDraft(src as never, aug) as { layer: Layer; listRefs: Record<string, string[]> };
+  eq((out.layer.rows[0] as { rule: unknown }).rule, { course: ex.lists[1].courseIds });
+  eq(out.listRefs, { r: ["fictional-ba:L2"] });
+  ok(DraftSchema.safeParse(out).success, "the schema accepts a qualified listRefs id");
+  const throwsWith = (fn: () => unknown, needle: string) => {
+    try {
+      fn();
+    } catch (e) {
+      ok((e as Error).message.includes(needle), `expected "${needle}" in "${(e as Error).message}"`);
+      return;
+    }
+    throw new Error(`expected a throw mentioning "${needle}"`);
+  };
+  throwsWith(() => withForeignLists(own, ["fictional-ba:L9"], { dirOf }), "unknown list fictional-ba:L9");
+  throwsWith(() => withForeignLists(own, ["other-ba:L1"], { dirOf }), "cannot be used");
+  throwsWith(() => withForeignLists({ ...ex }, ["fictional-ba:L1"], { dirOf }), "own page");
+  throwsWith(() => withForeignLists(own, ["fictional-ba:L1"], { ownEdition: "2025-2026", dirOf }), "2026-2027 catalog");
+  throwsWith(() => withForeignLists(own, ["L1"], { dirOf }), "is not");
 });
 
 console.log(`${passed}/${passed + failures} passed.`);
