@@ -1,0 +1,158 @@
+{
+  "programId": "cornell-entrepreneurship-minor-2026",
+  "description": "A fictional Italian major finishes the entrepreneurship minor with seven business courses that total sixteen and a half credits.",
+  "layerIds": [
+    "cornell-entrepreneurship-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-italian-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "AEM-2220",
+    "AEM-2210",
+    "HADM-4144",
+    "AEM-3249",
+    "AEM-3220",
+    "NBA-4720",
+    "AEM-3255"
+  ],
+  "mustNotCount": [
+    {
+      "courseId": "HADM-1210",
+      "rowId": "accounting",
+      "why": "The hotel-school accounting course is reserved for hotel-school students, which this student is not."
+    },
+    {
+      "courseId": "ORIE-3150",
+      "rowId": "accounting",
+      "why": "The operations research accounting course is reserved for that major, which this student is not."
+    },
+    {
+      "courseId": "DEA-2730",
+      "rowId": "credits-jcb",
+      "why": "A design course carries no business-college subject code, so it adds nothing to the business-college credit count."
+    },
+    {
+      "courseId": "FSAD-4660",
+      "rowId": "credits-jcb",
+      "why": "A fiber science course is on the industries list but is not a business-college course."
+    }
+  ],
+  "courses": [
+    {
+      "id": "AEM-2220",
+      "subject": "AEM",
+      "number": "2220",
+      "title": "Dilemmas in Entrepreneurship",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2210",
+      "subject": "AEM",
+      "number": "2210",
+      "title": "Financial Accounting",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "HADM-4144",
+      "subject": "HADM",
+      "number": "4144",
+      "title": "Developing an Entrepreneurial Mindset",
+      "credits": 1.5,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3249",
+      "subject": "AEM",
+      "number": "3249",
+      "title": "Entrepreneurial Marketing and Strategy",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3220",
+      "subject": "AEM",
+      "number": "3220",
+      "title": "Digital Business Strategy",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "NBA-4720",
+      "subject": "NBA",
+      "number": "4720",
+      "title": "Family Enterprise Management and Governance",
+      "credits": 1.5,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3255",
+      "subject": "AEM",
+      "number": "3255",
+      "title": "Creativity Sprint: An Entrepreneurship Hackathon",
+      "credits": 1.5,
+      "attrs": [
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    },
+    {
+      "id": "HADM-1210",
+      "subject": "HADM",
+      "number": "1210",
+      "title": "Financial Accounting",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "ORIE-3150",
+      "subject": "ORIE",
+      "number": "3150",
+      "title": "Financial and Managerial Accounting",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "DEA-2730",
+      "subject": "DEA",
+      "number": "2730",
+      "title": "Human Centered Design Methods",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "D-AG"
+        },
+        {
+          "value": "D-HE"
+        },
+        {
+          "value": "LAD-HE"
+        },
+        {
+          "value": "CU-UGR"
+        }
+      ]
+    },
+    {
+      "id": "FSAD-4660",
+      "subject": "FSAD",
+      "number": "4660",
+      "title": "Textiles, Apparel, and Innovation",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "CU-CEL"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "programId": "cornell-artificial-intelligence-minor-2026",
+  "description": "A computer science major whose machine learning and AI courses also serve the minor has the courses beyond the two-course overlap cap held back.",
+  "layerIds": [
+    "cornell-computer-science-ba-2026",
+    "cornell-artificial-intelligence-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-computer-science-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "CS-3780",
+    "CS-3700",
+    "INFO-4470",
+    "INFO-4210",
+    "CS-4782",
+    "CS-4789"
+  ],
+  "limit": {
+    "maxCourses": 2
+  },
+  "shared": [
+    "CS-3780",
+    "CS-3700",
+    "INFO-4470",
+    "INFO-4210",
+    "CS-4782",
+    "CS-4789"
+  ],
+  "heldBack": [
+    {
+      "courseId": "INFO-4470",
+      "from": "cornell-artificial-intelligence-minor-2026",
+      "why": "Six courses serve both programs but only two may, so the extra ones stop counting for the minor."
+    },
+    {
+      "courseId": "INFO-4210",
+      "from": "cornell-artificial-intelligence-minor-2026",
+      "why": "Six courses serve both programs but only two may, so the extra ones stop counting for the minor."
+    },
+    {
+      "courseId": "CS-4782",
+      "from": "cornell-artificial-intelligence-minor-2026",
+      "why": "Six courses serve both programs but only two may, so the extra ones stop counting for the minor."
+    },
+    {
+      "courseId": "CS-4789",
+      "from": "cornell-artificial-intelligence-minor-2026",
+      "why": "Six courses serve both programs but only two may, so the extra ones stop counting for the minor."
+    }
+  ],
+  "courses": [
+    {
+      "id": "CS-3780",
+      "subject": "CS",
+      "number": "3780",
+      "title": "Introduction to Machine Learning",
+      "credits": 4,
+      "attrs": [
+        {
+          "value": "OPHLS-AG"
+        },
+        {
+          "value": "SDS-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-3700",
+      "subject": "CS",
+      "number": "3700",
+      "title": "Foundations of AI Reasoning and Decision-Making",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "SMR-AS"
+        }
+      ]
+    },
+    {
+      "id": "INFO-4470",
+      "subject": "INFO",
+      "number": "4470",
+      "title": "(listed on the catalog page; not in the catalog dump)",
+      "credits": 3,
+      "attrs": [],
+      "pageOnly": true
+    },
+    {
+      "id": "INFO-4210",
+      "subject": "INFO",
+      "number": "4210",
+      "title": "Artificial Intelligence: Law, Ethics, and Policy",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "ETM-AS"
+        },
+        {
+          "value": "SSC-AS"
+        }
+      ]
+    },
+    {
+      "id": "CS-4782",
+      "subject": "CS",
+      "number": "4782",
+      "title": "Introduction to Deep Learning",
+      "credits": 4,
+      "attrs": []
+    },
+    {
+      "id": "CS-4789",
+      "subject": "CS",
+      "number": "4789",
+      "title": "Introduction to Reinforcement Learning",
+      "credits": 3,
+      "attrs": []
+    }
+  ]
+}

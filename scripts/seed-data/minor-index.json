@@ -50,7 +50,8 @@
   },
   "cornell-entrepreneurship-minor-2026": {
     "shortName": "Entrepreneurship minor",
-    "offeredBy": "SC Johnson College"
+    "offeredBy": "SC Johnson College",
+    "notOpenTo": ["cornell-applied-economics-management-bs"]
   },
   "cornell-game-design-minor-2026": {
     "shortName": "Game Design minor",
@@ -80,7 +81,8 @@
   },
   "cornell-mechanical-engineering-minor-2026": {
     "shortName": "ME minor",
-    "offeredBy": "Engineering"
+    "offeredBy": "Engineering",
+    "notOpenTo": ["cornell-me-bs"]
   },
   "cornell-music-minor-2026": {
     "shortName": "Music minor",

@@ -1,0 +1,115 @@
+{
+  "programId": "cornell-entrepreneurship-minor-2026",
+  "description": "An Italian major's open electives absorb four of the minor's courses, far more than the one course a minor may share with a major.",
+  "layerIds": [
+    "cornell-italian-ba-2026",
+    "cornell-entrepreneurship-minor-2026"
+  ],
+  "ctx": {
+    "programId": "cornell-italian-ba-2026",
+    "entryTerm": "FA26",
+    "transfer": "none"
+  },
+  "plan": [
+    "AEM-2220",
+    "AEM-2210",
+    "HADM-4144",
+    "AEM-3249",
+    "AEM-3220",
+    "NBA-4720",
+    "AEM-3255"
+  ],
+  "limit": {
+    "maxCourses": 1,
+    "maxCredits": 4
+  },
+  "shared": [
+    "AEM-2210",
+    "AEM-2220",
+    "AEM-3220",
+    "AEM-3249"
+  ],
+  "heldBack": [
+    {
+      "courseId": "AEM-2210",
+      "from": "cornell-italian-ba-2026",
+      "why": "Only one course may count for both programs, so the accounting course stops filling an Italian elective."
+    },
+    {
+      "courseId": "AEM-3220",
+      "from": "cornell-italian-ba-2026",
+      "why": "The digital strategy course also stops filling an Italian elective to stay within the one-course limit."
+    },
+    {
+      "courseId": "AEM-3249",
+      "from": "cornell-italian-ba-2026",
+      "why": "The marketing and strategy course stops filling an Italian elective too, leaving only the overview course shared."
+    }
+  ],
+  "courses": [
+    {
+      "id": "AEM-2220",
+      "subject": "AEM",
+      "number": "2220",
+      "title": "Dilemmas in Entrepreneurship",
+      "credits": 3,
+      "attrs": [
+        {
+          "value": "OCE-IL"
+        }
+      ]
+    },
+    {
+      "id": "AEM-2210",
+      "subject": "AEM",
+      "number": "2210",
+      "title": "Financial Accounting",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "HADM-4144",
+      "subject": "HADM",
+      "number": "4144",
+      "title": "Developing an Entrepreneurial Mindset",
+      "credits": 1.5,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3249",
+      "subject": "AEM",
+      "number": "3249",
+      "title": "Entrepreneurial Marketing and Strategy",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3220",
+      "subject": "AEM",
+      "number": "3220",
+      "title": "Digital Business Strategy",
+      "credits": 3,
+      "attrs": []
+    },
+    {
+      "id": "NBA-4720",
+      "subject": "NBA",
+      "number": "4720",
+      "title": "Family Enterprise Management and Governance",
+      "credits": 1.5,
+      "attrs": []
+    },
+    {
+      "id": "AEM-3255",
+      "subject": "AEM",
+      "number": "3255",
+      "title": "Creativity Sprint: An Entrepreneurship Hackathon",
+      "credits": 1.5,
+      "attrs": [
+        {
+          "value": "ICE-IL"
+        }
+      ]
+    }
+  ]
+}
