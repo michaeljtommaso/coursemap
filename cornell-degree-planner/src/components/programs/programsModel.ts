@@ -10,6 +10,7 @@ import type { Program } from "@/types/db";
 import { courseCode } from "@/lib/planner/questions/registry";
 import { programColorFor } from "@/lib/planner/programColors";
 import { programCollegeId, programIsVisible, collegeShortName } from "@/lib/planner/colleges";
+import { minorClosure } from "@/lib/planner/minorEligibility";
 import {
   engineeringForbiddenReason,
   engineeringPairNote,
@@ -207,6 +208,10 @@ export type PickerContext = {
   /** A minor's `notOpenTo` from the minor index (D12), when the index is in
    *  memory: a major that a minor on the plan isn't open to is disabled. */
   notOpenToOf?: (minorId: string) => readonly string[] | undefined;
+  /** Who an `onlyOpenTo` minor is for, in plain words ("Engineering majors",
+   *  minorEligibility.onlyOpenToWho over the program list); "certain majors"
+   *  without it. */
+  onlyOpenToWho?: (prefixes: readonly string[]) => string;
 };
 
 function search(rows: PickerRow[], query: string): PickerRow[] {
@@ -241,6 +246,12 @@ export function notOpenToText(minorShortName: string, majorShortName: string): s
   return `${minorPhrase(minorShortName)} isn't open to ${majorShortName} majors`;
 }
 
+/** "The Exercise minor is only open to Nutritional Sciences majors" (D12
+ *  onlyOpenTo); `who` from minorEligibility.onlyOpenToWho. */
+export function onlyOpenToText(minorShortName: string, who: string): string {
+  return `${minorPhrase(minorShortName)} is only open to ${who}`;
+}
+
 /** D12, the other order: a major that a minor already on the plan isn't open to. */
 function closedByMinor(majorId: string, majorShortName: string, ctx: PickerContext): string | null {
   const notOpenToOf = ctx.notOpenToOf;
@@ -250,29 +261,38 @@ function closedByMinor(majorId: string, majorShortName: string, ctx: PickerConte
 }
 
 /**
- * D12 on a plan that already holds the pair (an old plan, or a carry-over
- * before the minor index loaded): minorId -> "The CS minor isn't open to
- * Computer Science majors — check with your advisor." for each minor that a
- * major on the plan (the primary or the second major) is closed to. That
- * minor's row and section read as this warning, never as cleanly done.
+ * D12 on a plan that already holds a closed minor (an old plan, a carry-over
+ * before the minor index loaded, or a minor the index closed later): minorId
+ * -> "The CS minor isn't open to Computer Science majors — check with your
+ * advisor." for each minor that a major on the plan (the primary or the
+ * second major) is closed to, or "The Exercise minor is only open to
+ * Nutritional Sciences majors — check with your advisor." for each
+ * `onlyOpenTo` minor no major on the plan opens (minorClosure). That minor's
+ * row and section read as this warning, never as cleanly done.
  */
 export function notOpenWarnings(opts: {
   primaryId: string;
   list: readonly AdditionalProgram[];
   notOpenToOf: (minorId: string) => readonly string[] | undefined;
   shortNameOf: (id: string) => string;
+  /** A minor's `onlyOpenTo` from the minor index; absent: none known. */
+  onlyOpenToOf?: (minorId: string) => readonly string[] | undefined;
+  onlyOpenToWho?: (prefixes: readonly string[]) => string;
 }): Map<string, string> {
   const majors = [opts.primaryId, ...opts.list.filter((p) => p.kind === "major").map((p) => p.programId)];
   const out = new Map<string, string>();
   for (const m of opts.list) {
     if (m.kind !== "minor") continue;
-    const closed = majors.find((id) => matchesProgramPrefix(id, opts.notOpenToOf(m.programId)));
-    if (closed) {
-      out.set(
-        m.programId,
-        `${notOpenToText(opts.shortNameOf(m.programId), opts.shortNameOf(closed))} — check with your advisor.`
-      );
-    }
+    const closure = minorClosure(
+      { notOpenTo: opts.notOpenToOf(m.programId), onlyOpenTo: opts.onlyOpenToOf?.(m.programId) },
+      majors
+    );
+    if (!closure) continue;
+    const text =
+      closure.kind === "notOpenTo"
+        ? notOpenToText(opts.shortNameOf(m.programId), opts.shortNameOf(closure.majorId))
+        : onlyOpenToText(opts.shortNameOf(m.programId), opts.onlyOpenToWho?.(closure.onlyOpenTo) ?? "certain majors");
+    out.set(m.programId, `${text} — check with your advisor.`);
   }
   return out;
 }
@@ -324,13 +344,21 @@ function engineeringMajorGroups(programs: readonly Program[], ctx: PickerContext
 }
 
 /** Minors (D12): every visible index entry, grouped by who offers it, groups
- *  and rows alphabetical. */
+ *  and rows alphabetical. A minor closed to the plan's majors (minorClosure:
+ *  `notOpenTo` one of them, or `onlyOpenTo` none of them) is disabled with
+ *  who it is or isn't for. */
 export function minorGroups(entries: readonly MinorIndexEntry[], ctx: PickerContext, query: string): PickerGroup[] {
   const majorsOnPlan = [ctx.primaryId, ...ctx.list.filter((p) => p.kind === "major").map((p) => p.programId)];
   const rows = entries
     .filter((e) => e.visible !== false)
     .map<PickerRow & { offeredBy: string }>((e) => {
-      const closed = majorsOnPlan.find((m) => matchesProgramPrefix(m, e.notOpenTo));
+      const closure = minorClosure(e, majorsOnPlan);
+      const closedReason =
+        closure?.kind === "notOpenTo"
+          ? `Not open to ${ctx.shortNameOf(closure.majorId)} majors`
+          : closure
+            ? `Only open to ${ctx.onlyOpenToWho?.(closure.onlyOpenTo) ?? "certain majors"}`
+            : null;
       return {
         id: e.id,
         kind: "minor",
@@ -338,7 +366,7 @@ export function minorGroups(entries: readonly MinorIndexEntry[], ctx: PickerCont
         shortName: e.shortName,
         offeredBy: e.offeredBy,
         disabledReason:
-          commonReason(e.id, ctx) ?? (closed ? `Not open to ${ctx.shortNameOf(closed)} majors` : null),
+          commonReason(e.id, ctx) ?? closedReason,
       };
     });
   const byGroup = new Map<string, PickerRow[]>();

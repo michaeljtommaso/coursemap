@@ -563,6 +563,48 @@ describe("ProgramStack", () => {
     });
   });
 
+  describe("a minor only open to certain majors (D12 onlyOpenTo)", () => {
+    beforeEach(() => {
+      state.minors = [
+        ...state.minors,
+        {
+          id: "quant-minor",
+          name: "Quant",
+          shortName: "Quant minor",
+          offeredBy: "Arts & Sciences",
+          catalogYear: "2026-27",
+          onlyOpenTo: [MATH.id, GOVT.id],
+        },
+      ];
+    });
+
+    it("the minor picker disables it with who it's for, named from the program list", () => {
+      render();
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+      act(() => $<HTMLButtonElement>('[data-add="add-minor"]')!.click());
+      const quant = $<HTMLButtonElement>('[data-picker-row="quant-minor"]')!;
+      expect(quant.disabled).toBe(true);
+      expect(quant.textContent).toContain("Only open to Government and Mathematics majors");
+    });
+
+    it("a second major that opens it enables it", () => {
+      state.plan.additionalPrograms = [{ programId: MATH.id, kind: "major" }];
+      render();
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+      act(() => $<HTMLButtonElement>('[data-add="add-minor"]')!.click());
+      expect($<HTMLButtonElement>('[data-picker-row="quant-minor"]')!.disabled).toBe(false);
+    });
+
+    it("a plan already holding it warns on the minor's row", () => {
+      state.plan.additionalPrograms = [{ programId: "quant-minor", kind: "minor" }];
+      render();
+      act(() => $<HTMLButtonElement>("#program-stack-primary")!.click());
+      expect($('[data-program-row="quant-minor"] [data-program-warning]')!.textContent).toBe(
+        "The Quant minor is only open to Government and Mathematics majors — check with your advisor."
+      );
+    });
+  });
+
   it("a refused add fills nothing and leaves the refusal toast to addProgram", () => {
     state.plan.addProgram = vi.fn(() => "cap");
     render();

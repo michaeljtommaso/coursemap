@@ -1182,6 +1182,10 @@ export const MinorIndexEntrySchema = z
     /** Program id prefixes whose majors may not take this minor (spec 047 C2),
      *  matched like the `program` rule leaf. */
     notOpenTo: z.array(z.string().min(1).max(80)).max(40).optional(),
+    /** The mirror image (spec 047 D12): program id prefixes the minor is
+     *  ONLY open to — closed to a plan unless one of its majors (the primary
+     *  or the second major) matches. Matched like notOpenTo. */
+    onlyOpenTo: z.array(z.string().min(1).max(80)).max(40).optional(),
     /** false pulls a minor from the picker without deleting it. Absent = shown. */
     visible: z.boolean().optional(),
   })

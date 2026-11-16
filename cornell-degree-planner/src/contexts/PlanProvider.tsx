@@ -34,7 +34,7 @@ import {
   type AdditionalProgram,
   type MinorIndexEntry,
 } from "@/lib/schemas";
-import { matchesProgramPrefix } from "@/lib/planner/distribution/overlap";
+import { minorClosure, onlyOpenToWho } from "@/lib/planner/minorEligibility";
 import type { MarkValue } from "@/lib/planner/distribution/types";
 import { countsForKey, parseCountsForKey, parseRef } from "@/lib/planner/questions/keys";
 import { canonicalProgramId } from "@/lib/planner/legacyPrograms";
@@ -707,16 +707,22 @@ export function forbiddenSecondMajor(
   return null;
 }
 
-/** A minor Cornell closes to a major on the plan (spec 047 D12 notOpenTo). */
-export type ClosedMinorPair = { minor: AdditionalProgram; majorId: string };
+/** A minor Cornell closes to the plan's majors (spec 047 D12): `notOpenTo`
+ *  a major on the plan (`majorId`), or — with `onlyOpenTo` set — open only to
+ *  majors the plan has none of (`majorId` is then the primary, or the first
+ *  major when there is no primary). */
+export type ClosedMinorPair = { minor: AdditionalProgram; majorId: string; onlyOpenTo?: readonly string[] };
 
 /**
- * The first minor on `programs` whose minor-index entry closes it to a major
- * on the plan — the primary (`primaryId`) or a second major on `programs` —
- * matched like the `program` rule leaf (a prefix matches every catalog year).
- * With `involving`, only a pair that program is part of (as the minor or the
- * major). `index` is the minor index the session already read; without it
- * nothing is known closed (null). Pure.
+ * The first minor on `programs` whose minor-index entry closes it to the
+ * plan's majors — the primary (`primaryId`) and a second major on `programs`,
+ * alike (minorClosure): `notOpenTo` one of them, or `onlyOpenTo` none of
+ * them. Matched like the `program` rule leaf (a prefix matches every catalog
+ * year). With `involving`, only a closure that program is part of: the minor
+ * itself, or for `notOpenTo` the major it is closed to (adding or bringing
+ * back a major can never close an `onlyOpenTo` minor, so an `onlyOpenTo`
+ * closure involves only its minor). `index` is the minor index the session
+ * already read; without it nothing is known closed (null). Pure.
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function closedMinorPair(
@@ -732,12 +738,45 @@ export function closedMinorPair(
   ];
   for (const minor of programs) {
     if (minor.kind !== "minor") continue;
-    const closedTo = index.find((e) => e.id === minor.programId)?.notOpenTo;
-    if (!closedTo || closedTo.length === 0) continue;
-    for (const majorId of majors) {
-      if (involving !== undefined && involving !== minor.programId && involving !== majorId) continue;
-      if (matchesProgramPrefix(majorId, closedTo)) return { minor, majorId };
+    const entry = index.find((e) => e.id === minor.programId);
+    if (involving !== undefined && involving !== minor.programId) {
+      // Only a notOpenTo pair with the `involving` major counts.
+      const closure = minorClosure({ notOpenTo: entry?.notOpenTo }, [involving]);
+      if (closure?.kind === "notOpenTo" && majors.includes(involving)) return { minor, majorId: involving };
+      continue;
     }
+    const closure = minorClosure(entry, majors);
+    if (!closure) continue;
+    if (closure.kind === "notOpenTo") return { minor, majorId: closure.majorId };
+    return { minor, majorId: majors[0], onlyOpenTo: closure.onlyOpenTo };
+  }
+  return null;
+}
+
+/**
+ * The `onlyOpenTo` minor that removing major `programId` from `programs`
+ * would close (spec 047 D12, the mirror of adding a major a minor is
+ * `notOpenTo`): open with it on the plan, closed without it. Null for a
+ * minor, a program not on the plan, a minor already closed, or without the
+ * minor index. Pure.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function minorClosedByRemoving(
+  programs: readonly AdditionalProgram[],
+  primaryId: string | null,
+  index: readonly MinorIndexEntry[] | null,
+  programId: string
+): ClosedMinorPair | null {
+  if (!index) return null;
+  const leaving = programs.find((p) => p.programId === programId);
+  if (!leaving || leaving.kind !== "major") return null;
+  const after = programs.filter((p) => p !== leaving);
+  for (const minor of after) {
+    if (minor.kind !== "minor") continue;
+    const now = closedMinorPair([minor, ...programs.filter((p) => p.kind === "major")], primaryId, index);
+    if (now) continue; // already closed: removing a major doesn't change that
+    const then = closedMinorPair([minor, ...after.filter((p) => p.kind === "major")], primaryId, index);
+    if (then) return then;
   }
   return null;
 }
@@ -1136,13 +1175,17 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
     }
     return peekMinorIndex()?.find((e) => e.id === p.programId)?.shortName || "the minor";
   }, []);
-  // Spec 047 D12 (notOpenTo) toasts: "the CS minor isn't open to Computer
-  // Science majors". Any major on the plan, the primary included.
+  // Spec 047 D12 toasts: "the CS minor isn't open to Computer Science
+  // majors" (notOpenTo; any major on the plan, the primary included), or
+  // "the Exercise minor is only open to Nutritional Sciences majors"
+  // (onlyOpenTo; no major on the plan is one of them).
   const closedSentence = useCallback((pair: ClosedMinorPair): string => {
+    const minor = peekMinorIndex()?.find((e) => e.id === pair.minor.programId)?.shortName;
+    const subject = minor ? `the ${minor}` : "that minor";
+    if (pair.onlyOpenTo) return `${subject} is only open to ${onlyOpenToWho(pair.onlyOpenTo, programsRef.current)}`;
     const prog = programsRef.current.find((x) => x.id === pair.majorId);
     const major = prog?.short_name || prog?.name || "that major's";
-    const minor = peekMinorIndex()?.find((e) => e.id === pair.minor.programId)?.shortName;
-    return `${minor ? `the ${minor}` : "that minor"} isn't open to ${major} majors`;
+    return `${subject} isn't open to ${major} majors`;
   }, []);
   // The program removal whose "Removed X · Undo" toast is showing (spec 047
   // D10): its layers' waivers and answers are not orphans while Undo can
@@ -2171,8 +2214,20 @@ export function PlanProvider({ children }: { children: React.ReactNode }) {
       const canonicalNow = (cid: string) => aliasesRef.current[cid] ?? cid;
       const planned = programRemoval(stateRef.current, programId, triedToDrop, canonicalNow);
       if (!planned) return; // not on the plan (a stale caller): nothing to undo
+      // D12, the mirror of adding a major a minor is closed to: never remove
+      // the major that keeps an onlyOpenTo minor open (a Nutritional Sciences
+      // second major beside a minor only open to it). Known once the session
+      // read the minor index; until then it is removed and the panel warns.
+      const primary = planProgramIdRef.current ?? useProgramStore.getState().selectedProgramId;
+      const wouldClose = (s: PlanState) =>
+        minorClosedByRemoving(s.additionalPrograms, primary, peekMinorIndex(), programId);
+      const closing = wouldClose(stateRef.current);
+      if (closing) {
+        showToast(`Can't remove ${programLabel(planned.removed.program)}: ${closedSentence(closing)}. Remove the minor first.`);
+        return;
+      }
       const removed: RemovedProgram = { planId: planIdRef.current, ...planned.removed };
-      commit((s) => programRemoval(s, programId, triedToDrop, canonicalNow)?.next ?? s);
+      commit((s) => (wouldClose(s) ? s : programRemoval(s, programId, triedToDrop, canonicalNow)?.next ?? s));
 
       const label = programLabel(removed.program);
       showToast(`Removed ${label}`, {

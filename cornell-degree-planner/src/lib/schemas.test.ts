@@ -375,6 +375,14 @@ describe("MinorIndexSchema (spec 047 D12)", () => {
     expect(MinorIndexEntrySchema.parse(entry({ futureField: 1 }))).toMatchObject({ futureField: 1, offeredBy: "Bowers CIS" });
   });
 
+  it("onlyOpenTo is bounded like notOpenTo (spec 047 D12)", () => {
+    expect(MinorIndexEntrySchema.parse(entry({ onlyOpenTo: ["cornell-nutr-bs"] })).onlyOpenTo).toEqual(["cornell-nutr-bs"]);
+    expect(MinorIndexEntrySchema.safeParse(entry({ onlyOpenTo: [""] })).success).toBe(false);
+    expect(MinorIndexEntrySchema.safeParse(entry({ onlyOpenTo: ["x".repeat(81)] })).success).toBe(false);
+    expect(MinorIndexEntrySchema.safeParse(entry({ onlyOpenTo: Array.from({ length: 41 }, (_, i) => `p${i}`) })).success).toBe(false);
+    expect(MinorIndexEntrySchema.safeParse(entry({ onlyOpenTo: "cornell-nutr-bs" })).success).toBe(false);
+  });
+
   it("rejects malformed entries and more than 300", () => {
     expect(MinorIndexEntrySchema.safeParse(entry({ offeredBy: undefined })).success).toBe(false);
     expect(MinorIndexEntrySchema.safeParse(entry({ offeredBy: "" })).success).toBe(false);

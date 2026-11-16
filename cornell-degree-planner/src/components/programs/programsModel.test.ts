@@ -4,6 +4,7 @@ import type { OverlapPair, ProgramSection } from "@/hooks/useRequirementProgress
 import type { Program } from "@/types/db";
 import type { Layer } from "@/lib/planner/distribution/types";
 import { ENGINEERING_SHARING_NOTE } from "@/lib/planner/engineeringDoubleMajor";
+import { onlyOpenToWho } from "@/lib/planner/minorEligibility";
 import {
   addButtons,
   concentrationChoice,
@@ -293,6 +294,56 @@ describe("the add picker", () => {
     ]);
     // The second major counts too.
     expect(groups[1].rows[0].disabledReason).toBe("Not open to CS majors");
+  });
+});
+
+describe("a minor only open to certain majors (D12 onlyOpenTo)", () => {
+  const ENG = [CS, ME, ECE, ORE, ISST, ENVE, CE];
+  const who = (prefixes: readonly string[]) => onlyOpenToWho(prefixes, [ECON, MATH, GOVT, HIDDEN, AEM, ...ENG, ENG_HIDDEN]);
+  const entries = [
+    minor("quant-minor", "Quant", "Arts & Sciences", { onlyOpenTo: [MATH.id, GOVT.id] }),
+    minor("eng-minor", "Engineering Writing", "Engineering", { onlyOpenTo: ENG.map((p) => p.id) }),
+    minor("open-minor", "Open", "Arts & Sciences"),
+  ];
+  const reasons = (c: PickerContext) =>
+    Object.fromEntries(minorGroups(entries, c, "").flatMap((g) => g.rows.map((r) => [r.id, r.disabledReason])));
+
+  it("the picker disables it with who it is for unless the primary or the second major matches", () => {
+    expect(reasons(ctx({ onlyOpenToWho: who }))).toEqual({
+      "quant-minor": "Only open to Government and Mathematics majors",
+      "eng-minor": "Only open to Engineering majors",
+      "open-minor": null,
+    });
+    // The second major opens it exactly as the primary does.
+    expect(reasons(ctx({ onlyOpenToWho: who, list: [{ programId: GOVT.id, kind: "major" }] }))["quant-minor"]).toBeNull();
+    expect(reasons(ctx({ onlyOpenToWho: who, primaryId: `${MATH.id}-2026`, primaryProgram: MATH }))["quant-minor"]).toBeNull();
+    expect(reasons(ctx({ onlyOpenToWho: who, primaryId: ME.id, primaryProgram: ME }))["eng-minor"]).toBeNull();
+    // Without the program names: still disabled, in plain words.
+    expect(reasons(ctx())["quant-minor"]).toBe("Only open to certain majors");
+  });
+
+  it("a plan that already holds it warns on the minor; a major that opens it clears the warning", () => {
+    const onlyOpenToOf = (id: string) => entries.find((e) => e.id === id)?.onlyOpenTo;
+    const warnings = notOpenWarnings({
+      primaryId: ECON.id,
+      list: [{ programId: "quant-minor", kind: "minor" }, { programId: "open-minor", kind: "minor" }],
+      notOpenToOf: () => undefined,
+      shortNameOf: (id) => ({ "quant-minor": "Quant minor", "open-minor": "Open minor" })[id] ?? id,
+      onlyOpenToOf,
+      onlyOpenToWho: who,
+    });
+    expect([...warnings]).toEqual([
+      ["quant-minor", "The Quant minor is only open to Government and Mathematics majors — check with your advisor."],
+    ]);
+    const opened = notOpenWarnings({
+      primaryId: ECON.id,
+      list: [{ programId: MATH.id, kind: "major" }, { programId: "quant-minor", kind: "minor" }],
+      notOpenToOf: () => undefined,
+      shortNameOf: (id) => id,
+      onlyOpenToOf,
+      onlyOpenToWho: who,
+    });
+    expect(opened.size).toBe(0);
   });
 });
 

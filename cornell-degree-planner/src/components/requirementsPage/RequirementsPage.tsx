@@ -40,6 +40,7 @@ import { ProgramSectionHeader } from "./ProgramSectionHeader";
 import { useRevealProgram } from "@/components/programs/revealProgram";
 import { useMinorIndex } from "@/hooks/useAdditionalProgramData";
 import { notOpenWarnings } from "@/components/programs/programsModel";
+import { onlyOpenToWho } from "@/lib/planner/minorEligibility";
 import { ConcentrationChooser } from "@/components/programs/ConcentrationChooser";
 import { useSecondMajorConcentration } from "@/components/programs/useSecondMajorConcentration";
 import { CONCENTRATION_TEXT, NOTICE_NEED, NOTICE_TEXT } from "@/components/requirements/requirementText";
@@ -357,9 +358,11 @@ export function RequirementsPage() {
             list: additionalPrograms,
             notOpenToOf: (id) => minorEntries.find((e) => e.id === id)?.notOpenTo,
             shortNameOf: nameOf,
+            onlyOpenToOf: (id) => minorEntries.find((e) => e.id === id)?.onlyOpenTo,
+            onlyOpenToWho: (prefixes) => onlyOpenToWho(prefixes, programs),
           })
         : new Map<string, string>(),
-    [programId, additionalPrograms, minorEntries, nameOf]
+    [programId, additionalPrograms, minorEntries, nameOf, programs]
   );
   // Overlap lines (under the later program, `pair.b`) and D14 / D12 warnings.
   const overlapBySection = useMemo(() => {
