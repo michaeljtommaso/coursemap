@@ -127,7 +127,7 @@
         "url": "https://catalog.cornell.edu/programs/digital-agriculture-minor/",
         "anchor": "Minor Requirements"
       },
-      "note": "A course counted by one of your majors' own requirements is held out of the electives. For each major that the minor knows, that means the courses its page or slots name, and for a major that counts a whole subject (for example Plant Sciences counts PLSCI, Animal Science counts ANSC, Information Science counts INFO) every elective in that subject. That is broad, so it may hold out too much; the confirm row states the real rule.",
+      "note": "Courses your major could count are held out of the electives, for every major the planner offers (a script derives the list from each major's own requirements and concentrations). A major's home subjects are held out whole: the subjects it requires a course in or counts as a whole (for example Plant Sciences and PLSCI, Animal Science and ANSC, Information Science and INFO). That is broad, so it may hold out too much; the confirm row states the real rule.",
       "kind": "pool",
       "rule": {
         "allOf": [
@@ -196,85 +196,7 @@
                   "allOf": [
                     {
                       "course": [
-                        "PLSCI-3420",
-                        "PLSCI-4000",
-                        "BEE-3299"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-biology-society-ba"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "INFO-2921"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-history-ba"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "INFO-2921"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-information-science-ba"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "BME-4390"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-physics-ba"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "INFO-4310",
-                        "ORIE-3120",
-                        "ORIE-4580"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-statistics-data-science-ba"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "PLSCI-2110",
-                        "PLSCI-2200",
-                        "ANSC-3300",
-                        "FDSC-2000",
-                        "ANSC-4880"
+                        "FDSC-2000"
                       ]
                     },
                     {
@@ -288,8 +210,10 @@
                   "allOf": [
                     {
                       "course": [
-                        "ANSC-4120",
-                        "ANSC-4880"
+                        "FDSC-2000",
+                        "PLSCI-2110",
+                        "PLSCI-2200",
+                        "PLSCI-3210"
                       ]
                     },
                     {
@@ -303,13 +227,15 @@
                   "allOf": [
                     {
                       "course": [
-                        "BEE-2510",
-                        "BEE-4530"
+                        "ENGRI-1130",
+                        "ENGRI-1200",
+                        "ENGRI-1310"
                       ]
                     },
                     {
                       "program": [
-                        "cornell-biological-engineering-bs"
+                        "cornell-be-bs",
+                        "cornell-isst-bs"
                       ]
                     }
                   ]
@@ -319,12 +245,30 @@
                     {
                       "course": [
                         "PLSCI-3420",
-                        "PLSCI-4000",
-                        "BEE-3299"
+                        "PLSCI-3430",
+                        "PLSCI-4000"
                       ]
                     },
                     {
                       "program": [
+                        "cornell-biological-sciences-ba",
+                        "cornell-biological-sciences-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "BEE-3299",
+                        "PLSCI-3420",
+                        "PLSCI-4000"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-biology-society-ba",
                         "cornell-biology-society-bs"
                       ]
                     }
@@ -341,7 +285,8 @@
                     },
                     {
                       "program": [
-                        "cornell-biometry-statistics-bs"
+                        "cornell-biometry-statistics-bs",
+                        "cornell-statistics-data-science-ba"
                       ]
                     }
                   ]
@@ -350,13 +295,268 @@
                   "allOf": [
                     {
                       "course": [
+                        "BEE-4530",
+                        "ECE-3140",
+                        "ECE-4250",
+                        "ECE-4760",
+                        "ECE-5470",
+                        "ENGRI-1130",
+                        "ENGRI-1200",
+                        "ENGRI-1310",
+                        "INFO-3950"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-bme-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "EAS-3030",
+                        "ECE-2300",
+                        "ECE-2720",
+                        "ENGRI-1130",
+                        "ENGRI-1200",
+                        "ENGRI-1310"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-ce-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "BEE-3299",
+                        "BEE-3900",
+                        "BEE-4530",
+                        "BME-4390",
+                        "CS-4750",
+                        "EAS-3030",
+                        "ECE-3140",
+                        "ECE-4250",
+                        "ECE-4760",
+                        "ENGRI-1130",
+                        "ENGRI-1200",
+                        "ENGRI-1310",
+                        "MAE-4180",
+                        "ORIE-3120",
+                        "ORIE-4580",
+                        "ORIE-4820"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-cheme-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "ANSC-3300",
+                        "ANSC-4310",
+                        "BEE-2510",
+                        "BEE-3900",
+                        "BEE-4530",
+                        "BME-4390",
+                        "EAS-3030",
+                        "ECE-2720",
+                        "ECE-3140",
+                        "ECE-4250",
+                        "ECE-4760",
+                        "ENGRI-1130",
+                        "ENGRI-1200",
+                        "ENGRI-1310",
+                        "FDSC-2000",
+                        "FDSC-4210",
+                        "INFO-3950",
+                        "INFO-4320",
+                        "ORIE-3120",
+                        "ORIE-4580",
+                        "ORIE-4820",
+                        "PLSCI-3350",
                         "PLSCI-3650",
-                        "EAS-3030"
+                        "PLSCI-4000"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-cs-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "PLSCI-3650"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-earth-climate-sciences-ba",
+                        "cornell-earth-climate-sciences-ecsag-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "BEE-2510",
+                        "CS-4750",
+                        "ECE-2300",
+                        "ECE-2720",
+                        "ENGRI-1130",
+                        "ENGRI-1200",
+                        "ENGRI-1310"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-eas-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "BEE-2510",
+                        "BEE-3299",
+                        "BEE-3900",
+                        "BEE-4530",
+                        "BEE-4550",
+                        "BME-4390",
+                        "CS-4750",
+                        "EAS-3030",
+                        "ENGRI-1130",
+                        "ENGRI-1200",
+                        "ENGRI-1310",
+                        "MAE-4180",
+                        "ORIE-3120",
+                        "ORIE-4580",
+                        "ORIE-4820"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-ece-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "BME-4390",
+                        "CS-4750",
+                        "EAS-3030",
+                        "ECE-2300",
+                        "ECE-2720",
+                        "ECE-3140",
+                        "ECE-4250",
+                        "ECE-4760",
+                        "ENGRI-1130",
+                        "ENGRI-1200",
+                        "ENGRI-1310",
+                        "MAE-4180",
+                        "ORIE-3120",
+                        "ORIE-4580",
+                        "ORIE-4820",
+                        "PLSCI-3650",
+                        "PLSCI-4200"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-enve-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "CRP-4080",
+                        "PLSCI-2200",
+                        "PLSCI-3210",
+                        "PLSCI-3420",
+                        "PLSCI-3650",
+                        "PLSCI-4200",
+                        "PLSCI-4660",
+                        "PLSCI-4720"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-environment-sustainability-ba",
+                        "cornell-environment-sustainability-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "EAS-3030",
+                        "PLSCI-3650"
                       ]
                     },
                     {
                       "program": [
                         "cornell-environmental-engineering-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "BEE-2510",
+                        "BEE-3299",
+                        "BEE-3900",
+                        "BEE-4530",
+                        "BME-4390",
+                        "CS-4750",
+                        "EAS-3030",
+                        "ECE-2300",
+                        "ECE-2720",
+                        "ECE-3140",
+                        "ECE-4250",
+                        "ECE-4760",
+                        "ENGRI-1130",
+                        "ENGRI-1200",
+                        "ENGRI-1310",
+                        "MAE-4180",
+                        "ORIE-3120",
+                        "ORIE-4580",
+                        "ORIE-4820"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-ep-bs",
+                        "cornell-mse-bs"
                       ]
                     }
                   ]
@@ -384,7 +584,7 @@
                     },
                     {
                       "program": [
-                        "cornell-information-science-bs"
+                        "cornell-history-ba"
                       ]
                     }
                   ]
@@ -393,364 +593,7 @@
                   "allOf": [
                     {
                       "course": [
-                        "PLSCI-3420",
-                        "PLSCI-3430"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-plant-sciences-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "PLSCI-4720",
-                        "PLSCI-4660",
-                        "PLSCI-3210",
-                        "PLSCI-3350",
-                        "PLSCI-3420"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-viticulture-enology-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "PLSCI-3650",
-                        "PLSCI-3350",
-                        "PLSCI-4000",
-                        "ANSC-4310",
-                        "ANSC-3300",
-                        "BEE-2510",
-                        "BEE-4530",
-                        "BEE-3900",
-                        "FDSC-2000",
-                        "FDSC-4210",
-                        "INFO-3950",
-                        "INFO-4320",
-                        "ECE-2720",
-                        "ORIE-3120",
-                        "ORIE-4580",
-                        "ORIE-4820",
-                        "ECE-4250",
-                        "ECE-4760",
-                        "ECE-3140",
-                        "CS-4750",
-                        "BME-4390",
-                        "EAS-3030"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-cs-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "BEE-2510",
-                        "BEE-3299",
-                        "BEE-4530",
-                        "BEE-3900",
-                        "BEE-4550",
-                        "ECE-2720",
-                        "ORIE-3120",
-                        "ORIE-4580",
-                        "ORIE-4820",
-                        "ECE-2300",
-                        "ECE-4250",
-                        "ECE-4760",
-                        "ECE-3140",
-                        "MAE-4180",
-                        "CS-4750",
-                        "BME-4390",
-                        "EAS-3030"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-ece-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "BEE-2510",
-                        "BEE-3299",
-                        "BEE-4530",
-                        "BEE-3900",
-                        "BEE-4550",
-                        "ECE-2720",
-                        "ORIE-3120",
-                        "ORIE-4580",
-                        "ORIE-4820",
-                        "ECE-2300",
-                        "ECE-4250",
-                        "ECE-4760",
-                        "ECE-3140",
-                        "MAE-4180",
-                        "CS-4750",
-                        "BME-4390",
-                        "EAS-3030"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-me-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "PLSCI-3420",
-                        "BEE-3299",
-                        "FDSC-2000",
-                        "INFO-3950",
-                        "ORIE-3120",
-                        "ORIE-4580",
-                        "ORIE-4820",
-                        "CS-4750",
-                        "INFO-4240"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-ore-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "BEE-2510",
-                        "BEE-4530",
-                        "BEE-3900",
-                        "BEE-4550"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-be-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "BEE-4530",
-                        "INFO-3950",
-                        "ECE-4250",
-                        "ECE-4760",
-                        "ECE-5470",
-                        "ECE-3140",
-                        "BME-4390"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-bme-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "BEE-2510",
-                        "ECE-2720",
-                        "ECE-2300",
-                        "EAS-3030"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-ce-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "BEE-3299",
-                        "BEE-4530",
-                        "BEE-3900",
-                        "ORIE-3120",
-                        "ORIE-4580",
-                        "ORIE-4820",
-                        "ECE-4250",
-                        "ECE-4760",
-                        "ECE-3140",
-                        "MAE-4180",
-                        "CS-4750",
-                        "BME-4390",
-                        "EAS-3030"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-cheme-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "BEE-2510",
-                        "ECE-2720",
-                        "ECE-2300",
-                        "CS-4750",
-                        "EAS-3030"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-eas-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "PLSCI-4200",
-                        "PLSCI-3650",
-                        "BEE-2510",
-                        "BEE-3299",
-                        "BEE-4530",
-                        "BEE-3900",
-                        "ECE-2720",
-                        "ORIE-3120",
-                        "ORIE-4580",
-                        "ORIE-4820",
-                        "ECE-2300",
-                        "ECE-4250",
-                        "ECE-4760",
-                        "ECE-3140",
-                        "MAE-4180",
-                        "CS-4750",
-                        "BME-4390",
-                        "EAS-3030"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-enve-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "BEE-2510",
-                        "BEE-3299",
-                        "BEE-4530",
-                        "BEE-3900",
-                        "ECE-2720",
-                        "ORIE-3120",
-                        "ORIE-4580",
-                        "ORIE-4820",
-                        "ECE-2300",
-                        "ECE-4250",
-                        "ECE-4760",
-                        "ECE-3140",
-                        "MAE-4180",
-                        "CS-4750",
-                        "BME-4390",
-                        "EAS-3030"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-ep-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "INFO-2921",
-                        "INFO-3950",
-                        "INFO-4310",
-                        "INFO-4320",
-                        "ORIE-3120",
-                        "INFO-4200",
-                        "INFO-4240"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-isst-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "course": [
-                        "BEE-2510",
-                        "BEE-3299",
-                        "BEE-4530",
-                        "BEE-3900",
-                        "ECE-2720",
-                        "ORIE-3120",
-                        "ORIE-4580",
-                        "ORIE-4820",
-                        "ECE-2300",
-                        "ECE-4250",
-                        "ECE-4760",
-                        "ECE-3140",
-                        "MAE-4180",
-                        "CS-4750",
-                        "BME-4390",
-                        "EAS-3030"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-mse-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "subject": [
-                        "INFO"
+                        "ORIE-3120"
                       ]
                     },
                     {
@@ -764,13 +607,84 @@
                 {
                   "allOf": [
                     {
-                      "subject": [
-                        "PLSCI"
+                      "course": [
+                        "BEE-2510",
+                        "BEE-3299",
+                        "BEE-3900",
+                        "BEE-4530",
+                        "BEE-4550",
+                        "BME-4390",
+                        "CS-4750",
+                        "EAS-3030",
+                        "ECE-2300",
+                        "ECE-2720",
+                        "ECE-3140",
+                        "ECE-4250",
+                        "ECE-4760",
+                        "ENGRI-1130",
+                        "ENGRI-1200",
+                        "ENGRI-1310",
+                        "ORIE-3120",
+                        "ORIE-4580",
+                        "ORIE-4820"
                       ]
                     },
                     {
                       "program": [
-                        "cornell-plant-sciences-bs"
+                        "cornell-me-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "BEE-3299",
+                        "ENGRI-1130",
+                        "ENGRI-1200",
+                        "ENGRI-1310",
+                        "FDSC-2000",
+                        "INFO-3950",
+                        "INFO-4240",
+                        "PLSCI-3420"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-ore-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "course": [
+                        "BME-4390"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-physics-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "AEM"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-agricultural-sciences-bs",
+                        "cornell-applied-economics-management-bs",
+                        "cornell-environment-sustainability-ba",
+                        "cornell-environment-sustainability-bs",
+                        "cornell-food-science-bs"
                       ]
                     }
                   ]
@@ -784,6 +698,7 @@
                     },
                     {
                       "program": [
+                        "cornell-agricultural-sciences-bs",
                         "cornell-animal-science-bs"
                       ]
                     }
@@ -798,8 +713,10 @@
                     },
                     {
                       "program": [
+                        "cornell-be-bs",
                         "cornell-biological-engineering-bs",
-                        "cornell-be-bs"
+                        "cornell-ce-bs",
+                        "cornell-enve-bs"
                       ]
                     }
                   ]
@@ -808,26 +725,56 @@
                   "allOf": [
                     {
                       "subject": [
-                        "ENGRI"
+                        "BME"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-bme-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "CS"
                       ]
                     },
                     {
                       "program": [
                         "cornell-biological-engineering-bs",
-                        "cornell-environmental-engineering-bs",
+                        "cornell-biometry-statistics-bs",
+                        "cornell-computer-science-ba",
                         "cornell-cs-bs",
-                        "cornell-ece-bs",
-                        "cornell-me-bs",
-                        "cornell-ore-bs",
-                        "cornell-be-bs",
-                        "cornell-bme-bs",
-                        "cornell-ce-bs",
-                        "cornell-cheme-bs",
-                        "cornell-eas-bs",
-                        "cornell-enve-bs",
-                        "cornell-ep-bs",
+                        "cornell-environmental-engineering-bs",
+                        "cornell-information-science-ba",
+                        "cornell-information-science-bs",
                         "cornell-isst-bs",
-                        "cornell-mse-bs"
+                        "cornell-mathematics-ba",
+                        "cornell-ore-bs",
+                        "cornell-statistics-data-science-ba"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "EAS"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-atmospheric-science-bs",
+                        "cornell-earth-climate-sciences-ba",
+                        "cornell-earth-climate-sciences-ecsag-bs",
+                        "cornell-eas-bs",
+                        "cornell-entomology-bs",
+                        "cornell-environment-sustainability-ba",
+                        "cornell-environment-sustainability-bs"
                       ]
                     }
                   ]
@@ -842,6 +789,52 @@
                     {
                       "program": [
                         "cornell-ece-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "ENGRI"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-biological-engineering-bs",
+                        "cornell-environmental-engineering-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "FDSC"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-food-science-bs",
+                        "cornell-viticulture-enology-bs"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "subject": [
+                        "INFO"
+                      ]
+                    },
+                    {
+                      "program": [
+                        "cornell-information-science-ba",
+                        "cornell-information-science-bs",
+                        "cornell-isst-bs"
                       ]
                     }
                   ]
@@ -869,6 +862,8 @@
                     },
                     {
                       "program": [
+                        "cornell-isst-bs",
+                        "cornell-mathematics-ba",
                         "cornell-ore-bs"
                       ]
                     }
@@ -878,40 +873,15 @@
                   "allOf": [
                     {
                       "subject": [
-                        "CS"
+                        "PLSCI"
                       ]
                     },
                     {
                       "program": [
-                        "cornell-cs-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "subject": [
-                        "EAS"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-eas-bs"
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "allOf": [
-                    {
-                      "subject": [
-                        "BME"
-                      ]
-                    },
-                    {
-                      "program": [
-                        "cornell-bme-bs"
+                        "cornell-agricultural-sciences-bs",
+                        "cornell-global-development-bs",
+                        "cornell-plant-sciences-bs",
+                        "cornell-viticulture-enology-bs"
                       ]
                     }
                   ]
